@@ -1,0 +1,20 @@
+# Original upstream dependency set with documented 4090-compatible version pins.
+numpy==1.23.5
+torch==2.2.2+cu118
+torchvision==0.17.2+cu118
+scipy==1.11.2
+matplotlib==3.7.5
+psutil==6.1.1
+omegaconf==2.3.0
+rich
+torchmetrics==1.3.2
+transformers==4.38.0
+sentence-transformers==2.2.2
+diffusers==0.24.0
+huggingface-hub==0.25.2
+tensorboard==2.15.1
+swanlab
+smplx==0.1.28
+h5py==3.11.0
+natsort==8.4.0
+einops==0.4.1

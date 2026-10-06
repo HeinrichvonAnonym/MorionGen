@@ -1,0 +1,7 @@
+{
+  "schema_version":1,
+  "thresholds":{"position_m":0.05,"orientation_deg":15,"object_goal_m":0.10,"contact_m":0.05,"trunk_deg":45,"upper_arm_deg":60,"recovery_hold_seconds":0.5},
+  "threshold_basis":"Engineering defaults for smoke comparisons; not derived or clinical thresholds. Contact uses CHOIS single-window default 5 cm; retain upstream metrics separately.",
+  "canonical":{"units":"m","axes":"right-handed Z-up","derivatives":"native sample period; only compare equivalent FPS/preprocessing"},
+  "not_implemented_without_inputs":{"RULA":"requires complete scoring inputs and validated scoring implementation","REBA":"requires complete scoring inputs and validated scoring implementation","joint_load":"requires mass, external forces and biomechanical model","CoP":"requires support/contact-force model","muscle_effort":"requires muscle model or measured EMG","FID":"requires compatible official evaluator, real reference distribution and adequate sample count","R_precision":"requires compatible official text-motion evaluator and retrieval protocol","diversity":"requires compatible embeddings and adequate sample count"}
+}

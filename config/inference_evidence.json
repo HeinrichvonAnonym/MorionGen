@@ -1,0 +1,24 @@
+{
+  "motionlcm": {
+    "reviewed": true,
+    "scope": "VAE reconstruction only",
+    "ram_bound_bytes": 3221225472,
+    "gpu_bound_bytes": 3221225472,
+    "max_frames": 196,
+    "source_basis": "FP32 VAE only, batch=1, <=196 frames, no_grad encode/decode. Checkpoint under 0.2 GiB; simultaneous CPU state/model <0.4 GiB. 256-wide 9-layer attention at <=228 tokens, no saved backward graph. Reserve >2 GiB each for interpreter, torch/CUDA workspace and allocator. Text encoder, full MLD and evaluators excluded; bound does not admit ControlNet or training.",
+    "files": [
+      {
+        "path": "/home/heinrich/MotioGen/outputs/assets/motionlcm/experiments_recons/vae_humanml/vae_humanml.ckpt",
+        "sha256": "4f4f1c82424a1875e331958f4d9c17807e992a7e9385147aaa09b13e03821dbd"
+      },
+      {
+        "path": "/home/heinrich/MotioGen/baselines/MotionLCM/configs/vae.yaml",
+        "sha256": "5959c5a1ef0f4c5843caef1b9be6a114fbad9958a108fb065e4a9351da34e5e3"
+      },
+      {
+        "path": "/home/heinrich/MotioGen/baselines/MotionLCM/mld/models/architectures/mld_vae.py",
+        "sha256": "20a31ec159f82f465a9f842d7a1e11951c3cd1b596bd29bafaae9df2f78f80f1"
+      }
+    ]
+  }
+}

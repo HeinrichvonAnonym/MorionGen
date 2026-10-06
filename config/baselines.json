@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "asset_root": "outputs/assets",
+  "run_root": "develop_logs/test_runs",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "timing": {
+    "warmup": 3,
+    "repetitions": 20
+  },
+  "resources": {
+    "gpu_max_gib": 20,
+    "gpu_reserve_gib": 3,
+    "ram_max_gib": 12,
+    "ram_reserve_gib": 6,
+    "disk_reserve_gib": 80,
+    "timeout_seconds": 900,
+    "sample_seconds": 0.25
+  },
+  "baselines": {
+    "motionlcm": {
+      "repo": "baselines/MotionLCM",
+      "environment": "motiogen-motionlcm",
+      "python": "3.10",
+      "model": "motionlcm_humanml_s_all.ckpt",
+      "skeleton": "humanml22",
+      "fps": 20,
+      "axes": "Y-up",
+      "training_entry": "train_motion_control.py",
+      "official_eval": [
+        "python",
+        "-m",
+        "test",
+        "--cfg",
+        "configs/motionlcm_control_s.yaml"
+      ],
+      "memory_estimate": {
+        "ram_gib": 5,
+        "gpu_gib": 6,
+        "basis": "provisional; revalidated from checkpoint tensor sizes and first inference; not a training bound"
+      }
+    },
+    "omnicontrol": {
+      "repo": "baselines/OmniControl",
+      "environment": "motiogen-omnicontrol",
+      "python": "3.10",
+      "model": "model_humanml3d.pt",
+      "skeleton": "humanml22",
+      "fps": 20,
+      "axes": "Y-up",
+      "training_entry": "train/train_mdm.py",
+      "official_eval": [
+        "bash",
+        "eval_omnicontrol.sh",
+        "MODEL_PATH",
+        "20",
+        "5"
+      ],
+      "memory_estimate": {
+        "ram_gib": 4,
+        "gpu_gib": 6,
+        "basis": "provisional; 196 frames, batch 1; must validate before execution"
+      }
+    },
+    "chois": {
+      "repo": "baselines/chois_release",
+      "environment": "motiogen-chois",
+      "python": "3.10",
+      "model": "model-10.pt",
+      "skeleton": "smpl24",
+      "fps": 30,
+      "axes": "Z-up",
+      "training_entry": "trainer_chois.py",
+      "official_eval": [
+        "python",
+        "t2m_eval/final_evaluations.py"
+      ],
+      "memory_estimate": null
+    },
+    "ardy": {
+      "repo": "baselines/ardy",
+      "environment": "motiogen-ardy",
+      "python": "3.10",
+      "model": "ARDY-Core-RP-20FPS-Horizon8",
+      "hf_repo": "nvidia/ARDY-Core-RP-20FPS-Horizon8",
+      "skeleton": "core27",
+      "fps": 20,
+      "axes": "Y-up",
+      "training_entry": null,
+      "official_eval": null,
+      "memory_estimate": null
+    },
+    "kimodo": {
+      "repo": "baselines/kimodo",
+      "environment": "motiogen-kimodo",
+      "python": "3.10",
+      "model": "Kimodo-SOMA-RP-v1.1",
+      "hf_repo": "nvidia/Kimodo-SOMA-RP-v1.1",
+      "skeleton": "soma30",
+      "fps": 30,
+      "axes": "Y-up",
+      "training_entry": null,
+      "official_eval": [
+        "python",
+        "benchmark/evaluate_folder.py"
+      ],
+      "memory_estimate": null
+    }
+  }
+}

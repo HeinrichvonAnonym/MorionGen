@@ -1,0 +1,8 @@
+{
+  "llama_base_path": "/home/heinrich/LLM/fine-tune-llama-3-8b-instruct/llama3-8b-instruct-hf",
+  "expected_base": "meta-llama/Meta-Llama-3-8B-Instruct",
+  "excluded_sibling_directories": ["fine_tuned_hf", "merged", "work_dirs"],
+  "provenance": "User identified original checkpoint; local training configs use this directory as pretrained_model_name_or_path. Hashes establish the local artifact, not identity with unverified upstream shard hashes.",
+  "mntp_repo": "McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp",
+  "supervised_repo": "McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp-supervised"
+}

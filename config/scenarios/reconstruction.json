@@ -1,0 +1,1 @@
+{"name":"reconstruction","kind":"reconstruction","duration_seconds":5,"constraints":[],"description":"Official MotionLCM VAE reconstruction path on a real tiny HumanML3D test motion. Diagnostic only: no text conditioning or manipulation control is exercised."}

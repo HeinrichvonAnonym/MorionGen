@@ -1,0 +1,1 @@
+{"name":"reach_high","kind":"position","duration_seconds":5,"prompt":"A person reaches up with the right hand.","constraints":[{"time_seconds":2.5,"joint":"right_wrist","position_m":[0.35,0.3,1.9]}],"description":"High target; posture proxies only."}

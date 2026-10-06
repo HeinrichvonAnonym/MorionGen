@@ -1,0 +1,13 @@
+{
+  "hf_mirror": "https://huggingface.co",
+  "asset_hosts": ["huggingface.co", "cdn-lfs.huggingface.co", "cdn-lfs-us-1.huggingface.co", "cas-bridge.xethub.hf.co", "drive.google.com", "docs.google.com", "drive.usercontent.google.com", "openaipublic.azureedge.net"],
+  "asset_host_suffixes": [".hf.co", ".huggingface.co", ".googleusercontent.com"],
+  "proxy_for_assets": true,
+  "allow_overseas_asset_redirects": true,
+  "download_timeout_seconds": 259200,
+  "disk_reserve_gib": 80,
+  "official_metadata_max_bytes": 2097152,
+  "official_metadata_may_use_inherited_proxy": true,
+  "archive_mirrors": {},
+  "policy_basis": "User explicitly superseded the earlier mirror restriction: use the current proxy to download all resources directly, without mirrors. Use official sources and their HTTPS storage redirects; reuse the original local Llama backbone. Never record proxy credentials or signed redirect URLs. Restricted resources remain subject to upstream access requirements."
+}

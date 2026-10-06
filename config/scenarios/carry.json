@@ -1,0 +1,1 @@
+{"name":"carry","kind":"object","duration_seconds":4,"prompt":"Lift and carry the box.","constraints":[],"object_sample":"official_processed_data","description":"CHOIS public object manipulation example; requires original processed data and body models."}

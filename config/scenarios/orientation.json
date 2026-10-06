@@ -1,0 +1,1 @@
+{"name":"orientation","kind":"orientation","duration_seconds":5,"prompt":"A person holds the right hand forward.","constraints":[{"time_seconds":2.5,"joint":"right_wrist","position_m":[0.35,0.6,1.2],"rotation_matrix":[[1,0,0],[0,1,0],[0,0,1]]}],"description":"Requires true global wrist rotations; position-only generators are unsupported."}

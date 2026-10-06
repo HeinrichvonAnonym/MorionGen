@@ -1,0 +1,1 @@
+{"name":"reach_low","kind":"position","duration_seconds":5,"prompt":"A person bends forward and reaches for a low object.","constraints":[{"time_seconds":2.5,"joint":"right_wrist","position_m":[0.35,0.6,0.55]}],"description":"Low target; posture proxies only."}

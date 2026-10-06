@@ -1,0 +1,1 @@
+{"name":"reach","kind":"position","duration_seconds":5,"prompt":"A person reaches forward with the right hand.","constraints":[{"time_seconds":2.5,"joint":"right_wrist","position_m":[0.35,0.6,1.2]}],"description":"World Z-up target; seed-dependent feasibility is reported, not guaranteed."}

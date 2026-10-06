@@ -1,0 +1,7 @@
+{
+  "pip_index_url": "https://pypi.tuna.tsinghua.edu.cn/simple",
+  "source": "https://mirrors.tuna.tsinghua.edu.cn/help/pypi/",
+  "reason": "User requires mainland mirrors and no proxy for large downloads. Direct TLS-enabled TUNA PyPI returned HTTP 200. setup_baselines.sh removes all HTTP/HTTPS/ALL proxy variables before package operations; model transport is separately governed by config/downloads.json.",
+  "override_environment_variable": "MOTIOGEN_PIP_INDEX_URL",
+  "conda_channel": "https://repo.anaconda.com/pkgs/main"
+}

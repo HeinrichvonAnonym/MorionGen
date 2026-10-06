@@ -1,0 +1,40 @@
+{
+  "sources": [
+    {
+      "path": "python/third_party/human_body_prior",
+      "official_url": "https://github.com/nghorbani/human_body_prior.git",
+      "sha": "6b883ecc3000697409a8caa2744523afe041e48a",
+      "working_tree": ""
+    },
+    {
+      "path": "python/third_party/bps_torch",
+      "official_url": "https://github.com/otaheri/bps_torch.git",
+      "sha": "00fcac3dffd294211d4ea0363eaf6c2ca4e068dc",
+      "working_tree": ""
+    },
+    {
+      "path": "third_party/chamfer_distance",
+      "official_url": "https://github.com/otaheri/chamfer_distance.git",
+      "sha": "f86f6f7cadd3aca642704573d1626c67ca2e2846",
+      "working_tree": ""
+    },
+    {
+      "path": "third_party/pytorch3d",
+      "official_url": "https://github.com/facebookresearch/pytorch3d.git",
+      "sha": "f34104cf6ebefacd7b7e07955ee7aaa823e616ac",
+      "working_tree": ""
+    },
+    {
+      "path": "python/third_party/CLIP",
+      "official_url": "https://github.com/openai/CLIP.git",
+      "sha": "d05afc436d78f1c48dc0dbf8e5980a9d471f35f6",
+      "working_tree": "",
+      "clone_scope": "shallow official dependency checkout; full baseline repositories were audited independently"
+    }
+  ],
+  "nvidia_staging_receipts": [
+    "python/third_party/ardy/MOTIOGEN_SOURCE.json",
+    "python/third_party/kimodo/MOTIOGEN_SOURCE.json"
+  ],
+  "purpose": "Official missing dependencies only; checkout does not imply successful installation or compiled extension compatibility."
+}
