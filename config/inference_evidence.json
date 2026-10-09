@@ -1,24 +1,85 @@
 {
   "motionlcm": {
-    "reviewed": true,
-    "scope": "VAE reconstruction only",
-    "ram_bound_bytes": 3221225472,
-    "gpu_bound_bytes": 3221225472,
-    "max_frames": 196,
-    "source_basis": "FP32 VAE only, batch=1, <=196 frames, no_grad encode/decode. Checkpoint under 0.2 GiB; simultaneous CPU state/model <0.4 GiB. 256-wide 9-layer attention at <=228 tokens, no saved backward graph. Reserve >2 GiB each for interpreter, torch/CUDA workspace and allocator. Text encoder, full MLD and evaluators excluded; bound does not admit ControlNet or training.",
-    "files": [
-      {
-        "path": "/home/heinrich/MotioGen/outputs/assets/motionlcm/experiments_recons/vae_humanml/vae_humanml.ckpt",
-        "sha256": "4f4f1c82424a1875e331958f4d9c17807e992a7e9385147aaa09b13e03821dbd"
+    "profiles": {
+      "reconstruction": {
+        "reviewed": true,
+        "scope": "VAE reconstruction only",
+        "ram_bound_bytes": 3221225472,
+        "gpu_bound_bytes": 3221225472,
+        "max_frames": 196,
+        "source_basis": "FP32 VAE only, batch=1, <=196 frames, no_grad encode/decode. Checkpoint under 0.2 GiB; simultaneous CPU state/model <0.4 GiB. 256-wide 9-layer attention at <=228 tokens, no saved backward graph. Reserve >2 GiB each for interpreter, torch/CUDA workspace and allocator. Text encoder, full MLD and evaluators excluded; bound does not admit ControlNet or training.",
+        "files": [
+          {"baseline_asset": "vae_humanml.ckpt", "sha256": "4f4f1c82424a1875e331958f4d9c17807e992a7e9385147aaa09b13e03821dbd"},
+          {"repo_file": "configs/vae.yaml", "sha256": "5959c5a1ef0f4c5843caef1b9be6a114fbad9958a108fb065e4a9351da34e5e3"},
+          {"repo_file": "mld/models/architectures/mld_vae.py", "sha256": "20a31ec159f82f465a9f842d7a1e11951c3cd1b596bd29bafaae9df2f78f80f1"}
+        ]
       },
-      {
-        "path": "/home/heinrich/MotioGen/baselines/MotionLCM/configs/vae.yaml",
-        "sha256": "5959c5a1ef0f4c5843caef1b9be6a114fbad9958a108fb065e4a9351da34e5e3"
-      },
-      {
-        "path": "/home/heinrich/MotioGen/baselines/MotionLCM/mld/models/architectures/mld_vae.py",
-        "sha256": "20a31ec159f82f465a9f842d7a1e11951c3cd1b596bd29bafaae9df2f78f80f1"
+      "full": {
+        "reviewed": true,
+        "scope": "full MotionLCM inference",
+        "ram_bound_bytes": 8589934592,
+        "gpu_bound_bytes": 8589934592,
+        "max_frames": 196,
+        "source_basis": "Batch=1, at most 196 frames, eval/no_grad and one-step LCM sampling. The reviewed path covers the 0.18 GiB T2M checkpoint and the 0.24 GiB full-joint ControlNet checkpoint, one VAE, one denoiser and the Sentence-T5 encoder; DNO optimize is false in the pinned configs. The 8 GiB static bounds remain guarded by first-run process-tree and CUDA allocator telemetry.",
+        "files": [
+          {"baseline_asset": "motionlcm_humanml.ckpt", "sha256": "19fcd9ccb34850da36bad2563c47df19c5944282e7b87a5447ad1be3b44363d8"},
+          {"baseline_asset": "motionlcm_humanml_s_all.ckpt", "sha256": "c020021c3fc4a1b48df0f88a4e36e38d93f2c09cd471170299c47c64f00a9b7b"},
+          {"repo_file": "configs/motionlcm_control_s.yaml", "sha256": "134cc9d95ffcd38e1888cc0872911f656eb3d528e9a5bb3bdf82394cb0f8f9ba"},
+          {"repo_file": "configs/motionlcm_t2m.yaml", "sha256": "ade98603b788dab7005c1605217d80708a5e46a8eb436a980c03fcae5e6f9a24"},
+          {"framework_file": "utils/motiogen/adapters.py", "sha256": "2dfa34402d15abdad3ff1b12038166486b7dfeeb0e9c4e3ebfe0f0ec83bdec6e"}
+        ]
       }
+    }
+  },
+  "omnicontrol": {
+    "reviewed": true,
+    "scope": "batch-1 OmniControl inference",
+    "ram_bound_bytes": 8589934592,
+    "gpu_bound_bytes": 8589934592,
+    "max_frames": 196,
+    "source_basis": "Batch=1, 196 frames, eval mode. The 0.17 GiB checkpoint and CLIP/MDM/SMPL modules are loaded once; spatial guidance retains only the current diffusion state and its gradient, with no optimizer or backward graph across steps. The 8 GiB RAM/VRAM bounds are conservative static allocation gates and remain subject to the process-tree watchdog and first-run allocator telemetry.",
+    "files": [
+      {"baseline_asset": "model_humanml3d.pt", "sha256": "886b722e95496f4ceafd704c4e1d0578888733d12ce67429677b80a91a9c36d0"},
+      {"framework_file": "utils/motiogen/adapters.py", "sha256": "2dfa34402d15abdad3ff1b12038166486b7dfeeb0e9c4e3ebfe0f0ec83bdec6e"}
+    ]
+  },
+  "chois": {
+    "reviewed": true,
+    "scope": "batch-1 single-window CHOIS inference",
+    "ram_bound_bytes": 10737418240,
+    "gpu_bound_bytes": 10737418240,
+    "max_frames": 120,
+    "source_basis": "One 120-frame validation window and one 0.10 GiB EMA checkpoint are loaded into a single diffusion model. The adapter explicitly omits optimizer, GradScaler, training loader and duplicate EMA model; DataLoader workers are forced to zero. When the optional PyTorch3D extension is absent, CHOIS's tensor-only BPS path uses squared torch.cdist nearest neighbours and fails closed for mesh distance. Bounds reserve headroom for SMPL-X mesh recovery and the 1024-point object BPS, and the watchdog must confirm the first real run.",
+    "files": [
+      {"baseline_asset": "model-10.pt", "sha256": "c7497bffe7a1bdf35c0af59957e3b450ef03f1b61a9a88fd0374902bd49a4e31"},
+      {"framework_file": "utils/motiogen/adapters.py", "sha256": "2dfa34402d15abdad3ff1b12038166486b7dfeeb0e9c4e3ebfe0f0ec83bdec6e"},
+      {"framework_file": "utils/motiogen/chois_compat.py", "sha256": "e17585426beb31bbceabb2df3e91d22003f192267ab3b66b743496e41cc4fb23"}
+    ]
+  },
+  "ardy": {
+    "reviewed": true,
+    "scope": "history-conditioned ARDY inference with staged text encoding",
+    "ram_bound_bytes": 15032385536,
+    "gpu_bound_bytes": 12884901888,
+    "max_frames": 400,
+    "source_basis": "The exact bfloat16 Llama 3 text encoder is a separate finite-prompt stage capped by Accelerate at 10 GiB GPU and 12 GiB CPU; its weights are released before loading the 0.58 GiB denoiser and 0.13 GiB tokenizer. The first 11 GiB-cap smoke was safely terminated at a 12.61 GiB device-wide peak, and PEFT merge materialization also crossed the reserve. The two LoRA adapters are therefore activated simultaneously, which sums their deltas exactly while avoiding a full merged-model transient and works across CPU/GPU dispatch; the RAM gate is a conservative 14 GiB for offload. ARDY then runs eval/no_grad with batch=1 and a bounded 160-frame history. The gates cover either stage, never their sum, and remain watchdog-enforced.",
+    "files": [
+      {"baseline_asset": "denoiser.safetensors", "sha256": "7c309b6026bf9440f2fbf83194b6040f2ffb6cd3a1d63b0b61557b27a4248614"},
+      {"framework_file": "utils/motiogen/local_llm.py", "sha256": "d99176136125330c2b2c3aaac6445d665f94e7be5e171a49a0a51f435ef0d591"},
+      {"framework_file": "utils/motiogen/adapters.py", "sha256": "2dfa34402d15abdad3ff1b12038166486b7dfeeb0e9c4e3ebfe0f0ec83bdec6e"}
+    ]
+  },
+  "kimodo": {
+    "reviewed": true,
+    "scope": "batch-1 Kimodo v1.1 inference with staged text encoding",
+    "ram_bound_bytes": 15032385536,
+    "gpu_bound_bytes": 12884901888,
+    "max_frames": 300,
+    "source_basis": "The exact bfloat16 Llama 3 text stage is capped at 10 GiB GPU and 12 GiB CPU and released before the 1.06 GiB Kimodo checkpoint is instantiated. MNTP and supervised LoRA adapters are activated simultaneously, summing their deltas exactly without PEFT materializing a full merged model on GPU; a 14 GiB RAM gate covers CPU offload. Kimodo's native end-effector protocol requires a feasible full-pose keyframe rather than an isolated XYZ value: constrained smoke first generates one no_grad reference pose, rigidly translates it to the requested world goal, optionally replaces the commanded effector global rotation, then performs the measured conditional generation with the official constraint class and post-processor. Both passes are batch=1, one sample and 100 denoising steps. The gates are conservative per-stage bounds pending first-run allocator telemetry.",
+    "files": [
+      {"baseline_asset": "model.safetensors", "sha256": "ef0a0ca45a6089ab4532dde609785771ae3f38755b4ae6cf314b0213e07cd4a3"},
+      {"framework_file": "utils/motiogen/local_llm.py", "sha256": "d99176136125330c2b2c3aaac6445d665f94e7be5e171a49a0a51f435ef0d591"},
+      {"framework_file": "utils/motiogen/adapters.py", "sha256": "2dfa34402d15abdad3ff1b12038166486b7dfeeb0e9c4e3ebfe0f0ec83bdec6e"}
     ]
   }
 }

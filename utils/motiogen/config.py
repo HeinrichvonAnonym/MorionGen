@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -14,6 +15,7 @@ def load_config(path=None):
     if cfg.get('schema_version') != 1:
         raise ValueError('Unsupported config schema')
     cfg['_source'] = str(path)
+    cfg['_data_root'] = str(data_root(cfg))
     return cfg
 
 
@@ -28,4 +30,22 @@ def scenario(name):
 
 
 def asset_root(cfg):
-    return ROOT / cfg['asset_root']
+    path = Path(cfg['asset_root'])
+    return path if path.is_absolute() else data_root(cfg) / path
+
+
+def data_root(cfg=None):
+    """Large, relocatable state root; source/config/logs remain in the repo."""
+    configured = os.environ.get('MORIONGEN_DATA_ROOT')
+    if not configured and cfg:
+        configured = cfg.get('data_root')
+    return Path(configured).expanduser().resolve() if configured else ROOT
+
+
+def repo_root(cfg, baseline):
+    path = Path(cfg['baselines'][baseline]['repo'])
+    return path if path.is_absolute() else data_root(cfg) / path
+
+
+def environment_root(cfg, baseline):
+    return data_root(cfg) / 'envs' / cfg['baselines'][baseline]['environment']

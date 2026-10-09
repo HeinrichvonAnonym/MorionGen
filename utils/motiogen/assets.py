@@ -1,30 +1,34 @@
 import json
+import os
 import shutil
 import subprocess
 import sys
+import tarfile
+import time
 import zipfile
 from pathlib import Path
 
-from .config import ROOT, asset_root
+from .config import ROOT, asset_root, data_root, repo_root
 from .runtime import checksum, json_write
 from .downloads import direct_environment, policy, resolve_asset_url
 
-# Official download IDs from pinned repositories, never guessed mirrors.
-DRIVE = {
-    'motionlcm': [('15zFDitcOLhjbQ0CaOoM-QNKQUeyJw-Om','experiments_recons.zip'),
-                  ('1U7homKobR2gaDLfL5flS3N0g7e0a_AQd','experiments_t2m.zip'),
-                  ('1o6oFdH5dgQJNB5J2rDGKCMw3FDr9gUkW','experiments_control.zip'),
-                  ('1Mg_3RnWmRt0tk_lyLRRiOZg1W-Fu4wLL','humanml3d_tiny.zip'),
-                  ('16hyR4XlEyksVyNVjhIWK684Lrm_7_pvX','t2m.zip'),
-                  ('1J2pTxrar_q689Du5r3jES343fZUmCs_y','smpl_models.zip'),
-                  ('1cmXKUT31pqd7_XpJAiWEo1K81TMYHA5n','glove.zip')],
-    'omnicontrol': [('1oTkBtArc3xjqkYD6Id7LksrTOn3e1Zud','omnicontrol_ckpt.zip'),('1INYlGA76ak_cKGzvpOV2Pe6RkYTlXTW2','smpl.zip'),('1DSaKqWX2HlwBtVH5l7DdW96jeYUIXsOP','t2m.zip')],
-    'chois': [('1ZG-9--RfUWj5oWYnvcONNuRuxaH_Zpw1','processed_data.zip')]
-}
+def drive_sources():
+    sources=json.loads((ROOT/'config/asset_sources.json').read_text())
+    result={}
+    for baseline in ('motionlcm','omnicontrol','chois'):
+        result[baseline]=[]
+        for filename,url in sources[baseline].items():
+            if filename.endswith(('.zip','.tar.gz','.tgz')) and '/file/d/' in url:
+                result[baseline].append((url.split('/file/d/',1)[1].split('/',1)[0],filename))
+    return result
 
 
 def curl_file(url,destination,timeout=600,metadata=False,expected_size=None):
     if not metadata and policy().get('proxy_for_assets'):
+        if 'drive.google.com/' in url:
+            # Large official checkpoints routinely exceed the generic curl
+            # timeout; the process-tree watchdog still bounds the whole run.
+            return gdown_file(url,destination,policy()['download_timeout_seconds'])
         from .transfer import proxy_file
         return proxy_file(url,destination,expected_size)
     destination=Path(destination); destination.parent.mkdir(parents=True,exist_ok=True)
@@ -53,6 +57,38 @@ def curl_file(url,destination,timeout=600,metadata=False,expected_size=None):
                 partial.replace(partial.with_name(partial.name+'.resume_unsupported'))
     if result.returncode:
         raise RuntimeError(f'curl failed with exit {result.returncode} for public asset; see transport policy')
+    partial.replace(destination)
+    return destination
+
+
+def gdown_file(url,destination,timeout=259200):
+    """Use gdown's cookie-aware public Drive flow without exposing signed URLs."""
+    destination=Path(destination); destination.parent.mkdir(parents=True,exist_ok=True)
+    partial=destination.with_name(destination.name+'.gdown.part')
+    resumable=destination.with_name(destination.name+'.part')
+    if not partial.exists():
+        candidates=list(destination.parent.glob(destination.name+'.gdown.part*.part'))
+        if candidates:
+            max(candidates,key=lambda path:path.stat().st_size).replace(partial)
+    if resumable.is_file() and not partial.exists():
+        resumable.replace(partial)
+    tools=data_root(json.loads((ROOT/'config/baselines.json').read_text()))/'envs/motiogen-tools/bin/python'
+    if not tools.is_file():
+        raise RuntimeError('Drive confirmation requires the external motiogen-tools environment')
+    environment=os.environ.copy()
+    environment['TMPDIR']=str(tools.parents[3]/'package-cache/tmp')
+    Path(environment['TMPDIR']).mkdir(parents=True,exist_ok=True)
+    command=[str(tools),'-m','gdown',url,'--output',str(partial),'--no-cookies','--fuzzy']
+    result=subprocess.run(command+['--continue'],capture_output=True,text=True,timeout=timeout,env=environment)
+    valid=partial.is_file() and is_archive(partial,destination.name)
+    if (result.returncode or not valid) and partial.is_file():
+        partial.replace(partial.with_name(partial.name+'.resume_failed_'+str(time.time_ns())))
+        result=subprocess.run(command,capture_output=True,text=True,timeout=timeout,env=environment)
+    valid=partial.is_file() and is_archive(partial,destination.name)
+    if result.returncode or not valid:
+        if partial.is_file():
+            partial.replace(partial.with_name(partial.name+'.invalid_'+str(time.time_ns())))
+        raise RuntimeError('Official Drive download unavailable through cookie-aware public flow')
     partial.replace(destination)
     return destination
 
@@ -87,35 +123,100 @@ def curl_snapshot(repo,target,repo_type='model',patterns=None):
     return str(target)
 
 
+def git_dataset_snapshot(repo,target):
+    """Clone metadata-heavy HF datasets without asking the multi-megabyte API listing."""
+    target=Path(target)
+    if target.exists() and any(target.iterdir()) and not (target/'.git').is_dir():
+        raise RuntimeError('Benchmark metadata target is non-empty and is not a verified checkout')
+    if not (target/'.git').is_dir():
+        target.parent.mkdir(parents=True,exist_ok=True)
+        subprocess.run(['git','clone','--depth','1',f'https://huggingface.co/datasets/{repo}',str(target)],check=True)
+    revision=subprocess.check_output(['git','rev-parse','HEAD'],cwd=target,text=True).strip()
+    status=subprocess.check_output(['git','status','--porcelain'],cwd=target,text=True).strip()
+    if status:
+        raise RuntimeError('Benchmark metadata checkout is dirty')
+    files=[]
+    for path in target.rglob('*'):
+        if path.is_file() and '.git' not in path.parts:
+            files.append({'file':str(path.relative_to(target)),'bytes':path.stat().st_size,'sha256':checksum(path)})
+    json_write(target.with_name(target.name+'.source_receipt.json'),{
+        'repo':repo,'revision':revision,'files':files,
+        'transport':'official Hugging Face dataset git checkout; no LFS motion dataset requested'})
+    return str(target)
+
+
 def text_access(root,name):
     """Probe selected upstream text dependencies without downloading the 8B backbone."""
     records=[]
-    repos=['meta-llama/Meta-Llama-3-8B-Instruct','McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp','McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp-supervised']
+    repos=[('meta-llama/Meta-Llama-3-8B-Instruct','config.json'),
+           ('McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp','config.json'),
+           ('McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp-supervised','adapter_config.json')]
     target=root/'text/access'; target.mkdir(parents=True,exist_ok=True)
-    for repo in repos:
+    for repo,probe in repos:
         file=target/(repo.replace('/','--')+'.json')
         response=subprocess.run(['curl','-sS','-L','--max-time','30','--max-filesize',str(policy()['official_metadata_max_bytes']),'-w','%{http_code}',
-                                 f'https://huggingface.co/{repo}/resolve/main/config.json','-o',str(file)],capture_output=True,text=True)
-        # PEFT-only supervised repos may not have config.json: preserve that distinction from gating.
+                                 f'https://huggingface.co/{repo}/resolve/main/{probe}','-o',str(file)],capture_output=True,text=True)
         records.append({'repo':repo,'http_status':response.stdout[-3:],'returncode':response.returncode,
-                        'probe':'config.json','body_saved':str(file),'backbone_downloaded':False})
+                        'probe':probe,'body_saved':str(file),'backbone_downloaded':False})
     json_write(root/name/'text_access.json',{'probes':records,'login_command':'conda run -n motiogen-tools huggingface-cli login',
                'model_access_page':'https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct',
                'scope':'public probes do not consume or print local credentials; full text-model access is not established'})
     return records
 
 
-def safe_extract(archive, target):
+def is_archive(path,name=None):
+    """Validate a configured archive by its logical filename, not temp suffix."""
+    logical=(name or Path(path).name).lower()
+    if logical.endswith('.zip'):
+        return zipfile.is_zipfile(path)
+    if logical.endswith(('.tar.gz','.tgz')):
+        return tarfile.is_tarfile(path)
+    return True
+
+
+def _safe_member(target,name,preserve_existing):
+    raw=target/name
+    if name in preserve_existing and raw.is_symlink():
+        return None
+    candidate=raw.resolve()
+    if not candidate.is_relative_to(target):
+        raise ValueError('Unsafe archive member: '+name)
+    current=target/name
+    while current!=target:
+        if current.is_symlink():
+            raise ValueError('Archive member crosses existing symlink: '+name)
+        current=current.parent
+    return candidate
+
+
+def safe_extract(archive, target, preserve_existing=()):
     target = Path(target).resolve()
-    with zipfile.ZipFile(archive) as source:
-        for info in source.infolist():
-            candidate = (target / info.filename).resolve()
-            if not candidate.is_relative_to(target) or (info.external_attr >> 16) & 0o170000 == 0o120000:
-                raise ValueError('Unsafe archive member: ' + info.filename)
-        free = shutil.disk_usage(target).free
-        if sum(info.file_size for info in source.infolist()) > free - 80 * 1024**3:
+    preserve_existing=set(preserve_existing)
+    if zipfile.is_zipfile(archive):
+        with zipfile.ZipFile(archive) as source:
+            members=[]
+            for info in source.infolist():
+                if _safe_member(target,info.filename,preserve_existing) is None:
+                    continue
+                if (info.external_attr >> 16) & 0o170000 == 0o120000:
+                    raise ValueError('Unsafe archive member: ' + info.filename)
+                members.append(info)
+            expanded=sum(info.file_size for info in members)
+            if expanded > shutil.disk_usage(target).free - 80 * 1024**3:
+                raise RuntimeError('Extraction would cross 80 GiB disk reserve')
+            source.extractall(target,members=members)
+        return
+    with tarfile.open(archive,'r:*') as source:
+        members=[]
+        for info in source.getmembers():
+            if _safe_member(target,info.name,preserve_existing) is None:
+                continue
+            if info.issym() or info.islnk() or info.isdev():
+                raise ValueError('Unsafe archive member: '+info.name)
+            members.append(info)
+        if sum(info.size for info in members) > shutil.disk_usage(target).free - 80 * 1024**3:
             raise RuntimeError('Extraction would cross 80 GiB disk reserve')
-        source.extractall(target)
+        source.extractall(target,members=members,filter='data')
 
 
 def prepare(cfg, baseline, run_dir, part='assets',selected=None):
@@ -125,6 +226,38 @@ def prepare(cfg, baseline, run_dir, part='assets',selected=None):
     target = root / baseline
     target.mkdir(exist_ok=True)
     observations = []
+    if baseline=='chois':
+        local_policy=json.loads((ROOT/'config/local_assets.json').read_text())['chois']
+        source=Path(local_policy['smplx_source_directory']).resolve()
+        body_target=target/'processed_data/smpl_all_models/smplx'
+        body_target.mkdir(parents=True,exist_ok=True)
+        files=[]
+        for name in local_policy['files']:
+            original=source/name
+            link=body_target/name
+            if not original.is_file():
+                observations.append({'kind':'SMPL-X','status':'missing_resources','file':str(original),
+                    'reason':'configured licensed local body model is missing'})
+                continue
+            if link.is_symlink() and link.resolve()!=original:
+                link.unlink()
+            if not link.exists():
+                link.symlink_to(original)
+            files.append({'file':name,'source':str(original),'bytes':original.stat().st_size,
+                          'sha256':checksum(original),'link':str(link)})
+        if len(files)==len(local_policy['files']):
+            json_write(target/'smplx.local_receipt.json',{'mode':local_policy['mode'],'files':files})
+            observations.append({'kind':'SMPL-X','status':'available','receipt':str(target/'smplx.local_receipt.json')})
+    if part in ('source','all'):
+        try:
+            from .sources import prepare_source
+            observations.append({'kind':'source','status':'available',**prepare_source(cfg,baseline)})
+        except Exception as exc:
+            observations.append({'kind':'source','status':'missing_resources','reason':f'{type(exc).__name__}: {exc}'})
+            return {'status':'missing_resources','reason':'official source checkout failed','observations':observations}
+    if part == 'source':
+        json_write(run_dir/'asset_observations.json',observations)
+        return {'status':'success','observations':observations}
     if baseline in ('ardy','kimodo'):
         observations.extend(text_access(root,baseline))
     if part=='text-access':
@@ -136,7 +269,7 @@ def prepare(cfg, baseline, run_dir, part='assets',selected=None):
             return {'status':'failed','reason':'environment installation failed; see stderr/stdout','observations':observations}
     if part == 'environment':
         return {'status':'success','observations':observations}
-    for drive_id, filename in DRIVE.get(baseline,[]):
+    for drive_id, filename in drive_sources().get(baseline,[]):
         if selected and filename not in selected:
             continue
         archive = target / filename
@@ -149,6 +282,12 @@ def prepare(cfg, baseline, run_dir, part='assets',selected=None):
             observations.append({'file':filename,'status':'missing_resources','reason':'Google Drive download paused: no checksum-pinned mainland mirror registered; proxy fallback prohibited','source':f'https://drive.google.com/file/d/{drive_id}/view'})
             continue
         try:
+            if archive.is_file() and not is_archive(archive,filename):
+                canonical=archive.with_name(archive.name+'.gdown.part')
+                if canonical.exists():
+                    archive.replace(archive.with_name(archive.name+'.invalid_'+str(time.time_ns())))
+                else:
+                    archive.replace(canonical)
             if not archive.is_file():
                 curl_file(mirror['url'] if mirror else f'https://drive.google.com/uc?export=download&id={drive_id}',archive)
             if mirror and checksum(archive)!=mirror['sha256']:
@@ -157,11 +296,15 @@ def prepare(cfg, baseline, run_dir, part='assets',selected=None):
         except Exception as exc:
             observations.append({'file':filename,'status':'missing_resources','reason':str(exc)})
             continue
-        if returncode or not archive.is_file() or not zipfile.is_zipfile(archive):
+        if returncode or not archive.is_file() or not is_archive(archive,filename):
             observations.append({'file':filename,'status':'missing_resources','returncode':returncode,'source':f'https://drive.google.com/file/d/{drive_id}/view'})
             continue
         receipt={'file':filename,'source':f'https://drive.google.com/file/d/{drive_id}/view','sha256':checksum(archive),'bytes':archive.stat().st_size}
-        safe_extract(archive,target)
+        preserve=()
+        if baseline=='chois':
+            preserve=tuple('processed_data/smpl_all_models/smplx/'+name for name in
+                           json.loads((ROOT/'config/local_assets.json').read_text())['chois']['files'])
+        safe_extract(archive,target,preserve_existing=preserve)
         json_write(extracted,receipt)
         observations.append(receipt)
     if baseline in ('ardy','kimodo') and (not selected or 'model' in selected):
@@ -171,6 +314,21 @@ def prepare(cfg, baseline, run_dir, part='assets',selected=None):
             observations.append({'repo':repo,'path':downloaded,'status':'downloaded'})
         except Exception as exc:
             observations.append({'repo':repo,'status':'missing_resources','reason':str(exc)})
+    if baseline=='kimodo' and (not selected or 'tmr' in selected):
+        try:
+            repo='nvidia/TMR-SOMA-RP-v1'
+            downloaded=curl_snapshot(repo,target/'TMR-SOMA-RP-v1')
+            observations.append({'repo':repo,'path':downloaded,'status':'downloaded'})
+        except Exception as exc:
+            observations.append({'repo':'nvidia/TMR-SOMA-RP-v1','status':'missing_resources','reason':str(exc)})
+    if baseline=='kimodo' and (not selected or 'benchmark-metadata' in selected):
+        try:
+            repo='nvidia/Kimodo-Motion-Gen-Benchmark'
+            downloaded=git_dataset_snapshot(repo,target/'benchmark_metadata')
+            observations.append({'repo':repo,'path':downloaded,'status':'downloaded',
+                'scope':'benchmark metadata only; BONES-SEED motion data is not downloaded'})
+        except Exception as exc:
+            observations.append({'repo':'nvidia/Kimodo-Motion-Gen-Benchmark','status':'missing_resources','reason':str(exc)})
     if baseline=='motionlcm' and (not selected or 'text' in selected):
         try:
             path=curl_snapshot('sentence-transformers/sentence-t5-large',root/'text/sentence-t5-large',
@@ -183,24 +341,35 @@ def prepare(cfg, baseline, run_dir, part='assets',selected=None):
     # Folder download: checkpoints only. Dataset/body-model access is checked separately.
     if baseline=='chois' and (not selected or 'checkpoint' in selected):
         if policy().get('proxy_for_assets'):
-            for folder_id,directory in [('1gqw3EHiEMqw1OXqH92Axoc5FJntA_E5x','pretrained_models'),('1hGDYEy91Tk7FC1U_8BouhlSp5RQkEJuY','evaluators')]:
+            source_policy=json.loads((ROOT/'config/asset_sources.json').read_text())['chois']
+            folders=[(source_policy[directory].rstrip('/').rsplit('/',1)[-1],directory)
+                     for directory in ('pretrained_models','evaluators')]
+            for folder_id,directory in folders:
                 try:
-                    import gdown
-                    entries=gdown.download_folder(id=folder_id,output=str(target/directory)+'/',quiet=True,use_cookies=False,skip_download=True)
-                    if not entries:
-                        raise RuntimeError('Official Drive folder listing unavailable')
+                    tools=data_root(cfg)/'envs/motiogen-tools/bin/python'
+                    folder=target/directory
+                    folder.mkdir(parents=True,exist_ok=True)
+                    environment=os.environ.copy(); environment['TMPDIR']=str(data_root(cfg)/'package-cache/tmp')
+                    Path(environment['TMPDIR']).mkdir(parents=True,exist_ok=True)
+                    result=subprocess.run([str(tools),'-m','gdown','--folder',
+                        f'https://drive.google.com/drive/folders/{folder_id}','--output',str(folder),
+                        '--no-cookies','--continue','--remaining-ok'],capture_output=True,text=True,timeout=policy()['download_timeout_seconds'],env=environment)
+                    if result.returncode:
+                        raise RuntimeError('Official Drive folder download unavailable')
                     receipts=[]
-                    for entry in entries:
-                        path=target/directory/entry.path
-                        if not path.resolve().is_relative_to(target.resolve()):
-                            raise ValueError('Unsafe Drive folder member')
-                        if not path.is_file():
-                            curl_file(f'https://drive.google.com/uc?export=download&id={entry.id}',path)
-                        receipts.append({'file':str(path.relative_to(target)),'bytes':path.stat().st_size,'sha256':checksum(path)})
+                    for path in folder.rglob('*'):
+                        if path.is_file():
+                            if not path.resolve().is_relative_to(target.resolve()):
+                                raise ValueError('Unsafe Drive folder member')
+                            receipts.append({'file':str(path.relative_to(target)),'bytes':path.stat().st_size,'sha256':checksum(path)})
+                    if not receipts:
+                        raise RuntimeError('Official Drive folder listing unavailable')
                     json_write(target/(directory+'.source_receipt.json'),{'folder_id':folder_id,'files':receipts,'transport':'inherited proxy; official Drive; upstream checksum not published'})
                     observations.append({'kind':directory,'status':'downloaded','files':receipts})
                 except Exception as exc:
-                    observations.append({'kind':directory,'status':'missing_resources','reason':type(exc).__name__})
+                    observations.append({'kind':directory,'status':'missing_resources',
+                        'reason':'Official Drive folder incomplete or quota-limited',
+                        'error_type':type(exc).__name__})
         else:
             observations.append({'kind':'checkpoints','status':'missing_resources','reason':'Google Drive folder paused: no checksum-pinned mainland mirror registered; proxy fallback prohibited'})
     if baseline=='omnicontrol' and (not selected or 'text' in selected):
@@ -217,7 +386,7 @@ def prepare(cfg, baseline, run_dir, part='assets',selected=None):
             observations.append({'kind':'CLIP','status':'missing_resources','reason':str(exc)})
     inventory=[]
     for path in target.rglob('*'):
-        if path.is_file() and '.cache' not in path.parts:
+        if path.is_file() and '.cache' not in path.parts and '.git' not in path.parts:
             inventory.append({'path':str(path.relative_to(root)),'bytes':path.stat().st_size,
                               'sha256':checksum(path) if path.suffix in ('.pt','.ckpt','.safetensors','.yaml','.json') else None})
     json_write(target/'inventory.json',inventory)
@@ -229,9 +398,35 @@ def prepare(cfg, baseline, run_dir, part='assets',selected=None):
 def prepare_local_llama(cfg):
     """Original user-supplied shards are read only; no fine-tuned directory is searched."""
     policy=json.loads((ROOT/'config/language_models.json').read_text())
-    base=Path(policy['llama_base_path']); index=json.loads((base/'model.safetensors.index.json').read_text())
+    configured=os.environ.get(policy.get('llama_base_environment','MORIONGEN_LLAMA_BASE_PATH')) or policy.get('llama_base_path')
+    if not configured:
+        raise FileNotFoundError('Set MORIONGEN_LLAMA_BASE_PATH to the user-authorized original Meta-Llama-3-8B-Instruct directory')
+    base=Path(configured).expanduser().resolve()
+    index_path=base/'model.safetensors.index.json'
+    if not index_path.is_file():
+        raise FileNotFoundError(index_path)
+    index=json.loads(index_path.read_text())
     if (base/'adapter_config.json').exists() or base.name in policy['excluded_sibling_directories']:
         raise ValueError('Refuse a fine-tuned or adapter checkpoint as the original base')
+    config_path=base/'config.json'
+    if not config_path.is_file():
+        raise FileNotFoundError(config_path)
+    original_config=json.loads(config_path.read_text())
+    mismatches={key:{'expected':expected,'actual':original_config.get(key)}
+                for key,expected in policy['expected_config'].items()
+                if original_config.get(key)!=expected}
+    if mismatches:
+        raise ValueError(
+            f'Local Llama config is not the required {policy["expected_base"]}: {mismatches}. '
+            'Llama 3.1 is not compatible with the pinned LLM2Vec Llama 3 adapters.')
+    tokenizer_config_path=base/'tokenizer_config.json'
+    if not tokenizer_config_path.is_file():
+        raise FileNotFoundError(tokenizer_config_path)
+    tokenizer_config=json.loads(tokenizer_config_path.read_text())
+    if not tokenizer_config.get('chat_template'):
+        raise ValueError(
+            f'Local Llama tokenizer is not {policy["expected_base"]}: the Instruct chat_template is missing. '
+            'The Meta-Llama-3-8B base model cannot replace Meta-Llama-3-8B-Instruct.')
     target=asset_root(cfg)/'text/llm2vec'; target.mkdir(parents=True,exist_ok=True)
     virtual=target/'original_base'; virtual.mkdir(exist_ok=True)
     files=[]
@@ -239,9 +434,9 @@ def prepare_local_llama(cfg):
     cached=json.loads(cached_path.read_text()) if cached_path.exists() else {}
     cached_files={entry['path']:entry for entry in cached.get('files',[])}
     # Only config is copied, to retain upstream instruction-format selection by _name_or_path.
-    config=json.loads((base/'config.json').read_text()); config['_name_or_path']=policy['expected_base']
+    config=dict(original_config); config['_name_or_path']=policy['expected_base']
     json_write(virtual/'config.json',config)
-    for name in sorted(set(index['weight_map'].values())|{'model.safetensors.index.json','tokenizer.json','tokenizer_config.json','special_tokens_map.json'}):
+    for name in sorted(set(index['weight_map'].values())|{'config.json','model.safetensors.index.json','tokenizer.json','tokenizer_config.json','special_tokens_map.json'}):
         source=base/name
         if not source.is_file():
             raise FileNotFoundError(source)
@@ -268,7 +463,7 @@ def prepare_local_llama(cfg):
 
 
 def find_asset(cfg, baseline, name):
-    roots=[asset_root(cfg)/baseline, ROOT/cfg['baselines'][baseline]['repo']]
+    roots=[asset_root(cfg)/baseline, repo_root(cfg,baseline)]
     # Shared HumanML/evaluator assets may be reused only after exact-file checks.
     if baseline=='omnicontrol':
         roots.append(asset_root(cfg)/'motionlcm')

@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "description": "Distinct A/B/E/H report evidence. Final cases are used in metric summaries; superseded or failed-outcome cases remain visible but are explicitly excluded from conclusions.",
+  "fixed_view": {
+    "root_centered_xy": true,
+    "xlim_m": [-1.4, 1.4],
+    "ylim_m": [-1.4, 1.4],
+    "zlim_m": [0.0, 2.2],
+    "elevation_deg": 18,
+    "azimuth_deg": -58
+  },
+  "cases": [
+    {"id":"motionlcm_t2m_s0","baseline":"motionlcm","scenario":"official","seed":0,"gaps":["E","H"],"run_dir":"develop_logs/test_runs/20261006_174214_motionlcm_evaluate-native_f0032175"},
+    {"id":"motionlcm_t2m_s1","baseline":"motionlcm","scenario":"official","seed":1,"gaps":["E","H"],"run_dir":"develop_logs/test_runs/20261006_174708_motionlcm_evaluate-native_dd71ab40"},
+    {"id":"motionlcm_t2m_s2","baseline":"motionlcm","scenario":"official","seed":2,"gaps":["E","H"],"run_dir":"develop_logs/test_runs/20261006_174727_motionlcm_evaluate-native_f4f369af"},
+    {"id":"motionlcm_reach_s0","baseline":"motionlcm","scenario":"reach","seed":0,"gaps":["A","E","H"],"run_dir":"develop_logs/test_runs/20261006_174237_motionlcm_demo_62638ce6"},
+    {"id":"motionlcm_reach_s1","baseline":"motionlcm","scenario":"reach","seed":1,"gaps":["A","E","H"],"run_dir":"develop_logs/test_runs/20261006_174451_motionlcm_demo_40ebc9fa"},
+    {"id":"motionlcm_reach_s2","baseline":"motionlcm","scenario":"reach","seed":2,"gaps":["A","E","H"],"run_dir":"develop_logs/test_runs/20261006_174512_motionlcm_demo_1e254911"},
+    {"id":"motionlcm_online_s0","baseline":"motionlcm","scenario":"online","seed":0,"gaps":["B","E","H"],"run_dir":"develop_logs/test_runs/20261006_174545_motionlcm_demo_1f139e92"},
+
+    {"id":"omnicontrol_t2m_s0","baseline":"omnicontrol","scenario":"official","seed":0,"gaps":["E","H"],"run_dir":"develop_logs/test_runs/20261006_175613_omnicontrol_evaluate-native_6a1d5251"},
+    {"id":"omnicontrol_reach_s0","baseline":"omnicontrol","scenario":"reach","seed":0,"gaps":["A","E","H"],"run_dir":"develop_logs/test_runs/20261006_175741_omnicontrol_demo_f14d94ce"},
+    {"id":"omnicontrol_reach_s1","baseline":"omnicontrol","scenario":"reach","seed":1,"gaps":["A","E","H"],"run_dir":"develop_logs/test_runs/20261006_180236_omnicontrol_demo_857604d7"},
+    {"id":"omnicontrol_reach_s2","baseline":"omnicontrol","scenario":"reach","seed":2,"gaps":["A","E","H"],"run_dir":"develop_logs/test_runs/20261006_180435_omnicontrol_demo_773c905d"},
+
+    {"id":"chois_carry_s0","baseline":"chois","scenario":"carry","seed":0,"gaps":["A","E","H"],"run_dir":"develop_logs/test_runs/20261006_190508_chois_evaluate-native_122662e0"},
+
+    {"id":"ardy_online_s0","baseline":"ardy","scenario":"online","seed":0,"gaps":["B","E","H"],"run_dir":"develop_logs/test_runs/20261007_011629_ardy_evaluate-native_b969fddf"},
+    {"id":"ardy_online_s1","baseline":"ardy","scenario":"online","seed":1,"gaps":["B","E","H"],"run_dir":"develop_logs/test_runs/20261007_013304_ardy_evaluate-native_4d4ee9a0"},
+    {"id":"ardy_online_s2","baseline":"ardy","scenario":"online","seed":2,"gaps":["B","E","H"],"run_dir":"develop_logs/test_runs/20261007_013422_ardy_evaluate-native_2d26e231"},
+
+    {"id":"kimodo_t2m_s0","baseline":"kimodo","scenario":"official","seed":0,"gaps":["E","H"],"run_dir":"develop_logs/test_runs/20261007_011806_kimodo_evaluate-native_79532838"},
+    {"id":"kimodo_reach_superseded_s0","baseline":"kimodo","scenario":"reach","seed":0,"gaps":["A","E","H"],"status":"superseded","include_in_summary":false,"run_dir":"develop_logs/test_runs/20261007_012117_kimodo_evaluate-native_e18842a5"},
+    {"id":"kimodo_reach_s0","baseline":"kimodo","scenario":"reach","seed":0,"gaps":["A","E","H"],"run_dir":"develop_logs/test_runs/20261007_012934_kimodo_evaluate-native_e245c79b"},
+    {"id":"kimodo_reach_s1","baseline":"kimodo","scenario":"reach","seed":1,"gaps":["A","E","H"],"run_dir":"develop_logs/test_runs/20261007_013123_kimodo_evaluate-native_8475a151"},
+    {"id":"kimodo_reach_s2","baseline":"kimodo","scenario":"reach","seed":2,"gaps":["A","E","H"],"run_dir":"develop_logs/test_runs/20261007_013210_kimodo_evaluate-native_8c8ee56e"},
+    {"id":"kimodo_orientation_s0","baseline":"kimodo","scenario":"orientation","seed":0,"gaps":["A","E","H"],"run_dir":"develop_logs/test_runs/20261007_013026_kimodo_evaluate-native_f564d6a2"}
+  ]
+}

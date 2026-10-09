@@ -1,7 +1,9 @@
 {
-  "pip_index_url": "https://pypi.tuna.tsinghua.edu.cn/simple",
-  "source": "https://mirrors.tuna.tsinghua.edu.cn/help/pypi/",
-  "reason": "User requires mainland mirrors and no proxy for large downloads. Direct TLS-enabled TUNA PyPI returned HTTP 200. setup_baselines.sh removes all HTTP/HTTPS/ALL proxy variables before package operations; model transport is separately governed by config/downloads.json.",
+  "pip_index_url": "https://pypi.org/simple",
+  "source": "https://pypi.org/",
+  "reason": "Use official package indexes through the current inherited proxy. CUDA torch wheels come from the official PyTorch index; model transport is separately governed by config/downloads.json.",
   "override_environment_variable": "MOTIOGEN_PIP_INDEX_URL",
-  "conda_channel": "https://repo.anaconda.com/pkgs/main"
+  "conda_channel": "https://repo.anaconda.com/pkgs/main",
+  "environment_root": "${MORIONGEN_DATA_ROOT}/envs",
+  "package_cache_root": "${MORIONGEN_DATA_ROOT}/package-cache"
 }

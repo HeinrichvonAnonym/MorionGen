@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 
 from .adapters import MissingResources,ResourceGate,Unsupported
-from .config import ROOT,read_json
+from .config import ROOT,read_json,repo_root
 from .runtime import budgets,checksum,json_write
 
 
@@ -44,7 +44,7 @@ def evaluate_official(cfg,name,protocol_file,run_dir,seed):
     n=len(gen); batch=spec['retrieval_batch']
     if text.shape!=gen.shape or n<320 or n%batch or len(reference)<320 or max(n,len(reference))>10000:
         raise MissingResources('This distribution protocol requires >=320 samples, paired text, complete 32-item retrieval batches and >=320 real references. Tiny demos are insufficient.')
-    path=ROOT/cfg['baselines'][name]['repo']/spec['metrics_source']
+    path=repo_root(cfg,name)/spec['metrics_source']
     loader=importlib.util.spec_from_file_location('motiogen_official_metrics',path)
     upstream=importlib.util.module_from_spec(loader); loader.loader.exec_module(upstream)
     np.random.seed(seed)

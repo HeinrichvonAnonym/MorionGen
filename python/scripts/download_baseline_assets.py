@@ -13,13 +13,16 @@ from motiogen.runtime import json_write
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--jobs',type=int,default=6,choices=[1,2,3,4,5,6])
+    parser.add_argument('--include-local-text',action='store_true',help='Stage user-authorized Llama plus LLM2Vec adapters')
     args=parser.parse_args()
     stamp=time.strftime('%Y%m%d_%H%M%S')
     from uuid import uuid4
     directory=ROOT/'develop_logs/test_runs'/f'{stamp}_official_asset_downloads_{uuid4().hex[:8]}'
     directory.mkdir(parents=True)
     tasks=[('ardy',['--asset','model']),('kimodo',['--asset','model']),('motionlcm',[]),
-           ('omnicontrol',[]),('chois',[]),('ardy-text',['--asset','local-text'])]
+           ('omnicontrol',[]),('chois',[])]
+    if args.include_local_text:
+        tasks.append(('ardy-text',['--asset','local-text']))
     state={'status':'running','jobs':args.jobs,'transport':'current inherited proxy; official sources; no mirrors',
            'tasks':{name:{'status':'queued'} for name,_ in tasks},
            'restricted_resources':[

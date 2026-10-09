@@ -3,20 +3,20 @@ import sys
 from pathlib import Path
 
 from .assets import find_asset
-from .config import ROOT, asset_root
+from .config import ROOT, asset_root, environment_root, repo_root
 from .runtime import budgets, command_output, json_write
 
 
 def audit(cfg, baseline, run_dir):
     spec=cfg['baselines'][baseline]
-    repo=ROOT/spec['repo']
+    repo=repo_root(cfg,baseline)
     checks={name:command_output(cmd,repo) for name,cmd in {
         'connectivity':['git','fsck','--connectivity-only'],'submodules':['git','submodule','status'],
         'lfs':['git','lfs','ls-files'],'commit':['git','rev-parse','HEAD'],'working_tree':['git','status','--short']}.items()}
-    py=Path(sys.executable).parents[2]/spec['environment']/'bin/python'
+    py=environment_root(cfg,baseline)/'bin/python'
     environment=command_output([str(py),'-c','import json,sys,importlib.metadata as m; print(json.dumps({"python":sys.version,"packages":{x.metadata["Name"]:x.version for x in m.distributions()}}))']) if py.exists() else {'returncode':None,'reason':'dedicated environment missing'}
     imports=set(); parse_failures=[]
-    for file in repo.rglob('*.py'):
+    for file in repo.rglob('*.py') if repo.exists() else []:
         if '.git' in file.parts:
             continue
         try:
@@ -50,7 +50,8 @@ def audit(cfg, baseline, run_dir):
     result['partial_assets']=[str(p.relative_to(asset_root(cfg))) for p in (asset_root(cfg)/baseline).rglob('*.part')]
     from .adapters import MissingResources,ResourceGate,Unsupported,create_adapter
     try:
-        create_adapter(cfg,baseline,run_dir,{'name':'official','kind':'official','duration_seconds':5},0).preflight()
+        duration=4 if baseline=='chois' else 5
+        create_adapter(cfg,baseline,run_dir,{'name':'official','kind':'official','duration_seconds':duration},0).preflight()
         result['asset_gate']={'assets_ready':True,'resource_review_passed':True}
     except MissingResources as exc:
         result['asset_gate']={'assets_ready':False,'reason':str(exc)}

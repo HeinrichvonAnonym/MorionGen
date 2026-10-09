@@ -1,0 +1,28 @@
+{
+  "chois": {
+    "smplx_source_directory": "/home/heinrich/TactileLab/data/GRAB/smplx/models/smplx",
+    "files": [
+      "SMPLX_MALE.npz",
+      "SMPLX_FEMALE.npz",
+      "SMPLX_NEUTRAL.npz"
+    ],
+    "mode": "read-only symlink reuse; user-owned licensed assets are never copied or modified"
+  },
+  "datasets": {
+    "bones_seed": {
+      "source_root": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/datasets/bones-studio-seed",
+      "soma_uniform_archive": "soma_uniform.tar.gz",
+      "metadata": "metadata/seed_metadata_v004.parquet",
+      "license": "LICENSE.md",
+      "mode": "read-only source; selected BVH files are extracted below MORIONGEN_DATA_ROOT"
+    },
+    "kit_ml": {
+      "source_root": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/datasets/KIT-ML",
+      "archives": ["new_joint_vecs.rar", "new_joints.rar", "texts.rar"],
+      "split": "test.txt",
+      "license": null,
+      "official_terms_url": "https://motion-annotation.humanoids.kit.edu/dataset/",
+      "mode": "read-only source; prepared copy is extracted below MORIONGEN_DATA_ROOT"
+    }
+  }
+}

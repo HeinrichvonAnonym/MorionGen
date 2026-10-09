@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "sources": {
+    "motionlcm": {
+      "url": "https://github.com/Dai-Wenxun/MotionLCM.git",
+      "commit": "81c06368c17b056713deef2e9f6483f3172eea42"
+    },
+    "omnicontrol": {
+      "url": "https://github.com/neu-vi/OmniControl.git",
+      "commit": "76336a6e78f074f3ba7059643414b91a1eced9f2"
+    },
+    "chois": {
+      "url": "https://github.com/lijiaman/chois_release.git",
+      "commit": "8ec585aa0200fd2a890ffb12897bcf69ae719463"
+    },
+    "ardy": {
+      "url": "https://github.com/nv-tlabs/ardy.git",
+      "commit": "693f74d13b3d04a0a22ce127ee79c929dd89756b"
+    },
+    "kimodo": {
+      "url": "https://github.com/nv-tlabs/kimodo.git",
+      "commit": "58e781898b3d7e328a676a75d3e338c45dce3ad9"
+    }
+  }
+}

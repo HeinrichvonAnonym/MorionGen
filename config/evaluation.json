@@ -2,6 +2,6 @@
   "motionlcm": {"metrics_source": "mld/models/metrics/utils.py", "evaluator_id": "HumanML3D-T2M-finest", "embedding_dim": 512, "retrieval_batch": 32, "diversity_pairs": 300},
   "omnicontrol": {"metrics_source": "data_loaders/humanml/utils/metrics.py", "evaluator_id": "HumanML3D-T2M-finest", "embedding_dim": 512, "retrieval_batch": 32, "diversity_pairs": 300},
   "chois": {"metrics_source": "t2m_eval/utils/metrics.py", "evaluator_id": "CHOIS-T2M-official", "embedding_dim": 512, "retrieval_batch": 32, "diversity_pairs": 300},
-  "ardy": {"metrics_source": null, "reason": "No official offline distribution evaluation entry found in this inference release"},
-  "kimodo": {"metrics_source": null, "reason": "Native TMR benchmark requires its paired test suite and compatible TMR checkpoint; HumanML3D embeddings cannot substitute"}
+  "ardy": {"metrics_source": null, "mode": "online_common", "reason": "No compatible official offline distribution benchmark is published; evaluate online continuity, update response, constraints and latency"},
+  "kimodo": {"metrics_source": "kimodo/metrics/tmr.py", "mode": "native_benchmark", "evaluator_id": "TMR-SOMA-RP-v1", "evaluator_repo": "nvidia/TMR-SOMA-RP-v1", "benchmark_repo": "nvidia/Kimodo-Motion-Gen-Benchmark", "reason": "Use the native Kimodo benchmark with paired BONES-SEED ground truth; HumanML3D embeddings cannot substitute"}
 }

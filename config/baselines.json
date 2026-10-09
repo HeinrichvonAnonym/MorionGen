@@ -1,5 +1,6 @@
 {
   "schema_version": 1,
+  "data_root": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen",
   "asset_root": "outputs/assets",
   "run_root": "develop_logs/test_runs",
   "seeds": [
@@ -14,7 +15,7 @@
   "resources": {
     "gpu_max_gib": 20,
     "gpu_reserve_gib": 3,
-    "ram_max_gib": 12,
+    "ram_max_gib": 14,
     "ram_reserve_gib": 6,
     "disk_reserve_gib": 80,
     "timeout_seconds": 900,
@@ -99,7 +100,8 @@
       "python": "3.10",
       "model": "Kimodo-SOMA-RP-v1.1",
       "hf_repo": "nvidia/Kimodo-SOMA-RP-v1.1",
-      "skeleton": "soma30",
+      "skeleton": "somaskel77",
+      "input_skeleton": "somaskel30",
       "fps": 30,
       "axes": "Y-up",
       "training_entry": null,

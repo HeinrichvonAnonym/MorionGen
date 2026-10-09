@@ -1,8 +1,11 @@
+import io
+import tarfile
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch
 
+from motiogen.assets import is_archive,safe_extract
 from motiogen.config import ROOT
 from motiogen.transfer import proxy_file
 
@@ -38,6 +41,22 @@ class ResumeTest(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError,'Invalid resume'):
                     proxy_file('https://huggingface.co/public',path,6)
             self.assertEqual(partial.read_bytes(),b'abc'); self.assertFalse(path.exists())
+
+    def test_tar_gz_logical_name_and_licensed_symlink_preservation(self):
+        directory=ROOT/'develop_logs/test_runs/.cache'; directory.mkdir(parents=True,exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=directory) as temporary:
+            root=Path(temporary); archive=root/'download.part'; target=root/'assets'; target.mkdir()
+            preserved='processed_data/smpl_all_models/smplx/SMPLX_MALE.npz'
+            licensed=root/'licensed.npz'; licensed.write_bytes(b'licensed')
+            link=target/preserved; link.parent.mkdir(parents=True); link.symlink_to(licensed)
+            with tarfile.open(archive,'w:gz') as output:
+                for name,payload in ((preserved,b'archive copy'),('processed_data/sample.txt',b'data')):
+                    info=tarfile.TarInfo(name); info.size=len(payload)
+                    output.addfile(info,io.BytesIO(payload))
+            self.assertTrue(is_archive(archive,'processed_data.tar.gz'))
+            safe_extract(archive,target,preserve_existing=(preserved,))
+            self.assertTrue(link.is_symlink()); self.assertEqual(licensed.read_bytes(),b'licensed')
+            self.assertEqual((target/'processed_data/sample.txt').read_bytes(),b'data')
 
 
 if __name__=='__main__':

@@ -1,16 +1,18 @@
 """Isolated, upstream-API adapters; import heavy libraries only inside workers."""
 import contextlib
+import importlib
 import json
 import os
 import sys
 import time
 from pathlib import Path
 from types import SimpleNamespace
+from types import MethodType
 
 import numpy as np
 
 from .assets import find_asset
-from .config import ROOT, asset_root
+from .config import ROOT, asset_root, repo_root
 from .motion import HUMANML_NAMES, Y_TO_Z, canonicalize, native_positions, save_motion
 from .runtime import event, json_write
 
@@ -88,7 +90,8 @@ class Adapter:
         metadata={'baseline':self.name,'model':self.spec['model'],'units':'m','axes':'right-handed Z-up',
                   'native_axes':self.spec['axes'],'skeleton':skeleton,'seed':self.seed,
                   'scenario':self.scene['name'],'native_joint_names':native,
-                  'postprocess':False,'representation_conversion':'world basis rotation; no retargeting'}
+                  'postprocess':bool(getattr(self,'postprocess',False)),
+                  'representation_conversion':'world basis rotation; no retargeting'}
         save_motion(self.path/filename,xyz,names,self.fps,metadata,rot,**optional)
         return self.path/filename
 
@@ -135,7 +138,7 @@ class MotionLCM(Adapter):
         from mld.config import get_module_config
         from mld.models.modeltype.mld import MLD
         from mld.data.humanml.scripts.motion_process import recover_from_ric
-        repo=ROOT/self.spec['repo']
+        repo=repo_root(self.cfg,self.name)
         cfg=OmegaConf.load(repo/'configs/motionlcm_control_s.yaml' if self.scene['kind']!='official' else repo/'configs/motionlcm_t2m.yaml')
         cfg.model=get_module_config(cfg.model,cfg.model.target,str(repo/'configs'))
         cfg.output_dir=str(self.path)
@@ -268,7 +271,7 @@ class MotionLCMVAE(Adapter):
         from omegaconf import OmegaConf
         from mld.config import get_module_config,instantiate_from_config
         from mld.data.humanml.scripts.motion_process import recover_from_ric
-        repo=ROOT/self.spec['repo']; cfg=OmegaConf.load(repo/'configs/vae.yaml')
+        repo=repo_root(self.cfg,self.name); cfg=OmegaConf.load(repo/'configs/vae.yaml')
         cfg.DATASET.NFEATS=263; cfg.DATASET.NJOINTS=22
         cfg.model=get_module_config(cfg.model,cfg.model.target,str(repo/'configs'))
         with self.timed('checkpoint_load'):
@@ -351,7 +354,20 @@ class OmniControl(Adapter):
             return clip_loader(str(require(self.cfg,self.name,'ViT-B-32.pt')),*args,**kwargs)
         clip.load=local_clip
         with self.timed('model_load'):
-            self.model,self.diffusion=create_model_and_diffusion(self.args,SimpleNamespace(dataset=SimpleNamespace(num_actions=1)))
+            # OmniControl hard-codes ./dataset paths inside GaussianDiffusion.
+            # Resolve only its four normalization reads to receipt-backed assets
+            # while keeping the pinned upstream checkout untouched.
+            from diffusion import gaussian_diffusion as omni_gaussian
+            original_pjoin=omni_gaussian.pjoin
+            normalization={name:require(self.cfg,self.name,name) for name in
+                           ('Mean.npy','Std.npy','Mean_raw.npy','Std_raw.npy')}
+            def asset_pjoin(_directory,filename):
+                return str(normalization[filename]) if filename in normalization else original_pjoin(_directory,filename)
+            omni_gaussian.pjoin=asset_pjoin
+            try:
+                self.model,self.diffusion=create_model_and_diffusion(self.args,SimpleNamespace(dataset=SimpleNamespace(num_actions=1)))
+            finally:
+                omni_gaussian.pjoin=original_pjoin
             state=torch.load(checkpoint,map_location='cpu'); load_model_wo_clip(self.model,state); del state
             self.model=ClassifierFreeSampleModel(self.model).to('cuda').eval()
         self.mean=np.load(require(self.cfg,self.name,'Mean.npy')).astype(np.float32); self.std=np.load(require(self.cfg,self.name,'Std.npy')).astype(np.float32)
@@ -413,17 +429,35 @@ def joint_aliases(skeleton_name):
 
 class SparseJointConstraint:
     """Upstream condition-dictionary protocol, without implicit root or hand-tip commands."""
-    def __init__(self,frame,joint,position,rotation=None):
+    def __init__(self,frame,joint,position,rotation=None,smooth_root_2d=None):
         self.frame,self.joint,self.position,self.rotation=frame,joint,position,rotation
+        self.smooth_root_2d=smooth_root_2d
 
     def update_constraints(self,data,index):
         import torch
         indices=torch.tensor([[self.frame,self.joint]],device=self.position.device)
         data['global_joints_positions'].append(self.position[None])
         index['global_joints_positions'].append(indices)
+        if self.smooth_root_2d is not None:
+            data['smooth_root_2d'].append(self.smooth_root_2d[None])
+            index['smooth_root_2d'].append(torch.tensor([self.frame],device=self.position.device))
         if self.rotation is not None:
             data['global_joints_rots'].append(self.rotation[None])
             index['global_joints_rots'].append(indices)
+
+    def crop_move(self,start,end):
+        if start<=self.frame<end:
+            return SparseJointConstraint(self.frame-start,self.joint,self.position,self.rotation,self.smooth_root_2d)
+        return EmptyConstraint()
+
+
+class EmptyConstraint:
+    """Window-local no-op matching the NVIDIA constraint protocol."""
+    def update_constraints(self,data,index):
+        return None
+
+    def crop_move(self,start,end):
+        return self
 
 
 class TimedTextEncoder:
@@ -453,6 +487,16 @@ class Nvidia(Adapter):
         if not (cache/'local_base_receipt.json').exists():
             raise MissingResources('Official LLM2Vec/Llama text weights missing. See text_access.json; log in locally with hf auth login when access is required.')
         policy=json.loads((cache/'local_base_receipt.json').read_text())
+        expected=json.loads((ROOT/'config/language_models.json').read_text())
+        if policy.get('expected_base')!=expected['expected_base'] or policy.get('expected_config')!=expected['expected_config']:
+            raise MissingResources('Local Llama receipt predates or disagrees with the pinned Meta-Llama-3-8B-Instruct identity; register it again')
+        for item in policy.get('files',[]):
+            source=Path(item['path'])
+            if not source.is_file():
+                raise MissingResources(f'User-supplied Llama shard disappeared: {source.name}')
+            stat=source.stat()
+            if stat.st_size!=item['bytes'] or stat.st_mtime_ns!=item['mtime_ns']:
+                raise MissingResources(f'User-supplied Llama shard changed after receipt: {source.name}; register it again')
         for repo in (policy['mntp_repo'],policy['supervised_repo']):
             if not (cache/repo/'source_receipt.json').is_file():
                 raise MissingResources(f'Official LLM2Vec adapter download incomplete: {repo}')
@@ -465,9 +509,10 @@ class Nvidia(Adapter):
         os.environ['TEXT_ENCODER_MODE']='local'
         os.environ['TEXT_ENCODERS_DIR']=str(asset_root(self.cfg)/'text/llm2vec')
         os.environ['CHECKPOINT_DIR']=str(asset_root(self.cfg)/self.name)
-        from .local_llm import load_encoder
-        with self.timed('text_model_load'):
-            text_encoder=load_encoder(self.cfg,self.name)
+        from .local_llm import precompute_encoder
+        prompts=[self.scene['prompt'],*[update['prompt'] for update in self.scene.get('updates',[])]]
+        with self.timed('text_model_load_and_encode',prompts=len(set(prompts))):
+            text_encoder=precompute_encoder(self.cfg,self.name,prompts)
         with self.timed('model_load'):
             self.model=module.load_model(self.spec['model'],device='cuda',text_encoder=text_encoder,checkpoints_dir=str(asset_root(self.cfg)/self.name)) if self.name=='ardy' else module.load_model(self.spec['model'],device='cuda',text_encoder=text_encoder)
         self.fps=self.model.motion_rep.fps if self.name=='ardy' else self.model.fps
@@ -480,8 +525,43 @@ class Nvidia(Adapter):
 
     def constraint_list(self):
         import torch
-        result=[]; skeleton=self.model.skeleton; j=len(self.native_names)
-        for c in self.scene.get('constraints',[]):
+        result=[]; skeleton=self.model.skeleton
+        specifications=self.scene.get('constraints',[])
+        if self.name=='kimodo' and specifications:
+            if len(specifications)!=1:
+                raise Unsupported('Kimodo goal-only smoke currently supports one feasible end-effector keyframe')
+            c=specifications[0]
+            idx=self.names.index(c['joint']); native=self.native_names[idx]
+            classes={'RightHand':'RightHandConstraintSet','LeftHand':'LeftHandConstraintSet',
+                     'RightFoot':'RightFootConstraintSet','LeftFoot':'LeftFootConstraintSet'}
+            if native not in classes:
+                raise Unsupported(f'Kimodo official post-processing does not expose {native} as an end effector')
+            constraints_module=importlib.import_module('kimodo.constraints')
+            constraint_class=getattr(constraints_module,classes[native])
+            frame=round(c['time_seconds']*self.fps)
+            duration=int(self.fps*self.scene['duration_seconds'])
+            # Official end-effector constraints are feasible full-pose
+            # keyframes, not isolated XYZ values. Generate a native reference
+            # pose, translate it so the requested effector reaches the world
+            # goal, and optionally replace that effector's global rotation.
+            with self.timed('constraint_reference_generation'),torch.no_grad():
+                reference=self.model([self.scene['prompt']],[duration],constraint_lst=[],
+                        num_denoising_steps=100,num_samples=1,post_processing=False,return_numpy=True)
+            output_lookup={name:i for i,name in enumerate(self.output_native_names)}
+            subset=[output_lookup[name] for name in self.native_names]
+            positions=torch.from_numpy(reference['posed_joints'][0,frame,subset]).float()
+            rotations=torch.from_numpy(reference['global_rot_mats'][0,frame,subset]).float()
+            target=torch.tensor(native_positions(c['position_m'],self.spec['axes']),dtype=torch.float32)
+            delta=target-positions[idx]
+            positions=positions+delta
+            smooth=torch.from_numpy(reference['smooth_root_pos'][0,frame,[[0,2]]]).float()
+            smooth=smooth+delta[[0,2]][None]
+            if 'rotation_matrix' in c:
+                rotations[idx]=torch.tensor(Y_TO_Z.T @ np.asarray(c['rotation_matrix']),dtype=torch.float32)
+            result.append(constraint_class(skeleton,torch.tensor([frame]),positions[None],
+                    rotations[None],smooth).to('cuda'))
+            return result
+        for c in specifications:
             idx=self.names.index(c['joint']); native=self.native_names[idx]
             pos=torch.tensor(native_positions(c['position_m'],self.spec['axes']),dtype=torch.float32,device='cuda')
             rot=None if 'rotation_matrix' not in c else torch.tensor(Y_TO_Z.T @ np.asarray(c['rotation_matrix']),dtype=torch.float32,device='cuda')
@@ -535,6 +615,7 @@ class Nvidia(Adapter):
         import torch
         self.seed_all(self.seed)
         constraints=self.constraint_list()
+        self.postprocess=self.name=='kimodo' and bool(constraints)
         if self.scene['kind']=='online':
             return self.streaming()
         output=self.generate(constraints,cold=True)
@@ -549,7 +630,10 @@ class Nvidia(Adapter):
         self.call_flags={'warmup':warmup,'cold':cold,'benchmark':benchmark}
         with self.timed('generation',**self.call_flags),torch.no_grad():
             if self.name=='kimodo':
-                output=self.model([self.scene['prompt']],[int(self.fps*self.scene['duration_seconds'])],constraint_lst=constraints,num_denoising_steps=100,num_samples=1,post_processing=False,return_numpy=True)
+                # Kimodo decodes posed_joints from rotations. Its official
+                # post-processor is therefore required to project sparse
+                # position/orientation commands back onto the output pose.
+                output=self.model([self.scene['prompt']],[int(self.fps*self.scene['duration_seconds'])],constraint_lst=constraints,num_denoising_steps=100,num_samples=1,post_processing=bool(constraints),return_numpy=True)
             else:
                 lengths=torch.tensor([int(self.fps*self.scene['duration_seconds'])],device='cuda')
                 observed,mask=(None,None)
@@ -564,15 +648,162 @@ class Nvidia(Adapter):
 class Chois(Adapter):
     def preflight(self):
         super().preflight()
-        for name in ('SMPLX_NEUTRAL.npz','SMPLX_MALE.npz','SMPLX_FEMALE.npz','processed_data'):
+        for name in ('SMPLX_NEUTRAL.npz','SMPLX_MALE.npz','SMPLX_FEMALE.npz',
+                     'cano_test_diffusion_manip_window_120_joints24.p',
+                     'cano_min_max_mean_std_data_window_120_joints24.p'):
             require(self.cfg,self.name,name)
-        raise ResourceGate('CHOIS Trainer preloads datasets and duplicates model with EMA; conservative inference bound not established')
+        clip=asset_root(self.cfg)/'omnicontrol/ViT-B-32.pt'
+        if not clip.is_file():
+            raise MissingResources('CHOIS uses OpenAI ViT-B/32; prepare the shared OmniControl CLIP asset')
+        from .resource_review import inference_review
+        inference_review(self)
 
     def load(self):
-        raise ResourceGate('CHOIS memory audit must precede Trainer allocation')
+        import torch
+        from .chois_compat import install_chamfer_fallback
+        self.chois_chamfer_backend=install_chamfer_fallback()
+        import trainer_chois as upstream
+
+        repo=repo_root(self.cfg,self.name)
+        data=require(self.cfg,self.name,'cano_test_diffusion_manip_window_120_joints24.p').parent
+        checkpoint=require(self.cfg,self.name,self.spec['model'])
+        import manip.data.cano_traj_dataset as chois_data
+        # The release leaves the author's absolute SMPL-H path in module state.
+        # Point it at the matching models included in the official data archive.
+        chois_data.SMPLH_PATH=str(data/'smpl_all_models/smplh_amass')
+        saved_argv=sys.argv
+        try:
+            sys.argv=['trainer_chois.py']
+            opt=upstream.parse_opt()
+        finally:
+            sys.argv=saved_argv
+        opt.window=120; opt.batch_size=1
+        opt.data_root_folder=str(data); opt.pretrained_model=str(checkpoint)
+        opt.save_res_folder=str(self.path/'raw/chois_results')
+        opt.save_dir=str(self.path/'raw/chois_runtime'); opt.exp_name='chois_runtime'
+        opt.input_first_human_pose=True; opt.use_random_frame_bps=True
+        opt.add_language_condition=True; opt.use_object_keypoints=True
+        opt.add_semantic_contact_labels=True; opt.use_guidance_in_denoising=False
+        opt.loss_w_feet=1.; opt.loss_w_fk=.5; opt.loss_w_obj_pts=1.
+        opt.test_sample_res=True; opt.compute_metrics=True
+        repr_dim=3+9+24*3+22*6+4
+        with self.timed('model_load'):
+            model=upstream.ObjectCondGaussianDiffusion(opt,d_feats=repr_dim,d_model=opt.d_model,
+                n_dec_layers=opt.n_dec_layers,n_head=opt.n_head,d_k=opt.d_k,d_v=opt.d_v,
+                max_timesteps=opt.window+1,out_dim=repr_dim,timesteps=1000,
+                objective='pred_x0',loss_type='l1',input_first_human_pose=True,
+                use_object_keypoints=True).cuda().eval().requires_grad_(False)
+
+        # Build the exact upstream inference helper without its optimizer, GradScaler,
+        # training dataset/dataloader, or EMA duplicate.
+        trainer=upstream.Trainer.__new__(upstream.Trainer)
+        trainer.use_wandb=False; trainer.model=model
+        trainer.ema=SimpleNamespace(ema_model=model); trainer.step=0
+        trainer.batch_size=1; trainer.results_folder=str(self.path/'raw/chois_runtime/weights')
+        trainer.vis_folder=str(self.path/'raw/chois_runtime/vis_res')
+        trainer.opt=opt; trainer.window=opt.window
+        for name in ('add_language_condition','use_random_frame_bps','use_object_keypoints',
+                     'add_semantic_contact_labels','test_unseen_objects','test_on_train',
+                     'input_first_human_pose','use_guidance_in_denoising','compute_metrics',
+                     'use_long_planned_path','use_object_split'):
+            setattr(trainer,name,getattr(opt,name))
+        for name in ('save_res_folder','data_root_folder','loss_w_feet','loss_w_fk','loss_w_obj_pts',
+                     'test_object_name','test_scene_name'):
+            setattr(trainer,name,getattr(opt,name))
+
+        val=upstream.CanoObjectTrajDataset(train=False,data_root_folder=str(data),window=opt.window,
+            use_object_splits=opt.use_object_split,input_language_condition=True,
+            use_random_frame_bps=True,use_object_keypoints=True)
+        # The public archive omits the per-window BPS cache (upstream documents
+        # that building every window takes over an hour).  Materialize only the
+        # selected batch=1 window inside this run directory.
+        val.dest_obj_bps_npy_folder=str(self.path/'raw/chois_bps')
+        Path(val.dest_obj_bps_npy_folder).mkdir(parents=True,exist_ok=True)
+        entry=val.window_data_dict[0]
+        seq_name=entry['seq_name']; object_name=seq_name.split('_')[1]
+        bps_path=Path(val.dest_obj_bps_npy_folder)/(seq_name+'_'+str(entry['ori_w_idx'])+'.npy')
+        with self.timed('input_bps_prepare'),torch.no_grad():
+            rest_verts,_=val.load_rest_pose_object_geometry(object_name)
+            rotations=torch.from_numpy(entry['obj_rot_mat']).float()
+            centers=torch.from_numpy(entry['window_obj_com_pos']).float()
+            vertices=val.load_object_geometry_w_rest_geo(rotations,centers,torch.from_numpy(rest_verts).float())
+            object_bps=val.compute_object_geo_bps(vertices,centers)
+            np.save(bps_path,object_bps.detach().cpu().numpy())
+        class OneSample(torch.utils.data.Dataset):
+            def __len__(self): return 1
+            def __getitem__(self,index): return val[0]
+            def __getattr__(self,name): return getattr(val,name)
+        trainer.val_ds=OneSample(); trainer.ds=trainer.val_ds; trainer.bm_dict=val.bm_dict
+        clip_load=upstream.clip.load
+        try:
+            upstream.clip.load=lambda _name,**kwargs: clip_load(str(asset_root(self.cfg)/'omnicontrol/ViT-B-32.pt'),**kwargs)
+            trainer.clip_model=trainer.load_and_freeze_clip('ViT-B/32')
+        finally:
+            upstream.clip.load=clip_load
+        trainer.hand_vertex_idxs,trainer.left_hand_vertex_idxs,trainer.right_hand_vertex_idxs=trainer.load_hand_vertex_ids()
+
+        def load_ema(instance,_milestone,pretrained_path=None):
+            with self.timed('checkpoint_load'):
+                payload=torch.load(pretrained_path or checkpoint,map_location='cpu')
+            state=payload.get('ema',payload)
+            if isinstance(state,dict) and isinstance(state.get('ema_model'),dict):
+                state=state['ema_model']
+            elif isinstance(state,dict):
+                selected={k.removeprefix('ema_model.'):v for k,v in state.items() if k.startswith('ema_model.')}
+                state=selected or state
+            incompatible=model.load_state_dict(state,strict=False)
+            if len(incompatible.missing_keys)>8:
+                raise RuntimeError(f'CHOIS EMA checkpoint incompatible: {len(incompatible.missing_keys)} missing keys')
+            instance.step=int(payload.get('step',0))
+        trainer.load=MethodType(load_ema,trainer)
+        self.model=model; self.trainer=trainer; self.fps=30
+        json_write(self.path/'upstream_config.json',vars(opt))
+        json_write(self.path/'allocation_contract.json',{
+            'batch_size':1,'validation_samples':1,'optimizer_created':False,
+            'grad_scaler_created':False,'ema_model_copy_created':False,
+            'checkpoint_target':'single inference model loaded from EMA weights',
+            'bps_chamfer_backend':self.chois_chamfer_backend,
+            'smplh_path':chois_data.SMPLH_PATH})
 
     def run(self,benchmark=False):
-        raise ResourceGate('CHOIS native single-window sample blocked by resource audit')
+        import torch
+        self.seed_all(self.seed)
+        captured=[]; original=self.trainer.gen_vis_res_generic
+        original_loader=torch.utils.data.DataLoader
+        def capture(*args,**kwargs):
+            result=original(*args,**kwargs)
+            if not kwargs.get('vis_gt',False):
+                captured.append(result)
+            return result
+        def single_process_loader(*args,**kwargs):
+            kwargs['num_workers']=0
+            kwargs['persistent_workers']=False
+            return original_loader(*args,**kwargs)
+        self.trainer.gen_vis_res_generic=capture
+        torch.utils.data.DataLoader=single_process_loader
+        try:
+            with self.timed('generation'),torch.no_grad():
+                self.trainer.cond_sample_res()
+        finally:
+            torch.utils.data.DataLoader=original_loader
+        if len(captured)!=1:
+            raise RuntimeError(f'CHOIS batch=1 contract violated: captured {len(captured)} predictions')
+        _,joint_list,_,rotation_list,object_positions,object_rotations,object_vertices,*_=captured[0]
+        joints=joint_list[0].detach().cpu().numpy()
+        obj_pos=object_positions[0].detach().cpu().numpy()
+        obj_rot=object_rotations[0].detach().cpu().numpy()
+        obj_verts=object_vertices[0].detach().cpu().numpy()
+        wrist=joints[:,22:24]
+        hand_dist=np.linalg.norm(wrist[:,:,None,:]-obj_verts[:,None,:,:],axis=-1).min(axis=-1)
+        names=['pelvis','left_hip','right_hip','spine1','left_knee','right_knee','spine2',
+               'left_ankle','right_ankle','spine3','left_foot','right_foot','neck','left_collar',
+               'right_collar','head','left_shoulder','right_shoulder','left_elbow','right_elbow',
+               'left_wrist_body','right_wrist_body','left_wrist','right_wrist']
+        np.savez_compressed(self.path/'raw/native_prediction.npz',joints=joints,
+            global_rotations=rotation_list[0].detach().cpu().numpy(),object_positions=obj_pos,
+            object_rotations=obj_rot,hand_object_distances_m=hand_dist)
+        return self.save(joints,names,object_positions=obj_pos,object_rotations=obj_rot,
+                         hand_object_distances_m=hand_dist)
 
 
 def create_adapter(cfg,name,run_dir,scene,seed):

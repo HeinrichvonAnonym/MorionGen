@@ -13,7 +13,7 @@ from pathlib import Path
 
 import psutil
 
-from .config import ROOT
+from .config import ROOT, data_root, repo_root
 
 GIB = 1024 ** 3
 
@@ -40,8 +40,11 @@ def checksum(path):
 
 
 def command_output(command, cwd=None):
-    result = subprocess.run(command, cwd=cwd, capture_output=True, text=True, timeout=30)
-    return {'returncode': result.returncode, 'stdout': result.stdout.strip(), 'stderr': result.stderr.strip()}
+    try:
+        result = subprocess.run(command, cwd=cwd, capture_output=True, text=True, timeout=30)
+        return {'returncode': result.returncode, 'stdout': result.stdout.strip(), 'stderr': result.stderr.strip()}
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {'returncode': None, 'stdout': '', 'stderr': f'{type(exc).__name__}: {exc}'}
 
 
 def gpu_snapshot():
@@ -68,10 +71,13 @@ def budgets(cfg):
     r = cfg['resources']
     ram = psutil.virtual_memory()
     gpu = gpu_snapshot()
-    disk = psutil.disk_usage(ROOT)
+    storage = data_root(cfg)
+    storage.mkdir(parents=True, exist_ok=True)
+    disk = psutil.disk_usage(storage)
     return {'ram_bytes': max(0, min(r['ram_max_gib'] * GIB, ram.available - r['ram_reserve_gib'] * GIB)),
             'gpu_bytes': max(0, min(r['gpu_max_gib'] * GIB, gpu.get('free_bytes', 0) - r['gpu_reserve_gib'] * GIB)),
             'available_ram_bytes': ram.available, 'gpu': gpu, 'free_disk_bytes': disk.free,
+            'storage_root': str(storage),
             'disk_ok': disk.free > r['disk_reserve_gib'] * GIB, 'isolation': memory_controller()}
 
 
@@ -83,7 +89,7 @@ class Run:
         self.events = self.path / 'events.jsonl'
         self.manifest = {'schema_version': 1, 'baseline': baseline, 'action': action, 'scenario': scene, 'seed': seed,
                          'status': 'running', 'command': command, 'timezone': 'Asia/Shanghai', 'budgets': budgets(cfg)}
-        repo = ROOT / cfg['baselines'][baseline]['repo']
+        repo = repo_root(cfg, baseline)
         self.manifest['git'] = {key: command_output(cmd, repo) for key, cmd in {
             'commit': ['git', 'rev-parse', 'HEAD'], 'status': ['git', 'status', '--short'],
             'remote': ['git', 'remote', '-v'], 'patch': ['git', 'diff', '--no-ext-diff']}.items()}
@@ -146,7 +152,7 @@ def terminate_group(proc):
         proc.wait(timeout=10)
 
 
-def supervise(run, command, cfg, cwd=ROOT, gpu=False, extra_env=None, timeout=None):
+def supervise(run, command, cfg, cwd=ROOT, gpu=False, extra_env=None, timeout=None, require_protocol=True):
     """Watch process tree and global headroom, not other users' GPU processes."""
     budget = budgets(cfg)
     run.manifest.update(command=command, budgets=budget)
@@ -191,7 +197,7 @@ def supervise(run, command, cfg, cwd=ROOT, gpu=False, extra_env=None, timeout=No
                 status, reason = 'resource_terminated', 'RAM budget/reserve crossed'
             elif gpu and (not gs['available'] or gs['free_bytes'] < cfg['resources']['gpu_reserve_gib'] * GIB or gs.get('used_bytes',0)-budget['gpu'].get('used_bytes',0)>budget['gpu_bytes']):
                 status, reason = 'resource_terminated', 'VRAM telemetry unavailable or reserve crossed'
-            elif psutil.disk_usage(ROOT).free < cfg['resources']['disk_reserve_gib'] * GIB:
+            elif psutil.disk_usage(data_root(cfg)).free < cfg['resources']['disk_reserve_gib'] * GIB:
                 status, reason = 'resource_terminated', 'disk reserve crossed'
             if reason:
                 event(run.events, 'termination_requested', reason=reason)
@@ -210,6 +216,6 @@ def supervise(run, command, cfg, cwd=ROOT, gpu=False, extra_env=None, timeout=No
         fields['worker'] = payload
         if status == 'success':
             status, reason = payload['status'], payload.get('reason')
-    elif status == 'success':
+    elif status == 'success' and require_protocol:
         status, reason = 'failed', 'worker did not produce result protocol'
     return run.finish(status, reason, **fields)

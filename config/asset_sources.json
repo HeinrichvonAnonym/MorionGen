@@ -1,0 +1,40 @@
+{
+  "motionlcm": {
+    "experiments_recons.zip": "https://drive.google.com/file/d/15zFDitcOLhjbQ0CaOoM-QNKQUeyJw-Om/view",
+    "experiments_t2m.zip": "https://drive.google.com/file/d/1U7homKobR2gaDLfL5flS3N0g7e0a_AQd/view",
+    "experiments_control.zip": "https://drive.google.com/file/d/1o6oFdH5dgQJNB5J2rDGKCMw3FDr9gUkW/view",
+    "humanml3d_tiny.zip": "https://drive.google.com/file/d/1Mg_3RnWmRt0tk_lyLRRiOZg1W-Fu4wLL/view",
+    "t2m.zip": "https://drive.google.com/file/d/16hyR4XlEyksVyNVjhIWK684Lrm_7_pvX/view",
+    "smpl_models.zip": "https://drive.google.com/file/d/1J2pTxrar_q689Du5r3jES343fZUmCs_y/view",
+    "glove.zip": "https://drive.google.com/file/d/1cmXKUT31pqd7_XpJAiWEo1K81TMYHA5n/view",
+    "sentence_t5": "https://huggingface.co/sentence-transformers/sentence-t5-large",
+    "humanml3d_full_setup": "https://github.com/EricGuo5513/HumanML3D"
+  },
+  "omnicontrol": {
+    "omnicontrol_ckpt.zip": "https://drive.google.com/file/d/1oTkBtArc3xjqkYD6Id7LksrTOn3e1Zud/view",
+    "smpl.zip": "https://drive.google.com/file/d/1INYlGA76ak_cKGzvpOV2Pe6RkYTlXTW2/view",
+    "t2m.zip": "https://drive.google.com/file/d/1DSaKqWX2HlwBtVH5l7DdW96jeYUIXsOP/view",
+    "clip": "https://openaipublic.azureedge.net/clip/models/40d365715913c9da98579312b702a82c18be219cc2a73407c4526f58eba950af/ViT-B-32.pt",
+    "humanml3d_full_setup": "https://github.com/EricGuo5513/HumanML3D"
+  },
+  "chois": {
+    "processed_data.tar.gz": "https://drive.google.com/file/d/1ZG-9--RfUWj5oWYnvcONNuRuxaH_Zpw1/view",
+    "pretrained_models": "https://drive.google.com/drive/folders/1gqw3EHiEMqw1OXqH92Axoc5FJntA_E5x",
+    "evaluators": "https://drive.google.com/drive/folders/1hGDYEy91Tk7FC1U_8BouhlSp5RQkEJuY",
+    "smplx_license": "https://smpl-x.is.tue.mpg.de/"
+  },
+  "ardy": {
+    "model": "https://huggingface.co/nvidia/ARDY-Core-RP-20FPS-Horizon8"
+  },
+  "kimodo": {
+    "model": "https://huggingface.co/nvidia/Kimodo-SOMA-RP-v1.1",
+    "tmr": "https://huggingface.co/nvidia/TMR-SOMA-RP-v1",
+    "benchmark_metadata": "https://huggingface.co/datasets/nvidia/Kimodo-Motion-Gen-Benchmark",
+    "bones_seed_license": "https://huggingface.co/datasets/bones-studio/seed"
+  },
+  "text": {
+    "llama_base_user_supplied": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+    "mntp_adapter": "https://huggingface.co/McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp",
+    "supervised_adapter": "https://huggingface.co/McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp-supervised"
+  }
+}

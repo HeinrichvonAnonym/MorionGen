@@ -5,30 +5,31 @@ from pathlib import Path
 
 from .adapters import MissingResources,ResourceGate,Unsupported,create_adapter
 from .audit import audit
-from .config import ROOT,load_config,scenario
+from .config import ROOT,environment_root,load_config,scenario
 from .metrics import evaluate
 from .motion import load_motion
 from .runtime import Run,event,gpu_lock,json_write,supervise
 
 
 def environment_python(cfg,name):
-    return Path(sys.executable).parents[2]/cfg['baselines'][name]['environment']/'bin/python'
+    return environment_root(cfg,name)/'bin/python'
 
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description='A/B/E/H source-backed baseline experiments')
-    parser.add_argument('action',choices=['audit','prepare','demo','evaluate','train-smoke'])
+    parser.add_argument('action',choices=['audit','prepare','demo','evaluate','evaluate-native','train-smoke'])
     parser.add_argument('--baseline',required=True,choices=['all','motionlcm','omnicontrol','chois','ardy','kimodo'])
     parser.add_argument('--config',default=None)
     parser.add_argument('--scenario',default='official')
     parser.add_argument('--seed',type=int,default=None,help='Omit to run configured three seeds')
     parser.add_argument('--dry-run',action='store_true')
-    parser.add_argument('--prepare-part',choices=['assets','environment','all','text-access'],default='assets')
+    parser.add_argument('--prepare-part',choices=['source','assets','environment','all','text-access'],default='assets')
     parser.add_argument('--asset',action='append',help='Prepare only selected archive name, model, text or checkpoint; repeat for several')
     parser.add_argument('--input',help='Canonical motion NPZ for evaluate')
     parser.add_argument('--official-protocol',help='Provenance manifest for official distribution embeddings; independent of demo metrics')
     parser.add_argument('--benchmark',action='store_true',help='Separate cold run, warmup 3, measured 20')
     parser.add_argument('--variant',choices=['native','cached','fp16','offload'],default='native')
+    parser.add_argument('--profile',choices=['smoke','stratified','full'],default='smoke',help='Native evaluation depth; full is preflight-only, stratified is Kimodo-only')
     args=parser.parse_args(argv)
     cfg=load_config(args.config)
     for spec in cfg['baselines'].values():
@@ -38,17 +39,25 @@ def main(argv=None):
         parser.error('evaluate requires --input or --official-protocol')
     if args.official_protocol:
         cfg['_evaluation_protocol']=str(Path(args.official_protocol).resolve())
+    cfg['_evaluation_profile']=args.profile
+    if args.profile=='stratified':
+        # 1,856 raw + 416 correction cases, followed by TMR and official
+        # evaluation, is bounded but can approach six hours on a 16 GiB card.
+        # Keep a two-hour watchdog margin; resume skips completed motions.
+        cfg['resources']['timeout_seconds']=28800
     scene=scenario(args.scenario)
     if args.action=='train-smoke' and args.scenario=='official':
         scene=scenario('reach')
     if args.dry_run:
         print(json.dumps({'action':args.action,'baselines':names,'scenario':scene,'seeds':cfg['seeds'] if args.seed is None else [args.seed],
                           'prepare_part':args.prepare_part,'worker_environments':{name:str(environment_python(cfg,name)) for name in names},
+                          'evaluation_profile':args.profile,
                           'training_policy':'fail closed unless reviewed evidence and bound fit current budgets','mutations':False},indent=2,ensure_ascii=False))
         return 0
     results=[]
     for name in names:
-        seeds=(cfg['seeds'] if args.seed is None else [args.seed]) if args.action=='demo' else [args.seed or 0]
+        repeated=args.action=='demo' or (args.action=='evaluate-native' and args.profile=='smoke')
+        seeds=(cfg['seeds'] if args.seed is None else [args.seed]) if repeated else [args.seed or 0]
         for seed in seeds:
             run=Run(cfg,name,args.action,scene,seed,sys.argv)
             try:
@@ -62,7 +71,8 @@ def main(argv=None):
                     result=run.finish('success',input=str(Path(args.input).resolve()))
                 else:
                     is_prepare=args.action=='prepare'
-                    python=Path(sys.executable) if is_prepare else environment_python(cfg,name)
+                    host_only=is_prepare or (args.action=='evaluate-native' and args.profile=='full')
+                    python=Path(sys.executable) if host_only else environment_python(cfg,name)
                     if not python.exists():
                         result=run.finish('missing_resources',f'Dedicated environment {cfg["baselines"][name]["environment"]} missing; use prepare --prepare-part environment')
                     else:
@@ -70,7 +80,14 @@ def main(argv=None):
                         if args.official_protocol:
                             from .official_eval import preflight
                             preflight(cfg,name,args.official_protocol)
-                        elif not is_prepare:
+                        elif args.action=='evaluate-native' and args.profile=='stratified':
+                            if name!='kimodo':
+                                raise Unsupported('stratified native evaluation is currently Kimodo-only')
+                            from .native_eval import stratified_preflight
+                            check=stratified_preflight(cfg)
+                            if check['status']!='ready':
+                                raise MissingResources(json.dumps(check['missing'],ensure_ascii=False))
+                        elif not is_prepare and not (args.action=='evaluate-native' and args.profile=='full'):
                             adapter=create_adapter(cfg,name,run.path,scene,seed)
                             if args.action=='train-smoke':
                                 from .training import preflight_training
@@ -85,7 +102,7 @@ def main(argv=None):
                                 command+=['--asset',asset]
                             from .downloads import policy
                             result=supervise(run,command,cfg,gpu=False,timeout=policy().get('download_timeout_seconds',3600)+3600)
-                        elif args.official_protocol:
+                        elif args.official_protocol or (args.action=='evaluate-native' and args.profile=='full'):
                             result=supervise(run,command,cfg,gpu=False)
                         else:
                             with gpu_lock(cfg):

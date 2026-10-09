@@ -4,6 +4,16 @@ from pathlib import Path
 import numpy as np
 
 HUMANML_NAMES = ['pelvis','left_hip','right_hip','spine1','left_knee','right_knee','spine2','left_ankle','right_ankle','spine3','left_foot','right_foot','neck','left_collar','right_collar','head','left_shoulder','right_shoulder','left_elbow','right_elbow','left_wrist','right_wrist']
+SOMA77_NAMES = ['pelvis','spine1','spine2','spine3','neck','Neck2','head','HeadEnd','Jaw','LeftEye','RightEye',
+    'LeftShoulder','left_shoulder','left_elbow','left_wrist','LeftHandThumb1','LeftHandThumb2','LeftHandThumb3','LeftHandThumbEnd',
+    'LeftHandIndex1','LeftHandIndex2','LeftHandIndex3','LeftHandIndex4','LeftHandIndexEnd','LeftHandMiddle1','LeftHandMiddle2',
+    'LeftHandMiddle3','LeftHandMiddle4','LeftHandMiddleEnd','LeftHandRing1','LeftHandRing2','LeftHandRing3','LeftHandRing4',
+    'LeftHandRingEnd','LeftHandPinky1','LeftHandPinky2','LeftHandPinky3','LeftHandPinky4','LeftHandPinkyEnd','RightShoulder',
+    'right_shoulder','right_elbow','right_wrist','RightHandThumb1','RightHandThumb2','RightHandThumb3','RightHandThumbEnd',
+    'RightHandIndex1','RightHandIndex2','RightHandIndex3','RightHandIndex4','RightHandIndexEnd','RightHandMiddle1','RightHandMiddle2',
+    'RightHandMiddle3','RightHandMiddle4','RightHandMiddleEnd','RightHandRing1','RightHandRing2','RightHandRing3','RightHandRing4',
+    'RightHandRingEnd','RightHandPinky1','RightHandPinky2','RightHandPinky3','RightHandPinky4','RightHandPinkyEnd',
+    'left_hip','left_knee','left_ankle','left_foot','LeftToeEnd','right_hip','right_knee','right_ankle','right_foot','RightToeEnd']
 # A proper rotation maps native (x,y,z) Y-up to (x,-z,y) Z-up.
 Y_TO_Z = np.array([[1.,0,0],[0,0,-1],[0,1,0]])
 
