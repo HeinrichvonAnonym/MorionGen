@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "purpose": "Pretrained native motor/physics-loop component effects; no retraining prerequisite",
+  "artifact_policy": {
+    "eager_mp4_for_matrix": false,
+    "reason": "Save full canonical motion and metrics for every run; render reviewed report cases from those arrays. CPU video encoding must not hold a GPU lease after inference. Existing videos remain untouched."
+  },
+  "shared_controls": ["checkpoint", "initial state", "task inputs", "seed", "motion duration", "metric definitions"],
+  "report_separately": ["native component effects", "project adaptations", "published results"],
+  "methods": {
+    "motionlcm": {
+      "evaluation_domain": "12 个固定 reach 几何任务：左右腕 × 2 个前向距离 × 3 个高度，文本为对应手向前伸；每任务 5 个 seed。保持原生 100 帧 / 20 FPS。不是 12 类活动或任意关节、任意文本的覆盖。",
+      "loop": "spatial hint -> trajectory encoder/ControlNet -> denoising -> VAE output; no native execution feedback",
+      "intervention": "ControlNet residual contribution with target hints retained",
+      "estimand": "Contribution of trained control branch to A/E/H in the fixed checkpoint",
+      "exclude": "Project rolling wrapper from native B scores"
+    },
+    "omnicontrol": {
+      "evaluation_domain": "同样的 12 个左右腕 reach 目标，比较 realism × spatial 的四个条件；保持原生 196 帧 / 20 FPS。该稀疏位置矩阵不等于已穷尽全部轨迹约束族。",
+      "loop": "spatial hints -> realism branch and geometry-guided denoising -> reconstructed joints",
+      "intervention": "realism branch x spatial guidance, retaining identical target information",
+      "estimand": "Individual and interaction effects of two inference control mechanisms on A/E/H",
+      "exclude": "Treating extracted backbone as unchanged original MDM"
+    },
+    "chois": {
+      "evaluation_domain": "预先固定 12 个官方人—物窗口，涉及 12 个物体和 2 个被试；每窗口 120 帧 / 30 FPS、5 个 seed。窗口覆盖并不构成跨被试总体泛化或力学抓握测试。",
+      "loop": "text/object/initial-pose/waypoints -> joint denoising with geometric guidance -> human and object motion",
+      "intervention": "native inference guidance enabled/disabled with identical inputs",
+      "estimand": "Guidance contribution to contact, object constraints, posture and runtime",
+      "exclude": "Calling geometric contact guidance a force simulation"
+    },
+    "ardy": {
+      "evaluation_domain": "12 条预先给定的根路径：4 个方向 × 3 组前进／后退速度；20 秒、第 5 秒 forward→backward 文本更新。不是 12 类语义活动，也不是运行后才揭示的新空间目标。",
+      "loop": "generated/corrected history plus text updates and predeclared Root2D waypoints -> hybrid root/body generator -> committed motion -> next model history; no physical execution sensor",
+      "intervention": "native history context and native optional correction; preserve event and buffer timing",
+      "estimand": "History/correction contributions to continuity, response, constraints and runtime",
+      "exclude": "G1 robot branch and treating horizon checkpoints as matched structural training"
+    },
+    "kimodo": {
+      "evaluation_domain": "复用 1,856 个原生 raw 分层 case 与其中 416 对 correction，按位置、旋转、根轨迹等约束族展示。416 对来自 385 个源 BVH，重叠片段和不同约束不被当成独立源动作。",
+      "loop": "text/constraints -> root/body denoising -> optional geometric correction -> output; no native execution-state loop",
+      "intervention": "paired native correction on/off, stratified by constraint family",
+      "estimand": "Correction contribution to A/E/H; reuse valid existing416pairs before adding evidence",
+      "exclude": "RP-vs-SEED as architecture causality"
+    },
+    "dart": {
+      "evaluation_domain": "原生 ReachLocation 策略，12 个根目标几何任务：4 个方向 × 3 个距离，20 秒、第 5 秒目标切换。不是障碍导航、扰动恢复或动力学站立测试。",
+      "loop": "native current motion state and goal -> learned policy -> diffusion latent action -> generated primitive -> native state update",
+      "intervention": "native goal update/freeze with state update retained and explicitly labeled",
+      "estimand": "Goal feedback contribution to B/E/H; not total feedback or physical recovery",
+      "exclude": "Project extrapolated state wrapper as identical native env execution"
+    },
+    "primal": {
+      "evaluation_domain": "12 个初态 × 5 个 seed × 8 个条件：站立与两种长度的模型生成热启动，共 8 个共享来源重采样组；每条 20 秒。没有外部目标更新接口，不补造目标成功率。",
+      "loop": "last pose plus predicted joints/velocity -> optional FK seed reprojection -> diffusion primitive -> ground snap -> inertialization -> next state; two frames bootstrap the first primitive",
+      "intervention": "ground snap x reprojection x inertialization,2x2x2, base checkpoint with navigation control disabled",
+      "estimand": "Native geometric pipeline main and interaction effects on motion quality and runtime",
+      "exclude": "Project goal-to-velocity navigation as native spatial model"
+    },
+    "closd": {
+      "evaluation_domain": "完整 SMPL 人体 PhysX 系统中的原生 REACH 任务，4 个方向 × 3 个距离；每条 600 步 / 30 FPS。未以本轮到达结果代表坐下、起身、交互或外力扰动任务。",
+      "loop": "simulated pose -> DiP reference -> PHC tracking action -> IsaacGym human dynamics -> simulated pose; tracker also receives simulation state",
+      "intervention": "native context_switch_prob0 vs1: after common simulation bootstrap, simulation prefix vs predicted prefix; PHC simulation-state feedback retained in both",
+      "estimand": "Planner simulation-feedback contribution with the same tracker and generator",
+      "exclude": "Standalone DiP or an unassessed engine port as full native CLoSD"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "method": "omnicontrol",
+  "purpose": "Coverage amendment: original 12 tasks constrain one wrist at one frame, not a trajectory. Keep domains separate.",
+  "sides": ["right", "left"],
+  "paths": ["line", "horizontal_arc", "vertical_arc"],
+  "amplitudes_m": [0.1, 0.2],
+  "anchor_frames": [20, 40, 60, 80, 100, 120, 140, 160, 180],
+  "fps": 20,
+  "frames": 196,
+  "center_m": [0.35, 0.6, 1.2],
+  "seeds": [20, 21, 22, 23, 24],
+  "conditions": [{"realism": 0, "spatial": 0}, {"realism": 0, "spatial": 1}, {"realism": 1, "spatial": 0}, {"realism": 1, "spatial": 1}],
+  "metric_scope": "Nine exact world-space wrist anchors; score only constrained frames. The path between anchors is not constrained. No physical reachability guarantee; failures remain in denominators.",
+  "sampling": "Twelve geometries fixed before any trajectory result. Five paired noise seeds, randomized condition order per block. Separate 60-block trajectory estimand; not pooled with single-point tasks."
+}

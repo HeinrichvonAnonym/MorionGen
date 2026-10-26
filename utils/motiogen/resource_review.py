@@ -12,6 +12,8 @@ def inference_review(adapter):
     if not path.exists():
         raise ResourceGate('No reviewed inference memory bound: provisional estimates cannot authorize allocation')
     entry=json.loads(path.read_text()).get(adapter.name)
+    if adapter.name=='ardy' and adapter.cfg.get('_validated_prompt_cache'):
+        entry=entry.get('cached_prompt_profile') if entry else None
     if entry and 'profiles' in entry:
         profile='reconstruction' if adapter.scene.get('kind')=='reconstruction' else 'full'
         entry=entry['profiles'].get(profile)

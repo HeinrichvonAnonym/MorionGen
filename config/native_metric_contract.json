@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "root_goal_radius_m": 0.3,
+  "root_goal_hold_seconds": 0.5,
+  "root_stationary_speed_m_s": 0.1,
+  "root_dwell_tail_seconds": 2.0,
+  "root_dwell_basis": "Separate final two-second near-goal occupancy and near-goal speed <=0.1 m/s from transient 0.5-second arrival; declared engineering threshold, not an official universal metric",
+  "root_goal_basis": "Retain the project's existing score_root_goals radius and hold duration; engineering threshold, not a clinical or universal benchmark claim",
+  "foot_height_thresholds_m": [0.03, 0.05, 0.1],
+  "foot_speed_thresholds_m_s": [0.1, 0.2],
+  "foot_contact_basis": "Sensitivity analysis using absolute skeletal foot-joint height around world Z=0; kinematic candidate contact, not measured contact force",
+  "floor_penetration_threshold_m": 0.02,
+  "physics_contact_force_thresholds_n": [1.0, 5.0, 20.0],
+  "physics_contact_basis": "CLoSD native net rigid-body contact force; positive vertical support force, thresholds are engineering sensitivity settings. Foot-body origin translation is not contact-point slip velocity. Nonfoot net contact is not by itself a fall.",
+  "bootstrap_repetitions": 2000,
+  "bootstrap_seed": 20261024,
+  "chois_native_units": {
+    "mean_lhand_jpe":"mm", "mean_rhand_jpe":"mm", "mean_hand_jpe":"mm",
+    "mean_mpjpe":"mm", "mean_mpvpe":"mm", "mean_root_trans_err":"mm",
+    "mean_rot_dist":"Frobenius (dimensionless)", "mean_obj_rot_dist":"Frobenius (dimensionless)",
+    "mean_floor_height":"m", "mean_gt_floor_height":"m",
+    "mean_fsliding_jnts":"height-weighted mm/frame", "mean_gt_fsliding_jnts":"height-weighted mm/frame",
+    "mean_contact_percent":"fraction", "mean_gt_contact_percent":"fraction",
+    "mean_contact_precision":"fraction", "mean_contact_recall":"fraction",
+    "mean_contact_acc":"fraction", "mean_contact_f1_score":"fraction",
+    "mean_obj_com_pos_err":"mm", "mean_start_obj_com_pos_err":"mm",
+    "mean_end_obj_com_pos_err":"mm", "mean_waypoints_xy_pos_err":"mm",
+    "mean_penetration_score":"m", "mean_gt_penetration_score":"m",
+    "mean_hand_penetration_score":"m", "mean_gt_hand_penetration_score":"m"
+  },
+  "chois_metric_source":"chois_release/evaluation_metrics.py:16-26,115-158,395-422,537-550. Rotation is mean ||I-Rpred inverse(Rgt)||F, not degrees or radians. Raw predicted object matrices are separately quaternion-projected for mesh geometry in trainer_chois.py:2618-2620.",
+  "independence": "Paired differences within task and seed; bootstrap task-level means, not individual frames, constraints, or duplicated clock trajectories"
+}

@@ -51,23 +51,52 @@ def main():
             if not torch.cuda.is_available():
                 raise MissingResources('CUDA not available in the dedicated environment')
             repo=repo_root(cfg,name); os.chdir(repo); sys.path.insert(0,str(repo))
-            adapter=create_adapter(cfg,name,path,scene,seed); adapter.preflight()
+            adapter=create_adapter(cfg,name,path,scene,seed)
+            if cfg.get('_frozen_prompt_cache'):
+                if name!='ardy':raise ValueError('Only ARDY has a reviewed required-hit cache profile')
+                from motiogen.prompt_cache_review import install_guard
+                install_guard(cfg,name,scene,path)
+            adapter.preflight()
             if action=='train-smoke':
                 from motiogen.training import preflight_training
                 preflight_training(adapter)
+            weight_binding=None
+            if cfg.get('_intervention') is not None:
+                from motiogen.weight_identity import bind,verify_unchanged
+                weight_binding=bind(cfg,name,path)
             adapter.load()
+            intervention = None
+            if cfg.get('_intervention') is not None:
+                from motiogen.interventions import install
+                intervention = install(adapter, cfg['_intervention'])
+            if cfg.get('_benchmark_native_sampler'):
+                from motiogen.sampler_timing import install as install_sampler_timing
+                install_sampler_timing(adapter,int(cfg['_benchmark_native_sampler']))
             if action=='train-smoke':
                 from motiogen.training import train_smoke
                 result=train_smoke(adapter)
             else:
                 output=adapter.run(args.benchmark)
+                if weight_binding is not None:verify_unchanged(weight_binding)
+                if intervention is not None:
+                    json_write(path/'intervention.json', intervention)
+                    if not intervention['calls'] or not all(intervention['calls'].values()):
+                        raise RuntimeError('Requested intervention did not execute')
                 common=evaluate(load_motion(output),scene,metric_policy)
                 json_write(path/'metrics.json',common)
                 for extra in ('motion_pre_stitch.npz','motion_postprocess.npz'):
                     if (path/extra).exists():
                         json_write(path/(extra+'.metrics.json'),evaluate(load_motion(path/extra),scene,metric_policy))
-                from motiogen.visualize import render
-                render(load_motion(output),scene,path/'motion.mp4')
+                from motiogen.runtime import checksum
+                artifact_policy_path=ROOT/'config/native_component_experiments.json'
+                artifact_policy=json.loads(artifact_policy_path.read_text())['artifact_policy'] if intervention is not None else {'eager_mp4_for_matrix':True}
+                if artifact_policy['eager_mp4_for_matrix']:
+                    from motiogen.visualize import render
+                    render(load_motion(output),scene,path/'motion.mp4')
+                json_write(path/'artifact_policy.json',{'policy':artifact_policy,
+                    'policy_sha256':checksum(artifact_policy_path) if intervention is not None else None,
+                    'motion_source':str(output),'mp4_created':(path/'motion.mp4').exists(),
+                    'scope':'Post-inference presentation only; no model output, RNG or scientific metric is changed'})
                 timing=adapter.timing_summary()
                 cold=[x for x in adapter.stages if x.get('cold',False) and x['stage']=='generation']
                 measured=[x['seconds'] for x in adapter.stages if x['stage'] in ('generation','replan') and not x.get('warmup',False) and not x.get('cold',False)]

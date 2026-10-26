@@ -719,7 +719,8 @@ class Chois(Adapter):
         # selected batch=1 window inside this run directory.
         val.dest_obj_bps_npy_folder=str(self.path/'raw/chois_bps')
         Path(val.dest_obj_bps_npy_folder).mkdir(parents=True,exist_ok=True)
-        entry=val.window_data_dict[0]
+        window_index=int(self.scene.get('native_window_index',0))
+        entry=val.window_data_dict[window_index]
         seq_name=entry['seq_name']; object_name=seq_name.split('_')[1]
         bps_path=Path(val.dest_obj_bps_npy_folder)/(seq_name+'_'+str(entry['ori_w_idx'])+'.npy')
         with self.timed('input_bps_prepare'),torch.no_grad():
@@ -731,7 +732,7 @@ class Chois(Adapter):
             np.save(bps_path,object_bps.detach().cpu().numpy())
         class OneSample(torch.utils.data.Dataset):
             def __len__(self): return 1
-            def __getitem__(self,index): return val[0]
+            def __getitem__(self,index): return val[window_index]
             def __getattr__(self,name): return getattr(val,name)
         trainer.val_ds=OneSample(); trainer.ds=trainer.val_ds; trainer.bm_dict=val.bm_dict
         clip_load=upstream.clip.load

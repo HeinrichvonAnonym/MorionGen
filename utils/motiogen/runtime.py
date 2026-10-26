@@ -47,16 +47,18 @@ def command_output(command, cwd=None):
         return {'returncode': None, 'stdout': '', 'stderr': f'{type(exc).__name__}: {exc}'}
 
 
-def gpu_snapshot():
+def gpu_snapshot(device=None):
     try:
         result = command_output(['nvidia-smi', '--query-gpu=index,memory.total,memory.free,memory.used', '--format=csv,noheader,nounits'])
         if result['returncode']:
             return {'available': False, 'error': result['stderr']}
-        # GPU 0 is the explicit device used by this single-GPU framework.
-        line = result['stdout'].splitlines()[0]
+        device = str(device if device is not None else os.environ.get('CUDA_VISIBLE_DEVICES', '0'))
+        if not device.isdigit():
+            raise ValueError('Exactly one numeric physical GPU index is required')
+        line = next(line for line in result['stdout'].splitlines() if line.split(',')[0].strip() == device)
         index, total, free, used = [int(x.strip()) for x in line.split(',')]
         return {'available': True, 'index': index, 'total_bytes': total * 1024 ** 2, 'free_bytes': free * 1024 ** 2, 'used_bytes': used * 1024 ** 2}
-    except (OSError, ValueError, subprocess.TimeoutExpired, IndexError) as exc:
+    except (OSError, ValueError, subprocess.TimeoutExpired, IndexError, StopIteration) as exc:
         return {'available': False, 'error': str(exc)}
 
 
@@ -70,7 +72,7 @@ def memory_controller():
 def budgets(cfg):
     r = cfg['resources']
     ram = psutil.virtual_memory()
-    gpu = gpu_snapshot()
+    gpu = gpu_snapshot(cfg.get('gpu_index'))
     storage = data_root(cfg)
     storage.mkdir(parents=True, exist_ok=True)
     disk = psutil.disk_usage(storage)
@@ -127,7 +129,8 @@ class Run:
 
 @contextlib.contextmanager
 def gpu_lock(cfg):
-    path = ROOT / cfg['run_root'] / '.gpu.lock'
+    device = cfg.get('gpu_index', os.environ.get('CUDA_VISIBLE_DEVICES', '0'))
+    path = ROOT / cfg['run_root'] / f'.gpu-{device}.lock'
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open('a') as handle:
         fcntl.flock(handle, fcntl.LOCK_EX)
@@ -163,7 +166,8 @@ def supervise(run, command, cfg, cwd=ROOT, gpu=False, extra_env=None, timeout=No
         return run.finish('resource_terminated', 'RAM/VRAM reserve unavailable')
     env = os.environ.copy()
     env.update({'PYTHONDONTWRITEBYTECODE': '1', 'PYTHONUNBUFFERED': '1', 'TOKENIZERS_PARALLELISM': 'false',
-                'MPLCONFIGDIR': str(run.path / 'cache/matplotlib'), 'WANDB_MODE': 'offline', 'CUDA_VISIBLE_DEVICES': '0'})
+                'MPLCONFIGDIR': str(run.path / 'cache/matplotlib'), 'WANDB_MODE': 'offline',
+                'CUDA_VISIBLE_DEVICES': str(cfg.get('gpu_index', os.environ.get('CUDA_VISIBLE_DEVICES', '0')))})
     if run.manifest['action']!='prepare':
         env.update({'HF_HUB_OFFLINE':'1','TRANSFORMERS_OFFLINE':'1'})
     if extra_env:
@@ -184,7 +188,7 @@ def supervise(run, command, cfg, cwd=ROOT, gpu=False, extra_env=None, timeout=No
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 rss = 0
             ram = psutil.virtual_memory()
-            gs = gpu_snapshot() if gpu else {'available': False}
+            gs = gpu_snapshot(cfg.get('gpu_index')) if gpu else {'available': False}
             elapsed = time.monotonic() - start
             peak_ram = max(peak_ram, rss)
             peak_gpu_used = max(peak_gpu_used, gs.get('used_bytes', 0))

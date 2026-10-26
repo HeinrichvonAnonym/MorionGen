@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "status": "pretrained_native_component_experiments",
+  "experiment_started_at": "2026-10-24T05:24:08Z",
+  "experiment_deadline_at": "2026-10-25T17:24:08Z",
+  "budget": {
+    "wall_hours": 36,
+    "gpu_count": 2,
+    "gpu_model": "RTX A4000",
+    "gpu_hours_upper_bound": 72,
+    "start_event": "first redo pretrained inference experiment",
+    "exclude": ["read-only audit", "requirements clarification"],
+    "on_conflict": "present measured cost and ask user; never silently reduce coverage"
+  },
+  "required_methods": ["motionlcm", "omnicontrol", "chois", "ardy", "kimodo", "dart", "primal", "closd"],
+  "required_evidence": {
+    "capabilities": "native only; project-added controllers must not count as native ability",
+    "architecture": "source-grounded backbone for each method; pipeline means motor/dynamics controller, execution and state-feedback loop, NOT training-data processing",
+    "causality": "paired native pretrained component and feedback-path interventions; estimate effects in the fixed pretrained system, not superiority of retrained architectures",
+    "training_policy": "Retraining is not required and missing training data must not block pretrained inference",
+    "metrics": ["A", "B", "E", "H"],
+    "E": "1007 kinematic metrics plus RULA/REBA with complete inputs and explicit load assumptions",
+    "clocks": ["realtime", "paused"],
+    "scope": "human motion only, no humanoid robots",
+    "report_floor": "1007 content and interaction coverage; retain individual cases, comparable motion visuals, failures and metric explanations"
+  },
+  "quarantine": {
+    "directory": "develop_logs/rejected_reports_20261024",
+    "preserve": ["1007 report", "1008 report", "original experimental data", "experimental code"],
+    "files_sha256": {
+      "20261024_feedback_survey.html": "462b12845bafca43b8ac579af7551b1f68f5dbbab40ea98461ed54c2b6189e78",
+      "20261024_primal_feedback_ablation.html": "6f0b048febed1c309eb17af2362d7c7b416bf35ebe197dc6b4aa2089692d866b",
+      "motiongen_survey.html": "27bb6d36a0c0b65b68fe4a33fda0635d910b29f7dd5fdfa87851c102ed496e18"
+    }
+  },
+  "engineering_requirements": [
+    "One declarative method registry and experiment plan; do not hardcode a five-method CLI beside standalone workers",
+    "Separate native method, representation adapter, experiment intervention, executor and metric evaluator",
+    "Persist exact intervention, training/data/checkpoint identities and causal estimand",
+    "Budget uses a shared wall-clock deadline and per-device allocation, not summed GPU-hours as elapsed time",
+    "Declare unsupported native interfaces with source evidence; never substitute a project-added capability",
+    "Resume only when protocol, inputs, code and checkpoint identities match",
+    "Resource pilots support measurement; do not demand fabricated static bounds or bypass safety checks"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "scope": "Reviewed native inference dependency paths, not training data or every unused published checkpoint. Paths relative to data_root/outputs/assets.",
+  "motionlcm": ["motionlcm/experiments_control/spatial/motionlcm_humanml/motionlcm_humanml_s_all.ckpt", "text/sentence-t5-large/model.safetensors"],
+  "omnicontrol": ["omnicontrol/omnicontrol_ckpt/model_humanml3d.pt", "omnicontrol/ViT-B-32.pt"],
+  "chois": ["chois/pretrained_models/model-10.pt", "omnicontrol/ViT-B-32.pt", "chois/processed_data/smpl_all_models/smplx/SMPLX_*.npz", "chois/processed_data/smpl_all_models/smplh_amass/*/model.npz"],
+  "ardy": ["ardy/ARDY-Core-RP-20FPS-Horizon8/*.safetensors", "ardy/ARDY-Core-RP-20FPS-Horizon8/config.yaml", "ardy/ARDY-Core-RP-20FPS-Horizon8/stats/**/*.npy"],
+  "kimodo": ["kimodo/Kimodo-SOMA-RP-v1.1/model.safetensors", "kimodo/Kimodo-SOMA-RP-v1.1/config.yaml", "kimodo/Kimodo-SOMA-RP-v1.1/stats/**/*.npy"],
+  "primal": ["primal-official/motion_diffuser_ar/runs/silu_anchor/tensorboard/version_0/checkpoints/epoch=29999-step=480000.ckpt", "primal-official/motion_diffuser_ar/runs/silu_anchor/tensorboard/version_0/hparams.yaml", "primal-registry/models/SMPLX/neutral/SMPLX_neutral.npz", "dart-official/data/stand.pkl"],
+  "dart": ["dart-official/policy_train/reach_location_mld/fixtext_repeat_floor100_hop10_skate100/iter_5000.pth", "dart-official/policy_train/reach_location_mld/fixtext_repeat_floor100_hop10_skate100/args.yaml", "dart-official/mvae/mvae_fps_clip/checkpoint_200000.pt", "dart-official/mld_denoiser/mld_fps_clip_euler/checkpoint_300000.pt", "smplx-locked-head-compatible/SMPLX_*.npz", "omnicontrol/ViT-B-32.pt", "dart-official/data/stand.pkl"],
+  "closd": ["closd-official/checkpoints/closd/CLoSD_multitask_finetune/Humanoid.pth", "closd-official/checkpoints/dip/DiP_multi-target_10steps_context20_predict40/model000300000.pt", "closd-distilbert/model.safetensors", "closd-official/data/smpl/SMPL_*.pkl"]
+}

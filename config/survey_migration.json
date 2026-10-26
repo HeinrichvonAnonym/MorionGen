@@ -1,0 +1,27 @@
+{
+  "source": "develop_logs/notes/20261007_abeh_baseline_interactive_report.html",
+  "sections": [
+    {"id":"summary","original":"一眼看懂这轮实验","current":"首轮发现、机制分类、能力与失败分母","treatment":"旧五方法结论保留为历史；新增三方法后，不再沿用“ARDY 唯一原生在线”。"},
+    {"id":"supplement","original":"Kimodo GT / Raw / Correction 与 KIT 补充","current":"Kimodo 416 对、历史 Raw / TMR / KIT 专节、四组配对动画","treatment":"复算 1856 个 raw 数值、416 对身份与运动学指标、830 个 KIT 分布；历史 TMR 保留原评估范围。"},
+    {"id":"matrix","original":"实验覆盖矩阵","current":"八方法机制表、每方法 A/B/E/H、能力分母","treatment":"原生接口与本轮测量分开；项目 rolling 不再充当原生 B 能力。"},
+    {"id":"performance","original":"速度和显存","current":"每方法 H、原生冷暖计时、调度耗时","treatment":"区分冷启动、缓存命中、模型请求、执行步与排队；不跨任务排速度总榜。"},
+    {"id":"experiments","original":"每个 baseline 实际跑了什么","current":"八方法干预说明、逐任务 / seed / 时钟指标与原始记录","treatment":"原 20 个 smoke case 保留；本轮预训练组件实验另列，不混入旧包装结果。"},
+    {"id":"tradeoff","original":"命中目标不代表动作可接受","current":"配对收益—代价散点、析因主效应与交互、足滑敏感性","treatment":"准确性与 jerk 同时报告；不能把姿态代理称为完整 RULA/REBA。"},
+    {"id":"gallery","original":"真实生成结果","current":"统一尺度双面板动画与原 MP4 播放器","treatment":"保留旧五方法视频；新增条件配对，不独立缩放骨架。"},
+    {"id":"case-evidence","original":"20 个 case 与逐指标解释","current":"原交互 case 全保留；新增原生逐 case A/B/E/H 与证据链接","treatment":"旧样本不删除、不重复计入扩样；新指标单位与测量时点显式解释。"},
+    {"id":"failed-cases","original":"失败、终止与被替代 case","current":"历史失败表、当前进程失败表与能力失败分母","treatment":"资源拒绝不是模型任务失败；ARDY 标量 CFG 错误首跑退出科学结论。"},
+    {"id":"compare","original":"按用途比较","current":"八方法用途选择器","treatment":"区分原生接口适配与本机实测表现；不同骨架与任务不做统一总分。"},
+    {"id":"limits","original":"实验边界与证据入口","current":"方法排除项、统计口径、权重身份证据与验收边界","treatment":"固定预训练组件效应不等于重训架构因果；双时钟同轨迹不翻倍独立样本。"},
+    {"id":"supplement-cases","original":"GT / Raw / Correction 统一标尺案例","current":"原 GT / Raw / Correction 静态对照图完整保留；四个预定约束族新增 Raw / Correction 双面板动画","treatment":"原件是图而非视频。新案例按约束族与词典序确定，不按收益最大挑选。该子节属于 supplement，不虚构新的原页面 section。"}
+  ],
+  "uses": [
+    {"method":"motionlcm","fit":"短离线文本生成、已有 ControlNet 的空间关节条件接口","not_fit":"原生执行状态反馈或持续任务更新；项目 rolling 不计入","question":"控制残差是否降低位置误差，是否增加姿态或速度代价？"},
+    {"method":"omnicontrol","fit":"稀疏关节位置和轨迹约束的离线生成","not_fit":"把多步去噪当成实时执行闭环；低显存不等于低时延","question":"几何 guidance 与 realism 各自贡献多少，组合是否改善 jerk 代价？"},
+    {"method":"chois","fit":"带物体几何、初态与路点的人—物联合生成","not_fit":"力反馈抓握、接触稳定性的动力学保证","question":"几何 guidance 能否同时改善接触、物体目标和穿透，而非仅降低平均手物距离？"},
+    {"method":"ardy","fit":"Core 人体流式生成、文本更新与原生根轨迹约束","not_fit":"把预先给定路点当未知在线空间命令；不包含 G1 机器人分支","question":"历史长度与 correction 对约束、边界连续性、响应和足滑有哪些独立及交互效应？"},
+    {"method":"kimodo","fit":"SOMA 人体位置、旋转、根轨迹、inbetweening 等约束族","not_fit":"原生执行状态递推或动力学追踪；不同 checkpoint 不能充当同训练架构消融","question":"已有 416 对中，哪些约束族受益，足滑和 jerk 的代价是多少？"},
+    {"method":"dart","fit":"原生目标条件策略驱动的连续人体运动原语","not_fit":"把运动学环境叫作刚体动力学；旧状态外推包装不计入","question":"保留状态递推时，更新目标相对冻结目标是否改善到达、驻停和响应？"},
+    {"method":"primal","fit":"基础 checkpoint 的连续人体生成与原生几何接续","not_fit":"原生导航目标控制；模型生成热启动不等于独立真实动作初态","question":"贴地、FK 重投影和惯性接续分别改善什么，组合是否引入副作用？"},
+    {"method":"closd","fit":"DiP 规划、PHC 跟踪、SMPL 人体 PhysX 执行闭环","not_fit":"单独 DiP 代替完整系统；同步步进的实时输入不等于异步硬实时","question":"同一 tracker 下，规划器接收执行状态相对预测历史是否提升成功、恢复和稳定性？"}
+  ]
+}

@@ -54,9 +54,24 @@ class ResumeTest(unittest.TestCase):
                     info=tarfile.TarInfo(name); info.size=len(payload)
                     output.addfile(info,io.BytesIO(payload))
             self.assertTrue(is_archive(archive,'processed_data.tar.gz'))
-            safe_extract(archive,target,preserve_existing=(preserved,))
+            # This unit tests archive naming and licensed links, not host capacity.
+            # Keep the production reserve intact and test its rejection separately.
+            with patch('motiogen.assets.shutil.disk_usage',return_value=Mock(free=100*1024**3)):
+                safe_extract(archive,target,preserve_existing=(preserved,))
             self.assertTrue(link.is_symlink()); self.assertEqual(licensed.read_bytes(),b'licensed')
             self.assertEqual((target/'processed_data/sample.txt').read_bytes(),b'data')
+
+    def test_extraction_preserves_disk_reserve(self):
+        directory=ROOT/'develop_logs/test_runs/.cache'
+        with tempfile.TemporaryDirectory(dir=directory) as temporary:
+            root=Path(temporary); archive=root/'tiny.tar.gz'; target=root/'assets'; target.mkdir()
+            with tarfile.open(archive,'w:gz') as output:
+                info=tarfile.TarInfo('sample.txt'); info.size=4
+                output.addfile(info,io.BytesIO(b'data'))
+            with patch('motiogen.assets.shutil.disk_usage',return_value=Mock(free=79*1024**3)):
+                with self.assertRaisesRegex(RuntimeError,'80 GiB disk reserve'):
+                    safe_extract(archive,target)
+            self.assertFalse((target/'sample.txt').exists())
 
 
 if __name__=='__main__':

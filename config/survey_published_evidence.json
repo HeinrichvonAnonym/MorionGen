@@ -1,0 +1,20 @@
+[
+  {
+    "method":"ARDY",
+    "source":"https://research.nvidia.com/labs/sil/projects/ardy/assets/ardy_paper.pdf#page=10",
+    "location":"Table 2 / Table 3，作者训练的架构对照",
+    "contrast":"完整两阶段 vs 单阶段",
+    "result":"关节位置误差 0.025 vs 0.101 m；路点误差 0.024 vs 0.164 m；约束条件足滑 0.250 vs 0.248 m/s。",
+    "meaning":"支持该论文设置下两阶段降低空间误差，不支持所有动作质量指标都改善。",
+    "boundary":"表 2 主设置对应 40 帧 horizon；本机是 Core Horizon8。论文架构重训对照不能替代本机 history × correction，也没有提供本机 A4000、RULA/REBA 收益。"
+  },
+  {
+    "method":"Kimodo",
+    "source":"https://research.nvidia.com/labs/sil/projects/kimodo/assets/kimodo_tech_report.pdf#page=14",
+    "location":"Table 1 / §6.1–6.2，作者训练的架构对照",
+    "contrast":"完整两阶段 vs 参数量相近的单阶段",
+    "result":"全身位置误差 2.67 vs 8.37 cm；末端位置 3.09 vs 10.19 cm；overview 足滑 3.87 vs 7.59 cm/s。",
+    "meaning":"支持该论文设置下根—身体分解有助于空间约束和足滑，不能将同等收益归给输出 correction。",
+    "boundary":"论文消融为 27 关节、20 FPS、8 GPU 训练；本机 SOMA 30 FPS checkpoint 不同。论文足滑为接触预测条件下速度，本机足滑比例不是同一单位或分母。"
+  }
+]
