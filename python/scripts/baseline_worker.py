@@ -56,6 +56,9 @@ def main():
                 if name!='ardy':raise ValueError('Only ARDY has a reviewed required-hit cache profile')
                 from motiogen.prompt_cache_review import install_guard
                 install_guard(cfg,name,scene,path)
+            elif cfg.get('_registered_prompt_cache'):
+                from motiogen.prompt_cache_registry import install_guard as install_registered_guard
+                install_registered_guard(cfg,name,scene,path)
             adapter.preflight()
             if action=='train-smoke':
                 from motiogen.training import preflight_training

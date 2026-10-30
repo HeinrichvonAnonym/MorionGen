@@ -44,6 +44,106 @@ def boundary_kinematics(joints,fps,boundaries):
         'boundary_jerk_rms':float(np.sqrt(np.mean(jerk[bounds-2]**2)))}
 
 
+def step_frames(fps,step_seconds=.1):
+    if not np.isfinite(fps) or fps<=0 or step_seconds<=0:raise ValueError('Positive FPS and step required')
+    return max(1,int(round(step_seconds*fps)))
+
+
+def common_step_jerk(joints,fps,step_seconds=.1):
+    """Third difference on a common time step, so 20 Hz and 30 Hz outputs compare.
+
+    Same normalisation as the archived native metric (component RMS over all
+    joints and axes); only the difference step changes from 1/FPS to ~0.1 s.
+    """
+    xyz=np.asarray(joints,float);k=step_frames(fps,step_seconds)
+    if len(xyz)<=3*k:raise ValueError('Motion shorter than three common steps')
+    d=(xyz[3*k:]-3*xyz[2*k:-k]+3*xyz[k:-2*k]-xyz[:-3*k])/(k/fps)**3
+    return float(np.sqrt(np.mean(d**2)))
+
+
+def common_step_boundary_jerk(joints,fps,boundaries,step_seconds=.1):
+    """Common-step third difference whose middle interval straddles each commit.
+
+    Samples s, s+k, s+2k, s+3k with s = b - ceil(1.5k); k = 1 reproduces the
+    native boundary_jerk_rms window (b-2 .. b+1).
+    """
+    xyz=np.asarray(joints,float);k=step_frames(fps,step_seconds);start=int(math.ceil(1.5*k))
+    bounds=np.asarray(boundaries,dtype=int);s=bounds-start
+    s=s[(s>=0)&(s+3*k<len(xyz))]
+    if not len(s):return None
+    d=(xyz[s+3*k]-3*xyz[s+2*k]+3*xyz[s+k]-xyz[s])/(k/fps)**3
+    return float(np.sqrt(np.mean(d**2)))
+
+
+def bone_length_cv(joints,names,bones):
+    """Within-clip coefficient of variation of each named bone length."""
+    xyz=np.asarray(joints,float);index={str(n):i for i,n in enumerate(names)};result={}
+    for a,b in bones:
+        if a not in index or b not in index:continue
+        length=np.linalg.norm(xyz[:,index[a]]-xyz[:,index[b]],axis=-1)
+        result[f'{a}-{b}']={'mean_m':float(length.mean()),'cv':float(length.std()/length.mean())}
+    return result
+
+
+def threshold_success(errors,thresholds=(.02,.05,.1)):
+    errors=np.asarray(errors,float)
+    return {f'success_{round(t*100)}cm':float((errors<=t).mean()) for t in thresholds}
+
+
+def facing_heading(joints,names,frame=0):
+    """Planar facing from hip and shoulder axes; degrees from +X in the Z-up report frame."""
+    xyz=np.asarray(joints,float);ix={str(n):i for i,n in enumerate(names)}
+    across=xyz[frame,ix['right_hip']]-xyz[frame,ix['left_hip']]
+    if 'right_shoulder' in ix and 'left_shoulder' in ix:across=across+xyz[frame,ix['right_shoulder']]-xyz[frame,ix['left_shoulder']]
+    forward=np.cross([0.,0.,1.],across);forward[2]=0;forward/=np.linalg.norm(forward)
+    return forward,float(np.degrees(np.arctan2(forward[1],forward[0])))
+
+
+def cluster_t_interval(values,clusters,level=.95):
+    """Equal-weight cluster means with a t interval on G-1 degrees of freedom."""
+    from scipy import stats
+    values=np.asarray(values,float);clusters=np.asarray(clusters)
+    if len(values)!=len(clusters) or not np.isfinite(values).all():
+        raise ValueError('Finite values and one cluster ID per paired result are required')
+    keys=sorted(set(clusters.tolist()))
+    means=np.array([values[clusters==k].mean() for k in keys])
+    result={'clusters':len(keys),'paired_n':len(values),'mean':float(means.mean()) if len(means) else None,'ci':None,'cluster_means':means.tolist()}
+    if len(means)>1:
+        se=means.std(ddof=1)/math.sqrt(len(means));q=float(stats.t.ppf(.5+level/2,len(means)-1))
+        result.update(se=float(se),df=len(means)-1,ci=[float(means.mean()-q*se),float(means.mean()+q*se)])
+    return result
+
+
+def sign_flip_p(cluster_means,exact_limit=24,draws=200000,seed=20261030):
+    """Two-sided sign-flip test of a zero mean over cluster means.
+
+    Exact enumeration of all 2^G sign patterns up to G = exact_limit, else a
+    seeded Monte Carlo over patterns including the observed one.
+    """
+    x=np.asarray(cluster_means,float);g=len(x)
+    if g<2 or not np.isfinite(x).all():raise ValueError('At least two finite cluster means required')
+    observed=abs(x.sum());tolerance=1e-12*max(1.,np.abs(x).sum())
+    if g<=exact_limit:
+        bits=np.arange(g,dtype=np.int64);hits=0;total=1<<g;chunk=1<<min(g,20)
+        for start in range(0,total,chunk):
+            codes=np.arange(start,min(total,start+chunk),dtype=np.int64)
+            signs=((codes[:,None]>>bits)&1)*2-1
+            hits+=int((np.abs(signs@x)>=observed-tolerance).sum())
+        return {'p':hits/total,'method':'exact','patterns':total}
+    rng=np.random.default_rng(seed)
+    signs=rng.integers(0,2,(draws,g))*2-1
+    hits=int((np.abs(signs@x)>=observed-tolerance).sum())
+    return {'p':(hits+1)/(draws+1),'method':'monte_carlo','patterns':draws}
+
+
+def holm(pvalues):
+    """Holm step-down adjusted p values in input order."""
+    p=np.asarray(pvalues,float);order=np.argsort(p);m=len(p);adjusted=np.empty(m);running=0.
+    for rank,index in enumerate(order):
+        running=max(running,min(1.,(m-rank)*p[index]));adjusted[index]=running
+    return adjusted.tolist()
+
+
 def foot_sensitivity(motion,contract):
     names=list(motion['joint_names']); required=['left_foot','right_foot']
     if not all(name in names for name in required):

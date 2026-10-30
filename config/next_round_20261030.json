@@ -1,0 +1,74 @@
+{
+  "protocol": "next_round_20261030",
+  "registered_before_results": true,
+  "deadline": "2026-11-01T12:00:00Z",
+  "report_reserve_seconds": 14400,
+  "seeds": [20, 21, 22, 23, 24],
+  "cluster_unit": "task (G = 24 per block); seeds are paired repetitions within a task, not independent clusters",
+  "pairing": "Same task and seed across every condition of a block; condition order randomized within each task-seed block with Random(1000*task+seed)",
+  "inference": {
+    "primary": "Equal-weight task means of paired differences; cluster t interval with G-1 degrees of freedom and exact two-sided sign-flip p over task means",
+    "supplementary": "Cluster bootstrap (existing clustered_interval) reported alongside, never as the decision interval",
+    "multiplicity": "One primary endpoint per block; Holm across the primary endpoints of M0 (G0) and V1 in this round",
+    "thresholds_m": [0.02, 0.05, 0.1],
+    "jerk": "Primary jerk metrics use a common 0.1 s third-difference step (common_step_jerk, common_step_boundary_jerk); native-step jerk is reported as a secondary high-frequency measure"
+  },
+  "blocks": {
+    "M0a": {
+      "question": "Why ARDY without correction misses root waypoints by 2.5-3.1 m: text-path conflict, a single sparse waypoint per window, or neither",
+      "method": "ardy",
+      "tasks": "task_geometry.ardy_path_tasks(): 8 body headings x 3 speed profiles, path reverses at 5 s",
+      "factors": {"text": ["conflict", "aligned"], "waypoints": ["sparse", "dense"], "correction": [0, 1]},
+      "cells": [["conflict", "sparse"], ["aligned", "sparse"], ["aligned", "dense"]],
+      "fixed": {"history_frames": 32, "clock": "paused", "root_margin_m": 0.04, "contact_threshold": 0.5},
+      "endpoint": "root waypoint error at registered waypoint frames (mean over windows), correction = 0; contrasts aligned-conflict (sparse) and dense-sparse (aligned)",
+      "stop_rule": "If aligned-sparse error stays above 1 m, text conflict is rejected as the main cause; if dense brings correction-off error under 0.5 m, sparse conditioning is the cause and M1 uses dense waypoints",
+      "runs": 720
+    },
+    "M0c": {
+      "question": "G0: does official ARDY correction raise boundary jerk at realistic correction magnitudes",
+      "method": "ardy",
+      "tasks": "task_geometry.ardy_offset_tasks(): 8 body headings x 3 text schedules (none, reverse at 5 s, reverse at 10 s)",
+      "target": "Per window: end root of the same-noise unconstrained prediction plus offset delta along the body-right normal of the task heading",
+      "factors": {"offset_m": [0.1, 0.25, 0.5, 1.0], "correction": [0, 1]},
+      "fixed": {"history_frames": 32, "clock": "paused", "text": "aligned", "waypoints": "sparse", "root_margin_m": 0.04},
+      "primary_endpoint": "G0 contrast: per task, mean over seeds and offsets {0.1, 0.25, 0.5} of (correction 1 - correction 0) boundary jerk at the 0.1 s step",
+      "gate": "G0 passes when the relative increase (mean paired difference / mean correction-0 value) is at least 20% and the cluster t interval excludes 0; otherwise direction A becomes a dose-response report",
+      "secondary": ["dose-response of the same contrast per offset including 1.0 m", "realised per-window correction displacement", "root waypoint error and 2/5/10 cm success", "native-step jerk", "foot sliding", "trunk inclination", "history consistency"],
+      "runs": 960
+    },
+    "V1": {
+      "question": "Is the ~1 m reach error a task-geometry artefact (180 degree heading, unreachable target) rather than a conditioning limit",
+      "methods": {"motionlcm": {"control_residual": [0, 1]}, "omnicontrol": {"realism": [0, 1], "spatial": [0, 1]}},
+      "tasks": "task_geometry.reach_tasks(): tiers reachable (0.8 arm), stepping (1.3 arm), legacy (original world targets) x 3 heights x 2 sides, plus 6 mirror cross-body targets",
+      "primary_endpoint": "MotionLCM control_residual = 1 constrained-wrist error at the target frame on the reachable tier",
+      "stop_rule": "<= 10 cm: P1 is rewritten as a target-feasibility result; > 20 cm: P1 is restored with the new number; in between: decide with the V1b aligned-text cross",
+      "secondary": ["reachable vs legacy tier error with all guidance off", "other-hand distance and chirality on the mirror tier", "frame-0 heading", "bone length CV and rigid-refit wrist error for OmniControl spatial", "0.1 s jerk", "pelvis displacement"],
+      "runs": 720
+    },
+    "V1b": {
+      "question": "Does target-direction wording change reachable-tier error",
+      "tasks": "reachable-tier tasks with low or high targets (4); prompt from task_geometry.reach_direction_prompt",
+      "methods": "as V1",
+      "runs": 120
+    },
+    "V5": {
+      "question": "Offline recomputation without GPU",
+      "items": ["v2 effects with cluster t interval and sign-flip p", "0.1 s jerk for every archived method", "PRIMAL and Kimodo raw motions: jerk step, bone length CV, correction magnitude", "MotionCorrection rebuild numeric check"]
+    }
+  },
+  "pilot": {
+    "M0": "Path task 2 (heading 90) and offset task 10 (heading 90, reverse at 5 s), seed 20, every condition; plus exact replays of two archived 20261024 ARDY runs",
+    "V1": "Reach tasks reachable-mid-right, legacy-mid-right and mirror-mid-right, seed 20, every condition",
+    "admission": "Batch is planned only after pilot_audit.json passes: finite complete outputs, legacy replay bit-identical, frame-0 heading within 20 degrees of body forward, median per-window pre-correction distance to the offset target within 20% of delta, dense mask covering every horizon frame, per-job time within 3x of estimate"
+  },
+  "conventions_not_derived": {
+    "offset_levels_m": "0.1/0.25/0.5/1.0 bracket the 0.5 m G0 limit; not derived from a task model",
+    "speed_profiles_m_s": "Reuse the 20261024 matrix profiles (0.4/-0.2, 0.2/-0.1, 0.6/-0.3)",
+    "reach_tiers": "0.8 and 1.3 arm lengths from the shoulder, elevations -30/0/+30 degrees; nominal body from 20261024 MotionLCM frame 0",
+    "mirror_target": "0.40 m forward, 0.10 m past the midline",
+    "history_frames": "32 (the shorter archived history)",
+    "root_margin_m": "0.04, the value of the native adapter; success at 5 cm is therefore not independent evidence",
+    "gate_threshold": "20% relative boundary-jerk increase, fixed in the 20261030 plan document"
+  }
+}
