@@ -1,0 +1,34 @@
+{
+  "stage": "feasibility_and_throughput",
+  "deadline": null,
+  "devices": [
+    1
+  ],
+  "jobs": [
+    {
+      "id": "smplsim-zero-torque",
+      "method": "smplsim",
+      "method_spec": {
+        "repo": "baselines/SMPLSim",
+        "environment": "motiogen-smplsim",
+        "weight_patterns": [
+          "closd-official/data/smpl/SMPL_*.pkl"
+        ],
+        "preprocessing_patterns": []
+      },
+      "timeout_seconds": 600,
+      "action": "infrastructure",
+      "require_protocol": false,
+      "command": [
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-smplsim/bin/python",
+        "/home/heinrich/MorionGen/python/scripts/smplsim_infrastructure_pilot.py",
+        "--run-dir",
+        "{run_dir}"
+      ],
+      "required_outputs": [
+        "{run_dir}/infrastructure.json"
+      ],
+      "retryable_statuses": []
+    }
+  ]
+}

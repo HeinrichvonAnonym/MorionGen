@@ -1,0 +1,70 @@
+{
+  "stage": "feasibility_and_throughput",
+  "devices": [
+    0
+  ],
+  "deadline": null,
+  "identity_files": [
+    "/home/heinrich/MorionGen/python/scripts/ardy_runtime_worker.py",
+    "/home/heinrich/MorionGen/python/scripts/reveal_runtime_event.py",
+    "/home/heinrich/MorionGen/utils/motiogen/runtime_feedback.py",
+    "/home/heinrich/MorionGen/utils/motiogen/local_llm.py",
+    "/home/heinrich/MorionGen/utils/motiogen/adapters.py",
+    "/home/heinrich/MorionGen/config/ardy_runtime_event_pilot_20261028.json"
+  ],
+  "jobs": [
+    {
+      "id": "ardy-runtime-update",
+      "method": "ardy",
+      "action": "runtime_reveal",
+      "seed": 0,
+      "timeout_seconds": 900,
+      "require_protocol": false,
+      "retryable_statuses": [],
+      "command": [
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-ardy/bin/python",
+        "/home/heinrich/MorionGen/python/scripts/run_runtime_reveal.py",
+        "--run-dir",
+        "{run_dir}",
+        "--events",
+        "/home/heinrich/MorionGen/config/ardy_runtime_event_pilot_20261028.json",
+        "--method",
+        "ardy",
+        "--clock",
+        "realtime"
+      ],
+      "required_outputs": [
+        "{run_dir}/runtime_trace.json",
+        "{run_dir}/consumption.json",
+        "{run_dir}/text_encoding.json"
+      ]
+    },
+    {
+      "id": "ardy-runtime-ignore",
+      "method": "ardy",
+      "action": "runtime_reveal",
+      "seed": 0,
+      "timeout_seconds": 900,
+      "require_protocol": false,
+      "retryable_statuses": [],
+      "command": [
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-ardy/bin/python",
+        "/home/heinrich/MorionGen/python/scripts/run_runtime_reveal.py",
+        "--run-dir",
+        "{run_dir}",
+        "--events",
+        "/home/heinrich/MorionGen/config/ardy_runtime_event_pilot_20261028.json",
+        "--method",
+        "ardy",
+        "--clock",
+        "realtime",
+        "--ignore"
+      ],
+      "required_outputs": [
+        "{run_dir}/runtime_trace.json",
+        "{run_dir}/consumption.json",
+        "{run_dir}/text_encoding.json"
+      ]
+    }
+  ]
+}

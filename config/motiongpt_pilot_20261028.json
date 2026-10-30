@@ -1,0 +1,44 @@
+{
+  "stage": "feasibility_and_throughput",
+  "deadline": null,
+  "devices": [
+    0
+  ],
+  "identity_files": [
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261028_supplement/generation_inputs.json"
+  ],
+  "jobs": [
+    {
+      "id": "motiongpt-native-sixteen",
+      "method": "motiongpt",
+      "method_spec": {
+        "repo": "baselines/MotionGPT",
+        "environment": "motiogen-motiongpt",
+        "weight_patterns": [
+          "motiongpt-official/motiongpt_s3_h3d.tar",
+          "motiongpt-flan-t5-base/model.safetensors"
+        ],
+        "preprocessing_patterns": [
+          "motiongpt-flan-t5-base/config.json",
+          "motiongpt-flan-t5-base/tokenizer.json",
+          "motiongpt-official/t2m/t2m/VQVAEV3_CB1024_CMT_H1024_NRES3/meta/*.npy"
+        ]
+      },
+      "timeout_seconds": 1200,
+      "action": "native_generation",
+      "require_protocol": false,
+      "retryable_statuses": [],
+      "command": [
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-motiongpt/bin/python",
+        "/home/heinrich/MorionGen/python/scripts/motiongpt_native_pilot.py",
+        "--run-dir",
+        "{run_dir}",
+        "--inputs",
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261028_supplement/generation_inputs.json"
+      ],
+      "required_outputs": [
+        "{run_dir}/generation.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "stage": "feasibility_and_throughput",
+  "devices": [
+    0,
+    1
+  ],
+  "deadline": null,
+  "identity_files": [
+    "/home/heinrich/MorionGen/python/scripts/dart_runtime_worker.py",
+    "/home/heinrich/MorionGen/python/scripts/reveal_runtime_event.py",
+    "/home/heinrich/MorionGen/utils/motiogen/runtime_feedback.py",
+    "/home/heinrich/MorionGen/config/runtime_event_pilot_20261028.json"
+  ],
+  "jobs": [
+    {
+      "id": "dart-realtime-update",
+      "method_spec": {"repo":"baselines/DART","environment":"motiogen-dart"},
+      "method": "dart",
+      "action": "runtime_reveal",
+      "seed": 0,
+      "command": [
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-dart/bin/python",
+        "/home/heinrich/MorionGen/python/scripts/run_runtime_reveal.py",
+        "--run-dir",
+        "{run_dir}",
+        "--events",
+        "/home/heinrich/MorionGen/config/runtime_event_pilot_20261028.json",
+        "--method",
+        "dart",
+        "--clock",
+        "realtime"
+      ],
+      "timeout_seconds": 180,
+      "require_protocol": false,
+      "retryable_statuses": [],
+      "required_outputs": [
+        "{run_dir}/runtime_trace.json",
+        "{run_dir}/consumption.json",
+        "{run_dir}/producer.json"
+      ]
+    },
+    {
+      "id": "dart-realtime-ignore",
+      "method_spec": {"repo":"baselines/DART","environment":"motiogen-dart"},
+      "method": "dart",
+      "action": "runtime_reveal",
+      "seed": 0,
+      "command": [
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-dart/bin/python",
+        "/home/heinrich/MorionGen/python/scripts/run_runtime_reveal.py",
+        "--run-dir",
+        "{run_dir}",
+        "--events",
+        "/home/heinrich/MorionGen/config/runtime_event_pilot_20261028.json",
+        "--method",
+        "dart",
+        "--clock",
+        "realtime",
+        "--ignore"
+      ],
+      "timeout_seconds": 180,
+      "require_protocol": false,
+      "retryable_statuses": [],
+      "required_outputs": [
+        "{run_dir}/runtime_trace.json",
+        "{run_dir}/consumption.json",
+        "{run_dir}/producer.json"
+      ]
+    },
+    {
+      "id": "dart-paused-update",
+      "method_spec": {"repo":"baselines/DART","environment":"motiogen-dart"},
+      "method": "dart",
+      "action": "runtime_reveal",
+      "seed": 0,
+      "command": [
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-dart/bin/python",
+        "/home/heinrich/MorionGen/python/scripts/run_runtime_reveal.py",
+        "--run-dir",
+        "{run_dir}",
+        "--events",
+        "/home/heinrich/MorionGen/config/runtime_event_pilot_20261028.json",
+        "--method",
+        "dart",
+        "--clock",
+        "paused"
+      ],
+      "timeout_seconds": 180,
+      "require_protocol": false,
+      "retryable_statuses": [],
+      "required_outputs": [
+        "{run_dir}/runtime_trace.json",
+        "{run_dir}/consumption.json",
+        "{run_dir}/producer.json"
+      ]
+    },
+    {
+      "id": "dart-paused-ignore",
+      "method_spec": {"repo":"baselines/DART","environment":"motiogen-dart"},
+      "method": "dart",
+      "action": "runtime_reveal",
+      "seed": 0,
+      "command": [
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-dart/bin/python",
+        "/home/heinrich/MorionGen/python/scripts/run_runtime_reveal.py",
+        "--run-dir",
+        "{run_dir}",
+        "--events",
+        "/home/heinrich/MorionGen/config/runtime_event_pilot_20261028.json",
+        "--method",
+        "dart",
+        "--clock",
+        "paused",
+        "--ignore"
+      ],
+      "timeout_seconds": 180,
+      "require_protocol": false,
+      "retryable_statuses": [],
+      "required_outputs": [
+        "{run_dir}/runtime_trace.json",
+        "{run_dir}/consumption.json",
+        "{run_dir}/producer.json"
+      ]
+    }
+  ]
+}

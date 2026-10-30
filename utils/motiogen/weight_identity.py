@@ -17,7 +17,9 @@ def signature(path):
 
 def dependencies(cfg,method):
     registry=json.loads((ROOT/'config/native_weight_bindings.json').read_text());base=asset_root(cfg);paths=[]
-    for pattern in registry[method]:
+    patterns = cfg['baselines'].get(method, {}).get('weight_patterns')
+    if patterns is None: patterns = registry[method]
+    for pattern in patterns:
         found=sorted(base.glob(pattern))
         if not found:raise FileNotFoundError('Registered inference dependency absent: '+pattern)
         paths.extend(found)

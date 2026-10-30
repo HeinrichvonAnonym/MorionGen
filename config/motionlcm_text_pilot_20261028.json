@@ -1,0 +1,45 @@
+{
+  "stage": "feasibility_and_throughput",
+  "devices": [
+    0
+  ],
+  "deadline": null,
+  "identity_files": [
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261028_supplement/generation_inputs.json"
+  ],
+  "jobs": [
+    {
+      "id": "motionlcm-native-text-sixteen",
+      "method": "motionlcm_t2m",
+      "method_spec": {
+        "repo": "baselines/MotionLCM",
+        "environment": "motiogen-motionlcm",
+        "weight_patterns": [
+          "motionlcm/experiments_t2m/motionlcm_humanml/motionlcm_humanml.ckpt",
+          "text/sentence-t5-large/model.safetensors"
+        ],
+        "preprocessing_patterns": [
+          "motionlcm/humanml3d/Mean.npy",
+          "motionlcm/humanml3d/Std.npy",
+          "text/sentence-t5-large/config.json",
+          "text/sentence-t5-large/tokenizer*"
+        ]
+      },
+      "command": [
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-motionlcm/bin/python",
+        "/home/heinrich/MorionGen/python/scripts/motionlcm_text_pilot.py",
+        "--run-dir",
+        "{run_dir}",
+        "--inputs",
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261028_supplement/generation_inputs.json"
+      ],
+      "timeout_seconds": 900,
+      "action": "native_generation",
+      "require_protocol": false,
+      "retryable_statuses": [],
+      "required_outputs": [
+        "{run_dir}/generation.json"
+      ]
+    }
+  ]
+}

@@ -35,9 +35,14 @@ def execute(plan, directory, resume=False):
                 raise ValueError('Interrupted running job requires process/evidence reconciliation before resume')
     else:
         state = {'identity': identity, 'jobs': {j['id']: {'status': 'pending'} for j in plan['jobs']}}
+    # A finite feasibility pilot has per-job limits, not a renewed wall budget.
+    if not plan.get('deadline') and (plan.get('stage') != 'feasibility_and_throughput'
+            or not plan['jobs'] or any(j.get('timeout_seconds', 0) <= 0 for j in plan['jobs'])):
+        raise ValueError('A deadline-free queue requires a finite feasibility pilot and explicit job timeouts')
     state.update(pid=os.getpid(), process_create_time=psutil.Process().create_time(),
-                 status='running', deadline=plan['deadline'])
-    deadline = datetime.fromisoformat(plan['deadline'].replace('Z','+00:00')).timestamp()
+                 status='running', deadline=plan.get('deadline'))
+    deadline = (datetime.fromisoformat(plan['deadline'].replace('Z','+00:00')).timestamp()
+                if plan.get('deadline') else float('inf'))
     admission = deadline - float(plan.get('report_reserve_seconds',14400))
     mutex = threading.Lock()
     stop = threading.Event()
@@ -130,7 +135,7 @@ def main():
     if len(ids) != len(set(ids)) or len(set(plan['devices'])) != len(plan['devices']):
         raise ValueError('Duplicate job/device identity')
     if args.action == 'plan':
-        print(json.dumps({'jobs':len(ids),'devices':plan['devices'],'deadline':plan['deadline'],'mutations':False}))
+        print(json.dumps({'jobs':len(ids),'devices':plan['devices'],'deadline':plan.get('deadline'),'mutations':False}))
     elif args.action == 'status':
         state = json.loads((args.directory/'state.json').read_text())
         try:

@@ -1,0 +1,43 @@
+{
+  "stage": "feasibility_and_throughput",
+  "devices": [
+    1
+  ],
+  "deadline": null,
+  "jobs": [
+    {
+      "id": "uhc-first-reference",
+      "method": "uhc",
+      "method_spec": {
+        "repo": "baselines/UHC",
+        "environment": "motiogen-uhc",
+        "weight_patterns": [
+          "uhc-official/uhc_implicit.p",
+          "closd-official/data/smpl/SMPL_*.pkl"
+        ],
+        "preprocessing_patterns": []
+      },
+      "command": [
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-uhc/bin/python",
+        "/home/heinrich/MorionGen/python/scripts/uhc_tracking_pilot.py",
+        "--run-dir",
+        "{run_dir}",
+        "--count",
+        "1"
+      ],
+      "environment": {
+        "MUJOCO_PY_MUJOCO_PATH": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/staged_dependencies/mujoco210",
+        "LD_LIBRARY_PATH": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/staged_dependencies/mujoco210/bin:/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/staged_dependencies/uhc-osmesa/root/usr/lib/x86_64-linux-gnu",
+        "MUJOCO_PY_FORCE_CPU": "1",
+        "OMP_NUM_THREADS": "4"
+      },
+      "action": "tracking",
+      "timeout_seconds": 900,
+      "require_protocol": false,
+      "retryable_statuses": [],
+      "required_outputs": [
+        "{run_dir}/tracking.json"
+      ]
+    }
+  ]
+}

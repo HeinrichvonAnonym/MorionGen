@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "stage": "feasibility_and_throughput",
+  "previous_analysis": "develop_logs/test_runs/20261024_native_matrix_analysis/analysis.json",
+  "output": "develop_logs/test_runs/20261028_supplement",
+  "budget": {"policy": "measure pilot throughput before proposing expansion; previous deadline is not reset", "gpus": [0, 1], "retraining": false},
+  "validation": {"human_rating": "pending_no_raters", "target_agreement_ci_halfwidth": 0.05, "confidence": 0.95},
+  "claims": [
+    {"id":"ergonomic_posture", "required":["input_provenance","bilateral_components","unknown_input_bounds","rule_validation","independent_human_validation"], "current_gap":"No implemented RULA/REBA; independent human raters unavailable"},
+    {"id":"correction_tradeoff", "required":["same_pair_joint_outcomes","failure_denominators","clustered_uncertainty"], "current_gap":"Ergonomic components absent from existing paired outcomes"},
+    {"id":"unknown_online_update", "required":["independent_event_delivery","cache_receipts","execution_clock","negative_control","load_condition"], "current_gap":"Old events were declared before start; no independent playback clock"},
+    {"id":"generation_routes", "required":["motiongpt_native_inference","shared_reference_and_evaluator","actual_length"], "current_gap":"MotionGPT not run"},
+    {"id":"physics_projection", "required":["physdiff_release_audit","matched_projection_conditions_if_available"], "current_gap":"No local PhysDiff executable evidence"},
+    {"id":"physical_execution", "required":["uhc_reference_tracking","phc_reference_tracking","retargeting_separation","auxiliary_force_receipts"], "current_gap":"No common-reference comparison"}
+  ],
+  "repositories": {
+    "MotionGPT":"https://github.com/OpenMotionLab/MotionGPT.git",
+    "UHC":"https://github.com/ZhengyiLuo/UHC.git",
+    "SMPLSim":"https://github.com/ZhengyiLuo/SMPLSim.git",
+    "PHC_MJX":"https://github.com/ZhengyiLuo/PHC_MJX.git"
+  }
+}

@@ -24,7 +24,9 @@ def snapshot(cfg,method):
                  'closd-official/checkpoints/dip/DiP_multi-target_10steps_context20_predict40/args.json',
                  'closd-distilbert/config.json','closd-distilbert/vocab.txt','closd-distilbert/tokenizer_config.json'],
         'primal':[], 'ardy':[], 'kimodo':[]}
-    for pattern in patterns[method]:
+    selected = cfg['baselines'].get(method, {}).get('preprocessing_patterns')
+    if selected is None: selected = patterns[method]
+    for pattern in selected:
         matches=[p for p in base.glob(pattern) if p.is_file() and not p.name.endswith(('.download.json','.verified.json'))]
         if not matches:raise FileNotFoundError('Preprocessing dependency absent: '+pattern)
         paths.extend(matches)
