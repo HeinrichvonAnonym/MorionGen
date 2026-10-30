@@ -29,12 +29,14 @@ SPEC = json.loads((ROOT/'config/next_round_20261030.json').read_text())
 def runs(block):
     """Job id -> (job, run_dir) over pilot and batch, each job once."""
     found = {}
-    for stage in ('pilot', 'batch'):
+    for stage in ('pilot', 'batch', 'continuation'):
         plan_path = OUT/block/f'{stage}_plan.json'
         state_path = OUT/block/f'{stage}_queue/state.json'
         if not plan_path.exists() or not state_path.exists():
             continue
         plan = json.loads(plan_path.read_text()); state = json.loads(state_path.read_text())['jobs']
+        for row in plan.get('superseded', []):
+            found.pop(row['id'], None)
         for job in plan['jobs']:
             row = state.get(job['id'], {})
             if row.get('status') == 'success' and 'legacy_run_dir' not in job:

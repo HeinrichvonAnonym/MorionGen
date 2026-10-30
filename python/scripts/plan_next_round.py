@@ -125,10 +125,59 @@ def v1_jobs(stage, body=None):
     return jobs, {'reach': tasks}, legacy['identity_files']
 
 
+def environment_difference(reference, run_dir):
+    path = Path(run_dir)/'environment_packages.json'
+    if not path.exists():
+        return {'environment_packages.json': 'missing'}
+    packages = json.loads(path.read_text())['packages']
+    return {n: [reference.get(n), packages.get(n)] for n in sorted(set(reference) | set(packages)) if reference.get(n) != packages.get(n)}
+
+
+def continuation(folder, spec):
+    """Remaining batch work after an interrupted or environment-contaminated batch segment.
+
+    Kept: batch successes whose package set equals the pilot run of the same method.
+    Rerun: everything else (pending, failed, running-at-stop, or package drift), with the
+    user site directory disabled so only the method environment is importable.
+    """
+    import psutil
+    batch = json.loads((folder/'batch_plan.json').read_text())
+    state = json.loads((folder/'batch_queue/state.json').read_text())
+    try:
+        alive = abs(psutil.Process(state['pid']).create_time()-state['process_create_time']) < 2
+    except psutil.NoSuchProcess:
+        alive = False
+    if alive:
+        raise ValueError('Batch queue is still running')
+    pilot_plan = {j['id']: j for j in json.loads((folder/'pilot_plan.json').read_text())['jobs']}
+    reference = {}
+    for job_id, row in json.loads((folder/'pilot_queue/state.json').read_text())['jobs'].items():
+        if row.get('status') == 'success' and 'legacy_run_dir' not in pilot_plan[job_id]:
+            reference.setdefault(pilot_plan[job_id]['method'], json.loads((Path(row['run_dir'])/'environment_packages.json').read_text())['packages'])
+    jobs, superseded = [], []
+    for job in batch['jobs']:
+        row = state['jobs'][job['id']]
+        drift = environment_difference(reference[job['method']], row['run_dir']) if row.get('run_dir') else {}
+        if row['status'] == 'success' and not drift:
+            continue
+        if row['status'] != 'pending':
+            superseded.append({'id': job['id'], 'batch_status': row['status'], 'run_dir': row.get('run_dir'),
+                               'reason': row.get('reason'), 'package_drift_vs_pilot': drift})
+        job = copy.deepcopy(job)
+        job['environment'] = {**job.get('environment', {}), 'PYTHONNOUSERSITE': '1'}
+        jobs.append(job)
+    return {'devices': batch['devices'], 'deadline': spec['deadline'], 'report_reserve_seconds': spec['report_reserve_seconds'],
+            'jobs': jobs, 'reused': batch['reused'], 'superseded': superseded, 'continues': str(folder/'batch_plan.json'),
+            'tasks': batch['tasks'], 'identity_files': batch['identity_files'], 'specification_sha256': checksum(SPEC_PATH),
+            'registered_at': datetime.now(timezone.utc).isoformat(), 'protocol': spec['protocol'], 'block': batch['block'],
+            'stage': 'continuation', 'isolation': 'PYTHONNOUSERSITE=1: the user site directory is not importable by workers',
+            **({k: batch[k] for k in ('amendment', 'amendment_sha256') if k in batch})}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--block', choices=['m0', 'v1'], required=True)
-    parser.add_argument('--stage', choices=['pilot', 'batch'], required=True)
+    parser.add_argument('--stage', choices=['pilot', 'batch', 'continuation'], required=True)
     parser.add_argument('--amendment', choices=sorted(AMENDMENTS), help='registered revision; writes to <block>_<amendment>/')
     args = parser.parse_args()
     spec = json.loads(SPEC_PATH.read_text())
@@ -142,6 +191,12 @@ def main():
         if args.block not in amendment['blocks']:
             raise ValueError(f'{args.amendment} does not amend {args.block}')
         spec_files.append(amendment['path'])
+    if args.stage == 'continuation':
+        plan = continuation(folder, spec)
+        json_write(destination, plan)
+        print(json.dumps({'plan': str(destination), 'jobs': len(plan['jobs']), 'superseded': len(plan['superseded'])}))
+        return
+    if args.amendment:
         jobs, tables, identity = m0_jobs(args.stage) if args.block == 'm0' else v1_jobs(args.stage, amendment['body'])
     else:
         jobs, tables, identity = (m0_jobs if args.block == 'm0' else v1_jobs)(args.stage)
