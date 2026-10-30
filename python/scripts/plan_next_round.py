@@ -24,6 +24,9 @@ LEGACY_REACH = ROOT/'develop_logs/test_runs/20261024_control_matrix/plan.json'
 REVIEWED_PAIR = {'A person walks forward.', 'A person walks backward.'}
 LEGACY_REPLAYS = ['ardy_task1_seed21_paused_condition0', 'ardy_task1_seed21_paused_condition1']
 PILOT = {'m0a': [2], 'm0c': [10], 'v1': None}
+AMENDMENTS = {'amend1': {'path': ROOT/'config/next_round_20261030_amend1.json', 'blocks': ['v1'],
+                         'body': tg.MEASURED_BODY_20261031},
+              'amend2': {'path': ROOT/'config/next_round_20261030_amend2.json', 'blocks': ['m0'], 'body': None}}
 
 
 def ardy_job(template, job_id, task_id, seed, prompt, update, path, condition, estimated):
@@ -33,6 +36,7 @@ def ardy_job(template, job_id, task_id, seed, prompt, update, path, condition, e
     scene['updates'] = [] if update is None else [{'time_seconds': update[0], 'prompt': update[1]}]
     scene['native_root_path'] = path
     scene['clock'] = 'paused'
+    job['required_outputs'] = [p for p in job['required_outputs'] if not p.endswith('/clock_trace.json')]
     config = job['config']
     config.pop('_frozen_prompt_cache', None)
     prompts = {prompt, *([update[1]] if update else [])}
@@ -89,11 +93,11 @@ def tg_seeds():
     return json.loads(SPEC_PATH.read_text())['seeds']
 
 
-def v1_jobs(stage):
+def v1_jobs(stage, body=None):
     cfg = load_config()
     legacy = json.loads(LEGACY_REACH.read_text())
     base = json.loads((ROOT/'config/scenarios/reach.json').read_text())
-    tasks = tg.reach_tasks()
+    tasks = tg.reach_tasks(body)
     pilot_ids = [t['id'] for t in tasks if t['side'] == 'right' and t['height'] == 'mid' and t['tier'] in ('reachable', 'legacy', 'mirror')]
     conditions = [('motionlcm', {'control_residual': v}) for v in (0, 1)]
     conditions += [('omnicontrol', {'realism': r, 'spatial': s}) for r in (0, 1) for s in (0, 1)]
@@ -125,13 +129,22 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--block', choices=['m0', 'v1'], required=True)
     parser.add_argument('--stage', choices=['pilot', 'batch'], required=True)
+    parser.add_argument('--amendment', choices=sorted(AMENDMENTS), help='registered revision; writes to <block>_<amendment>/')
     args = parser.parse_args()
     spec = json.loads(SPEC_PATH.read_text())
-    folder = OUT/args.block
+    folder = OUT/(args.block+(f'_{args.amendment}' if args.amendment else ''))
     destination = folder/f'{args.stage}_plan.json'
     if destination.exists():
         raise ValueError('Refusing to replace a registered plan; use a new revision')
-    jobs, tables, identity = (m0_jobs if args.block == 'm0' else v1_jobs)(args.stage)
+    spec_files = [SPEC_PATH]
+    if args.amendment:
+        amendment = AMENDMENTS[args.amendment]
+        if args.block not in amendment['blocks']:
+            raise ValueError(f'{args.amendment} does not amend {args.block}')
+        spec_files.append(amendment['path'])
+        jobs, tables, identity = m0_jobs(args.stage) if args.block == 'm0' else v1_jobs(args.stage, amendment['body'])
+    else:
+        jobs, tables, identity = (m0_jobs if args.block == 'm0' else v1_jobs)(args.stage)
     reused = []
     if args.stage == 'batch':
         audit = json.loads((folder/'pilot_audit.json').read_text())
@@ -147,9 +160,11 @@ def main():
                 keep.append(job)
         jobs = keep
     plan = {'devices': [0, 1], 'deadline': spec['deadline'], 'report_reserve_seconds': spec['report_reserve_seconds'],
-            'jobs': jobs, 'reused': reused, 'tasks': tables, 'identity_files': identity + [str(SPEC_PATH)],
+            'jobs': jobs, 'reused': reused, 'tasks': tables, 'identity_files': identity + [str(p) for p in spec_files],
             'specification_sha256': checksum(SPEC_PATH), 'registered_at': datetime.now(timezone.utc).isoformat(),
             'protocol': spec['protocol'], 'block': args.block, 'stage': args.stage}
+    if args.amendment:
+        plan.update(amendment=args.amendment, amendment_sha256=checksum(spec_files[-1]))
     json_write(destination, plan)
     print(json.dumps({'plan': str(destination), 'jobs': len(jobs), 'reused': len(reused)}))
 

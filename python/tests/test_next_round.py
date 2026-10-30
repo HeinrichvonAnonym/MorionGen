@@ -88,6 +88,19 @@ class TaskGeometryTests(unittest.TestCase):
         self.assertIsNone(tg.reach_direction_prompt(next(t for t in tasks if t['height'] == 'mid')))
         self.assertIn('up', tg.reach_direction_prompt(next(t for t in tasks if t['height'] == 'high')))
 
+    def test_amend1_body_keeps_tiers_and_legacy(self):
+        nominal, measured = tg.reach_tasks(), tg.reach_tasks(tg.MEASURED_BODY_20261031)
+        self.assertEqual([(t['id'], t['tier'], t['side'], t['height']) for t in nominal],
+                         [(t['id'], t['tier'], t['side'], t['height']) for t in measured])
+        for old, new in zip(nominal, measured):
+            if new['tier'] == 'legacy':
+                self.assertEqual(old['position_m'], new['position_m'])
+            elif new['tier'] in ('reachable', 'stepping'):
+                self.assertAlmostEqual(new['nominal_shoulder_distance_ratio'], old['nominal_shoulder_distance_ratio'], places=3)
+            else:
+                self.assertLess(new['nominal_shoulder_distance_ratio'], 1.)
+                self.assertGreater(new['target_body_m'][1]*(1 if new['side'] == 'left' else -1), 0.)
+
     def test_ardy_directions_map_to_body_axes(self):
         to_world = lambda xz: np.array([xz[0], -xz[1], 0.])
         np.testing.assert_allclose(to_world(tg.native_direction(0)), tg.BODY_FORWARD, atol=1e-12)

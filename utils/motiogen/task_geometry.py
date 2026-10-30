@@ -23,6 +23,13 @@ SHOULDER_HEIGHT_M = 1.37
 ARM_LENGTH_M = .54
 ELEVATIONS_DEG = {'low': -30., 'mid': 0., 'high': 30.}
 LEGACY_HEIGHTS_M = {'low': .9, 'mid': 1.2, 'high': 1.5}
+NOMINAL_BODY = {'shoulder_forward_m': 0., 'shoulder_lateral_m': SHOULDER_LATERAL_M, 'shoulder_height_m': SHOULDER_HEIGHT_M,
+                'arm_length_m': ARM_LENGTH_M, 'mirror_forward_m': .40, 'mirror_cross_m': .10, 'mirror_from_shoulder': False}
+# Amendment 1 (config/next_round_20261030_amend1.json): frame 0 of the 18 V1
+# pilot runs puts the shoulders 0.03 m behind the pelvis and gives
+# shoulder-elbow-wrist sums of 0.43-0.56 m (OmniControl median below 0.50 m).
+MEASURED_BODY_20261031 = {'shoulder_forward_m': -.03, 'shoulder_lateral_m': .20, 'shoulder_height_m': 1.37,
+                          'arm_length_m': .47, 'mirror_forward_m': .30, 'mirror_cross_m': .05, 'mirror_from_shoulder': True}
 
 
 def body_to_world(forward, right, up):
@@ -41,15 +48,20 @@ def _sign(side):
     return 1. if side == 'right' else -1.
 
 
-def _forward_target(side, distance, elevation_deg, shoulder_side=None):
-    shoulder_side = shoulder_side or side
+def _forward_target(side, distance, elevation_deg, body=NOMINAL_BODY):
     angle = math.radians(elevation_deg)
-    lateral = _sign(shoulder_side)*SHOULDER_LATERAL_M
-    return (distance*math.cos(angle), lateral, SHOULDER_HEIGHT_M+distance*math.sin(angle))
+    lateral = _sign(side)*body['shoulder_lateral_m']
+    return (body['shoulder_forward_m']+distance*math.cos(angle), lateral, body['shoulder_height_m']+distance*math.sin(angle))
 
 
-def reach_tasks():
-    """24 single-wrist targets: 3 tiers x 3 heights x 2 sides + 6 mirror targets."""
+def reach_tasks(body=None):
+    """24 single-wrist targets: 3 tiers x 3 heights x 2 sides + 6 mirror targets.
+
+    body defaults to NOMINAL_BODY (the registered 20261030 tasks);
+    MEASURED_BODY_20261031 gives the amendment-1 tasks.
+    """
+    body = body or NOMINAL_BODY
+    arm = body['arm_length_m']
     tasks = []
     for tier, ratio in [('reachable', .8), ('stepping', 1.3), ('legacy', None)]:
         for height in ELEVATIONS_DEG:
@@ -57,24 +69,25 @@ def reach_tasks():
                 if ratio is None:
                     # Original 20261024 world target, kept verbatim as the replication tier.
                     world = [_sign(side)*.35, .6, LEGACY_HEIGHTS_M[height]]
-                    body = world_to_body(world)
+                    point = world_to_body(world)
                 else:
-                    body = list(_forward_target(side, ratio*ARM_LENGTH_M, ELEVATIONS_DEG[height]))
-                    world = body_to_world(*body)
+                    point = list(_forward_target(side, ratio*arm, ELEVATIONS_DEG[height], body))
+                    world = body_to_world(*point)
                 tasks.append({'tier': tier, 'height': height, 'side': side, 'joint': side+'_wrist',
-                              'target_body_m': [round(v, 8) for v in body], 'position_m': world})
+                              'target_body_m': [round(v, 8) for v in point], 'position_m': world})
     for height in ELEVATIONS_DEG:
         for side in ('right', 'left'):
-            # Cross-body target 0.10 m past the midline: about 0.50 m from the
-            # constrained shoulder (inside 0.54 m) and closer to the other hand's side.
+            # Cross-body target past the midline, inside arm length from the
+            # constrained shoulder and closer to the other hand's side.
             angle = math.radians(ELEVATIONS_DEG[height])
-            body = [.40*math.cos(angle), -_sign(side)*.10, SHOULDER_HEIGHT_M+.40*math.sin(angle)]
+            forward = body['mirror_forward_m']*math.cos(angle)+(body['shoulder_forward_m'] if body['mirror_from_shoulder'] else 0.)
+            point = [forward, -_sign(side)*body['mirror_cross_m'], body['shoulder_height_m']+body['mirror_forward_m']*math.sin(angle)]
             tasks.append({'tier': 'mirror', 'height': height, 'side': side, 'joint': side+'_wrist',
-                          'target_body_m': [round(v, 8) for v in body], 'position_m': body_to_world(*body)})
+                          'target_body_m': [round(v, 8) for v in point], 'position_m': body_to_world(*point)})
     for index, task in enumerate(tasks):
-        shoulder = np.array([0., _sign(task['side'])*SHOULDER_LATERAL_M, SHOULDER_HEIGHT_M])
+        shoulder = np.array([body['shoulder_forward_m'], _sign(task['side'])*body['shoulder_lateral_m'], body['shoulder_height_m']])
         task['id'] = index
-        task['nominal_shoulder_distance_ratio'] = round(float(np.linalg.norm(np.asarray(task['target_body_m'])-shoulder)/ARM_LENGTH_M), 4)
+        task['nominal_shoulder_distance_ratio'] = round(float(np.linalg.norm(np.asarray(task['target_body_m'])-shoulder)/arm), 4)
         task['prompt'] = f"A person reaches forward with the {task['side']} hand."
     return tasks
 

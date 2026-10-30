@@ -1,0 +1,10 @@
+{
+  "amends": "config/next_round_20261030.json",
+  "amendment": "amend2",
+  "registered": "2026-10-31",
+  "blocks": ["m0"],
+  "trigger": "M0 pilot (develop_logs/test_runs/20261030_next_round/m0/) failed 14/14 new jobs with 'Missing expected output: clock_trace.json'. The job template was the first 20261024 ARDY matrix job, a realtime-clock job whose required_outputs include clock_trace.json; plan_next_round.ardy_job set clock=paused but kept that output.",
+  "change": "plan_next_round.ardy_job drops clock_trace.json from required_outputs of paused jobs. No protocol change: tasks, conditions, seeds, endpoints, gate and admission criteria are those of the 20261030 registration.",
+  "evidence_from_failed_pilot_outputs": "motion.npz/metrics.json/intervention.json were written for all 14 runs; heading -87.7 to -88.3 degrees, dense windows 8 frames, 50 reference passes per m0c run, median guided distance to offset target / delta 0.98-1.00. These runs are not reused; the amend2 pilot reruns them.",
+  "procedure": "New pilot and batch under develop_logs/test_runs/20261030_next_round/m0_amend2/ (plan_next_round.py --block m0 --amendment amend2)."
+}

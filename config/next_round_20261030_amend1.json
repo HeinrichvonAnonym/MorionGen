@@ -1,0 +1,30 @@
+{
+  "amends": "config/next_round_20261030.json",
+  "amendment": "amend1",
+  "registered": "2026-10-31",
+  "blocks": ["v1"],
+  "trigger": "V1 pilot audit (develop_logs/test_runs/20261030_next_round/v1/pilot_audit.json) failed reachable_tier_within_arm: OmniControl task 2 seed 20 conditions 00/01 put the reachable target at 1.014 and 1.044 of the realised frame-0 arm length.",
+  "evidence": {
+    "source": "frame 0 of the 18 V1 pilot runs (MotionLCM and OmniControl, HumanML3D skeleton)",
+    "shoulder_body_forward_m_median": -0.028,
+    "shoulder_lateral_m": "0.18-0.22",
+    "shoulder_height_m": "1.35-1.39",
+    "shoulder_elbow_wrist_sum_m": {"median": 0.509, "min": 0.429, "omnicontrol": "0.43-0.51", "motionlcm": "0.52-0.56"}
+  },
+  "change": {
+    "body": "task_geometry.MEASURED_BODY_20261031 replaces NOMINAL_BODY for V1 tasks",
+    "shoulder_forward_m": [0.0, -0.03],
+    "arm_length_m": [0.54, 0.47],
+    "mirror": {"forward_m": [0.40, 0.30], "measured_from": ["pelvis", "shoulder plane"], "past_midline_m": [0.10, 0.05]},
+    "unchanged": ["tier ratios 0.8 / 1.3 arm", "elevations -30/0/+30 degrees", "legacy world targets", "task ids and order", "conditions", "seeds", "endpoints", "stop rule", "pilot admission criteria"]
+  },
+  "expected_from_pilot_frames": {
+    "reachable_realised_ratio": {"median": 0.74, "max": 0.85},
+    "mirror_realised_ratio": {"median": 0.77, "max": 0.90}
+  },
+  "procedure": "New pilot and batch under develop_logs/test_runs/20261030_next_round/v1_amend1/ (plan_next_round.py --block v1 --amendment amend1); the original v1 pilot is kept as evidence and is not analysed as V1.",
+  "conventions_not_derived": {
+    "arm_length_m": "0.47 m: between the OmniControl frame-0 median and the overall minimum, chosen so 0.8 arm stays inside every pilot frame; 约定，未经推演",
+    "mirror_geometry": "0.30 m forward of the shoulder plane, 0.05 m past the midline; 约定，未经推演"
+  }
+}
