@@ -25,6 +25,16 @@ def install(adapter, condition, evidence):
     if target_mode=='relative_offset' and waypoints!='sparse':
         raise ValueError('Relative offsets are defined for one end-of-window waypoint')
     offset=float(condition.get('offset_m',0.))
+    # Optional 20261031 M1/V3 arms; absent keys keep the native settings.
+    from .ardy_boundary import TREATMENTS,apply as apply_boundary,renoise
+    margin=float(condition.get('root_margin_m',.04))
+    cfg_constraint=float(condition.get('constraint_cfg',2.))
+    boundary=condition.get('boundary','none');writeback=bool(condition.get('boundary_writeback',True))
+    renoise_fraction=float(condition.get('renoise_fraction',0.))
+    if boundary not in TREATMENTS or not 0.<=renoise_fraction<=1.:
+        raise ValueError('Unknown ARDY boundary treatment or renoise fraction')
+    if (boundary!='none' or renoise_fraction) and not correction:
+        raise ValueError('Boundary treatments and renoising act on corrected windows')
     receipts='waypoints' in condition or 'target_mode' in condition
     path=adapter.scene.get('native_root_path',{})
     direction=np.asarray(path.get('direction_xz',[0.,1.]),float)
@@ -43,7 +53,7 @@ def install(adapter, condition, evidence):
             count('denoiser_reference_pass_without_constraint')
             return
         actual=[float(inputs[0].item()),float(inputs[1].item())]
-        if actual != [2.,2.]:
+        if actual != [2.,cfg_constraint]:
             raise RuntimeError(f'ARDY denoiser received wrong text/constraint guidance: {actual}')
         count('denoiser_with_text_and_spatial_guidance')
         evidence['observed_denoiser_guidance']=actual
@@ -89,7 +99,7 @@ def install(adapter, condition, evidence):
             # Explicit per-step RNG makes differing history lengths share sampling noise.
             torch.manual_seed(seed)
             motion=model.autoregressive_step(num_frames=n+horizon,init_history_sequence=history,
-                texts=[prompt],num_denoising_steps=int(model.diffusion.num_base_steps),cfg_weight=(2.,2.),
+                texts=[prompt],num_denoising_steps=int(model.diffusion.num_base_steps),cfg_weight=(2.,cfg_constraint),
                 motion_mask=mask,observed_motion=observed)
             count('native_autoregressive_step')
             decoded=model.motion_rep.inverse(motion,is_normalized=True)
@@ -101,12 +111,35 @@ def install(adapter, condition, evidence):
                 local_constraint=Root2DConstraintSet(model.skeleton,torch.tensor(local_frames),target)
                 corrected=post_process_motion(decoded['local_rot_mats'][:,n:],
                     decoded['root_positions'][:,n:],decoded['foot_contacts'][:,n:],
-                    model.skeleton,constraint_lst=[local_constraint],contact_threshold=.5,root_margin=.04)
+                    model.skeleton,constraint_lst=[local_constraint],contact_threshold=.5,root_margin=margin)
                 count('native_motion_correction')
                 normalized=model.motion_rep(local_joint_rots=corrected['local_rot_mats'].to(motion.device),
                     root_positions=corrected['root_positions'].to(motion.device),to_normalize=True)
                 motion[:,n:]=normalized
                 decoded=model.motion_rep.inverse(motion,is_normalized=True)
+            if renoise_fraction:
+                with adapter.timed('renoise'):
+                    text_feat,text_pad_mask=model._encode_text([prompt])
+                    motion,info=renoise(model,motion,history,n,renoise_fraction,text_feat,text_pad_mask,
+                        mask,observed,(2.,cfg_constraint),seed+7)
+                count('native_renoise_pass')
+                summary=evidence.setdefault('renoise',{'steps':info['steps'],'signal_scale':info['signal_scale'],'roundtrip_root_max_m':0.})
+                summary['roundtrip_root_max_m']=max(summary['roundtrip_root_max_m'],info['roundtrip_root_max_m'])
+                decoded=model.motion_rep.inverse(motion,is_normalized=True)
+            if boundary!='none' and state.get('last_output') is not None:
+                with adapter.timed('boundary'):
+                    previous_root,previous_rot=state['last_output']
+                    root,rot=apply_boundary(boundary,previous_root,previous_rot,decoded['root_positions'][0,n:],
+                        decoded['local_rot_mats'][0,n:],adapter.fps)
+                    smoothed=motion.clone()
+                    smoothed[:,n:]=model.motion_rep(local_joint_rots=rot[None].to(motion.device),
+                        root_positions=root[None].to(motion.device),to_normalize=True)
+                count('native_boundary_'+boundary)
+                decoded=model.motion_rep.inverse(smoothed,is_normalized=True)
+                if writeback:
+                    motion=smoothed
+            if boundary!='none':
+                state['last_output']=(decoded['root_positions'][0,-4:].detach(),decoded['local_rot_mats'][0,-4:].detach())
             if receipts:
                 final_root=decoded['root_positions'][0,n:][:, [0,2]].double().cpu().numpy()
                 windows.append({'frame':int(state['frames']),'local_frames':local_frames,'targets_xz':targets.tolist(),
@@ -148,10 +181,12 @@ def install(adapter, condition, evidence):
             return adapter.save(np.concatenate(joints),adapter.names,np.concatenate(rotations),chunk_boundaries=boundaries,overlap_errors_m=errors)
         adapter.streaming=streaming
     evidence['native_source']='scripts/interactive_demo/generation.py:313; ardy/model/ardy_model.py:706'
-    evidence['guidance_weights']={'text':2.,'constraint':2.,'source':'scripts/interactive_demo/gui/model.py:188-203'}
+    evidence['guidance_weights']={'text':2.,'constraint':cfg_constraint,'source':'scripts/interactive_demo/gui/model.py:188-203'}
     evidence['task']={'root_direction_xz':direction.tolist(),'speed_before_m_s':before,'speed_after_m_s':after,
         'waypoints':'Frame-indexed future constraints fixed in advance; text update is a separate event at 5s'}
     if receipts:
+        evidence['task'].update(root_margin_m=margin,constraint_cfg=cfg_constraint,boundary=boundary,
+            boundary_writeback=writeback,renoise_fraction=renoise_fraction)
         evidence['task'].update(waypoint_density=waypoints,target_mode=target_mode,offset_m=offset,
             lateral_xz=lateral.tolist(),switch_seconds=switch,windows=windows,
             target_scope='path: absolute frame-indexed native XZ path; relative_offset: end of the same-noise unconstrained '

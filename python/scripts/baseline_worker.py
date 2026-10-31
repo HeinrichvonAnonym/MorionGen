@@ -25,8 +25,8 @@ def main():
     parser.add_argument('--asset',action='append')
     parser.add_argument('--benchmark',action='store_true')
     args=parser.parse_args(); path=Path(args.run_dir)
-    cfg=json.loads((path/'config.json').read_text()); manifest=json.loads((path/'manifest.json').read_text())
-    metric_policy=json.loads((path/'contracts.json').read_text())['metrics.json']['content']
+    cfg=json.loads((path/'config.json').read_text(encoding='utf-8')); manifest=json.loads((path/'manifest.json').read_text(encoding='utf-8'))
+    metric_policy=json.loads((path/'contracts.json').read_text(encoding='utf-8'))['metrics.json']['content']
     name=manifest['baseline']; scene=manifest['scenario']; seed=manifest['seed']; action=manifest['action']
     result={}
     try:
@@ -92,7 +92,7 @@ def main():
                         json_write(path/(extra+'.metrics.json'),evaluate(load_motion(path/extra),scene,metric_policy))
                 from motiogen.runtime import checksum
                 artifact_policy_path=ROOT/'config/native_component_experiments.json'
-                artifact_policy=json.loads(artifact_policy_path.read_text())['artifact_policy'] if intervention is not None else {'eager_mp4_for_matrix':True}
+                artifact_policy=json.loads(artifact_policy_path.read_text(encoding='utf-8'))['artifact_policy'] if intervention is not None else {'eager_mp4_for_matrix':True}
                 if artifact_policy['eager_mp4_for_matrix']:
                     from motiogen.visualize import render
                     render(load_motion(output),scene,path/'motion.mp4')
