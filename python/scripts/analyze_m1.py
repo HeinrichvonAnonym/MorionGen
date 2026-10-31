@@ -67,8 +67,10 @@ def paired(table, on, off, offsets, metric, epsilon=EPSILON, off_epsilon=None):
     """on/off: arm name or dict offset -> arm name. One difference per task-seed-offset."""
     deltas, clusters = [], []
     for (a, e, o, task, seed), values in sorted(table.items()):
+        if o not in offsets:
+            continue
         arm_on = on[o] if isinstance(on, dict) else on
-        if a != arm_on or e != epsilon or o not in offsets or metric not in values:
+        if a != arm_on or e != epsilon or metric not in values:
             continue
         arm_off = off[o] if isinstance(off, dict) else off
         base = table.get((arm_off, EPSILON if arm_off == 'C0' else (off_epsilon or epsilon), o, task, seed))
