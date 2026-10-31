@@ -82,7 +82,8 @@ def ardy_row(job, run):
         if f['sliding_fraction_given_candidate'] is not None:
             values['foot_sliding_5cm_10cms'] = f['sliding_fraction_given_candidate']
         values['foot_penetration_fraction'] = feet['floor_penetration_fraction']
-    common = common_history_consistency(motion['overlap_errors_m'], 32, 8, len(motion['joint_names']), len(joints)//8)
+    history_frames = int(job['config']['_intervention'].get('history_frames', 32))
+    common = common_history_consistency(motion['overlap_errors_m'], history_frames, 8, len(motion['joint_names']), len(joints)//8)
     values['history_consistency_32_m'] = common['mean_m']
     _, values['frame0_heading_deg'] = facing_heading(joints, motion['joint_names'])
     return values
