@@ -1,0 +1,32 @@
+{
+  "protocol": "v3_primal_20261031",
+  "registered_before_results": true,
+  "part_of": "config/m1_20261031.json V3 (PRIMAL part)",
+  "question": "Where does PRIMAL's native inertialization time constant (omega = 10 /s) sit on PRIMAL's own boundary-smoothness / motion-quality curve; together with the ARDY part this decides whether inertialization is a generic smoother or a PRIMAL-tuned component",
+  "deadline": "2026-11-03T12:00:00Z",
+  "report_reserve_seconds": 7200,
+  "scenes": "The 57 jobs of develop_logs/test_runs/20261024_primal_matrix (12 initial states: adapted stand, 5 short and 6 long model-generated histories; seeds 20-24), 600 frames at 30 fps, paused clock",
+  "conditions": "ground snap and keypoint reprojection on (native defaults); inertialization omega in {2.5, 5, 10, 20, 40} /s and inertialization off; all six conditions in one worker per scene with common random numbers (torch / numpy reseeded per condition) and shuffled execution order",
+  "intervention": "primal.models.motion_diffuser.inertialize replaced by the native function with the swept omega (dt = 1/30 unchanged); omega 10 runs the unpatched native function",
+  "cluster_unit": "initial state (G = 12); seeds are paired repetitions",
+  "endpoints": {
+    "primary_descriptive": "boundary jerk RMS at the native commit points (frames 14, 28, ...) per omega, paired against inertialization off and against omega 10",
+    "secondary": ["boundary velocity jump", "common-step jerk (0.1 s)", "foot sliding given 5 cm contact at 10 cm/s", "floor penetration fraction", "native generation wall time"]
+  },
+  "reading": {
+    "near_optimal": "omega 10 is near-optimal for PRIMAL when its boundary jerk is within 10% of the lowest boundary jerk over the sweep and its common-step jerk is within 10% of the lowest common-step jerk",
+    "combined_V3": "tuned when the ARDY part reads 'tuned' or omega 10 is not near-optimal for PRIMAL; generic when the ARDY part reads 'generic' and omega 10 is near-optimal for PRIMAL"
+  },
+  "pilot": {
+    "jobs": "primal_initial0_seed21",
+    "admission": "Six conditions recorded; finite motion; omega 10 bit-identical to ground1_reproject1_inertialize1 of the same 20261024 matrix job; swept calls equal native inertialization calls for omega != 10; inertialization off has zero inertialization calls; time within 3x estimate"
+  },
+  "inference": {
+    "primary": "Equal-weight initial-state means of paired differences; cluster t interval with G-1 degrees of freedom and exact sign-flip p",
+    "supplementary": "Cluster bootstrap alongside"
+  },
+  "conventions_not_derived": {
+    "omega_grid": "2.5 / 5 / 10 / 20 / 40 /s: factor-2 steps around the native 10 /s",
+    "near_optimal_tolerance": "10%, same tolerance as the ARDY V3 stop rule"
+  }
+}

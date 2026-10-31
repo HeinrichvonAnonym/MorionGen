@@ -18,6 +18,7 @@ def main():
     parser.add_argument('--frames', type=int, default=120)
     parser.add_argument('--output-dir', type=Path, help='Fresh output directory for native component experiments')
     parser.add_argument('--ground-ablation', action='store_true', help='Native 2x2x2 ground snap / reprojection / inertialization factorial')
+    parser.add_argument('--omega-sweep', help='Comma-separated inertialization omegas (1/s), ground snap and reprojection on, plus inertialization off')
     parser.add_argument('--initial-history',type=int,choices=[0,1,2],default=0,
                         help='0=adapted standing seed, 1/2=model-generated warm history (not independent real motion)')
     parser.add_argument('--initial-yaw',type=float,default=0.)
@@ -38,6 +39,8 @@ def main():
             parser.error('Output directory already exists; refusing to overwrite experiment evidence')
     if args.ground_ablation and args.output_dir is None:
         parser.error('--ground-ablation requires a fresh --output-dir')
+    if args.omega_sweep and (args.output_dir is None or args.ground_ablation):
+        parser.error('--omega-sweep requires a fresh --output-dir and excludes --ground-ablation')
     repo = DATA / 'baselines/PRIMAL'
     registry = DATA / 'outputs/assets/primal-registry'
     body = registry / 'models/SMPLX/neutral/SMPLX_neutral.npz'
@@ -58,7 +61,7 @@ def main():
     from motiogen.metrics import evaluate
     from motiogen.primal_interventions import NativeBranchCounter,NativePrimitiveClock
     weight_binding=None
-    if args.output_dir is not None and args.ground_ablation:
+    if args.output_dir is not None and (args.ground_ablation or args.omega_sweep):
         from motiogen.config import load_config
         from motiogen.weight_identity import bind,verify_unchanged
         weight_binding=bind(load_config(),'primal',args.output_dir.parent)
@@ -200,19 +203,40 @@ def main():
         'model_load_seconds':model_load_seconds,'initial_history_seconds':initial_history_seconds,
         'inference_warmup_seconds':time.perf_counter()-warmup_started,
         'scope':'Once per eight-condition worker, not once per factorial cell. Cold start includes imports, weight identity, model loading, initial-history preparation and native warmup. Generation timing excludes this setup.'})
-    conditions = [(ground, reproj, inertial)
-                  for ground in ([False, True] if args.ground_ablation else [True])
-                  for reproj, inertial in [(False, False), (True, False), (False, True), (True, True)]]
+    if args.omega_sweep:
+        conditions = [(True, True, True, float(w)) for w in args.omega_sweep.split(',')]+[(True, True, False, None)]
+    else:
+        conditions = [(ground, reproj, inertial, None)
+                      for ground in ([False, True] if args.ground_ablation else [True])
+                      for reproj, inertial in [(False, False), (True, False), (False, True), (True, True)]]
+    import contextlib
+    from unittest import mock
+    import primal.models.motion_diffuser as diffuser_module
+    native_inertialize = diffuser_module.inertialize
+    omega_calls = [0]
+
+    def omega_patch(omega):
+        # Native call sites pass omega=10, dt=1/30; omega 10 runs unpatched.
+        if omega is None or omega == 10.:
+            return contextlib.nullcontext()
+        def swept(seq1, seq2, omega=10., dt=1./30.):
+            if omega != 10.:
+                raise RuntimeError(f'Unexpected native inertialization omega {omega}')
+            omega_calls[0] += 1
+            return native_inertialize(seq1, seq2, omega=swept_omega, dt=dt)
+        swept_omega = omega
+        return mock.patch.object(diffuser_module, 'inertialize', swept)
     # Randomize execution order, preserving common random numbers across conditions.
     np.random.default_rng(args.seed).shuffle(conditions)
-    for ground, reproject, inertialize in conditions:
+    for ground, reproject, inertialize, omega in conditions:
+        omega_calls[0] = 0
         torch.manual_seed(args.seed)
         torch.cuda.manual_seed_all(args.seed)
         np.random.seed(args.seed)
         torch.cuda.reset_peak_memory_stats()
         torch.cuda.synchronize()
         start = time.perf_counter()
-        with NativeBranchCounter(model) as branch_counter, NativePrimitiveClock(model,int(cfg.scheduler.num_train_timesteps),int(cfg.data.seq_len)-2,args.clock) as native_clock:
+        with omega_patch(omega), NativeBranchCounter(model) as branch_counter, NativePrimitiveClock(model,int(cfg.scheduler.num_train_timesteps),int(cfg.data.seq_len)-2,args.clock) as native_clock:
             result = model.generate_perpetual_navigation(
             {key: value.clone() for key, value in batch.items()},
             n_inference_steps=int(cfg.scheduler.num_train_timesteps),
@@ -237,6 +261,12 @@ def main():
         name = f'reproject{int(reproject)}_inertialize{int(inertialize)}'
         if args.ground_ablation:
             name = f'ground{int(ground)}_' + name
+        if args.omega_sweep:
+            name = f'omega{omega:g}' if inertialize else 'inertialize0'
+            if omega is not None and omega != 10. and omega_calls[0] != branch_calls.get('inertialization', omega_calls[0]):
+                raise RuntimeError('Swept inertialization did not replace every native call')
+            if omega is not None and omega != 10. and not omega_calls[0]:
+                raise RuntimeError('Swept inertialization never executed')
         np.savez(out / f'{name}.npz', pose=motion.detach().cpu().numpy(),
                  joints=joints.detach().cpu().numpy())
         xyz, _ = canonicalize(joints[0, :, :22].detach().cpu().numpy(), 'Y-up')
@@ -253,6 +283,8 @@ def main():
                         'native_branch_calls': branch_calls,
                         'clock':args.clock,'primitive_clock_trace':native_clock.trace,
                         'ground_snap': ground, 'reprojection': reproject, 'inertialization': inertialize,
+                        'inertialization_omega': (10. if omega is None else omega) if inertialize else None,
+                        'swept_inertialization_calls': omega_calls[0],
                         'native_control': False,
                         'initial_history':args.initial_history,'initial_yaw_degrees':args.initial_yaw,
                         'initial_seed':args.initial_seed,'generated_frames_before_trim':generated_frames,
