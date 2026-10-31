@@ -35,6 +35,10 @@ def install(adapter, condition, evidence):
         raise ValueError('Unknown ARDY boundary treatment or renoise fraction')
     if (boundary!='none' or renoise_fraction) and not correction:
         raise ValueError('Boundary treatments and renoising act on corrected windows')
+    # 20261101 V4: corrected output, next window conditioned on the uncorrected generation.
+    correction_writeback=bool(condition.get('correction_writeback',True))
+    if not correction_writeback and (not correction or boundary!='none' or renoise_fraction):
+        raise ValueError('Output-only correction applies to MotionCorrection without boundary treatment or renoising')
     receipts='waypoints' in condition or 'target_mode' in condition
     path=adapter.scene.get('native_root_path',{})
     direction=np.asarray(path.get('direction_xz',[0.,1.]),float)
@@ -115,6 +119,8 @@ def install(adapter, condition, evidence):
                 count('native_motion_correction')
                 normalized=model.motion_rep(local_joint_rots=corrected['local_rot_mats'].to(motion.device),
                     root_positions=corrected['root_positions'].to(motion.device),to_normalize=True)
+                if not correction_writeback:
+                    uncorrected=motion.clone()
                 motion[:,n:]=normalized
                 decoded=model.motion_rep.inverse(motion,is_normalized=True)
             if renoise_fraction:
@@ -147,7 +153,7 @@ def install(adapter, condition, evidence):
                     'generated_at_targets_xz':generated_root[local_frames].tolist(),
                     'final_at_targets_xz':final_root[local_frames].tolist(),
                     'correction_root_displacement_max_m':float(np.linalg.norm(final_root-generated_root,axis=-1).max())})
-            state['history']=motion[:,-keep:].detach()
+            state['history']=(motion if correction_writeback else uncorrected)[:,-keep:].detach()
             state['frames']+=horizon
         return {key:value[:,-horizon:] if torch.is_tensor(value) and value.ndim>=2 and value.shape[1]==motion.shape[1]
                 else value for key,value in decoded.items()}
@@ -186,7 +192,7 @@ def install(adapter, condition, evidence):
         'waypoints':'Frame-indexed future constraints fixed in advance; text update is a separate event at 5s'}
     if receipts:
         evidence['task'].update(root_margin_m=margin,constraint_cfg=cfg_constraint,boundary=boundary,
-            boundary_writeback=writeback,renoise_fraction=renoise_fraction)
+            boundary_writeback=writeback,renoise_fraction=renoise_fraction,correction_writeback=correction_writeback)
         evidence['task'].update(waypoint_density=waypoints,target_mode=target_mode,offset_m=offset,
             lateral_xz=lateral.tolist(),switch_seconds=switch,windows=windows,
             target_scope='path: absolute frame-indexed native XZ path; relative_offset: end of the same-noise unconstrained '
