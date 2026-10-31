@@ -78,9 +78,45 @@ def jobs_for(stage, seeds):
     return jobs, tasks
 
 
+def continuation(spec):
+    """Remaining batch work after an interrupted batch (20261101 server maintenance).
+
+    Kept: batch successes whose package set equals the pilot reference. Rerun:
+    pending, running-at-stop, failed and package-drifted jobs.
+    """
+    import psutil
+    from plan_next_round import environment_difference
+    batch = json.loads((OUT/'batch_plan.json').read_text())
+    state = json.loads((OUT/'batch_queue/state.json').read_text())
+    try:
+        alive = abs(psutil.Process(state['pid']).create_time()-state['process_create_time']) < 2
+    except psutil.NoSuchProcess:
+        alive = False
+    if alive:
+        raise ValueError('Batch queue is still running')
+    pilot = json.loads((OUT/'pilot_queue/state.json').read_text())['jobs']
+    reference = json.loads((Path(next(r['run_dir'] for r in pilot.values() if r.get('status') == 'success'))
+                            /'environment_packages.json').read_text())['packages']
+    jobs, superseded = [], []
+    for job in batch['jobs']:
+        row = state['jobs'][job['id']]
+        drift = environment_difference(reference, row['run_dir']) if row.get('run_dir') else {}
+        if row['status'] == 'success' and not drift:
+            continue
+        if row['status'] != 'pending':
+            superseded.append({'id': job['id'], 'batch_status': row['status'], 'run_dir': row.get('run_dir'),
+                               'reason': row.get('reason'), 'package_drift_vs_pilot': drift})
+        jobs.append(copy.deepcopy(job))
+    return {**{k: batch[k] for k in ('devices', 'deadline', 'report_reserve_seconds', 'reused', 'tasks', 'identity_files')},
+            'jobs': jobs, 'superseded': superseded, 'continues': str(OUT/'batch_plan.json'),
+            'specification_sha256': checksum(SPEC_PATH), 'registered_at': datetime.now(timezone.utc).isoformat(),
+            'protocol': spec['protocol'], 'stage': 'continuation',
+            'interruption': 'batch queue stopped for server maintenance at 2026-10-31T17:11Z; server rebooted'}
+
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--stage', choices=['smoke', 'pilot', 'batch'], required=True)
+    parser.add_argument('--stage', choices=['smoke', 'pilot', 'batch', 'continuation'], required=True)
     parser.add_argument('--tag', help='smoke folder suffix')
     parser.add_argument('--only', help='smoke: comma-separated arms')
     args = parser.parse_args()
@@ -89,6 +125,11 @@ def main():
     destination = folder/f'{args.stage}_plan.json'
     if destination.exists():
         raise ValueError('Refusing to replace a registered plan; use a new revision')
+    if args.stage == 'continuation':
+        plan = continuation(spec)
+        json_write(destination, plan)
+        print(json.dumps({'plan': str(destination), 'jobs': len(plan['jobs']), 'superseded': len(plan['superseded'])}))
+        return
     seeds = [PILOT_SEED] if args.stage in ('pilot', 'smoke') else spec['seeds']
     jobs, tasks = jobs_for(args.stage, seeds)
     if args.stage == 'smoke':
