@@ -33,9 +33,10 @@ def m2_runs():
         plan_path, state_path = M2/f'{stage}_plan.json', M2/f'{stage}_queue/state.json'
         if not plan_path.exists():
             continue
+        plan = json.loads(plan_path.read_text())
         if not state_path.exists():
-            open_queue = True; continue
-        plan = json.loads(plan_path.read_text()); state = json.loads(state_path.read_text())['jobs']
+            open_queue = open_queue or bool(plan['jobs']); continue
+        state = json.loads(state_path.read_text())['jobs']
         for item in plan.get('reused', []):
             found[item['id']] = ({**item['job']['m2'], 'seed': item['job']['seed']}, item['run'])
         for job in plan['jobs']:
