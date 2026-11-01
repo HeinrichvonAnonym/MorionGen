@@ -37,8 +37,14 @@ def install(adapter, condition, evidence):
         raise ValueError('Boundary treatments and renoising act on corrected windows')
     # 20261101 V4: corrected output, next window conditioned on the uncorrected generation.
     correction_writeback=bool(condition.get('correction_writeback',True))
-    if not correction_writeback and (not correction or boundary!='none' or renoise_fraction):
-        raise ValueError('Output-only correction applies to MotionCorrection without boundary treatment or renoising')
+    if not correction_writeback and (not correction or (boundary!='none' and writeback) or renoise_fraction):
+        raise ValueError('Output-only correction applies to MotionCorrection with output-only boundary treatment and no renoising')
+    # 20261101 M2: after a boundary treatment, a second MotionCorrection pass constrained to the
+    # treated root path (every window frame) re-pins the feet the treatment moved.
+    repin=bool(condition.get('boundary_repin',False))
+    repin_margin=float(condition.get('boundary_repin_margin_m',.01))
+    if repin and boundary=='none':
+        raise ValueError('Foot re-pinning follows a boundary treatment')
     # 20261101 M2: boundary term inside MotionCorrection. The last k output frames of the
     # previous window are prepended as full-body constraints, so the solver's smoothness
     # and foot-contact terms act across the window boundary.
@@ -162,6 +168,12 @@ def install(adapter, condition, evidence):
                     previous_root,previous_rot=state['last_output']
                     root,rot=apply_boundary(boundary,previous_root,previous_rot,decoded['root_positions'][0,n:],
                         decoded['local_rot_mats'][0,n:],adapter.fps)
+                    if repin:
+                        path_constraint=Root2DConstraintSet(model.skeleton,torch.arange(root.shape[0]),root[:,[0,2]].float())
+                        fixed=post_process_motion(rot[None],root[None],decoded['foot_contacts'][:,n:],model.skeleton,
+                            constraint_lst=[path_constraint],contact_threshold=.5,root_margin=repin_margin)
+                        root,rot=fixed['root_positions'][0].to(root.dtype),fixed['local_rot_mats'][0].to(rot.dtype)
+                        count('native_boundary_repin')
                     smoothed=motion.clone()
                     smoothed[:,n:]=model.motion_rep(local_joint_rots=rot[None].to(motion.device),
                         root_positions=root[None].to(motion.device),to_normalize=True)
@@ -221,7 +233,7 @@ def install(adapter, condition, evidence):
     if receipts:
         evidence['task'].update(root_margin_m=margin,constraint_cfg=cfg_constraint,boundary=boundary,
             boundary_writeback=writeback,renoise_fraction=renoise_fraction,correction_writeback=correction_writeback,
-            boundary_prefix_frames=prefix_frames)
+            boundary_prefix_frames=prefix_frames,boundary_repin=repin,boundary_repin_margin_m=repin_margin)
         evidence['task'].update(waypoint_density=waypoints,target_mode=target_mode,offset_m=offset,
             lateral_xz=lateral.tolist(),switch_seconds=switch,windows=windows,
             target_scope='path: absolute frame-indexed native XZ path; relative_offset: end of the same-noise unconstrained '

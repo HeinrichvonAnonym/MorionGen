@@ -28,7 +28,10 @@ ARMS = {'C0': ('C0', {}), 'W1': ('C1', {}), 'W0': ('C1', {'correction_writeback'
         'B2': ('C1', {'correction_writeback': False, 'boundary_prefix_frames': 2}),
         'B4': ('C1', {'correction_writeback': False, 'boundary_prefix_frames': 4}),
         'B8': ('C1', {'correction_writeback': False, 'boundary_prefix_frames': 8}),
-        'B4h': ('C1', {'boundary_prefix_frames': 4})}
+        'B4h': ('C1', {'boundary_prefix_frames': 4}),
+        'XFo': ('XFo', {}), 'XFhR': ('XFh', {'boundary_repin': True}), 'XFoR': ('XFo', {'boundary_repin': True}),
+        'W0X': ('XFo', {'correction_writeback': False}),
+        'W0XR': ('XFo', {'correction_writeback': False, 'boundary_repin': True})}
 OFFSETS = [.1, .5, 1.]
 SMOKE_TASK, SMOKE_SEED = 10, 20
 PILOT_TASK, PILOT_SEED = 10, 23
