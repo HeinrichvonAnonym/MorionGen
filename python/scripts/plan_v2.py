@@ -93,19 +93,27 @@ def jobs_for(stage, seeds):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--stage', choices=['pilot', 'batch', 'continuation'], required=True)
+    parser.add_argument('--name', help='plan name for a later continuation, e.g. continuation2')
+    parser.add_argument('--devices', default='0,1')
     args = parser.parse_args()
     spec = json.loads(SPEC_PATH.read_text(encoding='utf-8'))
-    destination = OUT/f'{args.stage}_plan.json'
+    name = args.name or args.stage
+    if not name.startswith(args.stage):
+        raise ValueError('Plan name must start with the stage name')
+    destination = OUT/f'{name}_plan.json'
     if destination.exists():
         raise ValueError('Refusing to replace a registered plan; use a new revision')
     jobs = jobs_for(args.stage, [PILOT_SEED] if args.stage == 'pilot' else spec['seeds'])
     reused = []
     if args.stage == 'continuation':
-        batch = json.loads((OUT/'batch_queue/state.json').read_text(encoding='utf-8'))['jobs']
         registered = {j['id'] for j in json.loads((OUT/'batch_plan.json').read_text(encoding='utf-8'))['jobs']}
-        if any(batch.get(i, {}).get('status') in (None, 'pending', 'running') for i in registered):
-            raise ValueError('Continuation requires a finished batch queue')
-        jobs = [j for j in jobs if j['id'] in registered and batch[j['id']]['status'] != 'success']
+        done = set()
+        for path in [OUT/'batch_queue/state.json', *sorted(OUT.glob('continuation*_queue/state.json'))]:
+            state = json.loads(path.read_text(encoding='utf-8'))['jobs']
+            if any(v.get('status') in ('pending', 'running') for v in state.values()):
+                raise ValueError(f'Continuation requires finished queues ({path.parent.name})')
+            done |= {k for k, v in state.items() if v.get('status') == 'success'}
+        jobs = [j for j in jobs if j['id'] in registered and j['id'] not in done]
     elif args.stage == 'batch':
         audit = json.loads((OUT/'pilot_audit.json').read_text(encoding='utf-8'))
         if not audit.get('passed'):
@@ -122,7 +130,7 @@ def main():
         jobs = keep
     legacy = json.loads((LEGACY/'plan.json').read_text(encoding='utf-8'))
     _, source = source_windows()
-    plan = {'devices': [0, 1], 'deadline': spec['deadline'], 'report_reserve_seconds': spec['report_reserve_seconds'],
+    plan = {'devices': [int(d) for d in args.devices.split(',')], 'deadline': spec['deadline'], 'report_reserve_seconds': spec['report_reserve_seconds'],
             'jobs': jobs, 'reused': reused, 'tasks': tasks(),
             'identity_files': sorted(set(legacy['identity_files']+[str(SPEC_PATH), str(source)])),
             'source_windows_sha256': checksum(source), 'specification_sha256': checksum(SPEC_PATH),

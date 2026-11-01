@@ -55,7 +55,8 @@ def chois_row(run):
 
 def states():
     found = {}
-    for stage in ('pilot', 'batch', 'continuation'):
+    later = sorted(p.name.removesuffix('_plan.json') for p in OUT.glob('continuation*_plan.json'))
+    for stage in ['pilot', 'batch', *later]:
         path = OUT/f'{stage}_queue/state.json'
         if path.exists():
             found[stage] = (json.loads((OUT/f'{stage}_plan.json').read_text(encoding='utf-8')),
