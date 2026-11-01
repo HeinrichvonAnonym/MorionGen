@@ -39,6 +39,15 @@ def install(adapter, condition, evidence):
     correction_writeback=bool(condition.get('correction_writeback',True))
     if not correction_writeback and (not correction or boundary!='none' or renoise_fraction):
         raise ValueError('Output-only correction applies to MotionCorrection without boundary treatment or renoising')
+    # 20261101 M2: boundary term inside MotionCorrection. The last k output frames of the
+    # previous window are prepended as full-body constraints, so the solver's smoothness
+    # and foot-contact terms act across the window boundary.
+    prefix_frames=int(condition.get('boundary_prefix_frames',0))
+    if prefix_frames<0 or prefix_frames>model.gen_horizon_len or (prefix_frames and (not correction or boundary!='none' or renoise_fraction)):
+        raise ValueError('The MotionCorrection boundary prefix needs correction without boundary treatment or renoising')
+    if prefix_frames:
+        from ardy.constraints import FullBodyConstraintSet
+        from ardy.skeleton import fk
     receipts='waypoints' in condition or 'target_mode' in condition
     path=adapter.scene.get('native_root_path',{})
     direction=np.asarray(path.get('direction_xz',[0.,1.]),float)
@@ -112,10 +121,26 @@ def install(adapter, condition, evidence):
                 old=model.motion_rep.inverse(history,is_normalized=True)['posed_joints']
                 state['overlap_errors_m']=torch.linalg.vector_norm(decoded['posed_joints'][:,:n]-old,dim=-1).cpu().numpy()
             if correction:
-                local_constraint=Root2DConstraintSet(model.skeleton,torch.tensor(local_frames),target)
-                corrected=post_process_motion(decoded['local_rot_mats'][:,n:],
-                    decoded['root_positions'][:,n:],decoded['foot_contacts'][:,n:],
-                    model.skeleton,constraint_lst=[local_constraint],contact_threshold=.5,root_margin=margin)
+                prefix=state.get('correction_prefix') if prefix_frames else None
+                if prefix is None:
+                    local_constraint=Root2DConstraintSet(model.skeleton,torch.tensor(local_frames),target)
+                    corrected=post_process_motion(decoded['local_rot_mats'][:,n:],
+                        decoded['root_positions'][:,n:],decoded['foot_contacts'][:,n:],
+                        model.skeleton,constraint_lst=[local_constraint],contact_threshold=.5,root_margin=margin)
+                else:
+                    p_rot,p_root,p_contacts=prefix;k=p_root.shape[1]
+                    p_global,p_joints,_=fk(p_rot,p_root,model.skeleton)
+                    pin=FullBodyConstraintSet(model.skeleton,torch.arange(k),p_joints[0],p_global[0])
+                    local_constraint=Root2DConstraintSet(model.skeleton,torch.tensor(local_frames)+k,target)
+                    joined=post_process_motion(torch.cat([p_rot,decoded['local_rot_mats'][:,n:]],1),
+                        torch.cat([p_root,decoded['root_positions'][:,n:]],1),
+                        torch.cat([p_contacts,decoded['foot_contacts'][:,n:]],1),
+                        model.skeleton,constraint_lst=[pin,local_constraint],contact_threshold=.5,root_margin=margin)
+                    drift=float(torch.linalg.vector_norm(joined['root_positions'][0,:k].cpu()-p_root[0].cpu(),dim=-1).max())
+                    summary=evidence.setdefault('boundary_prefix',{'frames':prefix_frames,'windows':0,'prefix_root_drift_max_m':0.})
+                    summary['windows']+=1;summary['prefix_root_drift_max_m']=max(summary['prefix_root_drift_max_m'],drift)
+                    corrected={key:joined[key][:,k:] for key in ('local_rot_mats','root_positions')}
+                    count('native_motion_correction_with_boundary_prefix')
                 count('native_motion_correction')
                 normalized=model.motion_rep(local_joint_rots=corrected['local_rot_mats'].to(motion.device),
                     root_positions=corrected['root_positions'].to(motion.device),to_normalize=True)
@@ -144,6 +169,9 @@ def install(adapter, condition, evidence):
                 decoded=model.motion_rep.inverse(smoothed,is_normalized=True)
                 if writeback:
                     motion=smoothed
+            if prefix_frames:
+                state['correction_prefix']=tuple(decoded[key][:,-prefix_frames:].detach()
+                                                 for key in ('local_rot_mats','root_positions','foot_contacts'))
             if boundary!='none':
                 state['last_output']=(decoded['root_positions'][0,-4:].detach(),decoded['local_rot_mats'][0,-4:].detach())
             if receipts:
@@ -192,7 +220,8 @@ def install(adapter, condition, evidence):
         'waypoints':'Frame-indexed future constraints fixed in advance; text update is a separate event at 5s'}
     if receipts:
         evidence['task'].update(root_margin_m=margin,constraint_cfg=cfg_constraint,boundary=boundary,
-            boundary_writeback=writeback,renoise_fraction=renoise_fraction,correction_writeback=correction_writeback)
+            boundary_writeback=writeback,renoise_fraction=renoise_fraction,correction_writeback=correction_writeback,
+            boundary_prefix_frames=prefix_frames)
         evidence['task'].update(waypoint_density=waypoints,target_mode=target_mode,offset_m=offset,
             lateral_xz=lateral.tolist(),switch_seconds=switch,windows=windows,
             target_scope='path: absolute frame-indexed native XZ path; relative_offset: end of the same-noise unconstrained '
