@@ -1,0 +1,61 @@
+{
+  "protocol": "e1_biomech_20261101",
+  "registered_before_results": true,
+  "registered_note": "Registered before any batch result; development data were the M2 pilot runs of offset task 10, seed 23 (C0, W0, W0X, XFh at offsets 0.5 and 1.0 m), listed under development",
+  "question": "Do the kinematic costs of root correction (boundary jerk, foot sliding) correspond to biomechanical costs in a musculoskeletal model, and does the M2 candidate W0X, which removes the boundary-jerk cost, also remove the dynamic cost",
+  "data": "Every successful M2 run (config/m2_20261101.json: C0, W0, XFh, XFo, W0X x offsets 0.1/0.5/1.0 m x 24 tasks x seeds 23-25), read only; no new generation",
+  "pipeline": {
+    "environment": "OpenSim 4.6 Python API (opensim-api venv)",
+    "model": "RajagopalLaiUhlrich2023 (OpenSim Creator resources): 22 bodies, 39 coordinates, 80 lower-limb Millard muscles, torque actuators for lumbar and arms",
+    "steps": [
+      "ARDY cskel27 joints (Z-up) rotated to Y-up and used as joint-centre markers: hip, knee, ankle, toe base, shoulder, elbow, wrist per side (weight 1); pelvis, spine, chest, neck axial markers (weight 0.3)",
+      "Per-segment uniform scaling from median generated segment lengths; pelvis translations unclamped",
+      "Axial markers registered in pelvis/torso frames on a 1 s lumbar-locked calibration IK",
+      "IK over the whole run at 20 fps; coordinates low-passed at 6 Hz (4th-order Butterworth) and resampled to 100 Hz",
+      "Required external wrench from segment kinematics: F = sum m_i (a_i - g); moment about the whole-body COM = sum (c_i - C) x m_i a_i + sum dH_i/dt",
+      "Contact: heel (calcaneus origin) and toe (MTP) landmarks of each foot in contact when within 0.03 m of their own 5th-percentile height; two sole points per landmark on the floor plane",
+      "Ground reaction estimate: non-negative least squares over friction-pyramid edges (mu = 0.8) at active sole points, matching the required force and moment (moment rows x 10 /m, Tikhonov 1e-4); the unmatched part is the residual wrench",
+      "Inverse dynamics with the estimated loads applied to the calcanei",
+      "Static optimization (activation exponent 2, muscle physiology on, every 2nd frame = 50 Hz) with 1 N m reserves on unconstrained lower-limb coordinates and 1000-unit pelvis residual actuators"
+    ],
+    "trim_s": 0.5
+  },
+  "development": {
+    "observed": [
+      "IK marker RMS 0.019 m mean, max 0.068 m (W0X offset 1.0)",
+      "Required vertical force mean 1.0007 BW",
+      "C0 residual force RMS 0.008-0.009 BW (0.4-0.9% of frames above 5% BW); W0 0.20 / 0.28; W0X 0.22 / 0.22; XFh 0.88 / 2.06 BW at offsets 0.5 / 1.0 m",
+      "Static optimization, offset 1.0: muscle effort (sum of squared activations, mean over frames) C0 1.20, W0X 1.64; reserve RMS 0.01 / 0.13 N m"
+    ],
+    "fixes_before_registration": ["pelvis translation range clamp of +-5 m removed (IK error 2.6 m before)", "Tikhonov weight made dimensionless (an extra body-weight factor suppressed all contact forces)"]
+  },
+  "primary": {
+    "family": "Three hypotheses on the residual force RMS (BW), Holm-adjusted at 0.05 over the exact sign-flip p values; each also requires its interval on the stated side",
+    "H1": "W0X - C0 > 0: the M2 candidate keeps a dynamic cost",
+    "H2": "W0X - W0: two-sided; does the output-only crossfade change the dynamic cost",
+    "H3": "XFh - C0 > 0",
+    "pooling": "One difference per task-seed-offset, pooled over the three offsets, equal-weight task means, cluster t interval (G - 1 df)"
+  },
+  "secondary": [
+    "unsupported fraction (residual > 5% BW), residual moment / BW (m)",
+    "RMS and peak hip flexion, hip adduction, knee and ankle moments (N m/kg, both sides), lumbar extension moment",
+    "muscle effort (sum of squared activations), mean activation, reserve RMS and peak",
+    "per-offset contrasts W0X - C0, W0 - C0, XFh - C0, XFo - C0, W0X - XFo",
+    "task-level Spearman correlation between the kinematic costs (boundary jerk, foot sliding, from the M2 rows) and the residual force, across arms"
+  ],
+  "validity": {
+    "per_run": "IK marker RMS mean <= 0.03 m and max <= 0.10 m; required vertical force mean within 1 +- 0.02 BW; ID and SO completed. Failing runs are reported and excluded pairwise",
+    "pipeline": "C0 cell-mean residual force RMS <= 0.03 BW at every offset; otherwise the residual endpoint is reported as not interpretable"
+  },
+  "conventions_not_derived": {
+    "body_mass_kg": 75,
+    "friction_mu": 0.8,
+    "contact_margin_m": 0.03,
+    "sole_points": "heel +-0.03 m lateral at the calcaneus origin; toe 0.04 m ahead of the MTP, +-0.04 m lateral",
+    "unsupported_threshold_bw": 0.05,
+    "cutoff_hz": 6,
+    "reserve_optimal_force_nm": 1,
+    "residual_actuator_optimal_force": 1000
+  },
+  "storage": "Per-run OpenSim files on the data disk (outputs/e1_biomech_20261101/runs); metrics and receipts under develop_logs/test_runs/20261101_e1_biomech"
+}
