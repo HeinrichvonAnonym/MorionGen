@@ -2,7 +2,8 @@
 """Register the V2 CHOIS guidance decomposition plans (config/v2_chois_20261101.json).
 
 pilot: task 1, seed 21, every arm plus the x 0 development check; batch: requires a
-passed pilot audit and reuses the pilot successes of registered arms.
+passed pilot audit and reuses the pilot successes of registered arms; continuation:
+re-queues batch jobs that ended without success (e.g. transient resource gates).
 """
 import argparse
 import copy
@@ -91,7 +92,7 @@ def jobs_for(stage, seeds):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--stage', choices=['pilot', 'batch'], required=True)
+    parser.add_argument('--stage', choices=['pilot', 'batch', 'continuation'], required=True)
     args = parser.parse_args()
     spec = json.loads(SPEC_PATH.read_text(encoding='utf-8'))
     destination = OUT/f'{args.stage}_plan.json'
@@ -99,7 +100,13 @@ def main():
         raise ValueError('Refusing to replace a registered plan; use a new revision')
     jobs = jobs_for(args.stage, [PILOT_SEED] if args.stage == 'pilot' else spec['seeds'])
     reused = []
-    if args.stage == 'batch':
+    if args.stage == 'continuation':
+        batch = json.loads((OUT/'batch_queue/state.json').read_text(encoding='utf-8'))['jobs']
+        registered = {j['id'] for j in json.loads((OUT/'batch_plan.json').read_text(encoding='utf-8'))['jobs']}
+        if any(batch.get(i, {}).get('status') in (None, 'pending', 'running') for i in registered):
+            raise ValueError('Continuation requires a finished batch queue')
+        jobs = [j for j in jobs if j['id'] in registered and batch[j['id']]['status'] != 'success']
+    elif args.stage == 'batch':
         audit = json.loads((OUT/'pilot_audit.json').read_text(encoding='utf-8'))
         if not audit.get('passed'):
             raise ValueError('Batch admission requires a passed pilot audit')
