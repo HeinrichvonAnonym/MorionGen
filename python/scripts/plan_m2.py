@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Register M2 queue plans (config/m2_20261101.json): boundary term inside MotionCorrection.
+"""Register M2 queue plans (config/m2_20261101.json): output-only correction with output-only crossfade.
 
 smoke: unregistered development runs under 20261101_m2/smoke_<tag>/ (offset task 10, seed 20);
 pilot: offset task 10, seed 23, every cell; batch: requires a passed pilot audit;
@@ -94,7 +94,7 @@ def main():
     destination = OUT/f'{name}_plan.json'
     if destination.exists():
         raise ValueError('Refusing to replace a registered plan; use a new revision')
-    jobs = jobs_for(args.stage, [PILOT_SEED] if args.stage == 'pilot' else spec['seeds'])
+    jobs = jobs_for(args.stage, [PILOT_SEED] if args.stage == 'pilot' else spec['seeds'], list(spec['arms']), spec['offsets_m'])
     reused = []
     if args.stage == 'continuation':
         registered = {j['id'] for j in json.loads((OUT/'batch_plan.json').read_text(encoding='utf-8'))['jobs']}

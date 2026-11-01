@@ -1,0 +1,53 @@
+{
+  "protocol": "m2_20261101",
+  "registered_before_results": true,
+  "follows": "config/m1_20261031.json and config/v4_20261101.json (develop_logs/notes/20261101_m1_v3_v4_report.md)",
+  "gate_deviation": "The preregistered G1 did not pass (XFh removed the boundary-jerk cost at equal accuracy). M2 proceeds on a cost G1 did not measure: the post hoc foot-sliding increase of the root-smoothing arms (XFh - C0 +0.70 [0.68, 0.72]) and the remaining boundary-jerk cost of W0 (2.2-2.9x C0). This round confirms the foot-sliding cost on fresh seeds before any method claim rests on it",
+  "deadline": "2026-11-03T12:00:00Z",
+  "report_reserve_seconds": 7200,
+  "seeds": [23, 24, 25],
+  "seed_note": "Fresh seeds; M1 and V4 used 20-22",
+  "cluster_unit": "task (G = 24); seeds and offsets are paired repetitions within a task",
+  "pairing": "Same task, seed and offset across every arm; arm order randomized within each task-seed block with Random(1000*(500+task)+seed)",
+  "tasks": "task_geometry.ardy_offset_tasks(): 8 body headings x 3 text schedules; relative_offset target per window, as M1",
+  "offsets_m": [0.1, 0.5, 1.0],
+  "epsilon_m": 0.05,
+  "arms": {
+    "C0": {"role": "native sampling-layer constraint guidance only, no correction"},
+    "W0": {"correction": 1, "correction_writeback": false, "role": "MotionCorrection on the output only (V4 winner)"},
+    "XFh": {"correction": 1, "boundary": "crossfade", "boundary_writeback": true, "role": "M1 best accurate arm: corrected and crossfaded window written back"},
+    "XFo": {"correction": 1, "boundary": "crossfade", "boundary_writeback": false, "role": "correction written back, crossfade on the output only (V3 arm)"},
+    "W0X": {"correction": 1, "correction_writeback": false, "boundary": "crossfade", "boundary_writeback": false, "role": "candidate: the generation history stays uncorrected; each window is corrected and then crossfaded to the previous output on the output only"}
+  },
+  "development_smoke": {
+    "data": "offset task 10, seed 20, offsets 0.5 and 1.0 m (develop_logs/test_runs/20261101_m2/smoke_a, smoke_b); not analyzed",
+    "rejected": ["boundary_prefix_frames 2/4/8: previous output frames prepended as full-body constraints of MotionCorrection; boundary jerk 47/78 vs W0 27/36 and 0.1 s jerk 153/268, identical for every k", "boundary_repin: MotionCorrection rerun on the crossfaded window with the smoothed root path as constraint (margin 0.01 m); raises boundary jerk in every arm (W0XR 12.5/12.8 vs W0X 10.1/11.0; XFoR 130/188) and does not bring foot sliding below W0"],
+    "observed_candidate": "W0X end error 0.040 m, boundary jerk 10.1/11.0 (C0 10.7/11.4, W0 27.2/36.0), foot sliding 0.33 (W0 0.38, XFh 0.98) on this one task and seed"
+  },
+  "primary": {
+    "family": "Three hypotheses, Holm-adjusted at 0.05 over the exact sign-flip p values; each also requires its interval on the stated side",
+    "P1": "W0X - W0 boundary jerk at the 0.1 s step < 0; one difference per task-seed-offset, pooled over the three offsets, equal-weight task means",
+    "P2": "W0X - W0 foot sliding non-inferior with margin +0.05: test of (difference - 0.05) < 0, same pooling",
+    "P3": "XFh - C0 foot sliding > 0 (fresh-seed confirmation of the M1 post hoc cost), same pooling",
+    "accuracy": "W0X cell mean (24 tasks x 3 seeds) end waypoint error <= 0.05 m at every offset",
+    "decision": "W0X is adopted as the M2 method when P1, P2 and accuracy hold. P3 alone decides whether the root-smoothing foot-sliding cost is confirmed"
+  },
+  "secondary": ["W0X - C0 boundary jerk, 0.1 s jerk, foot sliding, trunk inclination (relative to C0 mean)", "W0X - XFo on all metrics: contribution of keeping the correction out of the history", "per-offset cells of end error, boundary jerk, 0.1 s jerk, foot sliding, trunk inclination, right upper-arm elevation, history consistency at 32 frames, wall time", "Pareto non-dominance of each arm over (end error, boundary jerk, foot sliding, 0.1 s jerk) at each offset"],
+  "inference": {
+    "primary": "Equal-weight task means of paired differences; cluster t interval with G-1 degrees of freedom and exact sign-flip p",
+    "supplementary": "Cluster bootstrap alongside, never as the decision interval"
+  },
+  "grid": "C0, W0, XFh, XFo, W0X x 3 offsets x 24 tasks x 3 seeds",
+  "runs": 1080,
+  "estimated_hours": "about 3 on two GPUs (about 19 s per run)",
+  "pilot": {
+    "jobs": "Offset task 10, seed 23, every arm and offset (15 runs); reused by the batch",
+    "admission": "Finite complete outputs; time within 3x estimate; frame-0 heading within 20 degrees of body forward; constraint guidance weight 2 as registered; reference pass on every window; correction on every window for corrected arms; crossfade on every window after the first for XFh, XFo and W0X; writeback receipts as registered; corrected arms end waypoint error <= 0.055 m; W0, XFh, XFo and W0X bit-identical to each other up to the first window boundary at each offset"
+  },
+  "conventions_not_derived": {
+    "noninferiority_margin": "+0.05 foot-sliding units (about 13% of the W0 level 0.38-0.44)",
+    "offsets_m": "0.1 / 0.5 / 1.0 m, three of the six M1 levels",
+    "crossfade": "linear ramp, length 0.336 s (half-decay time matched to omega = 10 /s), as M1",
+    "seeds": "3 fresh seeds per task, as M1"
+  }
+}
