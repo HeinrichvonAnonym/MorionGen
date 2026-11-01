@@ -65,8 +65,11 @@ def jobs_for(stage, seeds):
 
 def m1_runs():
     found = {}
-    for stage in ('pilot', 'batch'):
-        state = json.loads((M1_OUT/f'{stage}_queue/state.json').read_text())['jobs']
+    for stage in ('pilot', 'batch', 'continuation'):
+        path = M1_OUT/f'{stage}_queue/state.json'
+        if not path.exists():
+            continue
+        state = json.loads(path.read_text())['jobs']
         found.update({k: v['run_dir'] for k, v in state.items() if v.get('status') == 'success'})
     return found
 
