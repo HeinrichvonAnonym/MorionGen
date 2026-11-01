@@ -1,0 +1,67 @@
+{
+  "protocol": "v2_chois_20261101",
+  "registered_before_results": true,
+  "follows": "develop_logs/notes/20261031_m0_v1_v5_report.md (V2 scheduled for idle GPUs); 20261024 CHOIS matrix: guidance lowers 0.1 s jerk by 3.75 [-4.81, -2.69] (12 windows x 5 seeds)",
+  "question": "Why does CHOIS geometric guidance lower jerk: the feet-floor term, the hand-object term, any late gradient (low-pass), or slower motion content",
+  "hypothesis": "The jerk drop comes from the feet-floor contact term suppressing foot jitter and is unrelated to the hand-object term",
+  "competing_explanations": {
+    "a_feet_floor": "feet-floor term suppresses high-frequency foot jitter",
+    "b_any_gradient": "any gradient applied in the last steps acts as a low-pass filter",
+    "c_content": "the hand-object term changes the motion content (slower, smaller)",
+    "d_chance": "a few-cluster statistical accident"
+  },
+  "deadline": "2026-11-03T12:00:00Z",
+  "report_reserve_seconds": 10800,
+  "seeds": [20, 21, 22],
+  "tasks": "First two eligible full native windows (text annotation present, >= 120 frames, start index 0) of each of the 13 test objects in native index order; G = 26. The first window of the first 12 objects is the 20261024 matrix task set. Fixed before outcomes",
+  "cluster_unit": "task (G = 26); seeds are paired repetitions within a task; object-clustered intervals (13 clusters) reported as sensitivity",
+  "arms": {
+    "N0": {"guidance": 0, "role": "no guidance"},
+    "G": {"guidance": 1, "terms": "both", "scale": 1.0, "last_step": 10, "direction": "loss", "role": "native guidance through the instrumented loss (bit identity with the 20261024 native function checked in the pilot)"},
+    "HO": {"guidance": 1, "terms": "hand_object", "role": "hand-object term only (1e4 x native loss)"},
+    "FF": {"guidance": 1, "terms": "feet_floor", "role": "feet-floor term only (3e5 x native loss)"},
+    "W49": {"guidance": 1, "last_step": 50, "role": "native loss, guided steps 1..49"},
+    "S05": {"guidance": 1, "scale": 0.5, "role": "native loss x 0.5"},
+    "S2": {"guidance": 1, "scale": 2.0, "role": "native loss x 2"},
+    "RND": {"guidance": 1, "direction": "random_equal_norm", "role": "Gaussian direction on the support of the native gradient with the same norm at every guided step"}
+  },
+  "grid": "8 arms x 26 tasks x 3 seeds = 624 runs, all new (the 20261024 runs are only the bit-identity reference)",
+  "metrics": {
+    "foot_jerk_0p1s": "common-step (0.1 s) jerk RMS over left/right ankle and foot joints",
+    "jerk_0p1s": "common-step jerk RMS over all 24 joints (the 20261024 effect)",
+    "mean_joint_speed_m_s": "mean joint speed over frames and joints (content explanation c)",
+    "official": "CHOIS evaluation_metrics json: foot sliding, floor height, contact percent, hand / human-object penetration, waypoint xy error, start / end object position error",
+    "contact_distance": "project metric: mean wrist-to-object-surface distance",
+    "generation_seconds": "timed generation"
+  },
+  "primary": {
+    "endpoint": "foot_jerk_0p1s, FF - N0; cluster t interval (task clusters) and exact sign-flip p",
+    "stop_rule": "FF - N0 excludes 0 and HO - N0 includes 0: (a) confirmed, the guidance jerk claim is rewritten as 'the feet-floor contact term lowers jerk'. Both exclude 0: interaction analysis G - HO - FF + N0. Neither excludes 0: the guidance jerk claim is downgraded. Only HO - N0 excludes 0: (a) rejected, hand-object term carries the effect"
+  },
+  "secondary": [
+    "replication: G - N0 on jerk_0p1s and foot_jerk_0p1s",
+    "low-pass (b): RND - N0 and RND - G on foot_jerk_0p1s",
+    "content (c): HO - N0 and G - N0 on mean_joint_speed_m_s",
+    "dose: S05, G, S2 and W49 against N0 and G",
+    "each arm against N0 on official foot sliding, floor height, contact percent, penetration, object errors and contact distance; Holm within this family",
+    "per-step guidance diagnostics: loss values and gradient norms of each term, applied perturbation scale",
+    "generation time per arm"
+  ],
+  "inference": {
+    "primary": "Equal-weight task means of paired differences; cluster t interval with G-1 degrees of freedom and exact sign-flip p",
+    "supplementary": "Cluster bootstrap alongside, never as the decision interval",
+    "multiplicity": "One primary endpoint; Holm over the secondary per-arm family"
+  },
+  "pilot": {
+    "jobs": "Task 1, seed 21, every arm (8 jobs) plus a development check: native loss x 0 through the instrumented path (not analyzed)",
+    "admission": "Finite complete outputs; official metrics json present; time within 3x estimate; guidance calls = last_step - 1 for guided arms and 0 for N0; N0 and G bit-identical to the 20261024 runs chois_task1_seed21_guidance0 / guidance1; the x 0 check bit-identical to N0 (otherwise the guided path itself changes the output and this is reported); HO and FF differ from G; RND direction norm equals the native gradient norm within 1e-4 relative at every guided step; at the first guided step (t = 9, identical state) every guided arm records the same term losses as G"
+  },
+  "conventions_not_derived": {
+    "tasks": "two windows per object to reach G >= 24 as required by the 20261031 V5 review",
+    "seeds": "3 per task, as M1 / V4",
+    "W49": "steps 1..49, from the 20261030 plan",
+    "scales": "0.5 and 2, from the 20261030 plan",
+    "random_direction": "Gaussian on the support of the native gradient, rescaled to its norm at every step; generator seeded with the run seed, independent of the sampling noise",
+    "foot_joints": "ankle and foot joints of the 24-joint CHOIS skeleton"
+  }
+}

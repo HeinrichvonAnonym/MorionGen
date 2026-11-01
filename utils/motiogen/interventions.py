@@ -31,11 +31,20 @@ def install(adapter, condition):
         enabled = bool(condition['guidance'])
         adapter.trainer.use_guidance_in_denoising = enabled
         adapter.trainer.opt.use_guidance_in_denoising = enabled
-        guide = adapter.trainer.apply_different_guidance_loss
-        def guided(*args, **kwargs):
-            count('geometry_guidance')
-            return guide(*args, **kwargs)
-        adapter.trainer.apply_different_guidance_loss = guided
+        # 20261101 V2 decomposition keys (terms, scale, last_step, direction) route guidance
+        # through chois_guidance; the 20261024 matrix conditions keep the native function.
+        from .chois_guidance import install as install_guidance, options as guidance_options
+        if enabled and set(condition) - {'guidance'}:
+            install_guidance(adapter, condition, evidence, count)
+        else:
+            if set(condition) - {'guidance'}:
+                guidance_options(condition)
+                raise ValueError('CHOIS guidance decomposition requires guidance enabled')
+            guide = adapter.trainer.apply_different_guidance_loss
+            def guided(*args, **kwargs):
+                count('geometry_guidance')
+                return guide(*args, **kwargs)
+            adapter.trainer.apply_different_guidance_loss = guided
         sample = adapter.model.sample
         def sampled(*args, **kwargs):
             count('native_sampler')
