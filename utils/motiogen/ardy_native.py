@@ -54,6 +54,12 @@ def install(adapter, condition, evidence):
     if prefix_frames:
         from ardy.constraints import FullBodyConstraintSet
         from ardy.skeleton import fk
+    # 20261102 P0: which window frames carry the relative-offset root constraint.
+    # end: last frame only; end_token: every frame of the last native token;
+    # ramp: every frame, reference root path plus offset ramped linearly to the full offset at the end.
+    constraint_frames=condition.get('constraint_frames','end')
+    if constraint_frames not in ('end','end_token','ramp') or (constraint_frames!='end' and (target_mode!='relative_offset' or correction)):
+        raise ValueError('Constraint frame layouts other than end apply to uncorrected relative-offset runs')
     receipts='waypoints' in condition or 'target_mode' in condition
     path=adapter.scene.get('native_root_path',{})
     direction=np.asarray(path.get('direction_xz',[0.,1.]),float)
@@ -100,9 +106,17 @@ def install(adapter, condition, evidence):
                 finally:
                     reference_pass[0]=False
                 count('native_reference_pass')
-                reference_end=model.motion_rep.inverse(free,is_normalized=True)['root_positions'][0,-1,[0,2]].double().cpu().numpy()
-            local_frames=[horizon-1]
-            targets=(reference_end+offset*lateral)[None]
+                reference_root=model.motion_rep.inverse(free,is_normalized=True)['root_positions'][0,n:][:, [0,2]].double().cpu().numpy()
+            reference_end=reference_root[-1]
+            if constraint_frames=='end':
+                local_frames=[horizon-1]
+                targets=(reference_end+offset*lateral)[None]
+            elif constraint_frames=='end_token':
+                local_frames=list(range(horizon-model.num_frames_per_token,horizon))
+                targets=reference_root[local_frames]+offset*lateral[None]
+            else:
+                local_frames=list(range(horizon))
+                targets=reference_root+offset*lateral[None]*((np.arange(horizon)+1.)/horizon)[:,None]
         elif waypoints=='dense':
             local_frames=list(range(horizon))
             targets=path_targets([state['frames']+k for k in local_frames])
@@ -233,7 +247,8 @@ def install(adapter, condition, evidence):
     if receipts:
         evidence['task'].update(root_margin_m=margin,constraint_cfg=cfg_constraint,boundary=boundary,
             boundary_writeback=writeback,renoise_fraction=renoise_fraction,correction_writeback=correction_writeback,
-            boundary_prefix_frames=prefix_frames,boundary_repin=repin,boundary_repin_margin_m=repin_margin)
+            boundary_prefix_frames=prefix_frames,boundary_repin=repin,boundary_repin_margin_m=repin_margin,
+            constraint_frames=constraint_frames)
         evidence['task'].update(waypoint_density=waypoints,target_mode=target_mode,offset_m=offset,
             lateral_xz=lateral.tolist(),switch_seconds=switch,windows=windows,
             target_scope='path: absolute frame-indexed native XZ path; relative_offset: end of the same-noise unconstrained '
