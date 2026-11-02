@@ -1,0 +1,59 @@
+{
+ "protocol": "p0_20261102",
+ "registered_before_results": true,
+ "follows": "config/m2_20261101.json and config/e1_biomech_20261101.json (develop_logs/notes/20261101_m1_v3_v4_report.md section 5d)",
+ "question": "Native ARDY root conditioning (training-layer) was inaccurate in M1/M2 (C0 end error equal to the offset). M2 receipts show the C0 window end moving 1-4 mm toward the target. The M1/M2 task places the target at the last frame of an 8-frame (0.4 s) window, visible only inside that window; the official demo exposes constraints up to 160 frames ahead as future tokens. P0 asks whether native conditioning reaches fixed goals when given lookahead, and how it compares with output-layer MotionCorrection at the goal window",
+ "development_smoke": {
+  "data": "develop_logs/test_runs/20261102_p0/smoke_a (in-window layouts, task 10 seed 20), smoke_b (lookahead 0/1/2/4 s, task 2 seed 20), smoke_c (G0/G4/W0g/G4W, tasks 10 and 17 seed 20); not analyzed",
+  "observed": [
+   "In-window constraint layouts (last frame, last token, every frame ramped) with constraint weight 2 or 10 move the window end 0.3-8% of the offset",
+   "Lookahead 4 s: goal error 2-19 mm on three tasks; lookahead 0 s: error equal to the offset; lookahead 1-2 s: mostly within 3 cm with occasional failures up to 2.9 m and 5-10x the 0.1 s jerk",
+   "W0g (output-only correction on the goal window): error 0.040 m, boundary jerk 18-40x G0; G4W: correction moves the root 1-3 cm, kinematics as G4"
+  ]
+ },
+ "deadline": "2026-11-04T12:00:00Z",
+ "report_reserve_seconds": 7200,
+ "seeds": [26, 27, 28],
+ "seed_note": "Fresh seeds; M1/V4 used 20-22, M2 23-25, smokes 20",
+ "cluster_unit": "task (G = 24); seeds and offsets are paired repetitions within a task",
+ "pairing": "Same task, seed and offset across every arm; arm order randomized within each task-seed block with Random(1000*(600+task)+seed)",
+ "tasks": "task_geometry.ardy_offset_tasks(): 8 body headings x 3 text schedules, prompt updates as M1/M2",
+ "goal_task": "Goals at 4, 8, 12, 16 s; each goal is the root XZ of the same-seed unconstrained run (same prompt schedule) at that frame plus sign*offset along the task lateral direction, signs +,-,+,-. A goal is exposed as a native Root2D future constraint from lookahead_seconds before its frame; num_frames grows to show it (official window budget 10 s)",
+ "offsets_m": [0.5, 1.0],
+ "arms": {
+  "G0": {"lookahead_seconds": 0, "correction": 0, "role": "native conditioning, goal visible only inside the window that holds it (M2 C0 information)"},
+  "G1": {"lookahead_seconds": 1, "correction": 0, "role": "native conditioning, 1 s lookahead"},
+  "G2": {"lookahead_seconds": 2, "correction": 0, "role": "native conditioning, 2 s lookahead"},
+  "G4": {"lookahead_seconds": 4, "correction": 0, "role": "native conditioning, 4 s lookahead"},
+  "W0g": {"lookahead_seconds": 0, "correction": 1, "correction_writeback": false, "role": "output-layer correction: official MotionCorrection on the window holding the goal, output only (M2 W0 rule)"},
+  "G4W": {"lookahead_seconds": 4, "correction": 1, "correction_writeback": false, "role": "official demo combination: 4 s lookahead plus output-only MotionCorrection on the goal window"}
+ },
+ "primary": {
+  "family": "Three hypotheses, Holm-adjusted at 0.05 over the exact sign-flip p values; each also requires its interval on the stated side. One value per run (mean over its 4 goals for goal error), pooled over both offsets, equal-weight task means of paired differences",
+  "H1": "Positive control: G4 - G0 goal error < 0, and the G4 cell mean goal error <= 0.05 m at each offset",
+  "H2": "G4 - W0g jerk at the 0.1 s step < 0",
+  "H3": "G4 - W0g foot sliding non-inferior with margin +0.05: test of (difference - 0.05) < 0",
+  "decision": "H1 decides whether native conditioning works when given lookahead. H1 and H2 together support 'training-layer conditioning reaches the goal without the jerk cost of output-layer correction'; H3 adds foot sliding"
+ },
+ "secondary": [
+  "Lookahead dose G0/G1/G2/G4: goal error, goal success <= 0.05 m, goal failure > 0.5 m, 0.1 s jerk, boundary jerk, foot sliding, trunk inclination",
+  "G4W - G4 on every metric: cost of adding output correction when native conditioning already reaches the goal",
+  "G4 - G0 on kinematic metrics: kinematic cost of goal reaching itself",
+  "Per-offset cells of every metric and wall time",
+  "A later E1-style OpenSim evaluation (residual force) of G0, G4, W0g and G4W is a separate registration"
+ ],
+ "inference": {
+  "primary": "Equal-weight task means of paired differences; cluster t interval with G-1 degrees of freedom and exact sign-flip p",
+  "supplementary": "Cluster bootstrap alongside, never as the decision interval"
+ },
+ "grid": "6 arms x 2 offsets x 24 tasks x 3 seeds",
+ "runs": 864,
+ "estimated_hours": "about 2.5 on two GPUs (about 19 s per run)",
+ "pilot": {
+  "jobs": "Offset task 10, seed 26, every arm and offset (12 runs); reused by the batch",
+  "admission": "Finite complete outputs; time within 3x the 19 s estimate; 4 goal receipts per run at 4/8/12/16 s; one reference run per job; window num_frames <= 200 and > history+horizon only while a goal is within lookahead; corrected arms correct exactly the 4 goal windows; G0 and W0g identical before the first goal window and G4 and G4W identical before the first goal window (root XZ, 1e-6 m)"
+ },
+ "conventions_not_derived": [
+  "Goal times 4/8/12/16 s and alternating signs; offsets 0.5/1.0 m; lookahead 1/2/4 s; foot-sliding margin +0.05 as M2; correction margin 0.04 m as M1/M2"
+ ]
+}

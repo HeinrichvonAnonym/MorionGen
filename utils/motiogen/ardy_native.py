@@ -263,7 +263,7 @@ def install(adapter, condition, evidence):
                 state['last_output']=(decoded['root_positions'][0,-4:].detach(),decoded['local_rot_mats'][0,-4:].detach())
             if goal_mode:
                 windows.append({'frame':int(state['frames']),'visible_goal_frames':[state['frames']+k for k in local_frames],
-                                'num_frames':int(total)})
+                                'history_frames':int(n),'num_frames':int(total)})
                 final_root=decoded['root_positions'][0,n:][:, [0,2]].double().cpu().numpy()
                 for g,sign in zip(goal_frames,goal_signs):
                     if state['frames']<=g<state['frames']+horizon:
