@@ -25,15 +25,54 @@ METRICS = [PRIMARY, 'unsupported_fraction_5pct_bw', 'residual_moment_rms_m', 'lu
            'muscle_effort_sum_a2_mean', 'muscle_activation_mean', 'reserve_rms_nm', 'reserve_peak_nm']
 
 
-def load_table():
-    table, invalid, failed = {}, [], []
+def limb_valid(row, path):
+    """Post hoc rule: the registered IK limits applied to the limb markers only."""
+    posthoc = path.parent/'markers_posthoc.json'
+    if not posthoc.exists():
+        return None
+    limb = json.loads(posthoc.read_text())['limb']
+    return limb['rms_mean_m'] <= .03 and limb['max_m'] <= .10 and row['validity']['vertical_force_ok']
+
+
+def load_table(mode='registered'):
+    """mode: 'registered' (preregistered validity), 'all' (no exclusion), 'limb' (limb-marker IK validity)."""
+    table, invalid = {}, []
     for path in sorted((OUT/'runs').glob('*/metrics.json')):
         row = json.loads(path.read_text()); info = row['m2']
-        if not row['valid']:
-            invalid.append({'id': row['id'], 'validity': row['validity'], 'ik': row['ik']}); continue
+        keep = {'registered': row['valid'], 'all': True, 'limb': limb_valid(row, path)}[mode]
+        if not keep:
+            invalid.append({'id': row['id'], 'arm': info['arm'], 'offset_m': info['offset_m'], 'validity': row['validity'], 'ik': row['ik'],
+                            'posthoc_missing': keep is None}); continue
         table[(info['arm'], info['offset_m'], info['task'], info['seed'])] = row['metrics']
     failed = [p.parent.name for p in (OUT/'runs').glob('*/error.json')]
     return table, invalid, failed
+
+
+def primary(table):
+    c0 = [cell(table, 'C0', o, PRIMARY) for o in OFFSETS]
+    valid = bool(all(v is not None and v <= .03 for v in c0))
+    hypotheses = {'H1': test(*paired(table, 'W0X', 'C0', OFFSETS, PRIMARY)),
+                  'H2': test(*paired(table, 'W0X', 'W0', OFFSETS, PRIMARY)),
+                  'H3': test(*paired(table, 'XFh', 'C0', OFFSETS, PRIMARY))}
+    side = {'H1': lambda ci: ci[0] > 0, 'H2': lambda ci: ci[0] > 0 or ci[1] < 0, 'H3': lambda ci: ci[0] > 0}
+    for key, p in zip(hypotheses, holm([h['sign_flip_p'] for h in hypotheses.values()])):
+        hypotheses[key]['holm_p'] = p
+        hypotheses[key]['supported'] = bool(p < .05 and side[key](hypotheses[key]['ci95']) and valid)
+    return valid, hypotheses
+
+
+def validity_by_arm():
+    counts = collections.defaultdict(collections.Counter)
+    for path in (OUT/'runs').glob('*/metrics.json'):
+        row = json.loads(path.read_text()); key = f"{row['m2']['arm']}|d{row['m2']['offset_m']:g}"
+        counts[key]['runs'] += 1
+        counts[key]['registered_invalid'] += not row['valid']
+        for check, ok in row['validity'].items():
+            counts[key][f'failed_{check}'] += not ok
+        limb = limb_valid(row, path)
+        counts[key]['limb_invalid'] += limb is False
+        counts[key]['posthoc_missing'] += limb is None
+    return {k: dict(v) for k, v in sorted(counts.items())}
 
 
 def paired(table, on, off, offsets, metric):
@@ -80,16 +119,15 @@ def main():
     table, invalid, failed = load_table()
     result = {'runs': len(table), 'expected_runs': M2_SPEC['runs'], 'invalid_runs': invalid, 'failed_runs': failed}
     result['cells'] = {f'{a}|d{o:g}': {m: cell(table, a, o, m) for m in METRICS} for a in ARMS for o in OFFSETS}
-    c0 = [result['cells'][f'C0|d{o:g}'][PRIMARY] for o in OFFSETS]
-    result['pipeline_valid'] = bool(all(v is not None and v <= .03 for v in c0))
-    hypotheses = {'H1': test(*paired(table, 'W0X', 'C0', OFFSETS, PRIMARY)),
-                  'H2': test(*paired(table, 'W0X', 'W0', OFFSETS, PRIMARY)),
-                  'H3': test(*paired(table, 'XFh', 'C0', OFFSETS, PRIMARY))}
-    side = {'H1': lambda ci: ci[0] > 0, 'H2': lambda ci: ci[0] > 0 or ci[1] < 0, 'H3': lambda ci: ci[0] > 0}
-    for key, p in zip(hypotheses, holm([h['sign_flip_p'] for h in hypotheses.values()])):
-        hypotheses[key]['holm_p'] = p
-        hypotheses[key]['supported'] = bool(p < .05 and side[key](hypotheses[key]['ci95']) and result['pipeline_valid'])
+    result['pipeline_valid'], hypotheses = primary(table)
     result['primary'] = hypotheses
+    result['validity_by_arm'] = validity_by_arm()
+    result['posthoc_sensitivity'] = {}
+    for mode in ('all', 'limb'):
+        alt, alt_invalid, _ = load_table(mode)
+        valid, alt_hypotheses = primary(alt)
+        result['posthoc_sensitivity'][mode] = {'runs': len(alt), 'excluded': len(alt_invalid), 'pipeline_valid': valid, 'primary': alt_hypotheses,
+                                               'cells': {f'{a}|d{o:g}': cell(alt, a, o, PRIMARY) for a in ARMS for o in OFFSETS}}
     result['contrasts'] = {f'{on}-{off}': {'pooled': {m: test(*paired(table, on, off, OFFSETS, m)) for m in METRICS},
                                            'per_offset': {str(o): {m: test(*paired(table, on, off, [o], m)) for m in (PRIMARY, 'muscle_effort_sum_a2_mean', 'knee_angle_moment_rms_nm_kg', 'lumbar_extension_moment_rms_nm_kg')} for o in OFFSETS}}
                            for on, off in [('W0X', 'C0'), ('W0', 'C0'), ('XFh', 'C0'), ('XFo', 'C0'), ('W0X', 'XFo'), ('W0X', 'W0')]}
