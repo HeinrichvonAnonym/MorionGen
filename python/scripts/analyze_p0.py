@@ -63,10 +63,66 @@ def rows(folder):
     return out
 
 
+METRICS = ['goal_error_m', 'goal_error_max_m', 'goal_success_5cm', 'goal_failure_50cm', 'goal_fraction',
+           'correction_root_displacement_m', 'boundary_jerk_0p1s', 'jerk_0p1s', 'foot_sliding_5cm_10cms',
+           'trunk_inclination', 'right_upper_arm_elevation']
+MARGIN = .05
+
+
+def analyze(folder):
+    from motiogen.native_analysis import holm
+    from motiogen.runtime import json_write
+    from plan_p0 import SPEC_PATH
+    spec = json.loads(SPEC_PATH.read_text(encoding='utf-8'))
+    arms, offsets = list(spec['arms']), spec['offsets_m']
+    table = {(r['arm'], r['offset_m'], r['task'], r['seed']): r['values'] for r in rows(folder)}
+
+    def paired(on, off, chosen, metric, shift=0.):
+        deltas, clusters = [], []
+        for (a, o, task, seed), values in sorted(table.items()):
+            base = table.get((off, o, task, seed))
+            if a == on and o in chosen and base is not None and metric in values and metric in base:
+                deltas.append(values[metric]-base[metric]-shift); clusters.append(task)
+        return deltas, clusters
+
+    def cell(arm, offset, metric):
+        by = {}
+        for (a, o, task, _), values in table.items():
+            if a == arm and o == offset and metric in values:
+                by.setdefault(task, []).append(values[metric])
+        return float(np.mean([np.mean(v) for v in by.values()])) if by else None
+
+    result = {'runs': len(table), 'expected_runs': spec['runs']}
+    result['cells'] = {f'{a}|d{o:g}': {m: cell(a, o, m) for m in METRICS} for a in arms for o in offsets}
+    hypotheses = {'H1': nr.test(*paired('G4', 'G0', offsets, 'goal_error_m')),
+                  'H2': nr.test(*paired('G4', 'W0g', offsets, 'jerk_0p1s')),
+                  'H3': nr.test(*paired('G4', 'W0g', offsets, 'foot_sliding_5cm_10cms', MARGIN))}
+    hypotheses['H3']['margin'] = MARGIN; hypotheses['H3']['mean_difference'] = hypotheses['H3']['mean']+MARGIN
+    for key, p in zip(('H1', 'H2', 'H3'), holm([hypotheses[k]['sign_flip_p'] for k in ('H1', 'H2', 'H3')])):
+        hypotheses[key]['holm_p'] = p
+        hypotheses[key]['supported'] = bool(p < .05 and hypotheses[key]['ci95'][1] < 0)
+    accurate = {str(o): result['cells'][f'G4|d{o:g}']['goal_error_m'] <= .05 for o in offsets}
+    hypotheses['H1']['G4_accurate_per_offset'] = accurate
+    hypotheses['H1']['supported'] = bool(hypotheses['H1']['supported'] and all(accurate.values()))
+    result['primary'] = hypotheses
+    secondary = {}
+    for on, off in [('G1', 'G0'), ('G2', 'G0'), ('G4', 'G0'), ('G4', 'G2'), ('G2', 'G1'), ('G4W', 'G4'), ('W0g', 'G0'), ('G4', 'W0g')]:
+        secondary[f'{on}-{off}'] = {'pooled': {m: nr.test(*paired(on, off, offsets, m)) for m in METRICS},
+                                    'per_offset': {str(o): {m: nr.test(*paired(on, off, [o], m)) for m in METRICS} for o in offsets}}
+    result['secondary'] = secondary
+    json_write(folder/'analysis.json', result)
+    print(json.dumps({'runs': result['runs'], 'primary': {k: {x: v.get(x) for x in ('mean', 'ci95', 'holm_p', 'supported')}
+                                                          for k, v in hypotheses.items()}}))
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--folder', required=True)
+    parser.add_argument('--analyze', action='store_true')
     args = parser.parse_args()
+    if args.analyze:
+        analyze(Path(args.folder))
+        return
     for r in sorted(rows(Path(args.folder)), key=lambda r: (r['offset_m'], r['arm'], r['task'], r['seed'])):
         v = r['values']
         print(f"{r['arm']:4s} d{r['offset_m']:g} task{r['task']:<2d} seed{r['seed']} err {v['goal_error_m']:.3f} "
