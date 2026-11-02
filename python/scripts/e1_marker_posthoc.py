@@ -55,9 +55,10 @@ def summarize(names, errors, limits):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--redo', action='store_true')
+    parser.add_argument('--out', type=Path, default=OUT)
     args = parser.parse_args()
     osim.Logger.setLevelString('error')
-    for path in sorted((OUT/'runs').glob('*/metrics.json')):
+    for path in sorted((args.out/'runs').glob('*/metrics.json')):
         target = path.parent/'markers_posthoc.json'
         if target.exists() and not args.redo:
             continue

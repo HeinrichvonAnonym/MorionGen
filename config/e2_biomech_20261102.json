@@ -1,0 +1,27 @@
+{
+ "protocol": "e2_biomech_20261102",
+ "registered_before_results": true,
+ "registered_note": "Registered while the P0 batch was generating, before any P0 batch result or any OpenSim evaluation of P0 runs. Development data: the P0 smokes (seed 20, kinematics only)",
+ "question": "When native ARDY conditioning is given 4 s lookahead and reaches the goals (P0 G4), is the motion also dynamically consistent, and does output-layer correction at the goal window (W0g) carry the dynamic cost E1 found for M2 output corrections",
+ "data": "Successful P0 runs (config/p0_20261102.json) of arms G0, G4, W0g, G4W x offsets 0.5/1.0 m x 24 tasks x seeds 26-28 (576 runs), read only; no new generation",
+ "pipeline": "Identical to config/e1_biomech_20261101.json (same model, IK, contact, ground-reaction estimate, inverse dynamics, static optimization, trim 0.5 s, body mass 75 kg); worker python/scripts/run_e1_biomech.py --protocol e2",
+ "validity": "As E1: IK RMS <= 0.03 m, IK max <= 0.10 m, required vertical force within 1 +- 0.02 BW; invalid runs excluded pairwise. Pipeline valid when every G0 cell has residual force RMS <= 0.03 BW",
+ "primary": {
+  "family": "Three hypotheses on the residual force RMS (BW), Holm-adjusted at 0.05 over the exact sign-flip p values; each also requires its interval on the stated side",
+  "K1": "W0g - G4 > 0: output-layer correction at the goal window carries a dynamic cost that lookahead conditioning does not",
+  "K2": "G4 - G0 non-inferior with margin +0.03 BW: test of (difference - 0.03) < 0; reaching the goals by native conditioning keeps the motion dynamically consistent",
+  "K3": "G4W - G4 non-inferior with margin +0.03 BW: adding output correction after lookahead conditioning keeps the dynamic consistency",
+  "pooling": "One difference per task-seed-offset, pooled over both offsets, equal-weight task means, cluster t interval (G - 1 df), exact sign-flip p"
+ },
+ "secondary": [
+  "unsupported fraction (residual > 5% BW), residual moment / BW",
+  "RMS and peak hip, knee, ankle and lumbar extension moments (N m/kg)",
+  "muscle effort (sum of squared activations), mean activation, reserve RMS and peak",
+  "per-offset contrasts W0g - G0, G4 - G0, W0g - G4, G4W - G4",
+  "validity by arm and offset; post hoc sensitivity without exclusion and with limb-marker validity, as E1"
+ ],
+ "conventions_not_derived": [
+  "Non-inferiority margin 0.03 BW (the E1 pipeline-validity threshold); arm subset G0/G4/W0g/G4W (G1/G2 left out to halve CPU time)"
+ ],
+ "estimated_hours": "about 12 with 6 OpenSim workers (about 10 min per run, 95% static optimization)"
+}
