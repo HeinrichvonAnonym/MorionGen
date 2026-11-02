@@ -74,6 +74,86 @@ def install(adapter, condition, evidence):
         if keep+model.gen_horizon_len+lookahead>10*adapter.fps:
             raise ValueError('History, horizon and lookahead exceed the official 10 s window budget')
         goal_state={'targets':None};goals=[]
+    # 20261103 P1: sampling-layer guidance in the window holding a goal, before every native DDIM step:
+    # 'xt' moves the generation tokens x_t down the gradient (through the CFG denoiser) of the squared XZ
+    # distance between the predicted clean root and the goal; 'x0' moves the clean root prediction itself.
+    guidance=condition.get('sampling_guidance')
+    guide={'active':False}
+    if guidance is not None:
+        if not goal_mode or correction:
+            raise ValueError('Sampling guidance applies to uncorrected goal lookahead runs')
+        guide_scale=float(guidance['scale']);guide_iterations=int(guidance.get('iterations',1))
+        guide_space=guidance.get('space','xt')
+        if guide_scale<=0 or guide_iterations<1 or guide_space not in ('xt','x0') or (guide_space=='x0' and guide_scale>1):
+            raise ValueError('Sampling guidance needs a positive scale (at most 1 in x0 space) and at least one iteration')
+        native_window=model._generate_window
+        def captured_window(history_sequence,global_transl,*args,**kwargs):
+            guide['global_xz']=global_transl[:,[0,2]].detach().clone()
+            return native_window(history_sequence,global_transl,*args,**kwargs)
+        model._generate_window=captured_window
+        native_denoising_step=model.denoising_step
+        def guided_step(x,history_len,generation_len,future_len,history_mask,generation_mask,future_mask,
+                        history_token_mask,generation_token_mask,future_token_mask,text_feat,text_pad_mask,t,
+                        first_heading_angle,motion_mask,observed_motion,num_denoising_steps,cfg_weight,
+                        target_motion=None,cfg_type=None):
+            if not guide['active']:
+                return native_denoising_step(x,history_len,generation_len,future_len,history_mask,generation_mask,
+                    future_mask,history_token_mask,generation_token_mask,future_token_mask,text_feat,text_pad_mask,t,
+                    first_heading_angle,motion_mask,observed_motion,num_denoising_steps,cfg_weight,target_motion,cfg_type)
+            use_timesteps,map_tensor=model.diffusion.space_timesteps(num_denoising_steps[0])
+            model.diffusion.calc_diffusion_vars(use_timesteps)
+            weights=[torch.tensor([float(w)],device=x.device) for w in cfg_weight]
+            fixed=[v.clone() if torch.is_tensor(v) else v for v in (text_feat,text_pad_mask,first_heading_angle,motion_mask,observed_motion)]
+            batch,dim=x.shape[0],x.shape[2];tokens=model.gen_horizon_len//model.num_frames_per_token
+            def clean(generation):
+                full=x.clone();full[generation_token_mask]=generation.reshape(-1,dim)
+                pred=model.denoiser(*weights,full,history_len,generation_len,future_len,history_mask,generation_mask,
+                    future_mask,history_token_mask,generation_token_mask,future_token_mask,fixed[0],fixed[1],
+                    map_tensor[t],fixed[2],fixed[3],fixed[4])
+                return pred[generation_token_mask].reshape(batch,tokens,dim)
+            def goal_loss(prediction):
+                root,_=model.hybrid.get_root_and_latent_body_motion_from_hybrid(prediction)
+                xz=model.motion_rep.global_root_stats.unnormalize(root)[0][:,[0,2]]+guide['global_xz'][0]
+                return ((xz[guide['frames']]-guide['targets'])**2).sum()
+            generation=x[generation_token_mask].reshape(batch,tokens,dim).detach().clone()
+            trace=guide['receipt'].setdefault('first_window_trace',[]) if guide['receipt']['guided_windows']==1 else None
+            for _ in range(guide_iterations if guide_space=='xt' else 0):
+                with torch.enable_grad():
+                    variable=generation.requires_grad_(True)
+                    prediction=clean(variable);loss=goal_loss(prediction)
+                    gradient,clean_gradient=torch.autograd.grad(loss,[variable,prediction])
+                generation=(generation-guide_scale*gradient).detach()
+                guide['receipt']['guided_steps']+=1
+                if trace is not None:
+                    trace.append({'t':int(t[0]),'loss_m2':float(loss),'xt_gradient_norm':float(gradient.norm()),
+                                  'clean_gradient_norm':float(clean_gradient.norm())})
+            with torch.no_grad():
+                prediction=clean(generation)
+                if guide_space=='x0':
+                    root,latent=model.hybrid.get_root_and_latent_body_motion_from_hybrid(prediction)
+                    metric=model.motion_rep.global_root_stats.unnormalize(root).clone()
+                    xz=metric[0][guide['frames']][:,[0,2]]+guide['global_xz'][0]
+                    if trace is not None:
+                        trace.append({'t':int(t[0]),'loss_m2':float(((xz-guide['targets'])**2).sum())})
+                    delta=guide_scale*(guide['targets']-xz)
+                    metric[0,guide['frames'],0]+=delta[:,0];metric[0,guide['frames'],2]+=delta[:,1]
+                    prediction=model.hybrid.get_hybrid_motion_from_root_and_latent_body_motion(
+                        model.motion_rep.global_root_stats.normalize(metric),latent)
+                    guide['receipt']['guided_steps']+=1
+            guide['last_loss']=float(goal_loss(prediction))
+            following=model.sampler(generation,prediction,t)
+            out=x.clone();out[generation_token_mask]=following.reshape(-1,dim)
+            return out
+        model.denoising_step=guided_step
+        guide['receipt']={'space':guide_space,'scale':guide_scale,'iterations':guide_iterations,'guided_windows':0,
+            'guided_steps':0,'final_losses_m2':[],
+            'scope':'window holding a goal, before each DDIM step. xt: gradient of the squared goal XZ error of the clean '
+                    'root prediction, through the CFG denoiser, applied to x_t; x0: the clean root prediction at the goal '
+                    'frames moved by scale times its XZ error (OmniControl-style guidance on the prediction)'}
+    # P1: without goal constraints the goal reaches the model only through sampling guidance.
+    goal_constraints=bool(condition.get('goal_constraints',True))
+    if not goal_constraints and (guidance is None or lookahead):
+        raise ValueError('Goal runs without native goal constraints need sampling guidance and no lookahead')
     receipts='waypoints' in condition or 'target_mode' in condition
     path=adapter.scene.get('native_root_path',{})
     direction=np.asarray(path.get('direction_xz',[0.,1.]),float)
@@ -169,6 +249,12 @@ def install(adapter, condition, evidence):
                 goal_state['targets']={g:free_roots[g]+sign*offset*lateral for g,sign in zip(goal_frames,goal_signs)}
             local_frames=[g-state['frames'] for g in goal_frames if state['frames']<=g<state['frames']+horizon+lookahead]
             targets=np.array([goal_state['targets'][state['frames']+k] for k in local_frames]).reshape(-1,2)
+            if guidance is not None:
+                held=[i for i,k in enumerate(local_frames) if k<horizon]
+                guide.update(active=bool(held),frames=[local_frames[i] for i in held],
+                             targets=torch.tensor(targets[held],dtype=torch.float32,device='cuda'))
+                if guide['active']:
+                    guide['receipt']['guided_windows']+=1
         elif waypoints=='dense':
             local_frames=list(range(horizon))
             targets=path_targets([state['frames']+k for k in local_frames])
@@ -178,10 +264,10 @@ def install(adapter, condition, evidence):
             targets=path_targets([state['frames']+horizon-1])
         target = torch.tensor(targets,dtype=torch.float32,device='cuda')
         total=n+horizon
-        if goal_mode and local_frames:
+        if goal_mode and local_frames and goal_constraints:
             tokens=model.num_frames_per_token
             total=n+max(horizon,-(-(max(local_frames)+1)//tokens)*tokens)
-        if goal_mode and not local_frames:
+        if goal_mode and (not local_frames or not goal_constraints):
             observed=mask=None
         else:
             constraint = Root2DConstraintSet(model.skeleton,torch.tensor([n+k for k in local_frames]),target)
@@ -194,6 +280,9 @@ def install(adapter, condition, evidence):
                 texts=[prompt],num_denoising_steps=int(model.diffusion.num_base_steps),cfg_weight=(2.,cfg_constraint),
                 motion_mask=mask,observed_motion=observed)
             count('native_autoregressive_step')
+            if guide['active']:
+                count('native_sampling_guided_window');guide['active']=False
+                guide['receipt']['final_losses_m2'].append(guide['last_loss'])
             decoded=model.motion_rep.inverse(motion,is_normalized=True)
             generated_root=decoded['root_positions'][0,n:][:, [0,2]].double().cpu().numpy()
             if history is not None:
@@ -330,4 +419,5 @@ def install(adapter, condition, evidence):
             evidence['task'].update(goal_frames=goal_frames,goal_signs=goal_signs,lookahead_frames=lookahead,goals=goals,
                 goal_scope='goal_lookahead: same-seed unconstrained run at each goal frame plus sign*offset_m along lateral_xz; '
                            'goals within lookahead are future constraints of the native window')
+            evidence['task'].update(goal_constraints=goal_constraints,sampling_guidance=guide.get('receipt'))
     evidence['history_is']='model-generated explicit motion, corrected when correction is enabled'

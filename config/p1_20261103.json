@@ -1,0 +1,56 @@
+{
+ "protocol": "p1_20261103",
+ "registered_before_results": true,
+ "registered_note": "Registered while the P0 batch was generating, before any P0 batch result and before any P1 run on seeds 26-28",
+ "follows": "config/p0_20261102.json (same goal task, tasks, seeds, offsets; P1 runs pair with the P0 runs of the same task, seed and offset)",
+ "question": "Sampling-layer guidance on the P0 goal task: with the goal information of G0 (goal visible only in the window holding it) and of G4 (4 s lookahead), does guidance during ARDY denoising reach the goals, at what kinematic cost, compared with native conditioning (G0, G4) and output-layer correction (W0g, G4W)",
+ "development_smoke": {
+  "data": "develop_logs/test_runs/20261103_p1/smoke_a-e (tasks 2, 10, 17, seed 20); not analyzed",
+  "observed": [
+   "x_t guidance through the CFG denoiser (DPS-style), scale 1-1000: goal error equal to G0 (fraction toward the goal -0.05 to 0.14); the gradient norm on x_t is 5e-5 to 9e-4 of the gradient norm on the clean prediction at every step",
+   "Clean-prediction guidance, full step: after each edit the next clean prediction returns to the unguided goal error (0.4995-0.5000 m at 0.5 m offset, all 10 steps), so only the last-step edit survives; goal error 0, 0.1 s jerk 16-49x G0",
+   "Clean-prediction guidance at partial steps 0.2/0.5: goals partly reached, later goals diverge up to 2.5 m",
+   "With 4 s lookahead the full-step clean-prediction guidance removes the 5-18 mm residual of G4 with jerk as G4"
+  ]
+ },
+ "deadline": "2026-11-05T12:00:00Z",
+ "report_reserve_seconds": 7200,
+ "seeds": [26, 27, 28],
+ "cluster_unit": "task (G = 24); seeds and offsets are paired repetitions within a task",
+ "pairing": "Same task, seed and offset as the P0 runs; P1 arm order randomized within each task-seed block with Random(1000*(700+task)+seed)",
+ "offsets_m": [0.5, 1.0],
+ "arms": {
+  "S0": {"base": "G0", "sampling_guidance": {"space": "xt", "scale": 100, "iterations": 1}, "role": "G0 plus x_t guidance (DPS-style, gradient through the CFG denoiser) at every denoising step of each goal window"},
+  "X0": {"base": "G0", "sampling_guidance": {"space": "x0", "scale": 1}, "role": "G0 plus clean-prediction guidance (OmniControl-style) at every denoising step of each goal window"},
+  "V0": {"base": "G0", "goal_constraints": false, "sampling_guidance": {"space": "x0", "scale": 1}, "role": "clean-prediction guidance only, no native goal constraint"},
+  "X4": {"base": "G4", "sampling_guidance": {"space": "x0", "scale": 1}, "role": "G4 plus clean-prediction guidance at each goal window (G4W counterpart)"}
+ },
+ "comparators": "P0 arms G0, G4, W0g, G4W of the same task, seed and offset (config/p0_20261102.json)",
+ "primary": {
+  "family": "Four hypotheses, Holm-adjusted at 0.05 over exact sign-flip p values; each also requires its interval on the stated side. One value per run (mean over the 4 goals for goal error), pooled over both offsets, equal-weight task means of paired differences",
+  "L1": "x_t guidance has no leverage: S0 - G0 goal error equivalent to 0 within +-0.05 m (two shifted one-sided tests, p = the larger; interval inside +-0.05)",
+  "L2": "X0 - G0 jerk at the 0.1 s step > 0, with the X0 cell mean goal error <= 0.05 m at each offset",
+  "L3": "X0 - W0g jerk at the 0.1 s step differs from 0 (two-sided; the sign is reported)",
+  "L4": "X4 - G4 jerk at the 0.1 s step non-inferior with margin +10% of the pooled G4 mean: test of (difference - margin) < 0",
+  "decision": "L1 and L2 together support 'in ARDY, sampling-layer guidance either has no leverage (x_t) or acts as a last-step replacement with a jerk cost (clean prediction)'; L3 places that cost against output-layer correction; L4 asks whether guidance is free once lookahead conditioning has done the work"
+ },
+ "secondary": [
+  "Mechanism: per S0 run, the ratio of x_t to clean-prediction gradient norms over the 10 steps of the first goal window; per X0 run, the pre-edit goal error of each step relative to the unguided error (erasure)",
+  "V0 - X0 on every metric: whether the native in-window constraint changes the guided result",
+  "Goal error, goal success <= 0.05 m, boundary jerk, foot sliding, trunk inclination for every arm and comparator; per-offset cells; X4 - G4W",
+  "A later OpenSim evaluation (residual force) of X0 and X4 is a separate registration"
+ ],
+ "inference": {
+  "primary": "Equal-weight task means of paired differences; cluster t interval with G-1 degrees of freedom and exact sign-flip p"
+ },
+ "grid": "4 arms x 2 offsets x 24 tasks x 3 seeds",
+ "runs": 576,
+ "estimated_hours": "about 2 on two GPUs (about 22 s per run)",
+ "pilot": {
+  "jobs": "Offset task 10, seed 26, every arm and offset (8 runs); reused by the batch",
+  "admission": "Finite complete outputs; time within 3x a 25 s estimate; 4 goal receipts at 4/8/12/16 s; one reference run; exactly 4 guided windows and 40 guided steps; each arm identical to its P0 base run (G0 for S0/X0/V0, G4 for X4) before the first goal window (joints, 1e-6 m)"
+ },
+ "conventions_not_derived": [
+  "x_t guidance scale 100 (development grid 1-1000 had no effect on the goal); clean-prediction step 1 (full step; partial steps diverged in development); one guidance iteration per denoising step; jerk non-inferiority margin 10% of the G4 mean"
+ ]
+}

@@ -59,7 +59,7 @@ def rows(folder):
             if run is None or job['id'] in seen:
                 continue
             seen.add(job['id'])
-            out.append({'id': job['id'], **job['p0'], 'seed': job['seed'], 'values': goal_row(job, run)})
+            out.append({'id': job['id'], **(job['p0'] if 'p0' in job else job['p1']), 'seed': job['seed'], 'values': goal_row(job, run)})
     return out
 
 
