@@ -2,8 +2,10 @@
 """P0 development smoke: does native ARDY root conditioning move the window toward the target?
 
 M2 receipts show the C0 window end moving 1-4 mm toward a 0.1-1.0 m offset target relative to the
-same-noise unconstrained pass. This smoke varies only how the constraint is given (frames carrying
-it, constraint guidance weight) on the M2 smoke task and seed; not analyzed as a registered result.
+same-noise unconstrained pass. Arms E/T/R vary how the in-window constraint is given (frames carrying
+it, constraint guidance weight); arms G* place fixed goals at 4/8/12/16 s and expose each one as a
+future constraint up to 0/1/2/4 s ahead (the official demo's future window). G* need a task without a
+prompt update (offset tasks 0-7). Not analyzed as a registered result.
 """
 import argparse
 import copy
@@ -24,9 +26,18 @@ from plan_next_round import LEGACY_ARDY, ardy_job
 OUT = ROOT/'develop_logs/test_runs/20261102_p0'
 ARMS = {'E': ('end', 2.), 'E5': ('end', 10.), 'T': ('end_token', 2.), 'T5': ('end_token', 10.),
         'R': ('ramp', 2.), 'R5': ('ramp', 10.)}
+GOAL_ARMS = {'G0': (0., False), 'G1': (1., False), 'G2': (2., False), 'G4': (4., False),
+             'W0g': (0., True), 'G4W': (4., True)}
+GOAL_SECONDS = [4., 8., 12., 16.]
 
 
 def condition(arm, offset):
+    if arm in GOAL_ARMS:
+        lookahead, corrected = GOAL_ARMS[arm]
+        base = m1_condition('C1' if corrected else 'C0', .05, offset)
+        if corrected:
+            base['correction_writeback'] = False
+        return {**base, 'target_mode': 'goal_lookahead', 'goal_seconds': GOAL_SECONDS, 'lookahead_seconds': lookahead}
     frames, weight = ARMS[arm]
     return {**m1_condition('C0', .05, offset), 'constraint_cfg': weight, 'constraint_frames': frames}
 

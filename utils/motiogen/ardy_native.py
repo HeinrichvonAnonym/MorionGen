@@ -20,9 +20,9 @@ def install(adapter, condition, evidence):
     # Optional 20261030 protocol switches; absent keys keep the 20261024 behaviour.
     waypoints=condition.get('waypoints','sparse')
     target_mode=condition.get('target_mode','path')
-    if waypoints not in ('sparse','dense') or target_mode not in ('path','relative_offset'):
+    if waypoints not in ('sparse','dense') or target_mode not in ('path','relative_offset','goal_lookahead'):
         raise ValueError('Unknown ARDY waypoint density or target mode')
-    if target_mode=='relative_offset' and waypoints!='sparse':
+    if target_mode in ('relative_offset','goal_lookahead') and waypoints!='sparse':
         raise ValueError('Relative offsets are defined for one end-of-window waypoint')
     offset=float(condition.get('offset_m',0.))
     # Optional 20261031 M1/V3 arms; absent keys keep the native settings.
@@ -60,13 +60,27 @@ def install(adapter, condition, evidence):
     constraint_frames=condition.get('constraint_frames','end')
     if constraint_frames not in ('end','end_token','ramp') or (constraint_frames!='end' and (target_mode!='relative_offset' or correction)):
         raise ValueError('Constraint frame layouts other than end apply to uncorrected relative-offset runs')
+    # 20261102 P0: fixed future goals, offset laterally (alternating sign) from the same-seed unconstrained
+    # run, exposed to the model as future constraints up to lookahead_seconds ahead (official demo usage).
+    goal_mode=target_mode=='goal_lookahead'
+    if goal_mode:
+        if boundary!='none' or renoise_fraction or prefix_frames or constraint_frames!='end':
+            raise ValueError('Goal lookahead runs have no boundary treatment, renoising or prefix')
+        if correction and correction_writeback:
+            raise ValueError('Goal correction is output-only MotionCorrection on the window holding the goal')
+        goal_frames=[int(round(float(s)*adapter.fps)) for s in condition['goal_seconds']]
+        goal_signs=[1. if i%2==0 else -1. for i in range(len(goal_frames))]
+        lookahead=int(round(float(condition['lookahead_seconds'])*adapter.fps))
+        if keep+model.gen_horizon_len+lookahead>10*adapter.fps:
+            raise ValueError('History, horizon and lookahead exceed the official 10 s window budget')
+        goal_state={'targets':None};goals=[]
     receipts='waypoints' in condition or 'target_mode' in condition
     path=adapter.scene.get('native_root_path',{})
     direction=np.asarray(path.get('direction_xz',[0.,1.]),float)
     if direction.shape!=(2,) or not np.isclose(np.linalg.norm(direction),1.):
         raise ValueError('Root path direction must be a unit native XZ vector')
     lateral=np.asarray(path.get('lateral_xz',[direction[1],-direction[0]]),float)
-    if target_mode=='relative_offset' and (lateral.shape!=(2,) or not np.isclose(np.linalg.norm(lateral),1.)):
+    if target_mode in ('relative_offset','goal_lookahead') and (lateral.shape!=(2,) or not np.isclose(np.linalg.norm(lateral),1.)):
         raise ValueError('Relative offset requires a unit native XZ lateral vector')
     before=float(path.get('speed_before_m_s',.4));after=float(path.get('speed_after_m_s',-.2))
     switch=float(path.get('switch_seconds',5.))
@@ -87,6 +101,29 @@ def install(adapter, condition, evidence):
         seconds=np.asarray(frames,float)/adapter.fps
         distance=before*np.minimum(seconds,switch)+after*np.maximum(seconds-switch,0.)
         return distance[:,None]*direction[None]
+    def scheduled_prompt(frames):
+        # Same rule as the paused streaming loop: an update applies from the first window starting at or after it.
+        prompt=adapter.scene['prompt']
+        for update in adapter.scene.get('updates',[]):
+            if frames/adapter.fps>=update['time_seconds']:
+                prompt=update['prompt']
+        return prompt
+    def free_goal_roots():
+        history=None;frames=0;roots={}
+        horizon=model.gen_horizon_len
+        while frames<=max(goal_frames):
+            n=0 if history is None else history.shape[1]
+            prompt=scheduled_prompt(frames)
+            torch.manual_seed(adapter.seed*100000+frames)
+            motion=model.autoregressive_step(num_frames=n+horizon,init_history_sequence=history,
+                texts=[prompt],num_denoising_steps=int(model.diffusion.num_base_steps),cfg_weight=(2.,2.),
+                motion_mask=None,observed_motion=None)
+            root=model.motion_rep.inverse(motion,is_normalized=True)['root_positions'][0,n:][:, [0,2]].double().cpu().numpy()
+            for g in goal_frames:
+                if frames<=g<frames+horizon:
+                    roots[g]=root[g-frames]
+            history=motion[:,-keep:].detach();frames+=horizon
+        return roots
     def step(state,prompt):
         history = state['history']
         n = 0 if history is None else history.shape[1]
@@ -117,6 +154,21 @@ def install(adapter, condition, evidence):
             else:
                 local_frames=list(range(horizon))
                 targets=reference_root+offset*lateral[None]*((np.arange(horizon)+1.)/horizon)[:,None]
+        elif goal_mode:
+            if prompt!=scheduled_prompt(state['frames']):
+                raise RuntimeError('Streaming prompt differs from the reference schedule')
+            if goal_state['targets'] is None:
+                with adapter.timed('reference_pass'),torch.no_grad():
+                    reference_pass[0]=True
+                    try:
+                        free_roots=free_goal_roots()
+                    finally:
+                        reference_pass[0]=False
+                count('native_reference_run')
+                goal_state['free']=free_roots
+                goal_state['targets']={g:free_roots[g]+sign*offset*lateral for g,sign in zip(goal_frames,goal_signs)}
+            local_frames=[g-state['frames'] for g in goal_frames if state['frames']<=g<state['frames']+horizon+lookahead]
+            targets=np.array([goal_state['targets'][state['frames']+k] for k in local_frames]).reshape(-1,2)
         elif waypoints=='dense':
             local_frames=list(range(horizon))
             targets=path_targets([state['frames']+k for k in local_frames])
@@ -125,13 +177,20 @@ def install(adapter, condition, evidence):
             local_frames=[horizon-1]
             targets=path_targets([state['frames']+horizon-1])
         target = torch.tensor(targets,dtype=torch.float32,device='cuda')
-        constraint = Root2DConstraintSet(model.skeleton,torch.tensor([n+k for k in local_frames]),target)
-        observed,mask=model.motion_rep.create_conditions_from_constraints_batched(
-            [constraint],torch.tensor([n+horizon],device='cuda'),to_normalize=True,device='cuda')
+        total=n+horizon
+        if goal_mode and local_frames:
+            tokens=model.num_frames_per_token
+            total=n+max(horizon,-(-(max(local_frames)+1)//tokens)*tokens)
+        if goal_mode and not local_frames:
+            observed=mask=None
+        else:
+            constraint = Root2DConstraintSet(model.skeleton,torch.tensor([n+k for k in local_frames]),target)
+            observed,mask=model.motion_rep.create_conditions_from_constraints_batched(
+                [constraint],torch.tensor([total],device='cuda'),to_normalize=True,device='cuda')
         with adapter.timed('replan'),torch.no_grad():
             # Explicit per-step RNG makes differing history lengths share sampling noise.
             torch.manual_seed(seed)
-            motion=model.autoregressive_step(num_frames=n+horizon,init_history_sequence=history,
+            motion=model.autoregressive_step(num_frames=total,init_history_sequence=history,
                 texts=[prompt],num_denoising_steps=int(model.diffusion.num_base_steps),cfg_weight=(2.,cfg_constraint),
                 motion_mask=mask,observed_motion=observed)
             count('native_autoregressive_step')
@@ -140,10 +199,12 @@ def install(adapter, condition, evidence):
             if history is not None:
                 old=model.motion_rep.inverse(history,is_normalized=True)['posed_joints']
                 state['overlap_errors_m']=torch.linalg.vector_norm(decoded['posed_joints'][:,:n]-old,dim=-1).cpu().numpy()
-            if correction:
+            uncorrected=motion
+            window_frames=[k for k in local_frames if k<horizon]
+            if correction and window_frames:
                 prefix=state.get('correction_prefix') if prefix_frames else None
                 if prefix is None:
-                    local_constraint=Root2DConstraintSet(model.skeleton,torch.tensor(local_frames),target)
+                    local_constraint=Root2DConstraintSet(model.skeleton,torch.tensor(window_frames),target[:len(window_frames)])
                     corrected=post_process_motion(decoded['local_rot_mats'][:,n:],
                         decoded['root_positions'][:,n:],decoded['foot_contacts'][:,n:],
                         model.skeleton,constraint_lst=[local_constraint],contact_threshold=.5,root_margin=margin)
@@ -200,7 +261,19 @@ def install(adapter, condition, evidence):
                                                  for key in ('local_rot_mats','root_positions','foot_contacts'))
             if boundary!='none':
                 state['last_output']=(decoded['root_positions'][0,-4:].detach(),decoded['local_rot_mats'][0,-4:].detach())
-            if receipts:
+            if goal_mode:
+                windows.append({'frame':int(state['frames']),'visible_goal_frames':[state['frames']+k for k in local_frames],
+                                'num_frames':int(total)})
+                final_root=decoded['root_positions'][0,n:][:, [0,2]].double().cpu().numpy()
+                for g,sign in zip(goal_frames,goal_signs):
+                    if state['frames']<=g<state['frames']+horizon:
+                        reached=final_root[g-state['frames']];free_xz=goal_state['free'][g];goal=goal_state['targets'][g]
+                        goals.append({'frame':g,'sign':sign,'free_xz':free_xz.tolist(),'target_xz':goal.tolist(),
+                            'generated_xz':generated_root[g-state['frames']].tolist(),
+                            'reached_xz':reached.tolist(),'error_m':float(np.linalg.norm(reached-goal)),
+                            'correction_root_displacement_max_m':float(np.linalg.norm(final_root-generated_root,axis=-1).max()),
+                            'fraction_toward_target':float(np.dot(reached-free_xz,sign*lateral)/offset) if offset else None})
+            elif receipts:
                 final_root=decoded['root_positions'][0,n:][:, [0,2]].double().cpu().numpy()
                 windows.append({'frame':int(state['frames']),'local_frames':local_frames,'targets_xz':targets.tolist(),
                     'reference_end_xz':None if reference_end is None else reference_end.tolist(),
@@ -253,4 +326,8 @@ def install(adapter, condition, evidence):
             lateral_xz=lateral.tolist(),switch_seconds=switch,windows=windows,
             target_scope='path: absolute frame-indexed native XZ path; relative_offset: end of the same-noise unconstrained '
                          'prediction of this window plus offset_m along lateral_xz')
+        if goal_mode:
+            evidence['task'].update(goal_frames=goal_frames,goal_signs=goal_signs,lookahead_frames=lookahead,goals=goals,
+                goal_scope='goal_lookahead: same-seed unconstrained run at each goal frame plus sign*offset_m along lateral_xz; '
+                           'goals within lookahead are future constraints of the native window')
     evidence['history_is']='model-generated explicit motion, corrected when correction is enabled'
