@@ -32,6 +32,8 @@ PROTOCOLS = {
     'e3': {'out': ROOT/'develop_logs/test_runs/20261103_e3_upper', 'script': 'python/scripts/run_e3_upper.py', 'runner': ['--workers', '14'],
            'analysis': ['python/scripts/analyze_e3.py'], 'marker_posthoc': False,
            'records': ('*/neck.json', '*/lumbar.json'), 'errors': '*/*_error.json'},
+    'e4': {'out': ROOT/'develop_logs/test_runs/20261103_e4_cross_method', 'script': 'python/scripts/run_e4_cross_method.py',
+           'runner': ['--workers', '4'], 'analysis': ['python/scripts/analyze_e4.py'], 'marker_posthoc': False},
 }
 for _p in PROTOCOLS.values():
     _p.setdefault('script', 'python/scripts/run_e1_biomech.py'); _p.setdefault('marker_posthoc', True)
