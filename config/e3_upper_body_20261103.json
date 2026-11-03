@@ -1,41 +1,67 @@
 {
  "protocol": "e3_upper_body_20261103",
  "registered_before_results": true,
- "registered_note": "Registered before any E3 batch result. Development data: one E2 run (p0_W0g_task9_seed28_d1) used to debug and time the pipeline; its values informed only the pipeline choices listed under conventions_not_derived, and the sensitivity analysis repeats the primary family without it",
- "question": "Do the output-layer root corrections that carried a dynamic cost in E1 (W0X) and E2 (W0g) also raise the load on the lumbar spine, the neck and the shoulders, and do they change working posture",
- "interpretation": "Registered before the batch. Upper-body loads of output-corrected motions measure how far the correction pushes the motion beyond what a human body can produce, not an ergonomic risk a worker would bear: at the corrected windows the required joint moments exceed the muscles and the reserves carry the excess, so joint reactions there are lower bounds. A supported primary hypothesis therefore means that output-layer correction distorts an ergonomic assessment of the generated motion; absolute load levels are model-dependent and only paired differences within one model are interpreted",
+ "registered_note": "Registered before any E3 batch result; revision 2 (three-type classification) replaces the whole-motion primary family of revision 1 (commit fdd5724) before the batch started. Development data: one E2 run (p0_W0g_task9_seed28_d1) used to debug and time the pipeline and to look at its frame-level split into reachable and unreachable frames; the sensitivity analysis repeats the primary family without it. Pipeline check started before the batch: reproduction of the FBLS release jogging example (author kinematics, ground reactions and static-optimization results) with the E3 static optimization and joint reactions; its outcome is reported with E3 and decides whether the lumbar part is interpreted",
+ "question": "Where an output-layer root correction (E1 W0X, E2 W0g) changes an upper-body ergonomic assessment of the generated motion, is the change (1) a distortion made by our conversion into the models, (2) motion the human body cannot produce, or (3) producible motion that carries a higher load",
+ "classification": {
+  "type1_conversion": {
+   "meaning": "The models do not reproduce the generated skeleton, or a convention of the evaluation (axes, clamps, joint frames) misreads it. A property of the evaluation, not of the motion",
+   "run_flags": "Persistent fit error: run median of the per-frame IK marker RMS > 0.03 m (lumbar) or run median C2/skull fit error > 2 deg, chest fit > 1 deg, T1 fit > 5 mm (neck); a coordinate held at a non-anatomical model limit; joint-reaction finite on < 95% of frames",
+   "gate": "Type-1 rate per arm reported first. If it exceeds 5% in any control arm (C0, G0, G4) the conversion is treated as faulty and types 2 and 3 are not interpreted until it is fixed. Type-1 runs are excluded pairwise from types 2 and 3",
+   "known_and_fixed": "pelvis heading clamp at +-90 deg (E1Y/E2Y; FBLS pelvis and HYOID base unclamped); FBLS vertebral frames aligned with ground in the neutral pose, so compression is resolved along the spine tangent from model geometry (L5-S1 18.7 deg forward of the L5 frame y-axis); muscle-model conversion of FBLS rejected (passive forces)"
+  },
+  "type2_unreachable": {
+   "meaning": "Converted correctly, but the motion asks for forces the body cannot produce or postures it cannot reach",
+   "frame_flags": {
+    "external": "whole-body residual force > 5% BW (the E1 unsupported criterion)",
+    "lumbar_internal": "any lumbar reserve torque > 1 N m",
+    "neck_internal": "any neck reserve torque > 1 N m",
+    "kinematic": "a lumbar or neck coordinate within 0.5 deg of its anatomical range limit"
+   },
+   "outcome": "Fraction of trimmed frames flagged, per region (lumbar region: external, lumbar_internal or lumbar kinematic; neck region: neck_internal or neck kinematic)"
+  },
+  "type3_loaded": {
+   "meaning": "Reachable motion whose load or posture carries injury risk",
+   "frames": "Per region, the trimmed frames of a type-1-free run not flagged as type 2 for that region",
+   "outcomes": "L5-S1 compression along the spine tangent (95th percentile and mean, BW) and fraction of frames above the NIOSH 3400 N action limit; L5-S1 anterior-posterior shear (95th percentile) against 700 / 1000 N (Gallagher & Marras 2012); C7-T1 compression (95th percentile, BW); shoulder resultant moment; posture: ISO 11226 zone fractions over all type-1-free frames"
+  }
+ },
+ "interpretation": "Type-2 increases mean that the correction makes the motion physically impossible in that region; their loads are not ergonomic risk, and joint reactions on those frames (reserves carry the excess) are not analysed. Type-3 differences are ergonomic differences of producible motion. Absolute load levels are model-dependent; paired differences within one model are interpreted, and absolute levels are only compared with the published range",
  "data": "Every run evaluated by E1 (config/e1_biomech_20261101.json, 1080 M2 runs) and E2 (config/e2_biomech_20261102.json, 576 P0 runs); generated motions read only, no new generation",
  "pipeline": {
-  "worker": "python/scripts/run_e3_upper.py (module utils/motiogen/upper_body.py, OpenSim 4.6); biomech.py unchanged",
-  "posture": "From the generated joint rotations: trunk relative to pelvis and neck relative to chest as Z-X-Y angles, trunk and head inclination from vertical, upper-arm elevation relative to the chest, head angular speed; mean, |.| 95th percentile, RMS and ISO 11226 zone fractions over the trimmed motion",
-  "lumbar": "FBLS full-body lumbar spine model (Raabe & Chaudhari 2016, 324 Thelen muscles) with the E1 pipeline: per-segment scaling to 75 kg, joint-centre IK with axial spine markers (weight 0.3) registered in a lumbar-locked first second, pelvis coordinates unclamped, 6 Hz filter, contact-constrained ground reactions, inverse dynamics, static optimization (activation squared, reserves 1000 pelvis / 1 lumbar and legs / 200 arms as the model release), joint reactions at L5-S1 ... L1-L2 on the caudal-most child vertebra in its own frame; shoulder resultant moment from the FBLS inverse dynamics",
-  "neck": "HYOID head-neck model (Mortensen et al. 2018, 72 Millard muscles, rigid tendon) with the impact actuators removed, head-neck masses scaled by 75/79.54 kg, the 6-DOF base driven by the generated chest; per-frame least-squares fit of the six independent neck coordinates to the generated neck and head rotations relative to the chest (T1 at the generated neck joint); inverse dynamics, static optimization (reserves 1e4 base / 1 N m neck), joint reactions at C7-T1 (on C7) and C0-C1 (on the skull) driven by the static-optimization controls",
+  "worker": "python/scripts/run_e3_upper.py (module utils/motiogen/upper_body.py, OpenSim 4.6); biomech.py unchanged; per-frame series kept on the data disk for the frame classification",
+  "posture": "From the generated joint rotations: trunk relative to pelvis and neck relative to chest as Z-X-Y angles, trunk and head inclination from vertical, upper-arm elevation relative to the chest, head angular speed",
+  "lumbar": "FBLS full-body lumbar spine model (Raabe & Chaudhari 2016, 324 Thelen muscles) with the E1 pipeline: per-segment scaling to 75 kg, joint-centre IK with axial spine markers (weight 0.3) registered in a lumbar-locked first second, pelvis coordinates unclamped, 6 Hz filter, contact-constrained ground reactions, inverse dynamics, static optimization (activation squared, reserves 1000 pelvis / 1 lumbar and legs / 200 arms), joint reactions at L5-S1 ... L1-L2 from the static-optimization forces; shoulder resultant moment from the FBLS inverse dynamics",
+  "neck": "HYOID head-neck model (Mortensen et al. 2018, 72 Millard muscles, rigid tendon) with the impact actuators removed, head-neck masses scaled by 75/79.54 kg, the 6-DOF base driven by the generated chest; per-frame least-squares fit of the six independent neck coordinates to the generated neck and head rotations relative to the chest (T1 at the generated neck joint); inverse dynamics, static optimization (reserves 1e4 base / 1 N m neck), joint reactions at C7-T1 and C0-C1 driven by the static-optimization controls",
   "trim_s": 0.5,
   "static_optimization_rate_hz": {"neck": 50, "lumbar": 10}
  },
- "validity": {
-  "lumbar": "As E1: IK RMS <= 0.03 m, IK max <= 0.10 m, required vertical force within 1 +- 0.02 BW; joint-reaction finite on >= 95% of frames",
-  "neck": "Chest fit <= 1 deg, T1 fit <= 5 mm, C2 and skull orientation fit RMS <= 2 deg, neck coordinates at a range limit on <= 20% of frames, joint-reaction finite on >= 95% of frames",
-  "exclusion": "Invalid records excluded pairwise per region; reserves are outcomes, not validity criteria"
- },
  "primary": {
-  "family": "Six hypotheses, Holm-adjusted at 0.05 over the exact sign-flip p values; each also requires the lower 95% interval bound > 0",
-  "metrics": {"lumbar": "L5-S1 compression RMS (BW)", "neck": "C7-T1 compression RMS (BW)", "shoulder": "shoulder resultant moment RMS (N m/kg), mean of both sides"},
+  "family": "Eight hypotheses, Holm-adjusted at 0.05 over the exact sign-flip p values",
   "contrasts": {"e1": "W0X - C0, pooled over offsets 0.1/0.5/1.0 m", "e2": "W0g - G4, pooled over offsets 0.5/1.0 m"},
-  "pooling": "One difference per task-seed-offset, equal-weight task means, cluster t interval (G = 24, G - 1 df), exact sign-flip p"
+  "hypotheses": {
+   "type2_lumbar": "type-2 frame fraction of the lumbar region; directional (> 0): supported when Holm p < 0.05 and the lower 95% bound > 0",
+   "type2_neck": "type-2 frame fraction of the neck region; directional (> 0), as above",
+   "type3_lumbar": "L5-S1 tangent compression 95th percentile on reachable frames (BW); two-sided: a difference when Holm p < 0.05 and the interval excludes 0",
+   "type3_neck": "C7-T1 compression 95th percentile on reachable frames (BW); two-sided, as above"
+  },
+  "pooling": "One difference per task-seed-offset, equal-weight task means, cluster t interval (G = 24, G - 1 df), exact sign-flip p; type-3 statistics per run over its own reachable frames"
  },
  "secondary": [
-  "E1: W0 - C0, XFh - C0, XFo - C0, W0X - W0; E2: G4 - G0, G4W - G4, W0g - G0 on every region metric",
-  "L4-L5 and L1-L2 compression, L5-S1 shear and peak, fraction of frames above the NIOSH 3400 N limit",
-  "lumbar flexion / lateral bending / axial rotation moments; trunk and neck muscle-group activations, muscle effort, reserve RMS",
-  "C0-C1 compression, neck shear, neck coordinate moments",
-  "posture endpoints and ISO 11226 zone fractions",
-  "validity by arm; sensitivity of the primary family without the development run"
+  "type-1 rate by arm and flag (reported first, gate above)",
+  "type-2 split by flag (external, internal, kinematic) and its timing relative to the correction windows",
+  "type-3 sensitivity on frames reachable in both runs of a pair (time-matched)",
+  "type-3: L4-L5 and L1-L2 compression, L5-S1 shear against 700 / 1000 N, NIOSH fraction, shoulder moment, trunk and neck muscle-group activations, C0-C1 compression",
+  "posture: ISO 11226 zone fractions and posture endpoints",
+  "E1: W0 - C0, XFh - C0, XFo - C0, W0X - W0; E2: G4 - G0, G4W - G4, W0g - G0 on every primary outcome",
+  "absolute type-3 levels of the control arms against the published walking range (L5-S1 / L4-L5 peak compression about 0.9-2.6 BW for walking; FBLS static-optimization studies report up to 3.8 BW)",
+  "sensitivity of the primary family without the development run"
  ],
  "development_runs": ["p0_W0g_task9_seed28_d1"],
  "conventions_not_derived": [
+  "Type-1 gate 5%; type-2 thresholds 1 N m reserve and 0.5 deg from range limits; residual 5% BW as E1",
   "Static optimization at 10 Hz for FBLS (about 4 s per frame for 324 muscles) and 50 Hz for HYOID",
-  "Neck fit, limit and joint-reaction validity thresholds",
+  "Spine tangent from adjacent intervertebral joint centres as the compression axis",
   "Joint reactions of FBLS from the static-optimization forces file; of HYOID from the static-optimization controls with rigid-tendon muscles (the forces-file override returned NaN on most HYOID frames; converting FBLS to Millard muscles added passive forces of several hundred N per hip flexor)",
   "Axial spine marker weight 0.3; HYOID mass scaling by body-mass ratio; ISO 11226 static zones applied frame by frame to dynamic motion",
   "Primary-arm runs scheduled first"

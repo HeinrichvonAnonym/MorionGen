@@ -520,7 +520,7 @@ def fit_neck(chain, run):
                              'skull_deg_rms': rms(errors[:, 2]), 'skull_deg_max': float(errors[:, 2].max()), 't1_m_max': float(errors[:, 3].max())},
                'frames_at_coordinate_limit': {n: int(at_limit[:, k].sum()) for k, n in enumerate(NECK) if at_limit[:, k].any()},
                'limit_fraction': float(at_limit.any(1).mean())}
-    return rows, receipt
+    return rows, receipt, {'errors_chest_c2_skull_deg_t1_m': errors, 'at_limit': at_limit}
 
 
 def write_motion(model, rows, fps, path):
@@ -538,7 +538,8 @@ def neck(run, work, mass=75., step=2):
     work = Path(work).resolve(); work.mkdir(parents=True, exist_ok=True)
     neck_model(work/'model.osim', mass)
     chain = Chain(work/'model.osim')
-    rows, receipt = fit_neck(chain, run)
+    rows, receipt, per_frame = fit_neck(chain, run)
+    np.savez_compressed(work/'fit_frames.npz', fps=receipt['fps'], **per_frame)
     (work/'ik').mkdir(exist_ok=True)
     write_motion(chain.model, rows, receipt['fps'], work/'ik/ik.mot')
     times, labels, data = biomech.write_coordinates(work/'ik/ik.mot', work/'coordinates.mot')
