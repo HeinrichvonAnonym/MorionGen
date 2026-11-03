@@ -18,6 +18,16 @@ from motiogen.runtime import json_write
 SPEC = json.loads((ROOT/'config/e1_biomech_20261101.json').read_text(encoding='utf-8'))
 M2_SPEC = json.loads((ROOT/'config/m2_20261101.json').read_text(encoding='utf-8'))
 OUT = ROOT/'develop_logs/test_runs/20261101_e1_biomech'
+YAW = ROOT/'develop_logs/test_runs/20261103_e1y_biomech'
+OVERRIDE = None
+
+
+def run_paths():
+    """E1 metrics files; with --yaw, runs re-evaluated with the global heading unclamped replace their E1 originals."""
+    paths = {p.parent.name: p for p in (OUT/'runs').glob('*/metrics.json')}
+    if OVERRIDE is not None:
+        paths.update({p.parent.name: p for p in (OVERRIDE/'runs').glob('*/metrics.json')})
+    return [paths[k] for k in sorted(paths)]
 ARMS = list(M2_SPEC['arms']); OFFSETS = M2_SPEC['offsets_m']
 PRIMARY = 'residual_force_rms_bw'
 METRICS = [PRIMARY, 'unsupported_fraction_5pct_bw', 'residual_moment_rms_m', 'lumbar_extension_moment_rms_nm_kg',
@@ -37,15 +47,17 @@ def limb_valid(row, path):
 def load_table(mode='registered'):
     """mode: 'registered' (preregistered validity), 'all' (no exclusion), 'limb' (limb-marker IK validity)."""
     table, invalid = {}, []
-    for path in sorted((OUT/'runs').glob('*/metrics.json')):
+    for path in run_paths():
         row = json.loads(path.read_text()); info = row['m2']
         keep = {'registered': row['valid'], 'all': True, 'limb': limb_valid(row, path)}[mode]
         if not keep:
             invalid.append({'id': row['id'], 'arm': info['arm'], 'offset_m': info['offset_m'], 'validity': row['validity'], 'ik': row['ik'],
                             'posthoc_missing': keep is None}); continue
         table[(info['arm'], info['offset_m'], info['task'], info['seed'])] = row['metrics']
-    failed = [p.parent.name for p in (OUT/'runs').glob('*/error.json')]
-    return table, invalid, failed
+    failed = {p.parent.name for p in (OUT/'runs').glob('*/error.json')}
+    if OVERRIDE is not None:
+        failed = (failed-{p.parent.name for p in (OVERRIDE/'runs').glob('*/metrics.json')}) | {p.parent.name for p in (OVERRIDE/'runs').glob('*/error.json')}
+    return table, invalid, sorted(failed)
 
 
 def primary(table):
@@ -63,7 +75,7 @@ def primary(table):
 
 def validity_by_arm():
     counts = collections.defaultdict(collections.Counter)
-    for path in (OUT/'runs').glob('*/metrics.json'):
+    for path in run_paths():
         row = json.loads(path.read_text()); key = f"{row['m2']['arm']}|d{row['m2']['offset_m']:g}"
         counts[key]['runs'] += 1
         counts[key]['registered_invalid'] += not row['valid']
@@ -116,8 +128,13 @@ def kinematic_link(table):
 
 
 def main():
+    global OVERRIDE
+    if '--yaw' in sys.argv:
+        OVERRIDE = YAW
     table, invalid, failed = load_table()
-    result = {'runs': len(table), 'expected_runs': M2_SPEC['runs'], 'invalid_runs': invalid, 'failed_runs': failed}
+    result = {'runs': len(table), 'expected_runs': M2_SPEC['runs'], 'invalid_runs': invalid, 'failed_runs': failed,
+              'scope': 'registered E1 pipeline' if OVERRIDE is None else
+                       'post hoc: runs whose IK hit the +-90 degree pelvis_rotation clamp re-evaluated with the heading unclamped'}
     result['cells'] = {f'{a}|d{o:g}': {m: cell(table, a, o, m) for m in METRICS} for a in ARMS for o in OFFSETS}
     result['pipeline_valid'], hypotheses = primary(table)
     result['primary'] = hypotheses
@@ -132,7 +149,7 @@ def main():
                                            'per_offset': {str(o): {m: test(*paired(table, on, off, [o], m)) for m in (PRIMARY, 'muscle_effort_sum_a2_mean', 'knee_angle_moment_rms_nm_kg', 'lumbar_extension_moment_rms_nm_kg')} for o in OFFSETS}}
                            for on, off in [('W0X', 'C0'), ('W0', 'C0'), ('XFh', 'C0'), ('XFo', 'C0'), ('W0X', 'XFo'), ('W0X', 'W0')]}
     result['kinematic_link'] = kinematic_link(table)
-    json_write(OUT/'analysis.json', result)
+    json_write((OUT if OVERRIDE is None else OVERRIDE)/'analysis.json', result)
     print(json.dumps({'runs': result['runs'], 'pipeline_valid': result['pipeline_valid'], 'invalid': len(invalid), 'failed': len(failed),
                       'primary': {k: {x: v.get(x) for x in ('mean', 'ci95', 'holm_p', 'supported')} for k, v in hypotheses.items()}}))
 

@@ -27,6 +27,20 @@ PROTOCOLS = {
     'e2': {'source': RUNS/'20261102_p0', 'key': 'p0', 'arms': ('G0', 'G4', 'W0g', 'G4W'), 'out': RUNS/'20261102_e2_biomech',
            'data': DISK/'e2_biomech_20261102/runs', 'done_marker': 'analysis.json'},
 }
+# Post hoc (20261103): the Rajagopal model clamps pelvis_rotation (global heading) to +-90 degrees. Re-evaluate,
+# with the heading unclamped, every run whose IK hit that limit, plus two runs that never did as controls.
+for name, base, day in (('e1y', 'e1', '20261103'), ('e2y', 'e2', '20261103')):
+    PROTOCOLS[name] = {**PROTOCOLS[base], 'out': RUNS/f'{day}_{name}_biomech', 'data': DISK/f'{name}_biomech_{day}/runs',
+                       'free_yaw': True, 'select_from': PROTOCOLS[base]['out']}
+CONTROLS = 2
+
+
+def yaw_selection(evaluated):
+    hit, clear = [], []
+    for path in sorted((evaluated/'runs').glob('*/markers_posthoc.json')):
+        limits = json.loads(path.read_text())['frames_at_coordinate_limit']
+        (hit if limits.get('pelvis_rotation', 0) else clear).append(path.parent.name)
+    return set(hit+clear[:CONTROLS])
 MASS = 75.
 TRIM = .5
 
@@ -56,10 +70,13 @@ def source_runs(protocol):
         open_queue = True
     if arms is not None:
         found = {j: v for j, v in found.items() if v[0]['arm'] in arms}
+    if 'select_from' in protocol:
+        selected = protocol.setdefault('selected', yaw_selection(protocol['select_from']))
+        found = {j: v for j, v in found.items() if j in selected}
     return found, open_queue
 
 
-def evaluate(job_id, info, run, out, data, key):
+def evaluate(job_id, info, run, out, data, key, free_yaw=False):
     import opensim as osim
     import biomech
     osim.Logger.setLevelString('error')
@@ -69,7 +86,7 @@ def evaluate(job_id, info, run, out, data, key):
     try:
         if work.exists():
             shutil.rmtree(work)
-        receipt = biomech.prepare(run, work, MASS)
+        receipt = biomech.prepare(run, work, MASS, free_yaw=free_yaw)
         metrics = biomech.dynamics(work, MASS)
         t1 = (receipt['frames']-1)/receipt['fps']-TRIM
         metrics.update(biomech.static_optimization(work, TRIM, t1))
@@ -102,7 +119,8 @@ def run_pool(args, protocol, returned, counts):
             todo = sorted((j for j in runs if j not in submitted and j not in returned and not (out/'runs'/j/'metrics.json').exists()),
                           key=lambda j: (runs[j][0]['task'], j))
             for job_id in todo[:max(0, 2*args.workers-len(submitted))]:
-                submitted[job_id] = pool.submit(evaluate, job_id, *runs[job_id], out, protocol['data'], protocol['key'])
+                submitted[job_id] = pool.submit(evaluate, job_id, *runs[job_id], out, protocol['data'], protocol['key'],
+                                                protocol.get('free_yaw', False))
             (out/'progress.json').write_text(json.dumps({'m2_successful_runs': len(runs), 'm2_open': open_queue,
                                                          'evaluated': sum(1 for _ in (out/'runs').glob('*/metrics.json')),
                                                          'in_flight': len(submitted), 'waiting': len(todo), 'this_session': counts,

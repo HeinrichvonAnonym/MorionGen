@@ -68,7 +68,8 @@ SEGMENTS = {'pelvis': ['pelvis'], 'femur': ['femur_r', 'femur_l', 'patella_r', '
             'humerus': ['humerus_r', 'humerus_l'], 'forearm': ['ulna_r', 'ulna_l', 'radius_r', 'radius_l', 'hand_r', 'hand_l']}
 
 
-def scaled_model(points, names, mass, path):
+def scaled_model(points, names, mass, path, free_yaw=False):
+    """free_yaw: also unclamp pelvis_rotation, the global heading (the model clamps it to +-90 degrees)."""
     model = osim.Model(str(MODEL)); state = model.initSystem()
     target, base = segment_lengths(points, names), model_lengths(model, state)
     factors = {k: target[k]/base[k] for k in target}
@@ -78,7 +79,7 @@ def scaled_model(points, names, mass, path):
             s = osim.Scale(); s.setSegmentName(body); s.setScaleFactors(osim.Vec3(*[factors[segment]]*3)); s.setApply(True)
             scales.cloneAndAppend(s)
     model.scale(state, scales, True, mass)
-    for name in ('pelvis_tx', 'pelvis_ty', 'pelvis_tz'):
+    for name in ('pelvis_tx', 'pelvis_ty', 'pelvis_tz', *(('pelvis_rotation',) if free_yaw else ())):
         coordinate = model.updCoordinateSet().get(name)
         coordinate.setRangeMin(-1e3); coordinate.setRangeMax(1e3); coordinate.setDefaultClamped(False)
     state = model.initSystem()
@@ -394,11 +395,11 @@ def so_metrics(out):
             'reserve_peak_nm': float(np.abs(act[:, reserves]*RESERVE_NM).max()) if reserves else 0.}
 
 
-def prepare(run, out, mass=75., calibration_seconds=1.):
+def prepare(run, out, mass=75., calibration_seconds=1., free_yaw=False):
     out = Path(out).resolve(); out.mkdir(parents=True, exist_ok=True)
     points, names, fps = load(run)
-    receipt = {'run': str(run), 'model_source': str(MODEL), 'fps': fps, 'frames': int(points.shape[0])}
-    receipt['scaling'] = scaled_model(points, names, mass, out/'scaled.osim')
+    receipt = {'run': str(run), 'model_source': str(MODEL), 'fps': fps, 'frames': int(points.shape[0]), 'free_yaw': free_yaw}
+    receipt['scaling'] = scaled_model(points, names, mass, out/'scaled.osim', free_yaw)
     calib = list(range(int(calibration_seconds*fps)))
     write_trc(points, names, fps, out/'calibration.trc', calib)
     limb_only = {n: (w if n in MARKERS else 0.) for n, w in WEIGHTS.items()}

@@ -16,6 +16,16 @@ from motiogen.native_analysis import holm
 from motiogen.runtime import json_write
 
 OUT = ROOT/'develop_logs/test_runs/20261102_e2_biomech'
+YAW = ROOT/'develop_logs/test_runs/20261103_e2y_biomech'
+OVERRIDE = None
+
+
+def run_paths():
+    """E2 metrics files; with --yaw, runs re-evaluated with the global heading unclamped replace their E2 originals."""
+    paths = {p.parent.name: p for p in (OUT/'runs').glob('*/metrics.json')}
+    if OVERRIDE is not None:
+        paths.update({p.parent.name: p for p in (OVERRIDE/'runs').glob('*/metrics.json')})
+    return [paths[k] for k in sorted(paths)]
 P0_SPEC = json.loads((ROOT/'config/p0_20261102.json').read_text(encoding='utf-8'))
 ARMS = ['G0', 'G4', 'W0g', 'G4W']; OFFSETS = P0_SPEC['offsets_m']
 MARGIN = .03
@@ -24,14 +34,17 @@ MARGIN = .03
 def load_table(mode='registered'):
     """mode: 'registered' (preregistered validity), 'all' (no exclusion), 'limb' (limb-marker IK validity)."""
     table, invalid = {}, []
-    for path in sorted((OUT/'runs').glob('*/metrics.json')):
+    for path in run_paths():
         row = json.loads(path.read_text()); info = row['p0']
         keep = {'registered': row['valid'], 'all': True, 'limb': limb_valid(row, path)}[mode]
         if not keep:
             invalid.append({'id': row['id'], 'arm': info['arm'], 'offset_m': info['offset_m'], 'validity': row['validity'],
                             'ik': row['ik'], 'posthoc_missing': keep is None}); continue
         table[(info['arm'], info['offset_m'], info['task'], info['seed'])] = row['metrics']
-    return table, invalid, [p.parent.name for p in (OUT/'runs').glob('*/error.json')]
+    failed = {p.parent.name for p in (OUT/'runs').glob('*/error.json')}
+    if OVERRIDE is not None:
+        failed = (failed-{p.parent.name for p in (OVERRIDE/'runs').glob('*/metrics.json')}) | {p.parent.name for p in (OVERRIDE/'runs').glob('*/error.json')}
+    return table, invalid, sorted(failed)
 
 
 def paired(table, on, off, offsets, metric, shift=0.):
@@ -68,7 +81,7 @@ def primary(table):
 
 def validity_by_arm():
     counts = collections.defaultdict(collections.Counter)
-    for path in (OUT/'runs').glob('*/metrics.json'):
+    for path in run_paths():
         row = json.loads(path.read_text()); key = f"{row['p0']['arm']}|d{row['p0']['offset_m']:g}"
         counts[key]['runs'] += 1
         counts[key]['registered_invalid'] += not row['valid']
@@ -81,8 +94,13 @@ def validity_by_arm():
 
 
 def main():
+    global OVERRIDE
+    if '--yaw' in sys.argv:
+        OVERRIDE = YAW
     table, invalid, failed = load_table()
-    result = {'runs': len(table), 'invalid_runs': invalid, 'failed_runs': failed}
+    result = {'runs': len(table), 'invalid_runs': invalid, 'failed_runs': failed,
+              'scope': 'registered E2 pipeline' if OVERRIDE is None else
+                       'post hoc: runs whose IK hit the +-90 degree pelvis_rotation clamp re-evaluated with the heading unclamped'}
     result['cells'] = {f'{a}|d{o:g}': {m: cell(table, a, o, m) for m in METRICS} for a in ARMS for o in OFFSETS}
     result['pipeline_valid'], hypotheses = primary(table)
     result['primary'] = hypotheses
@@ -97,7 +115,7 @@ def main():
     result['contrasts'] = {f'{on}-{off}': {'pooled': {m: test(*paired(table, on, off, OFFSETS, m)) for m in METRICS},
                                            'per_offset': {str(o): {m: test(*paired(table, on, off, [o], m)) for m in METRICS} for o in OFFSETS}}
                            for on, off in [('W0g', 'G0'), ('G4', 'G0'), ('W0g', 'G4'), ('G4W', 'G4')]}
-    json_write(OUT/'analysis.json', result)
+    json_write((OUT if OVERRIDE is None else OVERRIDE)/'analysis.json', result)
     print(json.dumps({'runs': result['runs'], 'pipeline_valid': result['pipeline_valid'], 'invalid': len(invalid), 'failed': len(failed),
                       'primary': {k: {x: v.get(x) for x in ('mean', 'ci95', 'holm_p', 'supported')} for k, v in hypotheses.items()}}))
 

@@ -22,9 +22,13 @@ OPENSIM_PY = Path.home()/'.local/share/opensim-api/bin/python'
 ARDY_PY = DATA/'envs/motiogen-ardy/bin/python'
 PROTOCOLS = {
     'e1': {'out': ROOT/'develop_logs/test_runs/20261101_e1_biomech', 'runner': ['--workers', '8'],
-           'analysis': 'python/scripts/analyze_e1.py'},
+           'analysis': ['python/scripts/analyze_e1.py']},
     'e2': {'out': ROOT/'develop_logs/test_runs/20261102_e2_biomech', 'runner': ['--workers', '6', '--protocol', 'e2'],
-           'analysis': 'python/scripts/analyze_e2.py'},
+           'analysis': ['python/scripts/analyze_e2.py']},
+    'e1y': {'out': ROOT/'develop_logs/test_runs/20261103_e1y_biomech', 'runner': ['--workers', '6', '--protocol', 'e1y'],
+            'analysis': ['python/scripts/analyze_e1.py', '--yaw']},
+    'e2y': {'out': ROOT/'develop_logs/test_runs/20261103_e2y_biomech', 'runner': ['--workers', '6', '--protocol', 'e2y'],
+            'analysis': ['python/scripts/analyze_e2.py', '--yaw']},
 }
 PROTOCOL = PROTOCOLS['e1']
 OUT = PROTOCOL['out']
@@ -104,7 +108,7 @@ def launch_runner():
 
 def post_process():
     for name, cmd in [('marker_posthoc', [str(OPENSIM_PY), 'python/scripts/e1_marker_posthoc.py', '--out', str(OUT)]),
-                      ('analysis', [str(ARDY_PY), PROTOCOL['analysis']])]:
+                      ('analysis', [str(ARDY_PY), *PROTOCOL['analysis']])]:
         log(f'start {name}')
         with open(OUT/f'{name}_final.log', 'w') as f:
             code = subprocess.run(['nice', '-n', '10', *cmd], cwd=ROOT, env=env(), stdout=f, stderr=subprocess.STDOUT).returncode
