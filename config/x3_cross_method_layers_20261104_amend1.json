@@ -1,0 +1,25 @@
+{
+  "amends": "config/x3_cross_method_layers_20261104.json",
+  "registered_before_results": true,
+  "basis": "development runs on scratch output (not analysed); details in develop_logs/notes/20261104_x3_prereg_log.md",
+  "changes": [
+    {"what": "OmniControl realism off", "was": "ControlNet residual multiplied by 0 (plain MDM), as in experiment 1",
+     "now": "ControlNet receives OmniControl's native zero hint; C0 = native unconstrained output, S = spatial guidance on that base",
+     "why": "the plain-MDM base is degenerate for the registered prompts (development: 0.1 s jerk 89 vs 6.8 m/s^3, 1.1 m travel in 9.8 s)"},
+    {"what": "DART initial state", "now": "env.reset generators seeded and element 0's stand.pkl state copied to every batch element",
+     "why": "get_batch draws the start sequence at random; runs did not share the registered initial state"},
+    {"what": "DART W1", "was": "generation arm", "now": "post hoc: W0 windows corrected toward goal minus the written-back shift; later frames rigidly shifted by the written-back root translation",
+     "why": "DART re-canonicalises its history each primitive; a world shift of the history shifts every later C0 frame by the same vector (development max error 1.5e-6 m). Only the root translation is written back"},
+    {"what": "DART S precision", "was": "no autocast", "now": "native fp16 autocast, per-primitive gradient checkpointing",
+     "why": "fp32 replay of the C0 noise drifts 4.97 m; native autocast replays exactly (0.0 m), passing the registered 0.01 m replay gate"},
+    {"what": "DART G0 reading", "now": "G0 reported at goal 1 only (secondary)",
+     "why": "after G0's single policy primitive the chaotic noise-driven walk leaves C0's path, so later C0-defined goals lie 5-20 m away"},
+    {"what": "Kimodo scheduling", "now": "generation waits for the reviewed RAM gate (>= 20 GiB free); the gate is not bypassed",
+     "why": "E3/E4 OpenSim workers share the host"},
+    {"what": "stage cells", "now": "confirm generates only the 20 non-pilot (task, seed) cells and reuses the 4 pilot cells; top_up generates only seed 42",
+     "why": "one generation per cell; DART outputs depend on batch composition at fp16 precision"},
+    {"what": "DART confirm scheduling", "now": "the confirm DART batch (40 S jobs) starts in parallel with the pilot; its outputs enter analysis only if the pilot gate admits every DART arm without change, otherwise it is regenerated",
+     "why": "S costs 60 s per optimiser step (300 steps, about 5 h per batch, launch-overhead bound at 8% GPU utilisation)"}
+  ],
+  "unchanged": "tasks, seeds, offsets, arms otherwise, hypotheses, margins, inference, pilot gate, precision rule"
+}
