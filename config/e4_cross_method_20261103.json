@@ -1,0 +1,68 @@
+{
+  "protocol": "e4_cross_method_20261103",
+  "registered_before_results": true,
+  "registered_note": "Registered before any E4 evaluation. Smoke runs (first pair of each method) check only the validity flags and the loader, not the contrasts; they stay in the batch.",
+  "question": "Experiment 1 measured each method's component on/off contrast with kinematic metrics only. Does the physical-feasibility criterion (external force the motion needs but the feet cannot supply) move with the same components, and how do the eight methods compare on it",
+  "criterion": "E criterion of the report: residual force = required external force of the whole body minus the best ground reaction force the active foot contacts can supply under friction, as a fraction of body weight",
+  "data": "Existing experiment-1 outputs, read only; no new generation. Runs from develop_logs/test_runs/20261024_native_matrix_analysis/analysis.json (paused clock) and Kimodo pairs from develop_logs/test_runs/20261024_kimodo_pair_audit/audit.json",
+  "selection": {
+    "rule": "Per method and task, the two lowest seeds present in every listed condition. Kimodo: the first case (by case path) of each of the 26 constraint families, raw and corrected outputs",
+    "convention": "Two seeds per task: convention to fit about 480 OpenSim runs into the CPU share left by E3 (4 workers), not derived",
+    "methods": {
+      "motionlcm": {"conditions": [{"control_residual": 0}, {"control_residual": 1}], "contrasts": [["control_residual", {}]]},
+      "omnicontrol": {"conditions": [{"realism": 0, "spatial": 0}, {"realism": 0, "spatial": 1}, {"realism": 1, "spatial": 0}, {"realism": 1, "spatial": 1}],
+                      "contrasts": [["spatial", {"realism": 1}], ["spatial", {"realism": 0}], ["realism", {"spatial": 1}]]},
+      "chois": {"conditions": [{"guidance": 0}, {"guidance": 1}], "contrasts": [["guidance", {}]]},
+      "dart": {"conditions": [{"goal_update": 0}, {"goal_update": 1}], "contrasts": [["goal_update", {}]]},
+      "closd": {"conditions": [{"execution_context": 0}, {"execution_context": 1}], "contrasts": [["execution_context", {}]]},
+      "primal": {"conditions": [{"ground_snap": 1, "reprojection": 1, "inertialization": 0}, {"ground_snap": 1, "reprojection": 1, "inertialization": 1}],
+                 "contrasts": [["inertialization", {"ground_snap": 1, "reprojection": 1}]], "source": "<run>/factorial/ground{g}_reproject{r}_inertialize{i}_canonical.npz"},
+      "ardy": {"conditions": [{"correction": 0, "history_long": 0}, {"correction": 1, "history_long": 0}, {"correction": 0, "history_long": 1}, {"correction": 1, "history_long": 1}],
+               "contrasts": [["correction", {"history_long": 0}], ["correction", {"history_long": 1}], ["history_long", {"correction": 1}]]},
+      "kimodo": {"conditions": [{"correction": 0}, {"correction": 1}], "contrasts": [["correction", {}]],
+                 "source": "<data_root>/benchmarks/kimodo-stratified-20261008/generated_{raw,postprocess}/<case>", "cluster": "constraint type (family without the notext / withtext prefix), 13 clusters"}
+    }
+  },
+  "pipeline": {
+    "same_as": "config/e1_biomech_20261101.json pipeline (Rajagopal model, joint-centre markers, per-segment scaling, IK, required wrench, friction-cone ground reaction estimate, inverse dynamics, static optimization), with the global heading unclamped (free_yaw) for every run as in E1Y",
+    "loader": "utils/motiogen/biomech_sources.py: canonical Z-up joints for all methods except Kimodo (native Y-up SOMA77 posed_joints, 30 fps, rotated to Z-up); spine1 / spine3 renamed to the axial-marker sources Spine / Spine3; CHOIS body wrists used as wrist centres",
+    "mass_kg": 75,
+    "trim_s": 0.5,
+    "calibration_s": 1.0
+  },
+  "metrics": {
+    "primary": ["residual_force_rms_bw", "unsupported_fraction_5pct_bw"],
+    "secondary": ["muscle_effort_sum_a2_mean", "hip_flexion_moment_rms_nm_kg", "knee_angle_moment_rms_nm_kg", "lumbar_extension_moment_rms_nm_kg"]
+  },
+  "validity": {
+    "gates": "As E1: IK marker RMS <= 0.03 m, IK max <= 0.10 m, mean required vertical force within 2% of body weight",
+    "primary_set": "Pairs whose two runs both pass; the all-pairs result is reported as sensitivity",
+    "report": "Pass fractions per method and condition are reported before any contrast"
+  },
+  "statistics": {
+    "effect": "Paired difference on minus off within (task, seed), mean over seeds, equal task weight",
+    "interval": "95% percentile bootstrap over task clusters (Kimodo: constraint-type clusters), 10000 resamples, seed 20261103",
+    "multiplicity": "Holm over the eight primary contrasts (the first contrast of each method) on residual_force_rms_bw; other contrasts and metrics descriptive",
+    "levels": "Per method and condition: median and interquartile range of residual_force_rms_bw over runs, the cross-method table of the report"
+  },
+  "hypotheses": {
+    "H1": "Output-layer correction raises the residual force: ARDY correction (history_long 0) and Kimodo correction, on minus off > 0",
+    "H2": "OmniControl spatial guidance (realism on) raises the residual force, on minus off > 0",
+    "H3": "MotionLCM control residual, CHOIS guidance, DART goal update, PRIMAL inertialization: two-sided, no direction registered",
+    "H4": "Positive control: CLoSD motions are executed in a physics simulator, so their residual-force median is below that of every kinematic method in both conditions"
+  },
+  "contact_validation": {
+    "purpose": "CLoSD stores the simulator contact forces per body. The estimated vertical ground reaction force should follow them",
+    "measure": "Pearson r between the estimated total vertical ground reaction force and the simulator total vertical contact force, both divided by their own clip mean, on the trimmed common time grid; flight fractions of both",
+    "threshold": "Median r >= 0.8 across CLoSD runs: convention, not derived"
+  },
+  "boundaries": [
+    "CHOIS motions carry or push objects whose hand loads are not modelled; CHOIS residual force includes the missing object interaction, so CHOIS levels are not compared with other methods, only its own contrast",
+    "Methods differ in clip length (3 to 20 s), frame rate (20 / 30 fps) and task; levels across methods describe each method's own task set, not a matched benchmark",
+    "Joint-centre markers only: no orientation of hands, feet or head; same as E1"
+  ],
+  "outputs": {
+    "records": "develop_logs/test_runs/20261103_e4_cross_method/",
+    "data": "<data_root>/outputs/e4_cross_method_20261103/runs"
+  }
+}
