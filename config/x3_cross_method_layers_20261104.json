@@ -1,0 +1,169 @@
+{
+  "protocol": "x3_cross_method_layers_20261104",
+  "registered_before_results": true,
+  "registered_at": "2026-11-04 (before any X3 pilot or confirmatory output exists)",
+  "follows": "config/p0_20261102.json (ARDY P0 goal task, experiment 2.4/2.5) and config/e4 cross-method E pipeline (python/scripts/run_e4_cross_method.py)",
+  "question": "Do the ARDY three-layer conclusions (training layer accurate and smooth when the goal is visible early; output-layer cost grows with the correction; write-back causes the boundary jump; crossfade moves the cost to foot sliding) hold for an autoregressive policy method (DART) and two whole-sequence diffusion methods (Kimodo, OmniControl) under equal information?",
+  "anchor": "ARDY is not rerun; its P0/E1/E2 results are the anchor cell. ARDY uses 20 s clips with goals at 4/8/12/16 s; DART mirrors that layout, whole-sequence methods use one goal per 10 s clip",
+  "development_smoke": {
+    "data": "/tmp prototypes only (not analyzed): MotionCorrection SMPL-X-22 wrapper on one OmniControl output (realism 0 / spatial 0 and 1/1) and one DART output from earlier runs",
+    "observed": [
+      "Wrapper FK reproduction RMS 0.05 cm (OmniControl realism 0 spatial 0), 0.65 cm (OmniControl 1/1, generator bone stretch up to 7% left elbow), 0.45 cm (DART)",
+      "Native post_process_motion with a Root2D constraint 1.0 m off the run moves the root to 0.040 m from the target (= native root_margin); the correction spreads over about +-3 s",
+      "E4 smoke (before registration): DART unconstrained residual 0.13-0.19 BW, so an absolute C0 residual gate of 0.03 BW is not usable as the negative control"
+    ]
+  },
+  "seeds": [40, 41],
+  "top_up_seed": 42,
+  "seed_note": "Fresh seeds; P0 used 26-28, E4 used its own; smokes used none of these",
+  "cluster_unit": "task (G = 12 per method); seeds and offsets are paired repetitions within a task",
+  "pairing": "Same task, seed and offset across every arm of a method. C0 does not depend on the offset and is generated once per task-seed",
+  "offsets_m": [0.5, 1.0],
+  "success_epsilon_m": 0.05,
+  "goal_definition": "Goal k = root XY (Z-up world) of the same-seed C0 run at goal frame T_k plus sign_k * delta * lateral_k. lateral_k is the horizontal unit vector to the body right of the C0 root velocity over the 0.5 s before T_k; if that speed is below 0.2 m/s the pelvis-facing direction (left-hip to right-hip cross up) is used. Implemented once in utils/motiogen/x3_tasks.py and used by every method",
+  "methods": {
+    "dart": {
+      "paradigm": "autoregressive (8-frame primitives, 2-frame history, 30 fps)",
+      "clip_seconds": 20,
+      "goal_seconds": [4, 8, 12, 16],
+      "goal_signs": "task-dependent pattern, see tasks",
+      "initial_state": "official ./data/stand.pkl",
+      "tasks": "12 = text {walk, run} x 6 noise streams s = 0..5; goal sign pattern (+,-,+,-) for even s, (-,+,-,+) for odd s. Text set restricted to the reach policy's own training texts with root progression (hop excluded: in-place)",
+      "noise": "Primitive k uses torch.manual_seed(100000*(1000*task+seed)+k) for both the C0 noise and the policy sampling, so arms are identical until their first divergence",
+      "arms": {
+        "C0": {"layer": "none", "definition": "Native text rollout: EnvReachLocationMLD.step with action ~ N(0, I) (DDIM noise of the fixed denoiser); goals never shown"},
+        "G0": {"layer": "training", "definition": "Fixed ReachLocation policy action only in the primitive whose future frames contain T_k (observation goal = goal k); C0 noise elsewhere. DART analogue of ARDY G0 (goal visible only inside its own window)"},
+        "G4": {"layer": "training", "definition": "Policy action in every primitive starting within [T_k - 4 s, T_k) with observation goal = goal k; with 4 s spacing the policy acts from frame 0 and always sees the next goal"},
+        "S": {"layer": "sampling", "definition": "Official optim_mld test-time noise optimization: start from the C0 noise sequence, Adam lr 0.01, 300 steps, unit-norm gradient, annealed lr, Huber loss on pelvis XY at the four goal frames, jerk and floor weights 0 (official defaults). Rollout is a differentiable re-execution of env.get_new_state_human (no autocast); replaying the C0 noise must reproduce C0 root XY within 0.01 m"},
+        "W0": {"layer": "output, window", "definition": "C0 plus MotionCorrection (SMPL-X-22 wrapper, native post_process_motion, Root2D at T_k) applied to the primitive window holding T_k only; no write-back, the next primitive continues from the uncorrected state"},
+        "W0X": {"layer": "output, window + crossfade", "definition": "W0 plus a crossfade of the window correction into the following frames with half-decay 0.168 s (the value used for ARDY X0)"},
+        "W1": {"layer": "output, window + write-back", "definition": "Corrected window written back into the DART history state before the next primitive. Conditional: the write-back requires converting corrected rotations to DART features; if the replay check (uncorrected write-back reproduces C0 within 0.01 m) fails, W1 is dropped and H4a is not tested; the decision is logged before confirmatory data"},
+        "O": {"layer": "output, whole clip", "definition": "C0 plus one MotionCorrection pass over the whole 20 s clip with Root2D at all four goal frames (same operation as the whole-sequence methods' O)"}
+      },
+      "T_arm": "G4",
+      "boundaries": "primitive boundaries recorded by the runner (every 8 frames)"
+    },
+    "kimodo": {
+      "paradigm": "whole-sequence diffusion (SOMA, 30 fps)",
+      "clip_seconds": 10,
+      "goal_seconds": [6],
+      "tasks": "12 locomotion prompts shared with OmniControl (see prompts); sign + for even task, - for odd task",
+      "arms": {
+        "C0": {"layer": "none", "definition": "Text only, constraint_lst empty, post_processing False"},
+        "T": {"layer": "training", "definition": "Native Root2DConstraintSet at frame 180 (goal XY), constraint CFG weight at the default 2.0, post_processing False"},
+        "T+": {"layer": "training, stronger guidance", "definition": "As T with constraint CFG weight 4.0 (x2; analogue of ARDY C3b)"},
+        "O": {"layer": "output", "definition": "C0 raw output passed to the native post_process_motion with the goal as Root2D constraint"},
+        "TO": {"layer": "training + output (native default)", "definition": "T raw output passed to the native post_process_motion with the same constraint"}
+      },
+      "sampling_layer": "structural gap: Kimodo has no native gradient guidance; no S arm",
+      "T_arm": "T"
+    },
+    "omnicontrol": {
+      "paradigm": "whole-sequence diffusion (HumanML3D 22 joints, 20 fps, 196 frames)",
+      "clip_seconds": 9.8,
+      "goal_seconds": [6],
+      "tasks": "same 12 prompts and signs as Kimodo",
+      "hint": "pelvis at frame 120: goal XY and the C0 pelvis height at that frame",
+      "arms": {
+        "C0": {"layer": "none", "definition": "Hint present, realism 0, spatial 0 (interventions.install)"},
+        "T": {"layer": "training", "definition": "Realism 1, spatial 0"},
+        "S": {"layer": "sampling", "definition": "Realism 0, spatial 1"},
+        "TS": {"layer": "training + sampling (native default)", "definition": "Realism 1, spatial 1"},
+        "O": {"layer": "output", "definition": "C0 plus MotionCorrection through the SMPL-X-22 wrapper, Root2D goal"},
+        "TO": {"layer": "training + output", "definition": "T plus the same MotionCorrection"}
+      },
+      "T_arm": "T"
+    }
+  },
+  "prompts": [
+    "A person walks forward.",
+    "A person walks forward slowly.",
+    "A person walks forward briskly.",
+    "A person jogs forward.",
+    "A person runs forward.",
+    "A person walks forward with long strides.",
+    "A person strolls forward casually.",
+    "A person marches forward.",
+    "A person walks forward swinging their arms.",
+    "A person walks forward confidently.",
+    "A person walks forward and looks around.",
+    "A person walks straight ahead."
+  ],
+  "output_wrapper": {
+    "rig": "Kimodo SMPLXSkeleton22 topology; rest offsets: SMPL-X neutral bone directions scaled to the run's median bone lengths, children of multi-child joints (pelvis, spine3) re-estimated from the run's mean local geometry",
+    "ik": "per-frame bone-direction alignment (minimal rotation for single-child joints, Kabsch for multi-child joints, identity for leaves)",
+    "contacts": "foot joint height < run minimum + 0.05 m and horizontal speed < 0.3 m/s",
+    "gate": "FK reproduction RMS <= 0.01 m per run; the max is reported",
+    "correction": "kimodo.postprocess.post_process_motion (native MotionCorrection, root_margin 0.04 m) on CPU; identical call for Kimodo O/TO, so all three methods share one implementation"
+  },
+  "metrics": {
+    "goal_error": "root XY distance to the goal at T_k, mean over a run's goals",
+    "goal_success": "share of goals within 0.05 m",
+    "jerk": "common_step_jerk at the 0.1 s step (primary smoothness), per-frame jerk reported",
+    "boundary_jerk": "common_step_boundary_jerk at DART primitive boundaries (DART only)",
+    "foot_sliding": "foot_sliding_5cm_10cms: native_analysis.foot_sensitivity row height 0.05 m, speed 0.1 m/s (P0 definition); Kimodo SOMA toe joints mapped to left_foot/right_foot through adapters.ALIASES",
+    "E": "E4 pipeline (biomech_sources.load, free_yaw) on all runs of the E arms at delta 1.0 m: residual force (BW, primary) and unsupported-frame fraction; validity gates as E1 (IK RMS <= 0.03 m, IK max <= 0.10 m, vertical force within 2%)",
+    "E_arms": {"dart": ["C0", "G4", "S", "W0", "O"], "kimodo": ["C0", "T", "O", "TO"], "omnicontrol": ["C0", "T", "S", "TS", "O"]}
+  },
+  "primary": {
+    "family": "One family per method; Holm at 0.05 over exact sign-flip p values within the family; each test also requires its 95% interval on the stated side. Kinematic tests pool both offsets (task mean over seeds and offsets of paired differences); E tests use delta 1.0 m",
+    "H1a": "T_arm - C0 goal error < 0",
+    "H1b": "T_arm - C0 jerk (0.1 s) non-inferior: (difference - 0.2 * mean C0 jerk) < 0",
+    "H2": "O - T_arm residual force > 0 (output-layer cost at the E criterion); goal errors of both arms reported alongside",
+    "H3": "S - T_arm jerk (0.1 s) > 0 (DART, OmniControl; Kimodo has no S arm)",
+    "H4a": "DART only, conditional on W1: W1 - W0 boundary jerk > 0",
+    "H4b": "DART only: W0X - W0 boundary jerk < 0",
+    "H4c": "DART only: W0X - W0 foot sliding non-inferior with margin +0.05: (difference - 0.05) < 0; a failure replicates ARDY's 'cost moves to foot sliding'",
+    "H5": "Descriptive, no test: where each method's output-layer cost appears (boundary jerk for DART; foot sliding / residual force for whole-sequence methods)",
+    "families": {"dart": ["H1a", "H1b", "H2", "H3", "H4a", "H4b", "H4c"], "kimodo": ["H1a", "H1b", "H2"], "omnicontrol": ["H1a", "H1b", "H2", "H3"]}
+  },
+  "secondary": [
+    "Every arm pair on every metric, per offset",
+    "Kimodo T+ - T (guidance dose), TO - T (adding output to conditioning); OmniControl TS - T, TO - T; DART G0 - C0, O - W0",
+    "Wrapper FK reproduction error and the generator's bone-length variation per arm",
+    "Wall time per arm",
+    "E unsupported-frame fraction for every E arm"
+  ],
+  "inference": {
+    "estimate": "equal-weight task means of paired (task, seed, offset) differences",
+    "interval": "95% cluster bootstrap over tasks, 10000 resamples, seed 20261104",
+    "test": "exact sign-flip over the 12 task means (4096 sign patterns)",
+    "E_exclusions": "a pair enters an E test only if both runs pass the validity gates; the all-runs result is reported as sensitivity"
+  },
+  "pilot": {
+    "jobs": "tasks 0, 3, 6, 9 with seed 40, every arm and both offsets; E at delta 1.0 m on the E arms",
+    "reuse": "pilot outputs are reused in the confirmatory set only if no generation code changes after the pilot; otherwise they are regenerated",
+    "admission": [
+      "every run finite and complete",
+      "intervention receipts: DART policy calls only in the registered primitives, S 300 optimizer steps with lower final loss, C0 noise replay within 0.01 m; Kimodo constraint list and CFG weights as registered; OmniControl realism/spatial call counts zero exactly when the arm switches them off",
+      "arms identical before their first divergence (DART C0/G0 before the first goal primitive, root XY within 1e-6 m)",
+      "wrapper FK gate on every O/W run",
+      "E IK validity >= 80% of pilot E runs per method (Kimodo: see kimodo_gate)"
+    ],
+    "precision_rule": "From the pilot task-level paired differences, projected 95% half-width at 12 tasks = 1.96 * SD / sqrt(12) / sqrt(2) (two seeds averaged within task). If it exceeds half the margin for H1b or H4c in any method, seed 42 is added for that method before confirmatory data are analysed",
+    "kimodo_gate": "If the full E4 Kimodo IK pass rate is below 80%, the SOMA77 pelvis/hip marker mapping is revised using the pilot only and recorded as a pipeline revision; Kimodo kinematic results do not depend on it"
+  },
+  "grid": {
+    "dart_generations": "12 tasks x 2 seeds x (C0 + 2 offsets x {G0, G4, S, W1}) = 216; W0, W0X, O are CPU post-processing",
+    "kimodo_generations": "12 x 2 x (C0 + 2 x {T, T+}) = 120; O, TO post-processing",
+    "omnicontrol_generations": "12 x 2 x (C0 + 2 x {T, S, TS}) = 168; O, TO post-processing",
+    "E_runs": "24 task-seeds x 14 E arms = 336 at delta 1.0 m"
+  },
+  "estimated_hours": "generation about 6 on two GPUs; E about 7 with 4 workers next to E3/E4, about 3 with 12 workers after they finish",
+  "compute_policy": "Never interrupt E3/E4; GPU generation runs alongside them; X3 E runs go through e1_guard.py --protocol x3 with 4 workers until E4 finishes",
+  "deviations_from_plan": [
+    "DART G0 is defined as policy-only-in-the-goal-primitive; a goal revealed exactly at T would equal C0 at T by construction (shared seeded noise)",
+    "DART gains an O arm (whole-clip output correction) so H5 compares one identical output-layer arm across all methods; W0/W0X stay window-level as in ARDY",
+    "The plan's C0 residual <= 0.03 BW negative control is replaced by within-method paired contrasts; E4 smoke already showed DART C0 at 0.13-0.19 BW. The E4 CLoSD runs remain the physics reference",
+    "E runs on 14 of 19 arms (E_arms) to fit the compute budget; the rest are kinematic only"
+  ],
+  "conventions_not_derived": [
+    "约定，未经推演: offsets 0.5/1.0 m, goal times (DART 4/8/12/16 s, whole-sequence 6 s), alternating signs",
+    "约定，未经推演: lateral direction rule (0.5 s velocity window, 0.2 m/s fallback threshold)",
+    "约定，未经推演: H1b margin 20% of C0 jerk; H4c margin +0.05 as M2/P0",
+    "约定，未经推演: Kimodo T+ constraint CFG weight 4.0 (x2 of default)",
+    "约定，未经推演: wrapper contact rule (0.05 m, 0.3 m/s) and FK gate 0.01 m",
+    "约定，未经推演: crossfade half-decay 0.168 s reused from ARDY X0",
+    "DART S optimizer settings are the official optim_mld defaults; MotionCorrection root_margin 0.04 m is the native default"
+  ]
+}
