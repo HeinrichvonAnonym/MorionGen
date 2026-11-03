@@ -61,7 +61,8 @@
  "conventions_not_derived": [
   "Type-1 gate 5%; type-2 thresholds 1 N m reserve and 0.5 deg from range limits; residual 5% BW as E1",
   "Static optimization at 10 Hz for FBLS (about 4 s per frame for 324 muscles) and 50 Hz for HYOID",
-  "Spine tangent from adjacent intervertebral joint centres as the compression axis",
+  "Spine tangent from adjacent intervertebral joint centres as the compression axis (centre to the joint above; L1-L2, whose FBLS torso joint lies below its centre, from the joint below; C0-C1 keeps the skull y-axis)",
+  "Timing of type-2 frames: within 0.5 s of a correction goal (goal_seconds of the run), against the fraction of all frames within that window",
   "Joint reactions of FBLS from the static-optimization forces file; of HYOID from the static-optimization controls with rigid-tendon muscles (the forces-file override returned NaN on most HYOID frames; converting FBLS to Millard muscles added passive forces of several hundred N per hip flexor)",
   "Axial spine marker weight 0.3; HYOID mass scaling by body-mass ratio; ISO 11226 static zones applied frame by frame to dynamic motion",
   "Primary-arm runs scheduled first"

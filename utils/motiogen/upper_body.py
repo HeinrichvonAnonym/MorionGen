@@ -568,6 +568,45 @@ def neck(run, work, mass=75., step=2):
     return receipt, metrics
 
 
+# ---------------------------------------------------------------- frame classification geometry
+
+CHAINS = {'lumbar': ('lumbar5', 'lumbar4', 'lumbar3', 'lumbar2', 'lumbar1', 'torso'),
+          'neck': ('cerv7', 'cerv6', 'cerv5', 'cerv4', 'cerv3', 'cerv2', 'cerv1', 'skull')}
+
+
+def geometry():
+    """Constants of the E3 frame classification from the generic models, for analysis outside OpenSim. Spine tangent of an
+    intervertebral joint: from its centre to the centre of the next joint up the chain, in the child body frame at the
+    default pose; the per-segment scaling is uniform over the vertebrae, so the direction holds for every scaled model.
+    Where the joint above lies below the centre (FBLS torso joint above L1-L2), the tangent comes from the joint below;
+    a joint without a vertebra above it keeps the child y-axis. Coupled coordinates (motion type 3) are stored in radians."""
+    out = {'trim_s': TRIM, 'niosh_n': NIOSH_N, 'pelvis': PELVIS, 'base': BASE,
+           'groups': {'lumbar': TRUNK_GROUPS, 'neck': NECK_GROUPS}, 'joints': {'lumbar': LUMBAR_JOINTS, 'neck': NECK_JOINTS}}
+    for part, path, joints, coords in (('lumbar', FBLS, LUMBAR_JOINTS, LUMBAR), ('neck', HYOID, NECK_JOINTS, NECK)):
+        model = osim.Model(str(path)); state = model.initSystem()
+        js, chain = model.getJointSet(), CHAINS[part]
+        tangents = {}
+        for key, (joint, child) in joints.items():
+            above = chain[chain.index(child)+1] if child in chain and chain.index(child)+1 < len(chain) else None
+            up = next((js.get(i) for i in range(js.getSize()) if above and js.get(i).getParentFrame().findBaseFrame().getName() == child
+                       and js.get(i).getChildFrame().findBaseFrame().getName() == above), None)
+            if up is None:
+                tangents[key] = {'axis': [0., 1., 0.], 'from': None}; continue
+            centre = biomech_vec(js.get(joint).getChildFrame().getPositionInGround(state))
+            local = lambda d: biomech_vec(model.getGround().expressVectorInAnotherFrame(state, osim.Vec3(*d), model.getBodySet().get(child)))
+            u, source = local(biomech_vec(up.getParentFrame().getPositionInGround(state))-centre), up.getName()
+            if u[1] <= 0:
+                below = next(j for j, c in joints.values() if c == chain[chain.index(child)-1])
+                u, source = local(centre-biomech_vec(js.get(below).getChildFrame().getPositionInGround(state))), below
+            u = u/np.linalg.norm(u)
+            tangents[key] = {'axis': u.tolist(), 'from': source, 'forward_tilt_deg': float(np.rad2deg(np.arctan2(u[0], u[1])))}
+        cs = model.getCoordinateSet()
+        ranges = {c: {'min': cs.get(c).getRangeMin(), 'max': cs.get(c).getRangeMax(), 'degrees_in_files': cs.get(c).getMotionType() == 1}
+                  for c in coords}
+        out[part] = {'tangents': tangents, 'coordinates': ranges}
+    return out
+
+
 # ---------------------------------------------------------------- validity
 
 def validity(part, receipt, metrics):
