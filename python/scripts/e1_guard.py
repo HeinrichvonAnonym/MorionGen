@@ -29,7 +29,13 @@ PROTOCOLS = {
             'analysis': ['python/scripts/analyze_e1.py', '--yaw']},
     'e2y': {'out': ROOT/'develop_logs/test_runs/20261103_e2y_biomech', 'runner': ['--workers', '6', '--protocol', 'e2y'],
             'analysis': ['python/scripts/analyze_e2.py', '--yaw']},
+    'e3': {'out': ROOT/'develop_logs/test_runs/20261103_e3_upper', 'script': 'python/scripts/run_e3_upper.py', 'runner': ['--workers', '14'],
+           'analysis': ['python/scripts/analyze_e3.py'], 'marker_posthoc': False,
+           'records': ('*/neck.json', '*/lumbar.json'), 'errors': '*/*_error.json'},
 }
+for _p in PROTOCOLS.values():
+    _p.setdefault('script', 'python/scripts/run_e1_biomech.py'); _p.setdefault('marker_posthoc', True)
+    _p.setdefault('records', ('*/metrics.json',)); _p.setdefault('errors', '*/error.json')
 PROTOCOL = PROTOCOLS['e1']
 OUT = PROTOCOL['out']
 PAUSE_C, RESUME_C = 88, 78
@@ -60,7 +66,7 @@ def mem_available_gb():
 
 
 def runner_pids():
-    r = subprocess.run(['pgrep', '-f', '[p]ython/scripts/run_e1_biomech.py '+' '.join(PROTOCOL['runner'])+'$'],
+    r = subprocess.run(['pgrep', '-f', '[p]'+PROTOCOL['script'][1:]+' '+' '.join(PROTOCOL['runner'])+'$'],
                        capture_output=True, text=True)
     return [int(p) for p in r.stdout.split()]
 
@@ -71,7 +77,7 @@ def finished():
         progress = json.loads((OUT/'progress.json').read_text())
     except Exception:
         return False
-    return not progress['m2_open'] and not progress['waiting'] and not progress['in_flight']
+    return not progress.get('m2_open', False) and not progress['waiting'] and not progress['in_flight']
 
 
 def worker_pids(parents):
@@ -84,7 +90,7 @@ def worker_pids(parents):
 
 def counts():
     runs = OUT/'runs'
-    return sum(1 for _ in runs.glob('*/metrics.json')), sum(1 for _ in runs.glob('*/error.json'))
+    return sum(1 for g in PROTOCOL['records'] for _ in runs.glob(g)), sum(1 for _ in runs.glob(PROTOCOL['errors']))
 
 
 def progress_age():
@@ -102,13 +108,13 @@ def env():
 def launch_runner():
     with open(OUT/'worker.log', 'a') as f:
         f.write(f'=== guard relaunch {datetime.now().astimezone().isoformat()} ===\n')
-        subprocess.Popen([str(OPENSIM_PY), 'python/scripts/run_e1_biomech.py', *PROTOCOL['runner']], cwd=ROOT, env=env(),
+        subprocess.Popen([str(OPENSIM_PY), PROTOCOL['script'], *PROTOCOL['runner']], cwd=ROOT, env=env(),
                          stdout=f, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, start_new_session=True)
 
 
 def post_process():
-    for name, cmd in [('marker_posthoc', [str(OPENSIM_PY), 'python/scripts/e1_marker_posthoc.py', '--out', str(OUT)]),
-                      ('analysis', [str(ARDY_PY), *PROTOCOL['analysis']])]:
+    steps = [('marker_posthoc', [str(OPENSIM_PY), 'python/scripts/e1_marker_posthoc.py', '--out', str(OUT)])] if PROTOCOL['marker_posthoc'] else []
+    for name, cmd in steps+[('analysis', [str(ARDY_PY), *PROTOCOL['analysis']])]:
         log(f'start {name}')
         with open(OUT/f'{name}_final.log', 'w') as f:
             code = subprocess.run(['nice', '-n', '10', *cmd], cwd=ROOT, env=env(), stdout=f, stderr=subprocess.STDOUT).returncode

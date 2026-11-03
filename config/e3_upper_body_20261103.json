@@ -1,0 +1,43 @@
+{
+ "protocol": "e3_upper_body_20261103",
+ "registered_before_results": true,
+ "registered_note": "Registered before any E3 batch result. Development data: one E2 run (p0_W0g_task9_seed28_d1) used to debug and time the pipeline; its values informed only the pipeline choices listed under conventions_not_derived, and the sensitivity analysis repeats the primary family without it",
+ "question": "Do the output-layer root corrections that carried a dynamic cost in E1 (W0X) and E2 (W0g) also raise the load on the lumbar spine, the neck and the shoulders, and do they change working posture",
+ "data": "Every run evaluated by E1 (config/e1_biomech_20261101.json, 1080 M2 runs) and E2 (config/e2_biomech_20261102.json, 576 P0 runs); generated motions read only, no new generation",
+ "pipeline": {
+  "worker": "python/scripts/run_e3_upper.py (module utils/motiogen/upper_body.py, OpenSim 4.6); biomech.py unchanged",
+  "posture": "From the generated joint rotations: trunk relative to pelvis and neck relative to chest as Z-X-Y angles, trunk and head inclination from vertical, upper-arm elevation relative to the chest, head angular speed; mean, |.| 95th percentile, RMS and ISO 11226 zone fractions over the trimmed motion",
+  "lumbar": "FBLS full-body lumbar spine model (Raabe & Chaudhari 2016, 324 Thelen muscles) with the E1 pipeline: per-segment scaling to 75 kg, joint-centre IK with axial spine markers (weight 0.3) registered in a lumbar-locked first second, pelvis coordinates unclamped, 6 Hz filter, contact-constrained ground reactions, inverse dynamics, static optimization (activation squared, reserves 1000 pelvis / 1 lumbar and legs / 200 arms as the model release), joint reactions at L5-S1 ... L1-L2 on the caudal-most child vertebra in its own frame; shoulder resultant moment from the FBLS inverse dynamics",
+  "neck": "HYOID head-neck model (Mortensen et al. 2018, 72 Millard muscles, rigid tendon) with the impact actuators removed, head-neck masses scaled by 75/79.54 kg, the 6-DOF base driven by the generated chest; per-frame least-squares fit of the six independent neck coordinates to the generated neck and head rotations relative to the chest (T1 at the generated neck joint); inverse dynamics, static optimization (reserves 1e4 base / 1 N m neck), joint reactions at C7-T1 (on C7) and C0-C1 (on the skull) driven by the static-optimization controls",
+  "trim_s": 0.5,
+  "static_optimization_rate_hz": {"neck": 50, "lumbar": 10}
+ },
+ "validity": {
+  "lumbar": "As E1: IK RMS <= 0.03 m, IK max <= 0.10 m, required vertical force within 1 +- 0.02 BW; joint-reaction finite on >= 95% of frames",
+  "neck": "Chest fit <= 1 deg, T1 fit <= 5 mm, C2 and skull orientation fit RMS <= 2 deg, neck coordinates at a range limit on <= 20% of frames, joint-reaction finite on >= 95% of frames",
+  "exclusion": "Invalid records excluded pairwise per region; reserves are outcomes, not validity criteria"
+ },
+ "primary": {
+  "family": "Six hypotheses, Holm-adjusted at 0.05 over the exact sign-flip p values; each also requires the lower 95% interval bound > 0",
+  "metrics": {"lumbar": "L5-S1 compression RMS (BW)", "neck": "C7-T1 compression RMS (BW)", "shoulder": "shoulder resultant moment RMS (N m/kg), mean of both sides"},
+  "contrasts": {"e1": "W0X - C0, pooled over offsets 0.1/0.5/1.0 m", "e2": "W0g - G4, pooled over offsets 0.5/1.0 m"},
+  "pooling": "One difference per task-seed-offset, equal-weight task means, cluster t interval (G = 24, G - 1 df), exact sign-flip p"
+ },
+ "secondary": [
+  "E1: W0 - C0, XFh - C0, XFo - C0, W0X - W0; E2: G4 - G0, G4W - G4, W0g - G0 on every region metric",
+  "L4-L5 and L1-L2 compression, L5-S1 shear and peak, fraction of frames above the NIOSH 3400 N limit",
+  "lumbar flexion / lateral bending / axial rotation moments; trunk and neck muscle-group activations, muscle effort, reserve RMS",
+  "C0-C1 compression, neck shear, neck coordinate moments",
+  "posture endpoints and ISO 11226 zone fractions",
+  "validity by arm; sensitivity of the primary family without the development run"
+ ],
+ "development_runs": ["p0_W0g_task9_seed28_d1"],
+ "conventions_not_derived": [
+  "Static optimization at 10 Hz for FBLS (about 4 s per frame for 324 muscles) and 50 Hz for HYOID",
+  "Neck fit, limit and joint-reaction validity thresholds",
+  "Joint reactions of FBLS from the static-optimization forces file; of HYOID from the static-optimization controls with rigid-tendon muscles (the forces-file override returned NaN on most HYOID frames; converting FBLS to Millard muscles added passive forces of several hundred N per hip flexor)",
+  "Axial spine marker weight 0.3; HYOID mass scaling by body-mass ratio; ISO 11226 static zones applied frame by frame to dynamic motion",
+  "Primary-arm runs scheduled first"
+ ],
+ "estimated_hours": "about 42 with 14 OpenSim workers (development run: neck 3 min, lumbar 18 min per run); the 720 primary-arm runs first, about 18"
+}
