@@ -3,6 +3,7 @@
  "registered_before_results": true,
  "registered_note": "Registered before any E3 batch result. Development data: one E2 run (p0_W0g_task9_seed28_d1) used to debug and time the pipeline; its values informed only the pipeline choices listed under conventions_not_derived, and the sensitivity analysis repeats the primary family without it",
  "question": "Do the output-layer root corrections that carried a dynamic cost in E1 (W0X) and E2 (W0g) also raise the load on the lumbar spine, the neck and the shoulders, and do they change working posture",
+ "interpretation": "Registered before the batch. Upper-body loads of output-corrected motions measure how far the correction pushes the motion beyond what a human body can produce, not an ergonomic risk a worker would bear: at the corrected windows the required joint moments exceed the muscles and the reserves carry the excess, so joint reactions there are lower bounds. A supported primary hypothesis therefore means that output-layer correction distorts an ergonomic assessment of the generated motion; absolute load levels are model-dependent and only paired differences within one model are interpreted",
  "data": "Every run evaluated by E1 (config/e1_biomech_20261101.json, 1080 M2 runs) and E2 (config/e2_biomech_20261102.json, 576 P0 runs); generated motions read only, no new generation",
  "pipeline": {
   "worker": "python/scripts/run_e3_upper.py (module utils/motiogen/upper_body.py, OpenSim 4.6); biomech.py unchanged",
