@@ -218,11 +218,13 @@ def draw(ax, panel, pose):
     for point, force in pose['forces']:
         arrow(ax, point, force/panel.weight*BW_LENGTH, centre, '#1f9e3a', 2.)
     residual = pose['residual']/panel.weight
+    com, _ = project(pose['com'][None], centre)
+    ax.scatter(com[:, 0], com[:, 1], s=30, c='#d81b8c', edgecolors='white', linewidths=.6, zorder=5)
     arrow(ax, pose['com'], residual*BW_LENGTH, centre, '#d81b8c', 3.)
     m = panel.metrics
     ax.set_title(f"{panel.label}\n残余力 RMS {m['metrics']['residual_force_rms_bw']:.3f} BW · IK 均方根 "
                  f"{m['ik']['rms_mean_m']*100:.1f} cm / 最大 {m['ik']['max_m']*100:.1f} cm · "
-                 f"{'有效' if m['valid'] else '无效'}", fontsize=12)
+                 f"{'评估有效' if m['valid'] else '评估无效'}", fontsize=12)
     ax.text(.02, .02, f"当前残余力 {np.linalg.norm(residual):.2f} BW", transform=ax.transAxes, fontsize=11,
             color='#d81b8c', zorder=6)
 
@@ -241,13 +243,13 @@ def main():
     times = np.arange(start, end, 1/args.fps)[:args.frames]
     fig = plt.figure(figsize=(16, 9), dpi=100)
     fig.suptitle(args.title, fontsize=14, y=.985)
-    axes = [fig.add_axes([.01+i*.495, .27, .48, .66]) for i in range(len(panels))]
+    axes = [fig.add_axes([.01+i*.495, .26, .48, .61]) for i in range(len(panels))]
     strip = fig.add_axes([.06, .06, .9, .16])
     colours = ['#d81b8c', '#3a6fb0']
     series = [(p.dynamics_time, np.linalg.norm(p.residual, axis=1)/p.weight) for p in panels]
     window = (series[0][0] >= start) & (series[0][0] <= end)
     still = series[0][0][window][np.argmax(series[0][1][window])]
-    fig.text(.5, .235, '骨骼：模型网格；肌肉：静态优化激活（蓝 0 → 红 1）；绿箭头：足底地面反力；'
+    fig.text(.5, .232, '骨骼：模型网格；肌肉：静态优化激活（蓝 0 → 红 1）；绿箭头：足底地面反力；'
              '品红箭头：残余力（地面反力解释不了的部分，作用于质心）；黑点：IK 跟踪的关节中心；1 BW = 0.6 m 箭头',
              ha='center', fontsize=9.5, color='#444')
     args.out.parent.mkdir(parents=True, exist_ok=True)
