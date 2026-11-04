@@ -12,8 +12,8 @@
     "markers": "E marker set ends at the wrists and the neck base (no hand or head markers)"
   },
   "mapping": {
-    "trunk_flexion_deg": "OpenSim FK: angle of the torso long axis (torso body +Y) from ground vertical in the pelvis sagittal plane; forward lean positive (pelvis +X projected on the floor gives forward)",
-    "trunk_side_bent": "1 if the torso axis lateral angle from vertical in the pelvis frontal plane exceeds the threshold",
+    "trunk_flexion_deg": "OpenSim FK: angle of the trunk line (midpoint of the two hip joints to the registered neck-base marker neck_c) from ground vertical in the pelvis sagittal plane; forward lean positive (pelvis +X projected on the floor gives forward)",
+    "trunk_side_bent": "1 if the trunk line's lateral angle from vertical in the pelvis frontal plane exceeds the threshold",
     "trunk_twisted": "1 if |lumbar_rotation| exceeds the threshold",
     "upper_arm_flexion_deg": "arm_flex_{r,l}; at the model bound (>= 89.5 deg) both 90 and 91 deg are scored and their score sets united, because larger flexion is clipped by the model range",
     "arm_abducted_or_rotated": "1 if abduction (-arm_add) exceeds the threshold, else 0; humeral rotation not scored",
@@ -52,6 +52,18 @@
   },
   "run_gate": "E run valid (IK RMS <= 0.03 m, IK max <= 0.10 m, vertical force within 2%); X3 pairs also follow the amendment-2 wrapper FK gate",
   "insensitivity_rule": "If at least 90% of a method's C0 frames (pooled over its C0 runs) fall in one frame class, that method's ergo tests are reported as 'insensitive at this task class' whatever their p values",
+  "revisions": [
+    {
+      "at": "2026-11-05T01:15+08:00, after a smoke test on 6 E4 runs and before any X3 or M-series ergonomic score",
+      "what": "trunk_flexion_deg / trunk_side_bent: trunk line from the hip-joint midpoint to neck_c instead of the torso body +Y axis",
+      "why": "the torso body axis is not the anatomical trunk line after per-run axial marker registration: on an ARDY walk it read 16.0 deg against 1.0 deg for the source hip-to-neck line; the hip-to-neck line in the model reads 1.2 / -3.1 / -3.1 deg against source 1.0 / -3.4 / -3.3 deg (ARDY, CLoSD, CHOIS); a Kimodo deep bend reads 56.2 against 49.5 deg (rigid torso beyond its range)"
+    }
+    ,{
+      "at": "2026-11-05T01:20+08:00, same smoke test",
+      "what": "neck-from-source sensitivity: angle minus the skeleton's neutral-pose angle (per skeleton family: SMPL/SMPL-X, ARDY cskel27, SOMA77); reported as not available until the neutral offsets are computed",
+      "why": "raw source neck angles on upright walks read 35 deg (ARDY) and 47 deg (CLoSD): the head joint's rest position relative to the neck differs between skeletons"
+    }
+  ],
   "conventions_not_derived": {
     "twist_and_side_bend_threshold_deg": 10,
     "abduction_threshold_deg": 20,
