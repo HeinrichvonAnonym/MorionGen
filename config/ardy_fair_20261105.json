@@ -1,0 +1,36 @@
+{
+  "protocol": "ardy_fair_20261105",
+  "registered_before_results": true,
+  "registered_note": "Registered before any E or RULA/REBA value of the M1 C1 runs was computed. Known at registration: the E1 results on the M2 arms (C0 residual 0.01 BW at every offset; W0 0.20/0.24/0.34, XFh 0.08/0.84/2.23, XFo 0.05/0.40/0.69, W0X 0.26/0.26/0.27 BW at offsets 0.1/0.5/1.0 m) and the E4 ARDY correction contrast under the native task path (REBA acceptable_lower -0.83).",
+  "question": "Does ARDY's root correction carry a biomechanical and ergonomic cost when the waypoint target agrees with ARDY's own gait (its own uncorrected output plus a small offset), and how much of the cost grows with the target offset (target conflict) rather than being present at the smallest offset (mechanism cost)",
+  "data": {
+    "source": "M1 block of config/m1 (develop_logs/test_runs/20261031_m1), read only, no new generation",
+    "arms": {"C0": "correction 0", "C1": "correction 1 with write-back, root_margin 0.04 m (official default)"},
+    "offsets_m": [0.1, 0.5, 1.0],
+    "tasks": 24, "seeds": [20, 21, 22], "runs": 432,
+    "offset_choice": "the three E1 offsets, for comparability with E1; offsets 0.05/0.25/0.75 exist but are not evaluated (CPU budget)"
+  },
+  "pipeline": "E1 pipeline (config/e1_biomech_20261101.json) with the global heading unclamped from the start (the E1y fix); RULA/REBA frames per config/ergo_rula_reba_20261105.json with object_free true",
+  "validity": "E1 per-run rule; pipeline valid if the C0 cell-mean residual force RMS is <= 0.03 BW at every offset",
+  "primary": {
+    "family": "F1-F4, Holm at 0.05 over exact sign-flip p values on task means, two-sided; supported = Holm p < 0.05, cluster t interval excludes 0, pipeline valid (and, for F3/F4, C0 not insensitive by the ergo config rule)",
+    "F1": "C1 - C0 residual force RMS (BW) at offset 0.1 m",
+    "F2": "slope over offset of C1 - C0 residual force RMS: per task, least squares on the seed-mean differences at 0.1/0.5/1.0 m (BW per m)",
+    "F3": "C1 - C0 REBA acceptable_lower at offset 0.1 m",
+    "F4": "slope over offset of C1 - C0 REBA acceptable_lower (per m)",
+    "pairs": "task-seed-offset pairs with both runs valid"
+  },
+  "interpretation": {
+    "mechanism_cost": "F1 supported with C1 - C0 >= 0.05 BW, or F3 supported: the correction costs even when the target agrees with ARDY's own gait",
+    "conflict_cost": "F2 (positive) or F4 (negative) supported: the cost grows with the target offset",
+    "both_can_hold": true,
+    "e4_link": "E4 used the native task path (0.4 m/s, reversing at 5 s), which conflicts with ARDY's own 0.64 m/s non-reversing gait; it is compared descriptively only (different tasks and targets)"
+  },
+  "secondary": [
+    "per-offset C1 - C0 contrasts on residual force RMS, unsupported fraction, residual moment, joint moments, muscle effort, REBA four-class shares, RULA acceptable_lower",
+    "descriptive RULA/REBA levels of the E1 M2 arms (C0, W0, XFh, XFo, W0X) per offset",
+    "all-pairs sensitivity without the validity exclusion"
+  ],
+  "conventions_not_derived": {"mechanism_cost_threshold_bw": 0.05, "offset_subset": [0.1, 0.5, 1.0]},
+  "storage": "OpenSim files on the data disk (outputs/ardy_fair_20261105/runs); metrics under develop_logs/test_runs/20261105_ardy_fair/e; ergo rows under develop_logs/test_runs/20261105_ergo/m1"
+}

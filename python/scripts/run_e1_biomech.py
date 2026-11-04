@@ -33,6 +33,11 @@ for name, base, day in (('e1y', 'e1', '20261103'), ('e2y', 'e2', '20261103')):
     PROTOCOLS[name] = {**PROTOCOLS[base], 'out': RUNS/f'{day}_{name}_biomech', 'data': DISK/f'{name}_biomech_{day}/runs',
                        'free_yaw': True, 'select_from': PROTOCOLS[base]['out']}
 CONTROLS = 2
+# ARDY fair-target control (config/ardy_fair_20261105.json): M1 block C0/C1 under relative-offset targets,
+# heading unclamped from the start.
+PROTOCOLS['ardyfair'] = {'source': RUNS/'20261031_m1', 'key': 'm1', 'arms': ('C0', 'C1'), 'block': 'm1',
+                         'out': RUNS/'20261105_ardy_fair/e', 'data': DISK/'ardy_fair_20261105/runs',
+                         'done_marker': 'analysis.json', 'free_yaw': True, 'closed': True, 'offsets': (0.1, 0.5, 1.0)}
 
 
 def yaw_selection(evaluated):
@@ -50,6 +55,10 @@ def source_runs(protocol):
     source, key, arms = protocol['source'], protocol['key'], protocol['arms']
     found, open_queue = {}, False
     stages = ['pilot', 'batch', *sorted(p.name[:-len('_plan.json')] for p in source.glob('continuation*_plan.json'))]
+    planned = {}
+    for stage in stages:
+        if (source/f'{stage}_plan.json').exists():
+            planned.update({j['id']: j for j in json.loads((source/f'{stage}_plan.json').read_text())['jobs']})
     for stage in stages:
         plan_path, state_path = source/f'{stage}_plan.json', source/f'{stage}_queue/state.json'
         if not plan_path.exists():
@@ -59,7 +68,8 @@ def source_runs(protocol):
             open_queue = open_queue or bool(plan['jobs']); continue
         state = json.loads(state_path.read_text())['jobs']
         for item in plan.get('reused', []):
-            found[item['id']] = ({**item['job'][key], 'seed': item['job']['seed']}, item['run'])
+            job = item.get('job') or planned[item['id']]
+            found[item['id']] = ({**job[key], 'seed': job['seed']}, item['run'])
         for job in plan['jobs']:
             row = state.get(job['id'], {})
             if row.get('status') in ('pending', 'running'):
@@ -68,8 +78,13 @@ def source_runs(protocol):
                 found[job['id']] = ({**job[key], 'seed': job['seed']}, row['run_dir'])
     if not (source/protocol['done_marker']).exists():
         open_queue = True
+    if protocol.get('closed'):
+        open_queue = False
     if arms is not None:
         found = {j: v for j, v in found.items() if v[0]['arm'] in arms}
+    if 'block' in protocol:
+        found = {j: v for j, v in found.items() if v[0].get('block') == protocol['block']
+                 and v[0]['offset_m'] in protocol['offsets']}
     if 'select_from' in protocol:
         selected = protocol.setdefault('selected', yaw_selection(protocol['select_from']))
         found = {j: v for j, v in found.items() if j in selected}

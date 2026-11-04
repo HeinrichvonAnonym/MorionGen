@@ -1,6 +1,6 @@
 """Score RULA/REBA frames on finished E runs (config/ergo_rula_reba_20261105.json).
 
---set e4 | x3 | m1 reads the E metrics.json files of that experiment and writes one JSON per run to
+--set e4 | x3 | m1 | e1 reads the E metrics.json files of that experiment and writes one JSON per run to
 develop_logs/test_runs/20261105_ergo/<set>/<id>.json; finished runs are skipped.
 """
 import argparse
@@ -23,7 +23,10 @@ def json_write(path, data):
 OUT = ROOT/'develop_logs/test_runs/20261105_ergo'
 SETS = {'e4': ROOT/'develop_logs/test_runs/20261103_e4_cross_method/runs',
         'x3': ROOT/'develop_logs/test_runs/20261104_x3/e/runs',
-        'm1': ROOT/'develop_logs/test_runs/20261105_ardy_fair/e/runs'}
+        'm1': ROOT/'develop_logs/test_runs/20261105_ardy_fair/e/runs',
+        'e1': ROOT/'develop_logs/test_runs/20261101_e1_biomech/runs'}
+# E1 runs re-evaluated with the global heading unclamped replace their originals.
+OVERRIDES = {'e1': ROOT/'develop_logs/test_runs/20261103_e1y_biomech/runs'}
 
 
 def prompt(source):
@@ -41,7 +44,7 @@ def prompt(source):
 
 def object_free(set_name, metrics):
     import ergo_frames
-    if set_name in ('x3', 'm1'):
+    if set_name in ('x3', 'm1', 'e1'):
         return True
     if metrics['method'] == 'chois':
         return False
@@ -59,10 +62,13 @@ def job(args):
     if out.exists():
         return 'skip'
     row = {k: metrics.get(k) for k in ('id', 'method', 'task', 'seed', 'arm', 'condition', 'offset_m', 'source', 'work')}
+    info = metrics.get('m1') or metrics.get('m2')
+    if info:
+        row.update(method='ardy', source=metrics['run'], **{k: info[k] for k in ('arm', 'task', 'offset_m')}, seed=info['seed'])
     row['valid'] = bool(metrics.get('valid'))
     row['object_free'] = object_free(set_name, metrics)
     try:
-        row.update(ergo_frames.score_run(metrics['work'], metrics['source'], row['object_free'],
+        row.update(ergo_frames.score_run(metrics['work'], row['source'], row['object_free'],
                                          float(metrics.get('scaling', {}).get('mass_kg', 75.))))
         row['status'] = 'success'
     except Exception as e:
@@ -78,7 +84,10 @@ def main():
     p.add_argument('--only', nargs='*', help='run ids to score (smoke test)')
     args = p.parse_args()
     (OUT/args.set).mkdir(parents=True, exist_ok=True)
-    files = sorted(SETS[args.set].glob('*/metrics.json'))
+    files = {f.parent.name: f for f in SETS[args.set].glob('*/metrics.json')}
+    if args.set in OVERRIDES:
+        files.update({f.parent.name: f for f in OVERRIDES[args.set].glob('*/metrics.json')})
+    files = [files[k] for k in sorted(files)]
     if args.only:
         files = [f for f in files if f.parent.name in args.only]
     counts = {}
