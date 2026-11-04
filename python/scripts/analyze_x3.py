@@ -67,6 +67,8 @@ def collect(stage):
                                 missing.append(str(path.relative_to(xt.OUT)))
                             continue
                         row, rec = kinematics(path, goals[f'{d:g}'] if arm == 'C0' else None)
+                        if rec.get('wrapper_fk'):
+                            row['fk_pass'] = bool(rec['wrapper_fk']['pass'])
                         table[(method, arm, d, t['id'], s)] = row
                         receipts[(method, arm, d, t['id'], s)] = rec
     e_runs = xt.OUT/'e'/'runs'
@@ -96,13 +98,16 @@ def interval(values, clusters):
     return out
 
 
-def paired(table, method, on, off, metric, offsets, shift=0., valid=False):
+def paired(table, method, on, off, metric, offsets, shift=0., valid=False, fk_gate=True):
+    """fk_gate: pairs with an output-layer run above the wrapper FK gate are left out (amendment 2)."""
     values, clusters = [], []
     for (m, a, d, task, seed), row in sorted(table.items()):
         if m != method or a != on or d not in offsets:
             continue
         base = table.get((m, off, d, task, seed))
         if base is None or row.get(metric) is None or base.get(metric) is None:
+            continue
+        if fk_gate and (row.get('fk_pass') is False or base.get('fk_pass') is False):
             continue
         if valid and not (row.get('E_valid') and base.get('E_valid')):
             continue
@@ -151,6 +156,12 @@ def hypotheses(table, method, reg):
         out['H4c']['margin'] = .05
     unvalid = paired(table, method, 'O', T, E_PRIMARY, [1.0], valid=False)
     out['H2_all_pairs_sensitivity'] = unvalid
+    if method == 'dart':
+        out['fk_all_cells_sensitivity'] = {
+            'H2': paired(table, method, 'O', T, E_PRIMARY, [1.0], valid=True, fk_gate=False),
+            'H4a': paired(table, method, 'W1', 'W0', 'boundary_jerk_0p1s', offsets, fk_gate=False),
+            'H4b': paired(table, method, 'W0X', 'W0', 'boundary_jerk_0p1s', offsets, fk_gate=False),
+            'H4c': paired(table, method, 'W0X', 'W0', 'foot_sliding_5cm_10cms', offsets, shift=.05, fk_gate=False)}
     return out
 
 
@@ -200,6 +211,17 @@ def precision(table, method, reg, hyp):
     return out
 
 
+def finite(x):
+    """NaN (an empty pair set) becomes null."""
+    if isinstance(x, dict):
+        return {k: finite(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [finite(v) for v in x]
+    if isinstance(x, (float, np.floating)) and not np.isfinite(x):
+        return None
+    return x
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--stage', default='confirm', choices=['pilot', 'confirm', 'top_up'])
@@ -219,7 +241,7 @@ def main():
         result['methods'][method] = {'cells': cells, 'hypotheses': hyp, 'secondary': secondary,
                                      'admission': admission(table, receipts, method),
                                      'precision': precision(table, method, reg, hyp) if args.stage == 'pilot' else None}
-    json_write(xt.OUT/f'analysis_{args.stage}.json', result)
+    json_write(xt.OUT/f'analysis_{args.stage}.json', finite(result))
     for method, r in result['methods'].items():
         print(method, json.dumps(r['admission'], default=str)[:600])
         for k, h in r['hypotheses'].items():

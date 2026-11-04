@@ -4,7 +4,7 @@
 #   dart:        DART generation + W1 equivariance check on X3_DART_GPU (0), then its output-layer arms (CPU)
 #   omnicontrol: OmniControl generation on X3_OMNI_GPU (1), then its output-layer arms (CPU)
 #   gen:         dart and omnicontrol in parallel
-#   kimodo: Kimodo generation on X3_KIMODO_GPU (0), retried every 600 s while its reviewed RAM gate refuses
+#   kimodo: Kimodo generation on the first of X3_KIMODO_GPUS (0 1) its reviewed RAM/VRAM gate admits, retried every 600 s
 #   e:      E plan for the finished generations, then runner (4 workers) and guard; refuses while a runner is alive
 set -u
 PART=$1; STAGE=$2
@@ -41,13 +41,14 @@ gen)
   wait; stamp "$STAGE gen done"; touch "$LOG/${STAGE}_gen_done" ;;
 kimodo)
   for attempt in $(seq 1 144); do
-    x3 motiogen-kimodo "${X3_KIMODO_GPU:-0}" "${STAGE}_kimodo.log" --method kimodo --stage "$STAGE"; code=$?
-    if tail -3 "$LOG/${STAGE}_kimodo.log" | grep -q ResourceGate; then
-      stamp "$STAGE kimodo gate refused (attempt $attempt)"; sleep 600
-    else
-      stamp "$STAGE kimodo exit=$code"; break
-    fi
+    for gpu in ${X3_KIMODO_GPUS:-0 1}; do
+      x3 motiogen-kimodo "$gpu" "${STAGE}_kimodo.log" --method kimodo --stage "$STAGE"; code=$?
+      tail -3 "$LOG/${STAGE}_kimodo.log" | grep -q ResourceGate || break 2
+      stamp "$STAGE kimodo gate refused on gpu $gpu (attempt $attempt)"
+    done
+    sleep 600
   done
+  stamp "$STAGE kimodo exit=$code"
   touch "$LOG/${STAGE}_kimodo_done" ;;
 e)
   OUT=develop_logs/test_runs/20261104_x3/e

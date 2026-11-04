@@ -1,0 +1,23 @@
+{
+  "amends": "config/x3_cross_method_layers_20261104.json",
+  "follows": "config/x3_cross_method_layers_20261104_amend1.json",
+  "registered_before_results": "written after the pilot gate and before any confirmatory analysis",
+  "basis": "pilot analysis (develop_logs/test_runs/20261104_x3/analysis_pilot.json) and a Kimodo IK diagnosis on 18 fixed stratified-benchmark clips (seed 20261104)",
+  "changes": [
+    {"what": "Kimodo SOMA77 axial marker sources (kimodo_gate)",
+     "was": "E4 route: spine marker from SOMA77 spine1, chest marker from spine3",
+     "now": "spine marker from SOMA77 spine2, chest marker from spine3; X3 Kimodo E jobs read a derived motion.npz (run_x3_e.kimodo_source); biomech_sources.py and E4 unchanged",
+     "why": "E4 Kimodo IK RMS 3.9 cm (0/2 valid). Per-marker errors on 18 clips: spine 7-9 cm, the largest. spine1 sits at the Rajagopal lumbar joint, so its torso-frame registration is ill-conditioned. With spine2: IK pass 10/18 -> 12/18, RMS lower in 17/18. The 6 remaining failures have max marker error 11.6-26.7 cm (motion beyond the rigid-torso model) and stay excluded by the E validity gate"},
+    {"what": "wrapper FK gate consequence",
+     "was": "gate on every O/W run; consequence of a failure not stated",
+     "now": "gate kept at 0.01 m; pairs involving an output-layer run above the gate leave the primary contrasts; all-cells results reported as sensitivity (analyze_x3 fk_all_cells_sensitivity)",
+     "why": "4/24 DART cells (run prompts) exceed the gate at 1.03-1.11 cm because DART bone lengths vary within a clip; OmniControl 16/16 pass"},
+    {"what": "precision rule outcome",
+     "now": "DART adds seed 42 (H1b projected half-width 5.70 > 5.09, H4c 0.028 > 0.025); Kimodo and OmniControl stay at seeds 40-41",
+     "why": "registered precision rule applied to the pilot"},
+    {"what": "confirm scheduling (OmniControl, Kimodo)",
+     "now": "confirm generation starts with the pilot E still running; confirm data enter analysis only if the pilot gate admits the arms unchanged",
+     "why": "same rule as the DART confirm batch in amendment 1"}
+  ],
+  "unchanged": "tasks, seeds 40-41 for all methods, offsets, arms, hypotheses, margins, inference, E criterion"
+}

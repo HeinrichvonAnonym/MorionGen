@@ -32,6 +32,23 @@ def evaluate(job, out, data):
     return e4().evaluate(job, out, data)
 
 
+KIMODO_AXIAL = {'spine2': 'Spine', 'spine3': 'Spine3'}
+
+
+def kimodo_source(job_id, path):
+    """Amendment 2: the Kimodo spine marker reads SOMA77 spine2 (spine1 sits at the lumbar joint); otherwise the E4 SOMA77 route."""
+    import numpy as np
+    from motiogen.motion import SOMA77_NAMES, Y_TO_Z, save_motion
+    with np.load(path/'motion.npz') as m:
+        posed = np.asarray(m['posed_joints'], float)
+    posed = posed[0] if posed.ndim == 4 else posed
+    dest = OUT/'sources'/job_id
+    dest.mkdir(parents=True, exist_ok=True)
+    save_motion(dest/'motion.npz', posed @ Y_TO_Z.T, [KIMODO_AXIAL.get(n, n) for n in SOMA77_NAMES], 30.,
+                {'units': 'm', 'axes': 'right-handed Z-up', 'protocol': 'x3', 'derived_from': str(path), 'axial_sources': KIMODO_AXIAL})
+    return dest
+
+
 def plan(stage):
     from motiogen import x3_tasks as xt
     reg = xt.prereg()
@@ -41,9 +58,12 @@ def plan(stage):
             for s in xt.seeds(stage):
                 for arm in arms:
                     path = xt.run_dir(method, t['id'], s, arm, None if arm == 'C0' else 1.0)
-                    job = {'id': f'{method}_t{t["id"]:02d}_s{s}_{arm}', 'method': method, 'task': t['id'], 'seed': s,
-                           'arm': arm, 'offset_m': None if arm == 'C0' else 1.0, 'source': str(path)}
-                    (jobs if (path/'receipt.json').exists() else missing).append(job)
+                    job_id = f'{method}_t{t["id"]:02d}_s{s}_{arm}'
+                    if not (path/'receipt.json').exists():
+                        missing.append({'id': job_id, 'source': str(path)}); continue
+                    source = kimodo_source(job_id, path) if method == 'kimodo' else path
+                    jobs.append({'id': job_id, 'method': method, 'task': t['id'], 'seed': s, 'arm': arm,
+                                 'offset_m': None if arm == 'C0' else 1.0, 'source': str(source), 'generation': str(path)})
     OUT.mkdir(parents=True, exist_ok=True)
     previous = json.loads((OUT/'plan.json').read_text())['jobs'] if (OUT/'plan.json').exists() else []
     known = {j['id'] for j in jobs}
