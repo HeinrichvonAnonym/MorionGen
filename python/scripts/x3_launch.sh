@@ -56,7 +56,7 @@ e)
   "$ENVS/motiogen-ardy/bin/python" python/scripts/run_x3_e.py --plan "$STAGE" >> "$LOG/${STAGE}_e_plan.log" 2>&1
   stamp "$STAGE e plan exit=$?"
   rm -f "$OUT/guard_done" "$OUT/progress.json"
-  nohup setsid "$OPENSIM" python/scripts/run_x3_e.py --workers 4 >> "$OUT/worker.log" 2>&1 < /dev/null &
+  nohup setsid "$OPENSIM" python/scripts/run_x3_e.py --workers ${X3_E_WORKERS:-8} >> "$OUT/worker.log" 2>&1 < /dev/null &
   sleep 5
   PROTO=$([ "$STAGE" = pilot ] && echo x3_pilot || echo x3)
   nohup setsid "$ENVS/motiogen-ardy/bin/python" python/scripts/e1_guard.py --protocol "$PROTO" >> "$OUT/guard_$STAGE.out" 2>&1 < /dev/null &

@@ -37,7 +37,7 @@ PROTOCOLS = {
     'x3_pilot': {'out': ROOT/'develop_logs/test_runs/20261104_x3/e', 'script': 'python/scripts/run_x3_e.py',
                  'runner': ['--workers', '4'], 'analysis': ['python/scripts/analyze_x3.py', '--stage', 'pilot'], 'marker_posthoc': False},
     'x3': {'out': ROOT/'develop_logs/test_runs/20261104_x3/e', 'script': 'python/scripts/run_x3_e.py',
-           'runner': ['--workers', '4'], 'analysis': ['python/scripts/analyze_x3.py', '--stage', 'confirm'], 'marker_posthoc': False},
+           'runner': ['--workers', '8'], 'analysis': ['python/scripts/analyze_x3.py', '--stage', 'confirm'], 'marker_posthoc': False},
 }
 for _p in PROTOCOLS.values():
     _p.setdefault('script', 'python/scripts/run_e1_biomech.py'); _p.setdefault('marker_posthoc', True)
