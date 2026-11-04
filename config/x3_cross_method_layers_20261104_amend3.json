@@ -1,0 +1,29 @@
+{
+  "amends": "config/x3_cross_method_layers_20261104.json",
+  "follows": "config/x3_cross_method_layers_20261104_amend2.json",
+  "registered_before_results": "written before any RULA/REBA score existed for any run and before the confirm and top-up analyses (kinematic and E) were run",
+  "basis": "decision to make RULA/REBA a primary evaluation; frame-class design chosen to avoid conditioning on feasibility, which the arms themselves change",
+  "changes": [
+    {
+      "what": "new ergonomic family (ergo), one per method",
+      "now": "RULA/REBA interval scoring per config/ergo_rula_reba_20261105.json on every E run (delta 1.0 m). Primary outcome acceptable_lower: share of all trimmed frames that are feasible (residual <= 0.05 BW) and have a REBA lower bound <= 3",
+      "tests": {
+        "R1": "T_arm - C0 acceptable_lower != 0 (all methods; DART T_arm = G4)",
+        "R2": "O - T_arm acceptable_lower != 0 (all methods)",
+        "R3": "S - T_arm acceptable_lower != 0 (DART, OmniControl)"
+      },
+      "families": {"dart": ["R1", "R2", "R3"], "kimodo": ["R1", "R2"], "omnicontrol": ["R1", "R2", "R3"]},
+      "inference": "as the registered E tests: equal-weight task means of paired (task, seed) differences at delta 1.0 m; 95% cluster bootstrap over tasks (10000 resamples, seed 20261104); exact sign-flip over task means, two-sided; Holm at 0.05 within each method's ergo family, separate from the H family; a test is supported when Holm p < 0.05 and the 95% interval excludes 0. Pairs enter only if both runs pass the E validity gates and the amendment-2 wrapper FK gate; all-pairs results reported as sensitivity",
+      "stages": "same task-seed cells as analyze_x3 --stage confirm and --stage top_up (DART seed 42 by the registered precision rule)",
+      "insensitivity_rule": "a method whose pooled C0 frames fall at least 90% in one frame class has its ergo tests reported as insensitive at this task class (walking) whatever the p values",
+      "secondary": ["Kimodo TO - T, OmniControl TS - T, DART W0 - G4 on acceptable_lower", "the four frame-class shares per arm", "the registered sensitivity analyses (conditional, ungated, neck from source geometry, RULA)"],
+      "why": "kinematic and residual-force outcomes do not say whether a reachable motion is ergonomically acceptable; scoring only feasible frames would condition on a post-treatment variable"
+    },
+    {
+      "what": "descriptive extensions (no tests)",
+      "now": "E4 component contrasts and the ARDY M-series relative-offset correction arms scored with the same pipeline, reported descriptively; E4 levels across methods are task-confounded and are not a method ranking"
+    }
+  ],
+  "unchanged": "tasks, seeds, offsets, arms, H hypotheses, margins, inference of the H family, E criterion and its validity gates",
+  "conventions_not_derived": "all thresholds in config/ergo_rula_reba_20261105.json conventions_not_derived"
+}

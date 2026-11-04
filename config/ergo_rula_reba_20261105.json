@@ -1,0 +1,66 @@
+{
+  "protocol": "ergo_rula_reba_20261105",
+  "registered_before_results": true,
+  "registered_note": "Written before any RULA/REBA score was computed on any E4, X3 or M-series run. The X3 confirm and top-up analyses (kinematic and E) had not been run either.",
+  "question": "Does a generation layer (conditioning, sampling, output correction) change the share of frames that are both physically reachable and not certainly at a REBA action level of 2 or higher",
+  "scope": "Rule-based posture screening from OpenSim inverse kinematics of generated motions. No human validation yet (two blind raters scheduled); results are 'rule screening scores', not occupational risk assessments.",
+  "inputs": {
+    "model": "RajagopalLaiUhlrich2023, scaled per run by the E pipeline (model.osim in the run work directory)",
+    "coordinates": "coordinates.mot: IK coordinates resampled to 100 Hz with a 6 Hz low-pass (biomech.write_coordinates)",
+    "dynamics": "dynamics.npz: residual_force, contact_{r,l}_{heel,toe}; same 100 Hz time base",
+    "frames": "trim 0.5 s at both ends as in E metrics; every third 100 Hz row (33.3 Hz)",
+    "markers": "E marker set ends at the wrists and the neck base (no hand or head markers)"
+  },
+  "mapping": {
+    "trunk_flexion_deg": "OpenSim FK: angle of the torso long axis (torso body +Y) from ground vertical in the pelvis sagittal plane; forward lean positive (pelvis +X projected on the floor gives forward)",
+    "trunk_side_bent": "1 if the torso axis lateral angle from vertical in the pelvis frontal plane exceeds the threshold",
+    "trunk_twisted": "1 if |lumbar_rotation| exceeds the threshold",
+    "upper_arm_flexion_deg": "arm_flex_{r,l}; at the model bound (>= 89.5 deg) both 90 and 91 deg are scored and their score sets united, because larger flexion is clipped by the model range",
+    "arm_abducted_or_rotated": "1 if abduction (-arm_add) exceeds the threshold, else 0; humeral rotation not scored",
+    "shoulder_raised": "unknown (no clavicle or scapula coordinates)",
+    "arm_supported": "0 (free-standing tasks without arm support)",
+    "elbow_flexion_deg": "elbow_flex_{r,l}",
+    "forearm_across_midline_or_outside": "unknown",
+    "wrist_flexion_deg": "unknown (no hand markers: wrist_flex is unconstrained in IK)",
+    "wrist_deviated / wrist_deviated_or_twisted / wrist_twist_score": "unknown (no hand markers)",
+    "neck_flexion_deg, neck_twisted, neck_side_bent": "unknown (no neck coordinate, no head marker)",
+    "leg_support_score (REBA)": "1 if both feet have heel or toe contact, else {1,2}",
+    "legs_score (RULA)": "1 if both feet have contact, else {1,2}",
+    "knee_flexion_deg (REBA)": "largest knee_angle among legs in contact (both legs if neither is in contact)",
+    "seated": "0",
+    "load_score, load_score_a/b, coupling_score": "0 for object-free prompts (all X3 prompts; E4 ARDY, DART, CLoSD, PRIMAL, OmniControl, MotionLCM reach prompts); unknown for CHOIS and for Kimodo prompts naming an object (keyword rule below)",
+    "static_over_minute": "0 (every clip is shorter than 60 s)",
+    "repeated_small_range_over4_per_minute, rapid_change_or_unstable, muscle_use_a/b": "unknown",
+    "sides": "left and right scored separately; per frame the worse side (larger lower bound, then larger upper bound) is kept"
+  },
+  "object_keywords": ["pick", "lift", "carry", "hold", "object", "box", "bag", "put", "place", "push", "pull", "throw", "grab", "drink", "cup", "phone", "move the"],
+  "frame_classes": {
+    "infeasible": "|residual_force| > 0.05 BW (E criterion threshold)",
+    "certain_risk": "feasible and REBA lower bound >= 4 (action level 2 or higher whatever the unknown inputs)",
+    "indeterminate": "feasible, lower bound <= 3 and upper bound >= 4",
+    "certain_acceptable": "feasible and REBA upper bound <= 3"
+  },
+  "outcomes": {
+    "primary": "acceptable_lower: share of all trimmed frames that are feasible and have REBA lower bound <= 3 (feasible and not certain_risk); denominator all frames, so infeasible frames count against a run",
+    "co_reported": ["share of each of the four classes", "certain_acceptable share", "median REBA lower and upper bound over feasible frames"],
+    "sensitivity": [
+      "conditional: certain_risk share among feasible frames only",
+      "ungated: REBA lower bound <= 3 share over all frames regardless of feasibility",
+      "neck from source geometry: neck flexion from the source motion's neck-to-head vector relative to its pelvis-to-neck axis, where the source has a head joint",
+      "RULA: the same classes and outcomes with lower bound >= 5 as risk (action level 3 or higher)"
+    ]
+  },
+  "run_gate": "E run valid (IK RMS <= 0.03 m, IK max <= 0.10 m, vertical force within 2%); X3 pairs also follow the amendment-2 wrapper FK gate",
+  "insensitivity_rule": "If at least 90% of a method's C0 frames (pooled over its C0 runs) fall in one frame class, that method's ergo tests are reported as 'insensitive at this task class' whatever their p values",
+  "conventions_not_derived": {
+    "twist_and_side_bend_threshold_deg": 10,
+    "abduction_threshold_deg": 20,
+    "upper_arm_bound_deg": 89.5,
+    "risk_threshold_REBA": 4,
+    "risk_threshold_RULA": 5,
+    "primary_uses_lower_bound": "the upper bound is set mostly by the unobserved neck and wrist",
+    "frame_stride": 3,
+    "insensitivity_share": 0.9,
+    "object_keywords": "keyword list for unknown load"
+  }
+}
