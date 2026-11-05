@@ -73,10 +73,12 @@ def one(ref, args):
                '--out', OUT_REL, '--disk', DISK] + (['--implicit'] if args.implicit else []) + \
             (['--track-guess'] if args.track_guess else []) + (['--tag', tag] if tag else [])
         log = log_dir/f"{ref['trial']}{'__'+tag if tag else ''}.log"
+        # MocoTrack writes <name>_tracked_states.sto into the working directory; parallel solves need their own
+        cwd = ROOT/OUT_REL/'cwd'/(ref['trial']+('__'+tag if tag else '')); cwd.mkdir(parents=True, exist_ok=True)
         start = time.time()
         with open(log, 'w') as fh:
             try:
-                code = subprocess.run(cmd, stdout=fh, stderr=subprocess.STDOUT, timeout=TIMEOUT_S, cwd=ROOT).returncode
+                code = subprocess.run(cmd, stdout=fh, stderr=subprocess.STDOUT, timeout=TIMEOUT_S, cwd=cwd).returncode
             except subprocess.TimeoutExpired:
                 code = 'timeout'
         out = ROOT/OUT_REL/(ref['trial']+('__'+tag if tag else ''))
