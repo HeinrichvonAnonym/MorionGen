@@ -109,6 +109,7 @@ def problem(args, out, work, floor, t0, t1, stage):
     for i in range(coords.getSize()):
         weights.cloneAndAppend(osim.MocoWeight(f'{coords.get(i).getAbsolutePathString()}/speed', .01))
     track.set_states_weight_set(weights)
+    track.set_apply_tracked_states_to_guess(bool(args.track_guess))
     track.set_control_effort_weight(args.effort)
     track.set_initial_time(t0); track.set_final_time(t1); track.set_mesh_interval(args.mesh)
     study = track.initialize()
@@ -116,12 +117,16 @@ def problem(args, out, work, floor, t0, t1, stage):
         effort = osim.MocoControlGoal.safeDownCast(study.updProblem().updGoal('control_effort'))
         for c in ('tilt', 'list', 'rotation', 'tx', 'ty', 'tz'):
             effort.setWeightForControl(f'/forceset/res_pelvis_{c}', RESIDUAL_WEIGHT)
-    solver = study.initCasADiSolver(); solver.set_num_mesh_intervals(int(round((t1-t0)/args.mesh)))
-    solver.set_optim_sparsity_detection('random'); solver.set_optim_finite_difference_scheme('forward')
-    solver.set_multibody_dynamics_mode('implicit' if args.implicit else 'explicit')
+    if args.track_guess:
+        solver = osim.MocoCasADiSolver.safeDownCast(study.updSolver())
+    else:
+        solver = study.initCasADiSolver(); solver.set_num_mesh_intervals(int(round((t1-t0)/args.mesh)))
+        solver.set_optim_sparsity_detection('random'); solver.set_optim_finite_difference_scheme('forward')
+        solver.set_multibody_dynamics_mode('implicit' if args.implicit else 'explicit')
     solver.set_optim_convergence_tolerance(1e-3); solver.set_optim_constraint_tolerance(1e-3)
     solver.set_optim_max_iterations(args.iterations); solver.set_parallel(args.threads)
-    model.initSystem(); solver.setGuess(reference_guess(solver, model, table_proc))
+    if not args.track_guess:
+        model.initSystem(); solver.setGuess(reference_guess(solver, model, table_proc))
     KEEP.append((track, model_proc, table_proc, model, study))
     return study, solver
 
@@ -156,6 +161,18 @@ def guess_from(solver, path):
     return guess
 
 
+def pruned_guess(path):
+    """Copy of a residual-stage solution without the pelvis residual controls, as a guess file for the final stage
+    (createGuess on the solver of a MocoTrack-initialised study dereferences a freed problem)."""
+    lines = Path(path).read_text().splitlines(); end = lines.index('endheader')
+    header = lines[end+1].split('\t'); keep = [i for i, h in enumerate(header) if 'res_pelvis_' not in h]
+    body = ['\t'.join(row.split('\t')[i] for i in keep) for row in lines[end+1:] if row.strip()]
+    meta = [f'num_controls={sum(1 for h in (header[i] for i in keep) if h.startswith("/forceset/"))}' if l.startswith('num_controls=') else l
+            for l in lines[:end]]
+    out = Path(path).with_name('guess_final.sto'); out.write_text('\n'.join(meta+['endheader']+body)+'\n')
+    return out
+
+
 def outdir(args):
     return OUT/(args.trial if not args.tag else f'{args.trial}__{args.tag}')
 
@@ -165,12 +182,15 @@ def solve(args):
     work = KIN30/args.trial; floor = trial_floor(work); t0, t1 = clip(args.trial, args.seconds)
     receipt = {'trial': args.trial, 'floor_m': floor, 't0': t0, 't1': t1, 'mesh_interval_s': args.mesh, 'effort_weight': args.effort,
                'contact': CONTACT, 'sphere_radius_m': SPHERE_R, 'torque': TORQUE, 'welded': WELD, 'continuation': args.continuation,
-               'implicit': args.implicit, 'stages': {}}
+               'implicit': args.implicit, 'track_guess': args.track_guess, 'stages': {}}
     stages = ['residual', 'final'] if args.continuation else ['final']
     for stage in stages:
         study, solver = problem(args, out, work, floor, t0, t1, stage)
         if stage == 'final' and args.continuation:
-            solver.setGuess(guess_from(solver, out/'solution_residual.sto'))
+            if args.track_guess:
+                solver.setGuessFile(str(pruned_guess(out/'solution_residual.sto')))
+            else:
+                solver.setGuess(guess_from(solver, out/'solution_residual.sto'))
         start = time.time()
         solution = study.solve()
         success = bool(solution.success())
@@ -274,6 +294,7 @@ def main():
     a.add_argument('--effort', type=float, default=.01); a.add_argument('--iterations', type=int, default=3000)
     a.add_argument('--threads', type=int, default=4); a.add_argument('--continuation', action='store_true')
     a.add_argument('--implicit', action='store_true'); a.add_argument('--tag')
+    a.add_argument('--track-guess', action='store_true', help="MocoTrack's own solver and tracked-state guess; final stage from a guess file")
     a.add_argument('--out', help='results directory relative to the repo'); a.add_argument('--disk', help='work directory for IK on the data disk')
     args = a.parse_args()
     global OUT, DISK
