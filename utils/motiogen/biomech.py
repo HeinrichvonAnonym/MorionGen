@@ -243,17 +243,34 @@ def sole_points(kin, side):
     return points, {'heel': heel[:, 1], 'toe': mtp[:, 1]}
 
 
-def contact_masks(heights, margin=CONTACT_MARGIN_M, dt=None, vmax=None, hmax=None, horizontal=None):
+def onset_contact(low, speed, von):
+    """Within each run of low frames, contact from the first frame with speed <= von to the end of the run; runs that
+    never reach von are swing."""
+    out = np.zeros_like(low, dtype=bool)
+    edges = np.diff(np.r_[0, low.astype(int), 0])
+    for a, b in zip(np.flatnonzero(edges == 1), np.flatnonzero(edges == -1)):
+        rest = np.flatnonzero(speed[a:b] <= von)
+        if len(rest):
+            out[a+rest[0]:b] = True
+    return out
+
+
+def contact_masks(heights, margin=CONTACT_MARGIN_M, dt=None, vmax=None, hmax=None, horizontal=None, onset=None):
     """Landmark within margin of its 5th-percentile height; with vmax, also vertical speed <= vmax (m/s); with hmax, also
-    horizontal speed <= hmax (m/s), horizontal: {side: {landmark: (T, 2) ground-plane positions}}."""
+    horizontal speed <= hmax (m/s); with onset, the onset rule of onset_contact on the horizontal speed (m/s);
+    horizontal: {side: {landmark: (T, 2) ground-plane positions}}."""
     floor = min(np.percentile(h, 5) for side in heights.values() for h in side.values())
 
     def mask(side, k, h):
         m = h <= np.percentile(h, 5)+margin
         if vmax is not None:
             m = m & (np.abs(np.gradient(h, dt)) <= vmax)
-        if hmax is not None:
-            m = m & (np.linalg.norm(np.gradient(horizontal[side][k], dt, axis=0), axis=1) <= hmax)
+        if hmax is not None or onset is not None:
+            v = np.linalg.norm(np.gradient(horizontal[side][k], dt, axis=0), axis=1)
+            if hmax is not None:
+                m = m & (v <= hmax)
+            if onset is not None:
+                m = onset_contact(m, v, onset)
         return m
     return floor, {side: {k: mask(side, k, h) for k, h in hs.items()} for side, hs in heights.items()}
 
@@ -333,7 +350,7 @@ def inverse_dynamics(model_path, coordinates, loads_xml, out_dir, name, t0, t1):
     return read_storage(Path(out_dir)/name)
 
 
-def dynamics(out, mass, contact_vmax=None, contact_hmax=None):
+def dynamics(out, mass, contact_vmax=None, contact_hmax=None, contact_onset=None):
     out = Path(out).resolve()
     model_path = out/'model.osim'
     times, labels, data = write_coordinates(out/'ik/ik.mot', out/'coordinates.mot')
@@ -344,8 +361,8 @@ def dynamics(out, mass, contact_vmax=None, contact_hmax=None):
     points, heights = {}, {}
     for side in ('r', 'l'):
         points[side], heights[side] = sole_points(kin, side)
-    horizontal = {side: landmark_ground(kin, side) for side in ('r', 'l')} if contact_hmax is not None else None
-    floor, masks = contact_masks(heights, dt=dt, vmax=contact_vmax, hmax=contact_hmax, horizontal=horizontal)
+    horizontal = {side: landmark_ground(kin, side) for side in ('r', 'l')} if contact_hmax is not None or contact_onset is not None else None
+    floor, masks = contact_masks(heights, dt=dt, vmax=contact_vmax, hmax=contact_hmax, horizontal=horizontal, onset=contact_onset)
     bw = mass*9.80665
     grf, rF, rM = estimate_grf(F, M, C, points, masks, floor, bw)
     write_loads(times, grf, floor, out/'grf.mot', out/'grf.xml')

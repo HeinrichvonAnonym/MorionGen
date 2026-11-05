@@ -76,7 +76,8 @@ def a4_hmax():
     return json.loads(grid.read_text())['selected_v_h'] if grid.exists() else None
 
 
-ESTIMATORS = {'registered': {}, 'a1': {'contact_vmax': .2}, 'a4': {'contact_hmax': a4_hmax()}}
+A5_ONSET = json.loads((ROOT/'config/val_a_addb_20261105_amend5.json').read_text())['rule']['v_on_m_s']
+ESTIMATORS = {'registered': {}, 'a1': {'contact_vmax': .2}, 'a4': {'contact_hmax': a4_hmax()}, 'a5': {'contact_onset': A5_ONSET}}
 
 
 def job(args):
