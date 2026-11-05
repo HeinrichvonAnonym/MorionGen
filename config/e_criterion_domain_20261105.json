@@ -21,13 +21,40 @@
   "consequence_kept": "X4 primary outcome is the REBA r3 certain-acceptable share without the feasibility gate; E is reported through this protocol"
  },
  "rules": {
-  "R0": {"contact": "registered height rule (landmark <= its 5th percentile + 3 cm)", "human_runs": "kin30",
-         "tau_envelope_bw": {"event": 0.643668272505001, "contact": 0.09333187692526736, "flight": 0.30656358948833407}},
-  "R4": {"contact": "R0 and horizontal landmark speed <= 1.2 m/s", "biomech": {"hmax": 1.2}, "human_runs": "kin30_a4",
-         "tau_envelope_bw": {"event": 0.6430962171751343, "contact": 0.11471482944301277, "flight": 0.30937478876750696}},
-  "R5": {"contact": "onset rule on R0 runs, v_on 0.5 m/s", "biomech": {"onset": 0.5}, "human_runs": "kin30_a5",
-         "tau_envelope_bw": {"event": 0.6455399887214077, "contact": 0.34707817178414496, "flight": 0.3065244370303531},
-         "note": "the R5 steady-contact envelope is set by human walking (p99 0.347 BW): the onset rule drops part of real walking support, so its threshold is the most lenient"},
+  "R0": {
+   "contact": "registered height rule (landmark <= its 5th percentile + 3 cm)",
+   "human_runs": "kin30",
+   "tau_envelope_bw": {
+    "event": 0.643668272505001,
+    "contact": 0.09333187692526736,
+    "flight": 0.30656358948833407
+   }
+  },
+  "R4": {
+   "contact": "R0 and horizontal landmark speed <= 1.2 m/s",
+   "biomech": {
+    "hmax": 1.2
+   },
+   "human_runs": "kin30_a4",
+   "tau_envelope_bw": {
+    "event": 0.6430962171751343,
+    "contact": 0.11471482944301277,
+    "flight": 0.30937478876750696
+   }
+  },
+  "R5": {
+   "contact": "onset rule on R0 runs, v_on 0.5 m/s",
+   "biomech": {
+    "onset": 0.5
+   },
+   "human_runs": "kin30_a5",
+   "tau_envelope_bw": {
+    "event": 0.6455399887214077,
+    "contact": 0.34707817178414496,
+    "flight": 0.3065244370303531
+   },
+   "note": "the R5 steady-contact envelope is set by human walking (p99 0.347 BW): the onset rule drops part of real walking support, so its threshold is the most lenient"
+  },
   "states": "per frame, from that rule's own masks: event = within 40 ms of any foot contact change (foot = heel or toe); contact = otherwise any contact; flight = otherwise",
   "frame_infeasible": "residual force / BW > tau_envelope_bw[state]; also reported: residual > 0.05 BW (the fixed threshold of the ergonomic protocol)"
  },
@@ -59,12 +86,34 @@
   "control": "each base is also run unmodified",
   "window": "middle third of the clip with 0.1 s raised-cosine ramps, unless stated",
   "defects": {
-   "float_window_m": [0.02, 0.05, 0.10],
-   "float_whole_m": [0.10],
-   "penetrate_window_m": [0.02, 0.05, 0.10],
-   "lean_deg": [5, 10, 20],
-   "slide_m_s": [0.1, 0.3, 0.6],
-   "time_compression": [1.25, 1.5, 2.0]
+   "float_window_m": [
+    0.02,
+    0.05,
+    0.1
+   ],
+   "float_whole_m": [
+    0.1
+   ],
+   "penetrate_window_m": [
+    0.02,
+    0.05,
+    0.1
+   ],
+   "lean_deg": [
+    5,
+    10,
+    20
+   ],
+   "slide_m_s": [
+    0.1,
+    0.3,
+    0.6
+   ],
+   "time_compression": [
+    1.25,
+    1.5,
+    2.0
+   ]
   },
   "defect_definitions": {
    "float / penetrate": "all joints shifted up / down",
@@ -73,7 +122,12 @@
    "time_compression": "fps multiplied by the factor (same frames, shorter clip); analysed over the whole clip with a 0.25 s trim"
   },
   "outcome": "per rule: change against the control in the defect window of residual rms, envelope_infeasible_share and foot_skate_share; detected if envelope_infeasible_share in the window exceeds the control's by >= 0.10 (约定，未经推演); detection rate per defect and size",
-  "amplitudes_note": "defect sizes 约定，未经推演"
+  "amplitudes_note": "defect sizes 约定，未经推演",
+  "pre_result_amendment": {
+   "slide_max_s": 0.5,
+   "reason": "squat stances span the whole 6 s clip, so the registered slide (speed x stance duration) would move the foot up to 3.6 m against the knee; the slide is limited to the first 0.5 s of the stance (max displacement 0.05 / 0.15 / 0.30 m), 约定，未经推演",
+   "recorded": "2026-11-05, before any injection result; static run in progress, no injection job run"
+  }
  },
  "moco": {
   "purpose": "a few dynamic references that are exactly dynamically consistent in this model",
@@ -87,7 +141,12 @@
   "computation": "per run one forward-kinematics pass on the original coordinates.mot; R0, R4, R5 each give contacts, GRF fit and residual (no inverse dynamics); a shadow directory (links to model.osim and coordinates.mot, new dynamics.npz) is scored by ergo_frames.score_run for REBA r3",
   "outcomes_per_run": "metrics above; REBA r3 certain-acceptable share ungated, and gated by the fixed 0.05 BW and by the envelope",
   "consistency": "registered comparisons of each experiment: E4 layer contrasts (analyze_e4.contrast, valid pairs); X3 each arm against C0 paired by task and seed; E1 and ARDY fair each arm against C0 paired by task, seed and offset; a comparison is a conclusion only if the sign of its effect agrees and its 95% interval excludes zero under all three rules, 'rule-dependent' otherwise",
-  "metrics_compared": ["residual_force_rms_bw", "unsupported_fraction_5pct_bw", "envelope_infeasible_share", "reba_r3_certain_acceptable_ungated"]
+  "metrics_compared": [
+   "residual_force_rms_bw",
+   "unsupported_fraction_5pct_bw",
+   "envelope_infeasible_share",
+   "reba_r3_certain_acceptable_ungated"
+  ]
  },
  "outputs": "develop_logs/test_runs/20261105_e_domain/{static,inject,moco,bracket}/ and analysis.json"
 }
