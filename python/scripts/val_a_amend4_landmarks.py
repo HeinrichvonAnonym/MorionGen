@@ -23,7 +23,8 @@ LOG = ROOT/'develop_logs/test_runs/20261105_val_a'
 DATA = Path('/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen')
 FILES = DATA/'datasets/addbiomechanics_v1/files'
 OUT = DATA/'addb_val_20261105/amend4_landmarks'
-HELDOUT_STUDIES = ('Camargo2021', 'Santos2017', 'Tan2021', 'Tan2022', 'Wang2023')
+HELDOUT_STUDIES = ('Camargo2021', 'Santos2017', 'Tan2021', 'Tan2022')
+NOT_OVERGROUND = {'Wang2023': 'walk trials are treadmill walking: 19-20 s segments with net pelvis horizontal speed 0.00-0.01 m/s'}
 LANDMARKS = {'heel': 'subtalar', 'toe': 'mtp'}
 EXCLUDED_REASONS = ('unmeasuredExternalForceDetected', 'manualReview')
 

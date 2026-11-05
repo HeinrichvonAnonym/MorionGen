@@ -5,10 +5,12 @@
   fetch PATTERN [...]   download members whose names match any regex (resumable; size and CRC checked)
 """
 import argparse
+import http.client
 import json
 import re
 import struct
 import sys
+import time
 import urllib.request
 import zlib
 from pathlib import Path
@@ -17,12 +19,29 @@ URL = 'http://archive.simtk.org/addbiomechanics/addbiomechanics.zip'
 DATA = Path('/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/datasets/addbiomechanics_v1')
 
 
-def get(start, end):
-    req = urllib.request.Request(URL, headers={'Range': f'bytes={start}-{end}'})
-    with urllib.request.urlopen(req, timeout=120) as r:
-        if r.status != 206:
-            raise RuntimeError(f'range request returned {r.status}')
-        return r.read()
+CHUNK = 32 << 20
+
+
+def get(start, end, attempts=8):
+    """Bytes start..end (inclusive) in CHUNK ranges, each retried; long single reads break behind some proxies."""
+    parts = []
+    for a in range(start, end+1, CHUNK):
+        b = min(a+CHUNK-1, end)
+        for k in range(attempts):
+            try:
+                req = urllib.request.Request(URL, headers={'Range': f'bytes={a}-{b}'})
+                with urllib.request.urlopen(req, timeout=120) as r:
+                    if r.status != 206:
+                        raise RuntimeError(f'range request returned {r.status}')
+                    data = r.read()
+                if len(data) != b-a+1:
+                    raise IOError(f'short read {len(data)}/{b-a+1}')
+                parts.append(data); break
+            except (IOError, OSError, http.client.HTTPException) as e:
+                if k == attempts-1:
+                    raise
+                time.sleep(5*(k+1))
+    return b''.join(parts)
 
 
 def size():
