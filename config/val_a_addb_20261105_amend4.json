@@ -1,0 +1,34 @@
+{
+ "protocol": "val_a_addb_20261105_amend4",
+ "amends": ["config/val_a_addb_20261105_amend1.json", "config/val_a_addb_20261105_amend2.json", "config/val_a_addb_20261105_amend3.json"],
+ "registered_before": "tuning, the download of the held-out studies, and any evaluation of the horizontal-speed rule",
+ "why": {
+  "failure": "amendment 1 (vertical speed) failed: late swing moves horizontally, so vertical speed does not separate it from stance",
+  "rule_family": "horizontal landmark speed is the standard kinematic criterion for a planted foot",
+  "known_cost": "a sliding stance foot of a generated motion loses contact under this rule, so foot sliding also raises its residual; accepted by the user, reduced by the tie-break below and reported in X4",
+  "decided_by": "user (path 3: fix the contact rule and validate it on new held-out walking before X4 uses E)"
+ },
+ "rule": {
+  "contact": "a sole landmark (heel: calcn origin, toe: toes origin) is in contact when its height <= its 5th percentile + 3 cm (registered) and its horizontal speed on the 100 Hz filtered trajectory <= v_h",
+  "everything_else": "unchanged (scaling, IK, 6 Hz filter, NNLS GRF, friction 0.8)",
+  "implementation": "biomech.dynamics(..., contact_hmax=v_h); the default None keeps the registered rule"
+ },
+ "development": {
+  "trials": "all With_Arm overground walking trials already exported (registered selection and the amendment-1 held-out set, treadmill trials removed) and the registered jump trials in the amendment-2 scope",
+  "grid_m_s": [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.2, 1.5],
+  "selection": "v_h maximising the median walking V3 (balanced accuracy, 20 N); among values within 0.01 of the maximum the largest is taken (least loss of contact for sliding feet); jump V3 must stay >= 0.85",
+  "grid_note": "grid and tie-break margin 约定，未经推演"
+ },
+ "heldout": {
+  "studies": "AddBiomechanics studies absent from every With_Arm file used so far (Camargo2021, Santos2017, Tan2021, Tan2022, Wang2023; No_Arm models only); same-named No_Arm studies (Falisse2017, Fregly2012, Han2023, Uhlrich2023, Hamner2013, Tiziana2019, Li2021) are reprocessings of used data and are not held out",
+  "trials": "overground level walking identified by trial name only (no treadmill, ramp, stair or transition trials), >= 2.0 s, force plates valid on >= 50% of frames; up to 4 trials per subject, up to 40 trials, as many subjects as possible, rng 20261105",
+  "landmarks": "No_Arm skeletons have no arm joints, so the pipeline IK cannot run; heel and toe come from the file's jointCenters (subtalar and mtp joint centres, the calcn and toes origins of the same model family), filtered and resampled as in the pipeline",
+  "bridge": "on the development walking trials V3 is also computed from jointCenters; the held-out result counts only if the median absolute difference to the pipeline V3 is <= 0.02 (约定，未经推演)"
+ },
+ "gate": {
+  "pass_if": "held-out median walking V3 >= 0.85, and on the development trials with full dynamics recomputed: walking V3 >= 0.85, jump V3 >= 0.85, walking V1 r >= 0.9 and RMSE <= 0.15 BW",
+  "pass": "X4 uses the E criterion with this rule; the amendment-3 envelope thresholds are recomputed with it on the same human trials and frozen before X4 data",
+  "fail": "X4 primary outcome is the REBA r3 certain-acceptable share without the feasibility gate; E is reported as exploratory"
+ },
+ "x4_reporting": "per method and arm, the share of frames that pass the height rule but fail the speed rule (contact lost to sliding)"
+}
