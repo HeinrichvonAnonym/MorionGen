@@ -1,0 +1,42 @@
+{
+ "protocol": "val_a_addb_20261105_amend3",
+ "amends": [
+  "config/val_a_addb_20261105_amend1.json",
+  "config/val_a_addb_20261105_amend2.json"
+ ],
+ "registered_before": "any X4 data; after the human residual by distance from foot events was seen (declared)",
+ "why": {
+  "finding": "human jumps (amendment-2 scope, registered estimator): 75% of frames above the state thresholds lie within 40 ms of a foot contact change (13% of frames); p99 within the window 0.64 BW, steady contact 0.06 BW, steady flight 0.31 BW; in walking the excess is not concentrated near events (0-40 ms 2.8%, 40-80 ms 1.7%, 80-160 ms 2.2%)",
+  "fairness": "with one threshold (pooled p99, 0.24 BW) the human false-infeasible rate ranges from 0.0% (steady contact) to 9.0% (jump event window), so a motion with more take-offs and landings is penalised for measurement error alone; state-specific thresholds fix the human false-infeasible rate at 1% in every state",
+  "not_chosen": "excluding event windows: hides take-off, landing and touchdown violations, uses the estimator's own event times, lets contact jitter remove most frames, and changes denominators",
+  "decided_by": "user"
+ },
+ "threshold": {
+  "states": {
+   "event": "within window_ms of a change in either foot's contact (foot = heel or toe landmark in contact)",
+   "contact": "outside the window, at least one foot in contact",
+   "flight": "outside the window, no foot in contact"
+  },
+  "window_ms": [
+   40,
+   80
+  ],
+  "primary_window_ms": 40,
+  "window_note": "40 ms primary, 80 ms sensitivity (约定，未经推演)",
+  "tau": "per state, 99th percentile of per-frame residual over the kept human frames of that state, classes weighted equally; a class enters a state only with >= min_frames_per_class_state frames",
+  "min_frames_per_class_state": 200,
+  "min_frames_note": "约定，未经推演; set after the 17-frame whole-body flight class dominated the amendment-1 flight threshold",
+  "scope_and_exclusions": "amendment 2 (no running, no yoga, ballet kept) and the amendment-1 exclusions",
+  "estimator": "computed on the registered contact rule; recomputed with the estimator fixed by the X4 preregistration if that differs",
+  "envelope_variant": "per state, the largest per-class 99th percentile (human false-infeasible <= 1% in every class and state); reported; choice between the equal-class-weight tau and the envelope open (pooled tau gives walking steady contact 3.8%)"
+ },
+ "x4_safeguards": [
+  "report per method and arm the share of frames in each state",
+  "report infeasibility per state; the primary conclusion must also hold within the steady-contact state alone",
+  "direct standardisation: per-state infeasibility reweighted to a common state mix per task (mean over the compared arms; over methods for cross-method rankings)",
+  "contact-jitter flag: a run whose foot-event rate exceeds the human maximum (events_per_second_max_all) is flagged and, in a sensitivity analysis, judged with the steady-contact threshold on all frames",
+  "bracketing: three-state rule (primary), two-state contact/flight rule, steady-contact threshold on all frames; a direction is claimed only when all three agree",
+  "window width and threshold values frozen before X4 data; 80 ms window as sensitivity"
+ ],
+ "limitation": "thresholds come from marker-based human data with marker noise and soft-tissue motion that generated motions do not have; this can make them lenient for every generated motion alike, mainly affecting absolute infeasibility rather than within-method arm differences"
+}

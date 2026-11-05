@@ -6,6 +6,8 @@ tau_frame (99th percentile of per-frame residual, classes weighted equally, sts 
 percentile of per-trial residual RMS). Amendment 1 (config/val_a_addb_20261105_amend1.json): the same on kin30_a1,
 the held-out walk V3, and tau_contact / tau_flight after the registered exclusions. Amendment 2
 (config/val_a_addb_20261105_amend2.json): the same threshold rule on kin30 without running and yoga tasks.
+Amendment 3 (config/val_a_addb_20261105_amend3.json): three-state thresholds (foot-event window, steady
+contact, steady flight) and the human foot-event rate on the amendment-2 scope.
 Writes develop_logs/test_runs/20261105_val_a/analysis.json.
 """
 import collections
@@ -19,6 +21,7 @@ LOG = ROOT/'develop_logs/test_runs/20261105_val_a'
 SPEC = json.loads((ROOT/'config/val_a_addb_20261105.json').read_text())
 AMEND = json.loads((ROOT/'config/val_a_addb_20261105_amend1.json').read_text())
 AMEND2 = json.loads((ROOT/'config/val_a_addb_20261105_amend2.json').read_text())
+AMEND3 = json.loads((ROOT/'config/val_a_addb_20261105_amend3.json').read_text())
 WORK = Path('/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/addb_val_20261105/work')
 BALLET = ('balletsmalljump', 'ballethighleg', 'ballet_high_leg')
 THRESHOLD_CLASSES = ('stand', 'walk', 'run', 'squat', 'jump', 'wholebody')
@@ -131,6 +134,56 @@ def amendment():
             'threshold': state_threshold('kin30_a1', reg)}
 
 
+def frame_states(name, r, f, window_ms):
+    d = np.load(WORK/name/r['id']/'dynamics.npz')
+    dt = np.median(np.diff(d['times'])); trim = slice(int(.5/dt), len(d['times'])-int(.5/dt))
+    foot = [(d[f'contact_{s}_heel'] | d[f'contact_{s}_toe'])[trim] for s in 'rl']
+    events = np.concatenate([np.flatnonzero(np.diff(x.astype(int)) != 0)+.5 for x in foot])
+    i = np.arange(len(foot[0]))
+    near = (np.min(np.abs(i[:, None]-events[None, :]), 1)*dt*1000 <= window_ms) if len(events) else np.zeros(len(i), bool)
+    contact = foot[0] | foot[1]
+    states = {'event': near, 'contact': ~near & contact, 'flight': ~near & ~contact}
+    return {k: v[f['keep']] for k, v in states.items()}, len(events)/(len(i)*dt)
+
+
+def three_state(name, keep_ids, scope_tasks, window_ms):
+    ex = AMEND['threshold']['exclusions']
+    rows = [json.loads(f.read_text()) for f in sorted((LOG/'runs'/name).glob('*.json'))]
+    kept = collections.defaultdict(list)
+    for r in rows:
+        if (r['id'] in keep_ids and r['status'] == 'success' and r['class'] in THRESHOLD_CLASSES and r['task'] not in scope_tasks
+                and r['class'] not in AMEND2['scope']['excluded_classes'] and r['task'] not in ex['unmodeled_support_tasks']
+                and r['ik_marker_error']['rms_mean_m'] <= .03):
+            kept[r['class']].append(r)
+    by = {k: collections.defaultdict(list) for k in ('event', 'contact', 'flight')}; rate = collections.defaultdict(list)
+    for c, v in kept.items():
+        for r in v:
+            f = np.load(LOG/'runs'/name/f"{r['id']}_frames.npz")
+            st, ev = frame_states(name, r, f, window_ms); rate[c].append(ev)
+            for k, m in st.items():
+                by[k][c].append(f['residual_bw'][f['keep']][m])
+    minimum = AMEND3['threshold']['min_frames_per_class_state']
+    out = {'window_ms': window_ms, 'kept_trials': {c: len(v) for c, v in kept.items()},
+           'events_per_second': {c: {'median': float(np.median(x)), 'max': float(np.max(x))} for c, x in rate.items()},
+           'events_per_second_max_all': float(max(max(x) for x in rate.values())), 'tau_bw': {}, 'per_class': {}, 'human_false_infeasible': {}}
+    for k, d in by.items():
+        xs = {c: np.concatenate(v) for c, v in d.items()}
+        xs = {c: x for c, x in xs.items() if len(x) >= minimum}
+        out['per_class'][k] = {c: {'frames': int(len(x)), 'p99_bw': float(np.percentile(x, 99))} for c, x in xs.items()}
+        if xs:
+            v = np.concatenate(list(xs.values())); w = np.concatenate([np.full(len(x), 1/len(x)) for x in xs.values()])
+            tau = weighted_quantile(v, w, .99); out['tau_bw'][k] = tau
+            out['human_false_infeasible'][k] = {c: float(np.mean(x > tau)) for c, x in xs.items()}
+            out.setdefault('tau_envelope_bw', {})[k] = float(max(np.percentile(x, 99) for x in xs.values()))
+    return out
+
+
+def amendment3():
+    reg = ids('selection.json')
+    yoga = tuple(AMEND2['scope']['excluded_tasks']['yoga'])
+    return {f'window_{w}ms': three_state('kin30', reg, yoga, w) for w in AMEND3['threshold']['window_ms']}
+
+
 def amendment2():
     reg = ids('selection.json')
     yoga = tuple(AMEND2['scope']['excluded_tasks']['yoga'])
@@ -149,6 +202,7 @@ def main():
     if (LOG/'runs/kin30_a1').exists() and (LOG/'selection_heldout.json').exists():
         result['amendment1'] = amendment()
     result['amendment2'] = amendment2()
+    result['amendment3'] = amendment3()
     (LOG/'analysis.json').write_text(json.dumps(result, indent=1))
     for name, v in result['variants'].items():
         print(f"== {name}: {v['success']}/{v['runs']} success; gate pass {v['gate']['pass']}", v['gate']['checks'])
@@ -171,6 +225,8 @@ def main():
     print('== amendment 2: gate pass', a['gate']['pass'], a['gate']['checks'])
     for k in ('threshold', 'threshold_without_ballet'):
         print(' ', k, json.dumps(a[k]))
+    for k, v in result['amendment3'].items():
+        print('== amendment 3', k, json.dumps(v))
 
 
 if __name__ == '__main__':
