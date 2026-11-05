@@ -1,0 +1,40 @@
+{
+ "protocol": "val_a_addb_20261105_amend5",
+ "amends": ["config/val_a_addb_20261105_amend1.json", "config/val_a_addb_20261105_amend2.json", "config/val_a_addb_20261105_amend3.json", "config/val_a_addb_20261105_amend4.json"],
+ "registered_before": "export and any evaluation of the amendment-5 held-out trials; the onset rule was explored on the development trials only",
+ "disclosure": {
+  "history": "amendment 4 (height + horizontal speed <= 1.2 m/s) failed its held-out gate (Camargo2021, median walking V3 0.838 < 0.85); its failure is reported unchanged",
+  "informed_by": "the amendment-4 held-out diagnostics (Camargo2021: false contacts on moving feet, touchdown predicted 80 ms early) motivated this rule; the rule and v_on were then built on the development trials (other laboratories) only",
+  "last_amendment": "no further contact-rule amendment after this one, whatever its outcome",
+  "decided_by": "user (option 1: v_on 0.5 with 0.3 and 0.7 as robustness checks, no further amendment on failure)"
+ },
+ "why": {
+  "attribution": "a low, horizontally moving sole landmark is either a human foot that is not yet down (a contact-detector error to remove) or a generated stance foot that slides (a motion defect); a single speed cap treats both alike and charges sliding to the E criterion",
+  "development_evidence": "human false contacts under the height rule are (i) the leading frames of a low-height run before the foot first slows (approach) and (ii) low-height runs that never slow (swing toe at minimum toe clearance: 113 of 114 such runs unloaded, 0.03-0.12 s, 3.7-4.9 m/s); generated sliding occurs mostly after the foot has come to rest"
+ },
+ "rule": {
+  "contact": "for each sole landmark (heel: calcn origin, toe: toes origin), take the runs of consecutive frames with height <= its 5th percentile + 3 cm (registered); within a run, contact starts at the first frame whose horizontal speed (100 Hz filtered trajectory) <= v_on and lasts to the end of the run; a run with no such frame is swing (no contact)",
+  "v_on_m_s": 0.5,
+  "v_on_basis": "maximum median walking V3 on the development trials over the grid [0.1, 0.2, 0.3, 0.5, 0.7, 1.0] (0.945, 0.964, 0.973, 0.983, 0.981, 0.974; jump 0.89-0.92); grid 约定，未经推演",
+  "robustness_values_m_s": [0.3, 0.7],
+  "everything_else": "unchanged (scaling, IK, 6 Hz filter, NNLS GRF, friction 0.8)",
+  "implementation": "biomech.dynamics(..., contact_onset=v_on); the default None keeps the registered rule"
+ },
+ "heldout": {
+  "subjects": "Camargo2021 AB18, AB24, AB25, AB28: the Camargo2021 subjects with no trial in the amendment-4 held-out set (same laboratory and protocol as that set; new people)",
+  "trials": "overground level walking by trial name (amendment-4 name rule), >= 2.0 s, force plates valid on >= 50% of frames; up to 10 trials per subject, up to 40 trials, rng 20261105",
+  "landmarks": "jointCenters (subtalar, mtp), 6 Hz low-pass and 100 Hz spline as in amendment 4",
+  "bridge": "on the development walking trials, median |V3(jointCenters) - V3(pipeline)| at v_on 0.5 <= 0.02 (约定，未经推演)",
+  "secondary": "V3 of the onset rule on the 40 amendment-4 held-out trials is reported but does not gate (their diagnostics informed the rule)"
+ },
+ "gate": {
+  "pass_if": "held-out median walking V3 >= 0.85 at each of v_on 0.3, 0.5 and 0.7; bridge passes; and on the development trials with full dynamics recomputed at v_on 0.5: walking V3 >= 0.85, jump V3 >= 0.85, walking V1 r >= 0.9 and RMSE <= 0.15 BW",
+  "pass": "X4 uses the E criterion with v_on 0.5; the amendment-3 envelope thresholds are recomputed with it on the same human trials and frozen before X4 data; earlier E results (X3, E4, E1, ARDY-fair) are re-scored with it (dynamics only) as a declared post hoc consistency step",
+  "fail": "the amendment-4 consequence stands: X4 primary outcome is the REBA r3 certain-acceptable share without the feasibility gate; E is reported as exploratory"
+ },
+ "x4_reporting": {
+  "foot_skate": "per method and arm, the share of contact frames (onset rule) whose landmark horizontal speed > 0.3 m/s (sliding after rest), reported next to E",
+  "contact_lost": "per method and arm, the share of height-rule contact frames that the onset rule removes (approach before rest and never-resting runs)",
+  "sensitivity": "E feasibility at v_on 0.3 and 0.7"
+ }
+}
