@@ -24,7 +24,28 @@ def kinematics(work):
     return times, labels, data, kin
 
 
-def evaluate(times, kin, mass, rule):
+def contact_v2(heights, reference, margin, dt, hmax=None, onset=None, horizontal=None):
+    """E v2: a landmark is in contact when its height above its flat-foot standing height (reference, from the method's
+    own floor convention) is <= margin; one world floor for all landmarks. Returns masks and elevations (m)."""
+    elevation = {s: {k: h-reference[s][k] for k, h in hs.items()} for s, hs in heights.items()}
+    masks = {}
+    for s, hs in elevation.items():
+        masks[s] = {}
+        for k, e in hs.items():
+            m = e <= margin
+            if hmax is not None or onset is not None:
+                v = np.linalg.norm(np.gradient(horizontal[s][k], dt, axis=0), axis=1)
+                if hmax is not None:
+                    m = m & (v <= hmax)
+                if onset is not None:
+                    m = biomech.onset_contact(m, v, onset)
+            masks[s][k] = m
+    return masks, elevation
+
+
+def evaluate(times, kin, mass, rule, reference=None, world_floor=0.):
+    """reference=None: v1 (per-landmark 5th-percentile floor). reference={side: {landmark: m}}: v2 (contact_v2, GRF
+    contact points on world_floor, elevation and per-frame lowest elevation returned)."""
     dt = float(np.median(np.diff(times)))
     F, M, C = biomech.required_wrench(kin, dt)
     points, heights = {}, {}
@@ -32,12 +53,18 @@ def evaluate(times, kin, mass, rule):
         points[side], heights[side] = biomech.sole_points(kin, side)
     horizontal = {side: biomech.landmark_ground(kin, side) for side in ('r', 'l')}
     kw = RULES[rule]
-    floor, masks = biomech.contact_masks(heights, dt=dt, hmax=kw.get('hmax'), onset=kw.get('onset'), horizontal=horizontal)
+    extra = {}
+    if reference is None:
+        floor, masks = biomech.contact_masks(heights, dt=dt, hmax=kw.get('hmax'), onset=kw.get('onset'), horizontal=horizontal)
+    else:
+        masks, elevation = contact_v2(heights, reference, biomech.CONTACT_MARGIN_M, dt, kw.get('hmax'), kw.get('onset'), horizontal)
+        floor = world_floor
+        extra = {'elevation': elevation, 'lowest_elevation': np.min([e for hs in elevation.values() for e in hs.values()], 0)}
     bw = mass*9.80665
     grf, rF, rM = biomech.estimate_grf(F, M, C, points, masks, floor, bw)
     speed = {s: {k: np.linalg.norm(np.gradient(horizontal[s][k], dt, axis=0), axis=1) for k in horizontal[s]} for s in horizontal}
     return {'dt': dt, 'floor': floor, 'masks': masks, 'grf': grf, 'residual_force': rF, 'residual_moment': rM,
-            'residual_bw': np.linalg.norm(rF, axis=1)/bw, 'speed': speed, 'com': C, 'required_force': F}
+            'residual_bw': np.linalg.norm(rF, axis=1)/bw, 'speed': speed, 'com': C, 'required_force': F, **extra}
 
 
 def states(masks, dt):
@@ -49,17 +76,18 @@ def states(masks, dt):
     return {'event': near, 'contact': ~near & contact, 'flight': ~near & ~contact}
 
 
-def infeasible(res, rule):
+def infeasible(res, rule, tau=None):
+    """tau: {state: BW} envelope; default the v1 registered TAU of the rule."""
     st = states(res['masks'], res['dt'])
-    tau = np.zeros(len(res['residual_bw']))
+    tau = tau or TAU[rule]; bound = np.zeros(len(res['residual_bw']))
     for k, m in st.items():
-        tau[m] = TAU[rule][k]
-    return res['residual_bw'] > tau, st
+        bound[m] = tau[k]
+    return res['residual_bw'] > bound, st
 
 
-def summary(res, rule, sel, reference_masks=None):
+def summary(res, rule, sel, reference_masks=None, tau=None):
     """Metrics over the boolean frame selection sel."""
-    bad, st = infeasible(res, rule)
+    bad, st = infeasible(res, rule, tau)
     r = res['residual_bw'][sel]
     contact = np.concatenate([res['masks'][s][k][sel] for s in ('r', 'l') for k in ('heel', 'toe')])
     fast = np.concatenate([res['speed'][s][k][sel] > SKATE_M_S for s in ('r', 'l') for k in ('heel', 'toe')])
@@ -72,6 +100,10 @@ def summary(res, rule, sel, reference_masks=None):
     if reference_masks is not None:
         ref = np.concatenate([reference_masks[s][k][sel] for s in ('r', 'l') for k in ('heel', 'toe')])
         out['contact_lost_vs_R0'] = float(np.mean(~contact[ref])) if ref.any() else None
+    if 'lowest_elevation' in res and len(r):
+        low = res['lowest_elevation'][sel]
+        out['lowest_elevation_m'] = {'median': float(np.median(low)), 'p5': float(np.percentile(low, 5)),
+                                     'p95': float(np.percentile(low, 95))}
     return out
 
 

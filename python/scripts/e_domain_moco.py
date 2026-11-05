@@ -249,6 +249,19 @@ def evaluate(args):
             'e_contact_moco_free': float(np.mean([np.mean(res['masks'][s_][k_][sel] & ~moco_contact[(s_, k_)][sel]) for s_, k_ in moco_contact])),
             'e_free_moco_contact': float(np.mean([np.mean(~res['masks'][s_][k_][sel] & moco_contact[(s_, k_)][sel]) for s_, k_ in moco_contact]))}
         result['rules'][rule] = s
+    reference = {s_: {k_: receipt['floor_m'] for k_ in ('heel', 'toe')} for s_ in 'rl'}
+    frames = {'sel': sel, 'moco_vertical_grf_bw': vz['r']+vz['l']}
+    result['v2'] = {'reference_m': receipt['floor_m'], 'world_floor_m': receipt['floor_m']-SPHERE_R, 'rules': {}}
+    for rule in e_rules.RULES:
+        res = e_rules.evaluate(et, kin, mass, rule, reference=reference, world_floor=receipt['floor_m']-SPHERE_R)
+        st = e_rules.states(res['masks'], res['dt'])
+        s = {k: v for k, v in e_rules.summary(res, rule, sel).items() if k != 'envelope_infeasible_share'}
+        agree = [res['masks'][s_][k_][sel] == moco_contact[(s_, k_)][sel] for s_, k_ in moco_contact]
+        s['contact_agreement'] = float(np.mean(agree))
+        result['v2']['rules'][rule] = s
+        frames[f'{rule}_residual_bw'] = res['residual_bw']; frames[f'{rule}_lowest_elevation'] = res['lowest_elevation']
+        frames.update({f'{rule}_state_{k}': m for k, m in st.items()})
+    np.savez_compressed(out/'frames_v2.npz', **frames)
     (out/'evaluation.json').write_text(json.dumps(result, indent=1))
     print(json.dumps({k: result[k] for k in ('trial', 'frames', 'moco_vertical_grf_mean_bw')} |
                      {r: {k: v[k] for k in ('envelope_infeasible_share', 'residual_force_rms_bw', 'contact_agreement')} for r, v in result['rules'].items()}))
