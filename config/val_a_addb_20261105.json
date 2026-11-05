@@ -1,0 +1,95 @@
+{
+ "protocol": "val_a_addb_20261105",
+ "registered_before": "any E-pipeline run on AddBiomechanics data",
+ "question": "Does the E criterion (contact-constrained GRF estimate and residual force from kinematics alone) reproduce force-plate GRF and contact on real human motion, and what residual force do real humans produce in it?",
+ "why": "The 5% BW feasibility threshold and the residual-force estimator were never checked on human data; every E result and the RULA/REBA feasibility gate depend on them.",
+ "data": {
+  "source": "AddBiomechanics v1 (CC BY 4.0), With_Arm subset, train and test splits; 52 archive entries are empty upstream (8 in this subset)",
+  "pass": "KINEMATICS (marker-based IK, no dynamic adjustment); sensitivity: DYNAMICS pass",
+  "joints": {
+   "pelvis": "ground_pelvis",
+   "right_hip": "hip_r",
+   "right_knee": "walker_knee_r",
+   "right_ankle": "ankle_r",
+   "right_foot": "mtp_r",
+   "right_shoulder": "acromial_r",
+   "right_elbow": "elbow_r",
+   "right_wrist": "radius_hand_r",
+   "Spine": "back",
+   "Spine3": "back + 2/3 (acromial midpoint - back)",
+   "neck": "acromial midpoint",
+   "left_*": "same with _l"
+  },
+  "joints_note": "Spine3 and neck have no AddB joint; both are rigid on the torso (the acromial joints are torso-fixed in the Rajagopal skeleton) and the axial markers are registered per run, so they constrain the torso like the generated axial joints",
+  "frame_rate": "resampled to 30 fps before the pipeline (generated inputs are 20-30 fps); sensitivity: native rate (about 100 Hz)",
+  "mass": "DYNAMICS-pass skeleton mass for every pass and rate (AddB fits it to the force plates; the header mass can differ, e.g. 53.1 vs 48.9 kg, which would bias the vertical GRF by the same ratio without saying anything about the estimator); the header/DYNAMICS ratio is reported per trial",
+  "classes": {
+   "stand": [
+    "Uhlrich2023 static",
+    "Han2023 static",
+    "Han2023 idling"
+   ],
+   "walk": [
+    "Han2023 walk",
+    "Fregly2012 *ngait*, sc_*_og",
+    "Falisse2017 gait",
+    "Uhlrich2023 walking, walkingts"
+   ],
+   "run": [
+    "Hammer2013 run"
+   ],
+   "squat": [
+    "Uhlrich2023 squats, squatsasym",
+    "Han2023 squat"
+   ],
+   "sts": [
+    "Uhlrich2023 sts, stsweaklegs",
+    "Falisse2017 sts"
+   ],
+   "jump": [
+    "Han2023 balletsmalljump, jumpingjack, hopping",
+    "Uhlrich2023 dj, djasym"
+   ],
+   "wholebody": [
+    "Han2023 worrier, tree, treearms, chair, ballethighleg, taichi, soccerkick, tennisgroundstroke, tennisserve, step, dog, lambadadance, sidestretch, whirl"
+   ]
+  },
+  "eligibility": "trial length >= 2.0 s (1 s calibration and 0.5 s trims of the E pipeline leave >= 1 s); frames flagged unmeasuredExternalForceDetected or manualReview are excluded from every metric",
+  "selection": "per class up to 24 trials, at most 4 per subject, uniform without replacement with numpy default_rng(20261105) over the sorted eligible list",
+  "known_at_registration": "trial counts, lengths and GRF coverage per study (scan of the b3d headers); API checks on 9 trials: jointCenters equal the skeleton FK, Y-up world frame, groundContactForce equals the raw plate sum, header mass vs DYNAMICS mass; no E output had been computed"
+ },
+ "pipeline": "biomech.prepare + biomech.dynamics exactly as for generated motion (scaling, axial registration, IK, 6 Hz filter, 100 Hz spline, required wrench, contact masks, NNLS GRF, residual); static optimization is not run",
+ "measured": {
+  "grf": "processing-pass groundContactForce of calcn_r and calcn_l (world frame, N), linearly interpolated to the pipeline times; frames whose AddB missingGRFReason is not notMissingGRF are excluded from GRF and contact metrics",
+  "contact": "per foot: measured vertical GRF > 20 N (约定，未经推演)"
+ },
+ "metrics": {
+  "V1": "total vertical GRF: per-trial Pearson r and RMSE in BW, estimated vs measured",
+  "V2": "total horizontal GRF magnitude: per-trial Pearson r and RMSE in BW",
+  "V3": "per-foot contact: balanced accuracy of the pipeline mask (heel or toe) against measured contact",
+  "V4": "residual force per frame (BW) after the 0.5 s trims: distribution per class; per-trial residual RMS and share of frames above 0.05 BW",
+  "summary": "per class: median and interquartile range over trials; pooled human statistics weight classes equally"
+ },
+ "threshold": {
+  "frame": "tau_frame = 99th percentile of per-frame residual (BW) over the human frames of stand, walk, run, squat, jump and wholebody (classes weighted equally); sts is reported but excluded because the seat supports the pelvis and the pipeline models foot contact only",
+  "run": "tau_run = 95th percentile of per-trial residual RMS over the same classes",
+  "use": "post hoc sensitivity on X3/E4/E1/ARDY-fair: feasibility and RULA/REBA gate recomputed with tau_frame in place of 0.05 BW; registered for X4 as the feasibility threshold if the gate passes"
+ },
+ "gate": {
+  "pass_if": "walk and run: median V1 r >= 0.9 and median V1 RMSE <= 0.15 BW; median V3 balanced accuracy >= 0.85 in walk, run and jump (约定，未经推演)",
+  "fail": "X4 runs generation only; the E criterion waits for an estimator fix, which is registered before it is evaluated on these trials"
+ },
+ "sensitivity": [
+  "DYNAMICS pass",
+  "native frame rate",
+  "contact threshold 50 N"
+ ],
+ "conventions_not_derived": [
+  "20 N contact threshold",
+  "gate limits 0.9 / 0.15 BW / 0.85",
+  "percentiles 99 and 95",
+  "2.0 s minimum length",
+  "24 trials and 4 per subject",
+  "30 fps resampling"
+ ]
+}
