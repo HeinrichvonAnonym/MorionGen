@@ -1,0 +1,31 @@
+{
+ "protocol": "val_a_addb_20261105_amend1",
+ "amends": "config/val_a_addb_20261105.json",
+ "registered_before": "any E output with the amended contact rule",
+ "why": {
+  "gate": "the registered gate failed on walking contact only: balanced accuracy 0.77 (< 0.85), sensitivity 0.98, specificity 0.58; predicted touchdown 110 ms before the measured heel strike (late swing within 3 cm of the floor), toe-off timing median 0 ms; V1 passed in walk and run, V3 passed in run and jump",
+  "threshold": "the registered tau_frame (0.98 BW) is dominated by unmodeled supports (hands on the floor in dog, a box in drop jumps, a platform in step, the seat in sts) and by source-kinematics failures (3 warrior trials with IK marker RMS 4-5 cm and residuals up to 18 BW); residual in running sits in flight frames (median 0.19 BW) and grows with the filter cutoff (10 and 12 Hz: 0.21 and 0.24 BW), so it is not filter smoothing",
+  "decided_by": "user, after the registered results above"
+ },
+ "estimator_fix": {
+  "contact": "a sole landmark (heel: calcn origin, toe: toes origin) is in contact when its height is <= its 5th percentile + 3 cm (registered) and its vertical speed on the 100 Hz filtered coordinates is <= 0.2 m/s (约定，未经推演; fixed before evaluation, not tuned on these trials)",
+  "everything_else": "unchanged (scaling, IK, 6 Hz filter, NNLS GRF, friction 0.8)",
+  "implementation": "biomech.dynamics(..., contact_vmax=0.2); the default None keeps the registered rule for every existing protocol",
+  "evaluation": "kin30 variant of the 160 registered trials (IK reused, dynamics recomputed) and all remaining eligible walk trials as a held-out set (kin30, full pipeline)"
+ },
+ "gate": {
+  "pass_if": "the registered checks on the 160 trials with the fixed estimator, and median V3 balanced accuracy >= 0.85 on the held-out walk trials",
+  "fail": "X4 runs generation only; the E criterion is not used for X4 until a further registered fix passes on new held-out trials"
+ },
+ "threshold": {
+  "exclusions": {"unmodeled_support_tasks": ["sts", "stsweaklegs", "dog", "step", "dj", "djasym"],
+                 "source_quality": "IK marker RMS (mean over frames) > 3 cm (约定，未经推演)",
+                 "frames": "unmeasuredExternalForceDetected and manualReview frames (registered)"},
+  "states": "per frame, predicted contact (any sole landmark of either foot in contact) or predicted flight (none), from the fixed estimator",
+  "tau_contact": "99th percentile of per-frame residual (BW) over contact frames of the remaining trials, classes weighted equally",
+  "tau_flight": "99th percentile over flight frames, classes with flight frames weighted equally",
+  "tau_run": "95th percentile of per-trial residual RMS over the remaining trials (registered definition)",
+  "use": "a frame is infeasible when its residual exceeds the tau of its predicted state; post hoc sensitivity on X3/E4/E1/ARDY-fair, registered for X4 if the gate passes"
+ },
+ "reported": ["registered and amended V1-V4 side by side", "per-class tau and the share of human frames above each tau", "share of excluded trials and frames per class"]
+}

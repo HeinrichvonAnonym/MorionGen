@@ -5,7 +5,8 @@ Selects trials by the registered classes and eligibility, maps the AddB joint ce
 biomech (Z-up motion.npz, like a generated run) and stores the measured foot GRF with the AddB missing-GRF flags.
 Variants: kin30 (KINEMATICS pass, 30 fps; primary), dyn30 (DYNAMICS pass), kin_native (KINEMATICS pass, native rate).
 Runs in the motiogen-addb environment (nimblephysics). Writes <DATA>/addb_val_20261105/sources/<variant>/<id>/ and
-develop_logs/test_runs/20261105_val_a/selection.json.
+develop_logs/test_runs/20261105_val_a/selection.json. --heldout exports the eligible walk trials outside the
+registered selection (kin30) to selection_heldout.json (config/val_a_addb_20261105_amend1.json).
 """
 import argparse
 import collections
@@ -136,8 +137,18 @@ def export(r, variants):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--variants', nargs='+', default=['kin30', 'dyn30', 'kin_native'])
+    p.add_argument('--heldout', action='store_true')
     args = p.parse_args()
     rows = scan(); chosen = select(rows)
+    if args.heldout:
+        taken = {(r['file'], r['trial_index']) for r in chosen}
+        held = [r for r in rows if r['class'] == 'walk' and (r['file'], r['trial_index']) not in taken]
+        for r in held:
+            r['id'] = re.sub(r'[^A-Za-z0-9]+', '_', f"{r['study']}_{Path(r['file']).parent.name}_{r['trial']}")
+            export(r, ['kin30'])
+        (LOG/'selection_heldout.json').write_text(json.dumps({'trials': held}, indent=1))
+        print(json.dumps({'heldout_walk': len(held)}))
+        return
     LOG.mkdir(parents=True, exist_ok=True)
     for i, r in enumerate(chosen):
         export(r, args.variants)

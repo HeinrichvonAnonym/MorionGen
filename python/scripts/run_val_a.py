@@ -4,10 +4,13 @@
 Per trial: biomech.prepare + biomech.dynamics on the exported source (heading unclamped), then V1-V4 on the frames
 after the 0.5 s trims whose AddB GRF is valid and not excluded. Writes develop_logs/test_runs/20261105_val_a/runs/
 <variant>/<id>.json and <id>_frames.npz; work directories go to <DATA>/addb_val_20261105/work/<variant>/<id>.
-Runs in the OpenSim environment; --workers processes in parallel.
+Runs in the OpenSim environment; --workers processes in parallel. --estimator a1 applies the amended contact rule
+(config/val_a_addb_20261105_amend1.json) and writes <variant>_a1, reusing the registered IK when it exists;
+--selection heldout runs the held-out walk trials.
 """
 import argparse
 import json
+import shutil
 import sys
 import traceback
 from concurrent.futures import ProcessPoolExecutor
@@ -61,23 +64,37 @@ def compare(work, measured, mass, contact_n=(20., 50.)):
     out.update(V4_residual_rms_bw=float(np.sqrt(np.mean(residual[keep]**2))) if keep.any() else None,
                V4_share_above_5pct=float(np.mean(residual[keep] > .05)) if keep.any() else None,
                V4_residual_p95_bw=float(np.percentile(residual[keep], 95)) if keep.any() else None)
-    frames = {'times': t, 'residual_bw': residual, 'keep': keep, 'grf_ok': ok, 'vertical_measured_bw': tot_m[:, 1]/bw,
+    contact_any = np.any([dyn[f'contact_{s}_{k}'][trim] for s in 'rl' for k in ('heel', 'toe')], axis=0)
+    frames = {'times': t, 'residual_bw': residual, 'keep': keep, 'grf_ok': ok, 'contact_any': contact_any, 'vertical_measured_bw': tot_m[:, 1]/bw,
               'vertical_estimated_bw': tot_e[:, 1]/bw}
     return out, frames
 
 
+VMAX = {'registered': None, 'a1': .2}
+
+
 def job(args):
-    variant, row = args
+    variant, row, estimator = args
     import biomech
-    src = Path(row['sources'][variant]); work = WORK/variant/row['id']; dest = LOG/'runs'/variant
+    name = variant if estimator == 'registered' else f'{variant}_{estimator}'
+    src = Path(row['sources'][variant]); work = WORK/name/row['id']; dest = LOG/'runs'/name
     dest.mkdir(parents=True, exist_ok=True)
     if (dest/f"{row['id']}.json").exists():
         return 'skip'
     result = {k: row[k] for k in ('id', 'study', 'subject', 'trial', 'task', 'class', 'seconds', 'mass_kg', 'mass_header_kg', 'mass_source')}
-    result['variant'] = variant
+    result.update(variant=variant, estimator=estimator)
     try:
-        receipt = biomech.prepare(src, work, mass=row['mass_kg'], free_yaw=True)
-        metrics = biomech.dynamics(work, row['mass_kg'])
+        base = WORK/variant/row['id']
+        if estimator != 'registered' and (base/'receipt.json').exists() and (base/'ik/ik.mot').exists():
+            (work/'ik').mkdir(parents=True, exist_ok=True)
+            for f in ('model.osim', 'receipt.json', 'ik/ik.mot'):
+                shutil.copy(base/f, work/f)
+            for f in base.glob('ik/*_ik_marker_errors.sto'):
+                shutil.copy(f, work/'ik'/f.name)
+            receipt = json.loads((work/'receipt.json').read_text()); result['ik_reused'] = True
+        else:
+            receipt = biomech.prepare(src, work, mass=row['mass_kg'], free_yaw=True)
+        metrics = biomech.dynamics(work, row['mass_kg'], contact_vmax=VMAX[estimator])
         cmp, frames = compare(work, src/'measured.npz', row['mass_kg'])
         result.update(status='success', ik_marker_error=receipt['ik_marker_error'], e_metrics=metrics, **cmp)
         np.savez_compressed(dest/f"{row['id']}_frames.npz", **frames)
@@ -92,9 +109,12 @@ def main():
     p.add_argument('--variants', nargs='+', default=['kin30', 'dyn30', 'kin_native'])
     p.add_argument('--workers', type=int, default=4)
     p.add_argument('--only', nargs='*')
+    p.add_argument('--estimator', default='registered', choices=list(VMAX))
+    p.add_argument('--selection', default='registered', choices=['registered', 'heldout'])
     args = p.parse_args()
-    rows = json.loads((LOG/'selection.json').read_text())['trials']
-    jobs = [(v, r) for v in args.variants for r in rows if isinstance(r['sources'].get(v), str) and (not args.only or r['id'] in args.only)]
+    rows = json.loads((LOG/('selection.json' if args.selection == 'registered' else 'selection_heldout.json')).read_text())['trials']
+    jobs = [(v, r, args.estimator) for v in args.variants for r in rows
+            if isinstance(r['sources'].get(v), str) and (not args.only or r['id'] in args.only)]
     counts = {}
     with ProcessPoolExecutor(args.workers) as pool:
         for status in pool.map(job, jobs):
