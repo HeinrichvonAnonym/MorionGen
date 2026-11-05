@@ -10,14 +10,11 @@
   "timeout_s": 7200,
   "retry_on_timeout_seconds": 1.5,
   "failed_entries_are_not_replaced": true,
-  "dynamics_mode": "explicit",
-  "track_guess": true,
-  "threads": 6,
+  "dynamics_mode": "not fixed: no smoke configuration has passed the physical check yet",
   "smoke_test": {
-   "trial": "Han2023_s005_split3_20220610_walk_2_segment_0 (test split; its smoke solve is not reused, the reference is solved again by --run)",
-   "result": "explicit + MocoTrack tracked-state guess (--track-guess): residual stage Solve_Succeeded, 626 iterations, 4421 s; final stage Solve_Succeeded, 73 iterations, 492 s (6 threads, machine load 25-38 on 20 cores)",
-   "rejected": "explicit with own reference guess: no progress after 466 iterations (inf_pr 89-141), stopped; implicit: diverged; records in develop_logs/test_runs/20261105_e_domain/moco_attempts/",
-   "fixed_at": "2026-11-06 00:10, before any reference is solved"
+   "trial": "Han2023_s005_split3_20220610_walk_2_segment_0",
+   "attempts": "develop_logs/test_runs/20261105_e_domain/moco_attempts/ (cold mesh 0.04; explicit continuation v0; implicit; own guess smoke2; track-guess smoke4)",
+   "status": "smoke4 (explicit + tracked-state guess) converged but failed the physical check (ballistic pelvis, zero GRF); no reference has been solved"
   }
  },
  "subjects": {
