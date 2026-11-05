@@ -1,0 +1,401 @@
+{
+ "created": "2026-11-05 21:58",
+ "seed": 20261106,
+ "split_attempts": 1,
+ "rule": "eligible: kin30 trials of the four classes whose centred clip min(2 s, duration - 1 s) is >= 1.5 s; subjects shuffled and halved (redrawn until each class has >= 3 eligible subjects per half); per class and half 3 subjects drawn, one trial per subject drawn",
+ "solve": {
+  "continuation": true,
+  "mesh_interval_s": 0.02,
+  "max_parallel": 3,
+  "timeout_s": 7200,
+  "retry_on_timeout_seconds": 1.5,
+  "failed_entries_are_not_replaced": true,
+  "dynamics_mode": "fixed from the smoke test before any reference is solved"
+ },
+ "subjects": {
+  "calibration": [
+   "Falisse2017/subject_0",
+   "Falisse2017/subject_10",
+   "Falisse2017/subject_3",
+   "Falisse2017/subject_6",
+   "Falisse2017/subject_9",
+   "Fregly2012/1GC",
+   "Fregly2012/2GC",
+   "Fregly2012/5GC",
+   "Han2023/s001_split1",
+   "Han2023/s001_split2",
+   "Han2023/s001_split4",
+   "Han2023/s002_split3",
+   "Han2023/s004_split4",
+   "Han2023/s005_split4",
+   "Han2023/s006_split3",
+   "Han2023/s007_split3",
+   "Uhlrich2023/subject2",
+   "Uhlrich2023/subject4",
+   "Uhlrich2023/subject7"
+  ],
+  "test": [
+   "Falisse2017/subject_2",
+   "Falisse2017/subject_5",
+   "Falisse2017/subject_7",
+   "Falisse2017/subject_8",
+   "Fregly2012/3GC",
+   "Han2023/s001_split0",
+   "Han2023/s001_split3",
+   "Han2023/s003_split3",
+   "Han2023/s003_split4",
+   "Han2023/s004_split2",
+   "Han2023/s004_split3",
+   "Han2023/s005_split3",
+   "Uhlrich2023/subject10",
+   "Uhlrich2023/subject11",
+   "Uhlrich2023/subject3",
+   "Uhlrich2023/subject5",
+   "Uhlrich2023/subject6",
+   "Uhlrich2023/subject8",
+   "Uhlrich2023/subject9"
+  ]
+ },
+ "refs": [
+  {
+   "trial": "Uhlrich2023_subject2_squatsAsym1_segment_0",
+   "class": "squat",
+   "split": "calibration",
+   "subject": "Uhlrich2023/subject2",
+   "study": "Uhlrich2023",
+   "task": "squatsasym",
+   "mass_kg": 78.86875082600001,
+   "trial_seconds": 9.0,
+   "clip_s": [
+    3.485,
+    5.485
+   ]
+  },
+  {
+   "trial": "Uhlrich2023_subject4_squatsAsym1_segment_0",
+   "class": "squat",
+   "split": "calibration",
+   "subject": "Uhlrich2023/subject4",
+   "study": "Uhlrich2023",
+   "task": "squatsasym",
+   "mass_kg": 62.9405463087,
+   "trial_seconds": 13.37,
+   "clip_s": [
+    5.665,
+    7.665
+   ]
+  },
+  {
+   "trial": "Uhlrich2023_subject7_squats1_segment_0",
+   "class": "squat",
+   "split": "calibration",
+   "subject": "Uhlrich2023/subject7",
+   "study": "Uhlrich2023",
+   "task": "squats",
+   "mass_kg": 62.48525590779998,
+   "trial_seconds": 12.8,
+   "clip_s": [
+    5.385,
+    7.385
+   ]
+  },
+  {
+   "trial": "Falisse2017_subject_6_STS_3_segment_0",
+   "class": "sts",
+   "split": "calibration",
+   "subject": "Falisse2017/subject_6",
+   "study": "Falisse2017",
+   "task": "sts",
+   "mass_kg": 53.153599206800024,
+   "trial_seconds": 6.69,
+   "clip_s": [
+    2.335,
+    4.335
+   ]
+  },
+  {
+   "trial": "Falisse2017_subject_9_STS_6_segment_0",
+   "class": "sts",
+   "split": "calibration",
+   "subject": "Falisse2017/subject_9",
+   "study": "Falisse2017",
+   "task": "sts",
+   "mass_kg": 55.18442520330001,
+   "trial_seconds": 7.17,
+   "clip_s": [
+    2.565,
+    4.565
+   ]
+  },
+  {
+   "trial": "Uhlrich2023_subject4_STSweakLegs1_segment_0",
+   "class": "sts",
+   "split": "calibration",
+   "subject": "Uhlrich2023/subject4",
+   "study": "Uhlrich2023",
+   "task": "stsweaklegs",
+   "mass_kg": 62.9405463087,
+   "trial_seconds": 17.73,
+   "clip_s": [
+    7.85,
+    9.85
+   ]
+  },
+  {
+   "trial": "Falisse2017_subject_9_Gait_9_segment_0",
+   "class": "walk",
+   "split": "calibration",
+   "subject": "Falisse2017/subject_9",
+   "study": "Falisse2017",
+   "task": "gait",
+   "mass_kg": 55.18442520330001,
+   "trial_seconds": 2.66,
+   "clip_s": [
+    0.5,
+    2.13
+   ]
+  },
+  {
+   "trial": "Fregly2012_1GC_jw_ngait_5_segment_0",
+   "class": "walk",
+   "split": "calibration",
+   "subject": "Fregly2012/1GC",
+   "study": "Fregly2012",
+   "task": "jw_ngait",
+   "mass_kg": 66.5217991238,
+   "trial_seconds": 2.6419527649769585,
+   "clip_s": [
+    0.5,
+    2.13
+   ]
+  },
+  {
+   "trial": "Fregly2012_2GC_DM_ngait_10_segment_0",
+   "class": "walk",
+   "split": "calibration",
+   "subject": "Fregly2012/2GC",
+   "study": "Fregly2012",
+   "task": "dm_ngait",
+   "mass_kg": 69.1477334118,
+   "trial_seconds": 2.946786492374728,
+   "clip_s": [
+    0.5,
+    2.43
+   ]
+  },
+  {
+   "trial": "Han2023_s001_split2_20220513_treearms_2_segment_2",
+   "class": "wholebody",
+   "split": "calibration",
+   "subject": "Han2023/s001_split2",
+   "study": "Han2023",
+   "task": "treearms",
+   "mass_kg": 71.33675313659995,
+   "trial_seconds": 3.94720834168839,
+   "clip_s": [
+    0.965,
+    2.965
+   ]
+  },
+  {
+   "trial": "Han2023_s005_split4_20220610_worrier2_2_segment_1",
+   "class": "wholebody",
+   "split": "calibration",
+   "subject": "Han2023/s005_split4",
+   "study": "Han2023",
+   "task": "worrier",
+   "mass_kg": 99.2755652399,
+   "trial_seconds": 7.998623537508603,
+   "clip_s": [
+    2.985,
+    4.985
+   ]
+  },
+  {
+   "trial": "Han2023_s007_split3_20220705_ballet_high_leg_3_segment_1",
+   "class": "wholebody",
+   "split": "calibration",
+   "subject": "Han2023/s007_split3",
+   "study": "Han2023",
+   "task": "ballet_high_leg",
+   "mass_kg": 65.6903184082,
+   "trial_seconds": 5.406386634844869,
+   "clip_s": [
+    1.7,
+    3.7
+   ]
+  },
+  {
+   "trial": "Uhlrich2023_subject10_squats1_segment_0",
+   "class": "squat",
+   "split": "test",
+   "subject": "Uhlrich2023/subject10",
+   "study": "Uhlrich2023",
+   "task": "squats",
+   "mass_kg": 57.0839501075,
+   "trial_seconds": 12.87,
+   "clip_s": [
+    5.415,
+    7.415
+   ]
+  },
+  {
+   "trial": "Uhlrich2023_subject8_squats1_segment_0",
+   "class": "squat",
+   "split": "test",
+   "subject": "Uhlrich2023/subject8",
+   "study": "Uhlrich2023",
+   "task": "squats",
+   "mass_kg": 60.77707354720002,
+   "trial_seconds": 13.2,
+   "clip_s": [
+    5.585,
+    7.585
+   ]
+  },
+  {
+   "trial": "Uhlrich2023_subject9_squatsAsym1_segment_0",
+   "class": "squat",
+   "split": "test",
+   "subject": "Uhlrich2023/subject9",
+   "study": "Uhlrich2023",
+   "task": "squatsasym",
+   "mass_kg": 75.56110510420001,
+   "trial_seconds": 13.499999999999998,
+   "clip_s": [
+    5.735,
+    7.735
+   ]
+  },
+  {
+   "trial": "Falisse2017_subject_2_STS_5_segment_0",
+   "class": "sts",
+   "split": "test",
+   "subject": "Falisse2017/subject_2",
+   "study": "Falisse2017",
+   "task": "sts",
+   "mass_kg": 69.42273227470002,
+   "trial_seconds": 5.3,
+   "clip_s": [
+    1.635,
+    3.635
+   ]
+  },
+  {
+   "trial": "Falisse2017_subject_7_STS_2_segment_0",
+   "class": "sts",
+   "split": "test",
+   "subject": "Falisse2017/subject_7",
+   "study": "Falisse2017",
+   "task": "sts",
+   "mass_kg": 64.06081976410002,
+   "trial_seconds": 5.55,
+   "clip_s": [
+    1.765,
+    3.765
+   ]
+  },
+  {
+   "trial": "Uhlrich2023_subject8_STS1_segment_0",
+   "class": "sts",
+   "split": "test",
+   "subject": "Uhlrich2023/subject8",
+   "study": "Uhlrich2023",
+   "task": "sts",
+   "mass_kg": 60.77707354720002,
+   "trial_seconds": 13.2,
+   "clip_s": [
+    5.585,
+    7.585
+   ]
+  },
+  {
+   "trial": "Han2023_s001_split3_20220513_walk_3_segment_0",
+   "class": "walk",
+   "split": "test",
+   "subject": "Han2023/s001_split3",
+   "study": "Han2023",
+   "task": "walk",
+   "mass_kg": 73.58049538119998,
+   "trial_seconds": 4.108,
+   "clip_s": [
+    1.05,
+    3.05
+   ]
+  },
+  {
+   "trial": "Han2023_s003_split3_20220523_walk_1_segment_0",
+   "class": "walk",
+   "split": "test",
+   "subject": "Han2023/s003_split3",
+   "study": "Han2023",
+   "task": "walk",
+   "mass_kg": 48.870083830599995,
+   "trial_seconds": 2.8040000000000003,
+   "clip_s": [
+    0.5,
+    2.3
+   ]
+  },
+  {
+   "trial": "Han2023_s005_split3_20220610_walk_2_segment_0",
+   "class": "walk",
+   "split": "test",
+   "subject": "Han2023/s005_split3",
+   "study": "Han2023",
+   "task": "walk",
+   "mass_kg": 96.15990823409996,
+   "trial_seconds": 4.860000000000001,
+   "clip_s": [
+    1.415,
+    3.415
+   ]
+  },
+  {
+   "trial": "Han2023_s001_split3_20220513_step_2_segment_1",
+   "class": "wholebody",
+   "split": "test",
+   "subject": "Han2023/s001_split3",
+   "study": "Han2023",
+   "task": "step",
+   "mass_kg": 73.58049538119998,
+   "trial_seconds": 3.71473130761352,
+   "clip_s": [
+    0.85,
+    2.85
+   ]
+  },
+  {
+   "trial": "Han2023_s003_split4_20220523_worrier2_4_segment_0",
+   "class": "wholebody",
+   "split": "test",
+   "subject": "Han2023/s003_split4",
+   "study": "Han2023",
+   "task": "worrier",
+   "mass_kg": 48.87048342060001,
+   "trial_seconds": 7.999033699722189,
+   "clip_s": [
+    2.985,
+    4.985
+   ]
+  },
+  {
+   "trial": "Han2023_s005_split3_20220610_worrier1_3_segment_1",
+   "class": "wholebody",
+   "split": "test",
+   "subject": "Han2023/s005_split3",
+   "study": "Han2023",
+   "task": "worrier",
+   "mass_kg": 96.15990823409996,
+   "trial_seconds": 7.998666444407402,
+   "clip_s": [
+    2.985,
+    4.985
+   ]
+  }
+ ],
+ "notes": [
+  "The v1 smoke-test clip (Han2023_s005_split3_20220610_walk_2_segment_0) was drawn into the test split. The smoke test only chose the solver configuration; no v2 contact or threshold parameter is taken from it, and the reference is re-solved here like every other entry.",
+  "Walking clips are shorter than 2 s when the trial is shorter than 3 s (centred clip leaves 0.5 s at each end); E trims a further 0.5 s at each end before scoring."
+ ]
+}

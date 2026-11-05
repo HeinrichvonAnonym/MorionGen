@@ -31,6 +31,7 @@ CONTACT = dict(stiffness=1e6, dissipation=2., static_friction=.8, dynamic_fricti
                transition_velocity=.2, hertz_smoothing=300., hunt_crossley_smoothing=50.)
 TORQUE = {'lower': (250., 2.), 'lumbar': (250., 2.), 'arm': (80., 2.)}
 CONTACT_N = 20.
+RESIDUAL_BOUND, RESIDUAL_WEIGHT = 2000., .4
 FPS_OUT = 30.
 
 
@@ -50,7 +51,7 @@ def trial_floor(work):
     return float(e_rules.evaluate(times, kin, 75., 'R0')['floor'])
 
 
-def build(work, floor, out):
+def build(work, floor, out, residuals=False):
     model = osim.Model(str(work/'model.osim'))
     model.updConstraintSet().clearAndDestroy()
     model.updForceSet().clearAndDestroy()
@@ -62,6 +63,9 @@ def build(work, floor, out):
     for i in range(coords.getSize()):
         c = coords.get(i); name = c.getName()
         if name.startswith('pelvis_'):
+            if residuals:
+                a = osim.CoordinateActuator(name); a.setName(f'res_{name}'); a.setOptimalForce(1.)
+                a.setMinControl(-RESIDUAL_BOUND); a.setMaxControl(RESIDUAL_BOUND); model.addForce(a)
             continue
         group = 'lumbar' if name.startswith('lumbar') else 'arm' if any(k in name for k in ('arm_', 'elbow', 'pro_sup')) else 'lower'
         force, bound = TORQUE[group]
@@ -86,12 +90,15 @@ def clip(trial, seconds):
     return float(mid-half), float(mid+half)
 
 
-def solve(args):
-    out = OUT/args.trial; out.mkdir(parents=True, exist_ok=True)
-    work = KIN30/args.trial; floor = trial_floor(work); t0, t1 = clip(args.trial, args.seconds)
-    model = build(work, floor, out); model.printToXML(str(out/'moco_model.osim'))
+KEEP = []
+
+
+def problem(args, out, work, floor, t0, t1, stage):
+    """MocoTrack study; stage 'residual' adds penalized pelvis residual actuators (continuation only)."""
+    name = 'moco_model.osim' if stage == 'final' else 'moco_model_residual.osim'
+    model = build(work, floor, out, residuals=stage == 'residual'); model.printToXML(str(out/name))
     track = osim.MocoTrack(); track.setName('e_domain')
-    model_proc = osim.ModelProcessor(str(out/'moco_model.osim'))
+    model_proc = osim.ModelProcessor(str(out/name))
     track.setModel(model_proc)
     table_proc = osim.TableProcessor(str(work/'coordinates.mot')); table_proc.append(osim.TabOpUseAbsoluteStateNames())
     track.setStatesReference(table_proc)
@@ -102,22 +109,83 @@ def solve(args):
     for i in range(coords.getSize()):
         weights.cloneAndAppend(osim.MocoWeight(f'{coords.get(i).getAbsolutePathString()}/speed', .01))
     track.set_states_weight_set(weights)
-    track.set_apply_tracked_states_to_guess(True)
     track.set_control_effort_weight(args.effort)
     track.set_initial_time(t0); track.set_final_time(t1); track.set_mesh_interval(args.mesh)
     study = track.initialize()
-    solver = osim.MocoCasADiSolver.safeDownCast(study.updSolver())
+    if stage == 'residual':
+        effort = osim.MocoControlGoal.safeDownCast(study.updProblem().updGoal('control_effort'))
+        for c in ('tilt', 'list', 'rotation', 'tx', 'ty', 'tz'):
+            effort.setWeightForControl(f'/forceset/res_pelvis_{c}', RESIDUAL_WEIGHT)
+    solver = study.initCasADiSolver(); solver.set_num_mesh_intervals(int(round((t1-t0)/args.mesh)))
+    solver.set_optim_sparsity_detection('random'); solver.set_optim_finite_difference_scheme('forward')
+    solver.set_multibody_dynamics_mode('implicit' if args.implicit else 'explicit')
     solver.set_optim_convergence_tolerance(1e-3); solver.set_optim_constraint_tolerance(1e-3)
     solver.set_optim_max_iterations(args.iterations); solver.set_parallel(args.threads)
+    model.initSystem(); solver.setGuess(reference_guess(solver, model, table_proc))
+    KEEP.append((track, model_proc, table_proc, model, study))
+    return study, solver
+
+
+def vec(x):
+    return np.asarray(x.to_numpy() if hasattr(x, 'to_numpy') else x, dtype=float).ravel()
+
+
+def reference_guess(solver, model, table_proc):
+    """Guess on this solver's grid: tracked coordinate values (radians) and their finite-difference speeds."""
+    ref = table_proc.processAndConvertToRadians(model)
+    t = np.asarray(ref.getIndependentColumn()); guess = solver.createGuess(); tg = vec(guess.getTimeMat())
+    states = set(guess.getStateNames())
+    for label in ref.getColumnLabels():
+        if label not in states:
+            continue
+        q = vec(ref.getDependentColumn(label))
+        guess.setState(label, osim.Vector(np.interp(tg, t, q).tolist()))
+        speed = label[:-len('/value')]+'/speed'
+        if label.endswith('/value') and speed in states:
+            guess.setState(speed, osim.Vector(np.interp(tg, t, np.gradient(q, t)).tolist()))
+    return guess
+
+
+def guess_from(solver, path):
+    """Guess on this solver's grid from an earlier solution: its states, and the controls this problem has."""
+    prev = osim.MocoTrajectory(str(path)); guess = solver.createGuess()
+    guess.insertStatesTrajectory(prev.exportToStatesTable(), True)
+    tp = vec(prev.getTimeMat()); tg = vec(guess.getTimeMat())
+    for name in guess.getControlNames():
+        guess.setControl(name, osim.Vector(np.interp(tg, tp, vec(prev.getControlMat(name))).tolist()))
+    return guess
+
+
+def outdir(args):
+    return OUT/(args.trial if not args.tag else f'{args.trial}__{args.tag}')
+
+
+def solve(args):
+    out = outdir(args); out.mkdir(parents=True, exist_ok=True)
+    work = KIN30/args.trial; floor = trial_floor(work); t0, t1 = clip(args.trial, args.seconds)
     receipt = {'trial': args.trial, 'floor_m': floor, 't0': t0, 't1': t1, 'mesh_interval_s': args.mesh, 'effort_weight': args.effort,
-               'contact': CONTACT, 'sphere_radius_m': SPHERE_R, 'torque': TORQUE, 'welded': WELD}
-    start = time.time()
-    solution = study.solve()
-    receipt.update(seconds=time.time()-start, success=bool(solution.success()), status=solution.getStatus(),
-                   iterations=int(solution.getNumIterations()), objective=float(solution.getObjective()) if solution.success() else None)
-    if not solution.success():
-        solution.unseal()
-    solution.write(str(out/'solution.sto'))
+               'contact': CONTACT, 'sphere_radius_m': SPHERE_R, 'torque': TORQUE, 'welded': WELD, 'continuation': args.continuation,
+               'implicit': args.implicit, 'stages': {}}
+    stages = ['residual', 'final'] if args.continuation else ['final']
+    for stage in stages:
+        study, solver = problem(args, out, work, floor, t0, t1, stage)
+        if stage == 'final' and args.continuation:
+            solver.setGuess(guess_from(solver, out/'solution_residual.sto'))
+        start = time.time()
+        solution = study.solve()
+        success = bool(solution.success())
+        if not success:
+            solution.unseal()
+        rec = {'seconds': time.time()-start, 'success': success, 'status': solution.getStatus(),
+               'iterations': int(solution.getNumIterations()), 'objective': float(solution.getObjective())}
+        solution.write(str(out/('solution.sto' if stage == 'final' else 'solution_residual.sto')))
+        if stage == 'residual':
+            res = {c: float(np.sqrt(np.mean(vec(solution.getControlMat(f"/forceset/res_pelvis_{c}"))**2)))
+                   for c in ('tilt', 'list', 'rotation', 'tx', 'ty', 'tz')}
+            rec['pelvis_residual_rms'] = res
+        receipt['stages'][stage] = rec
+        print(json.dumps({stage: rec}), flush=True)
+    receipt['success'] = receipt['stages']['final']['success']
     (out/'solve.json').write_text(json.dumps(receipt, indent=1))
     print(json.dumps(receipt))
 
@@ -147,7 +215,7 @@ def moco_outputs(out):
 
 def evaluate(args):
     import e_rules
-    out = OUT/args.trial; receipt = json.loads((out/'solve.json').read_text())
+    out = outdir(args); receipt = json.loads((out/'solve.json').read_text())
     times, P, names, land, grf = moco_outputs(out)
     if np.median([g[:, 1].sum() for g in grf.values()]) < 0:
         land = {k: -v for k, v in land.items()}; grf = {k: -v for k, v in grf.items()}
@@ -157,7 +225,7 @@ def evaluate(args):
     row = next(r for r in json.loads((VAL/'selection.json').read_text())['trials'] if r['id'] == args.trial)
     mass = row['mass_kg']
     biomech.load = lambda _run: (joints, names, FPS_OUT)
-    work = DISK/'work'/args.trial
+    work = DISK/'work'/out.name
     rec = biomech.prepare(out, work, mass, free_yaw=True)
     biomech.write_coordinates(work/'ik/ik.mot', work/'coordinates.mot')
     et, _, _, kin = e_rules.kinematics(work)
@@ -191,8 +259,12 @@ def main():
     a.add_argument('--trial', required=True); a.add_argument('--solve', action='store_true'); a.add_argument('--evaluate', action='store_true')
     a.add_argument('--seconds', type=float, default=2.); a.add_argument('--mesh', type=float, default=.04)
     a.add_argument('--effort', type=float, default=.01); a.add_argument('--iterations', type=int, default=3000)
-    a.add_argument('--threads', type=int, default=4)
+    a.add_argument('--threads', type=int, default=4); a.add_argument('--continuation', action='store_true')
+    a.add_argument('--implicit', action='store_true'); a.add_argument('--tag')
+    a.add_argument('--out', help='results directory relative to the repo'); a.add_argument('--disk', help='work directory for IK on the data disk')
     args = a.parse_args()
+    global OUT, DISK
+    OUT = ROOT/args.out if args.out else OUT; DISK = Path(args.disk) if args.disk else DISK
     os.nice(10)
     osim.Logger.setLevelString('info')
     if args.solve:
