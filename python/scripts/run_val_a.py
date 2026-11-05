@@ -6,7 +6,8 @@ after the 0.5 s trims whose AddB GRF is valid and not excluded. Writes develop_l
 <variant>/<id>.json and <id>_frames.npz; work directories go to <DATA>/addb_val_20261105/work/<variant>/<id>.
 Runs in the OpenSim environment; --workers processes in parallel. --estimator a1 applies the amended contact rule
 (config/val_a_addb_20261105_amend1.json) and writes <variant>_a1, reusing the registered IK when it exists;
---selection heldout runs the held-out walk trials.
+--selection heldout runs the held-out walk trials. --estimator a4 applies the horizontal-speed rule with the v_h selected
+on the development trials (config/val_a_addb_20261105_amend4.json, amend4_dev_grid.json) and writes <variant>_a4.
 """
 import argparse
 import json
@@ -70,7 +71,12 @@ def compare(work, measured, mass, contact_n=(20., 50.)):
     return out, frames
 
 
-VMAX = {'registered': None, 'a1': .2}
+def a4_hmax():
+    grid = LOG/'amend4_dev_grid.json'
+    return json.loads(grid.read_text())['selected_v_h'] if grid.exists() else None
+
+
+ESTIMATORS = {'registered': {}, 'a1': {'contact_vmax': .2}, 'a4': {'contact_hmax': a4_hmax()}}
 
 
 def job(args):
@@ -84,7 +90,7 @@ def job(args):
     result = {k: row[k] for k in ('id', 'study', 'subject', 'trial', 'task', 'class', 'seconds', 'mass_kg', 'mass_header_kg', 'mass_source')}
     result.update(variant=variant, estimator=estimator)
     try:
-        base = WORK/variant/row['id']
+        base = next((b for b in (WORK/variant/row['id'], WORK/f'{variant}_a1'/row['id']) if (b/'ik/ik.mot').exists()), WORK/variant/row['id'])
         if estimator != 'registered' and (base/'receipt.json').exists() and (base/'ik/ik.mot').exists():
             (work/'ik').mkdir(parents=True, exist_ok=True)
             for f in ('model.osim', 'receipt.json', 'ik/ik.mot'):
@@ -94,7 +100,7 @@ def job(args):
             receipt = json.loads((work/'receipt.json').read_text()); result['ik_reused'] = True
         else:
             receipt = biomech.prepare(src, work, mass=row['mass_kg'], free_yaw=True)
-        metrics = biomech.dynamics(work, row['mass_kg'], contact_vmax=VMAX[estimator])
+        metrics = biomech.dynamics(work, row['mass_kg'], **ESTIMATORS[estimator])
         cmp, frames = compare(work, src/'measured.npz', row['mass_kg'])
         result.update(status='success', ik_marker_error=receipt['ik_marker_error'], e_metrics=metrics, **cmp)
         np.savez_compressed(dest/f"{row['id']}_frames.npz", **frames)
@@ -109,7 +115,7 @@ def main():
     p.add_argument('--variants', nargs='+', default=['kin30', 'dyn30', 'kin_native'])
     p.add_argument('--workers', type=int, default=4)
     p.add_argument('--only', nargs='*')
-    p.add_argument('--estimator', default='registered', choices=list(VMAX))
+    p.add_argument('--estimator', default='registered', choices=list(ESTIMATORS))
     p.add_argument('--selection', default='registered', choices=['registered', 'heldout'])
     args = p.parse_args()
     rows = json.loads((LOG/('selection.json' if args.selection == 'registered' else 'selection_heldout.json')).read_text())['trials']

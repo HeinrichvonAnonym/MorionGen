@@ -243,11 +243,24 @@ def sole_points(kin, side):
     return points, {'heel': heel[:, 1], 'toe': mtp[:, 1]}
 
 
-def contact_masks(heights, margin=CONTACT_MARGIN_M, dt=None, vmax=None):
-    """Landmark within margin of its 5th-percentile height; with vmax, also vertical speed <= vmax (m/s)."""
+def contact_masks(heights, margin=CONTACT_MARGIN_M, dt=None, vmax=None, hmax=None, horizontal=None):
+    """Landmark within margin of its 5th-percentile height; with vmax, also vertical speed <= vmax (m/s); with hmax, also
+    horizontal speed <= hmax (m/s), horizontal: {side: {landmark: (T, 2) ground-plane positions}}."""
     floor = min(np.percentile(h, 5) for side in heights.values() for h in side.values())
-    slow = (lambda h: np.abs(np.gradient(h, dt)) <= vmax) if vmax is not None else (lambda h: True)
-    return floor, {side: {k: (h <= np.percentile(h, 5)+margin) & slow(h) for k, h in hs.items()} for side, hs in heights.items()}
+
+    def mask(side, k, h):
+        m = h <= np.percentile(h, 5)+margin
+        if vmax is not None:
+            m = m & (np.abs(np.gradient(h, dt)) <= vmax)
+        if hmax is not None:
+            m = m & (np.linalg.norm(np.gradient(horizontal[side][k], dt, axis=0), axis=1) <= hmax)
+        return m
+    return floor, {side: {k: mask(side, k, h) for k, h in hs.items()} for side, hs in heights.items()}
+
+
+def landmark_ground(kin, side):
+    """Heel (calcn origin) and toe (toes origin) ground-plane positions, the landmarks of contact_masks."""
+    return {k: kin['origin'][:, kin['names'].index(f'{body}_{side}')][:, [0, 2]] for k, (body, _, _) in SOLE.items()}
 
 
 def _edges(mu=FRICTION):
@@ -320,7 +333,7 @@ def inverse_dynamics(model_path, coordinates, loads_xml, out_dir, name, t0, t1):
     return read_storage(Path(out_dir)/name)
 
 
-def dynamics(out, mass, contact_vmax=None):
+def dynamics(out, mass, contact_vmax=None, contact_hmax=None):
     out = Path(out).resolve()
     model_path = out/'model.osim'
     times, labels, data = write_coordinates(out/'ik/ik.mot', out/'coordinates.mot')
@@ -331,7 +344,8 @@ def dynamics(out, mass, contact_vmax=None):
     points, heights = {}, {}
     for side in ('r', 'l'):
         points[side], heights[side] = sole_points(kin, side)
-    floor, masks = contact_masks(heights, dt=dt, vmax=contact_vmax)
+    horizontal = {side: landmark_ground(kin, side) for side in ('r', 'l')} if contact_hmax is not None else None
+    floor, masks = contact_masks(heights, dt=dt, vmax=contact_vmax, hmax=contact_hmax, horizontal=horizontal)
     bw = mass*9.80665
     grf, rF, rM = estimate_grf(F, M, C, points, masks, floor, bw)
     write_loads(times, grf, floor, out/'grf.mot', out/'grf.xml')
