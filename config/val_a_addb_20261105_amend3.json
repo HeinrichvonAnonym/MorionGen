@@ -23,12 +23,13 @@
   ],
   "primary_window_ms": 40,
   "window_note": "40 ms primary, 80 ms sensitivity (约定，未经推演)",
-  "tau": "per state, 99th percentile of per-frame residual over the kept human frames of that state, classes weighted equally; a class enters a state only with >= min_frames_per_class_state frames",
+  "tau": "per state, the largest per-class 99th percentile over the kept human frames of that state (envelope: human false-infeasible <= 1% in every class and state); a class enters a state only with >= min_frames_per_class_state frames",
   "min_frames_per_class_state": 200,
   "min_frames_note": "约定，未经推演; set after the 17-frame whole-body flight class dominated the amendment-1 flight threshold",
   "scope_and_exclusions": "amendment 2 (no running, no yoga, ballet kept) and the amendment-1 exclusions",
   "estimator": "computed on the registered contact rule; recomputed with the estimator fixed by the X4 preregistration if that differs",
-  "envelope_variant": "per state, the largest per-class 99th percentile (human false-infeasible <= 1% in every class and state); reported; choice between the equal-class-weight tau and the envelope open (pooled tau gives walking steady contact 3.8%)"
+  "equal_class_weight_variant": "reported only: 99th percentile with classes weighted equally (leaves walking steady contact at 3.8% human false-infeasible)",
+  "tau_choice_decided_by": "user (envelope)"
  },
  "x4_safeguards": [
   "report per method and arm the share of frames in each state",
