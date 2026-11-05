@@ -25,6 +25,7 @@ OUT = ROOT/'develop_logs/test_runs/20261106_e_v2/rescore'
 DISK = Path('/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/outputs/e_v2_20261106/rescore')
 FLOOR = json.loads((ROOT/'config/e_v2_floor_reference_20261106.json').read_text())
 PROTOCOL = ROOT/'config/e_v2_protocol_20261106.json'
+DEPTH = .03
 KEYS = ('id', 'method', 'task', 'seed', 'arm', 'condition', 'offset_m', 'valid')
 
 
@@ -101,6 +102,8 @@ def job(args):
             s = e_rules.summary(x, rule, sel, ref0, tau=tau[rule] if tau else None)
             if not tau:
                 s.pop('envelope_infeasible_share')
+            low = x['lowest_elevation'][sel]
+            s['hover_share'] = float(np.mean(low > DEPTH)); s['penetration_share'] = float(np.mean(low < -DEPTH))
             st = e_rules.states(x['masks'], x['dt'])
             frames_out.update({f'{rule}_residual_bw': x['residual_bw'], f'{rule}_lowest_elevation': x['lowest_elevation'],
                                **{f'{rule}_state_{k}': m for k, m in st.items()},

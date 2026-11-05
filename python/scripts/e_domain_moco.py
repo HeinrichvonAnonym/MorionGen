@@ -278,8 +278,12 @@ def evaluate(args):
         s = {k: v for k, v in e_rules.summary(res, rule, sel).items() if k != 'envelope_infeasible_share'}
         agree = [res['masks'][s_][k_][sel] == moco_contact[(s_, k_)][sel] for s_, k_ in moco_contact]
         s['contact_agreement'] = float(np.mean(agree))
+        ev = {k: res['grf'][k]['force'][:, 1]/bw for k in 'rl'}
+        s['vertical_grf'] = {k: {'r': float(np.corrcoef(ev[k][sel], vz[k][sel])[0, 1]),
+                                 'rmse_bw': float(np.sqrt(np.mean((ev[k][sel]-vz[k][sel])**2)))} for k in 'rl'}
         result['v2']['rules'][rule] = s
         frames[f'{rule}_residual_bw'] = res['residual_bw']; frames[f'{rule}_lowest_elevation'] = res['lowest_elevation']
+        frames[f'{rule}_vertical_grf_bw'] = ev['r']+ev['l']
         frames.update({f'{rule}_state_{k}': m for k, m in st.items()})
     np.savez_compressed(out/'frames_v2.npz', **frames)
     (out/'evaluation.json').write_text(json.dumps(result, indent=1))

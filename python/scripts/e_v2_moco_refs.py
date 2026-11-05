@@ -70,7 +70,8 @@ def one(ref, args):
     for seconds, tag in ((2., None), (RETRY_SECONDS, 'short')):
         cmd = [sys.executable, str(ROOT/'python/scripts/e_domain_moco.py'), '--trial', ref['trial'], '--solve', '--evaluate',
                '--continuation', '--mesh', str(args.mesh), '--threads', str(args.threads), '--seconds', str(seconds),
-               '--out', OUT_REL, '--disk', DISK] + (['--implicit'] if args.implicit else []) + (['--tag', tag] if tag else [])
+               '--out', OUT_REL, '--disk', DISK] + (['--implicit'] if args.implicit else []) + \
+            (['--track-guess'] if args.track_guess else []) + (['--tag', tag] if tag else [])
         log = log_dir/f"{ref['trial']}{'__'+tag if tag else ''}.log"
         start = time.time()
         with open(log, 'w') as fh:
@@ -106,7 +107,7 @@ def main():
     a.add_argument('--select', action='store_true'); a.add_argument('--run', action='store_true')
     a.add_argument('--parallel', type=int, default=3); a.add_argument('--threads', type=int, default=4)
     a.add_argument('--mesh', type=float, default=.02); a.add_argument('--implicit', action='store_true')
-    a.add_argument('--only', nargs='*')
+    a.add_argument('--track-guess', action='store_true'); a.add_argument('--only', nargs='*')
     args = a.parse_args()
     if args.select:
         select()
