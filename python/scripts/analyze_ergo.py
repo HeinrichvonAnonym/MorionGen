@@ -3,7 +3,10 @@
 
 --set x3 --stage confirm|top_up: registered ergo family R1-R3 per method (Holm within method), pairs and
 gates exactly as the E tests of analyze_x3. --set e4: descriptive component contrasts, no tests.
-Writes develop_logs/test_runs/20261105_ergo/analysis_<set>[_<stage>].json.
+--revision r3: the same contrasts on the revision 3 bounds (post hoc for X3/E4/E1): primary REBA r3 certain-acceptable
+share; the registered metric, the common version (r3_common: neck and shoulder at their minimum for all methods) and
+the repeated-action upper bound (r3_repeat1) are reported as sensitivity.
+Writes develop_logs/test_runs/20261105_ergo/analysis_<set>[_<stage>][_r3].json.
 """
 import argparse
 import collections
@@ -23,7 +26,16 @@ PRIMARY = 'reba_acceptable_lower'
 CLASSES = ('infeasible', 'certain_risk', 'indeterminate', 'certain_acceptable')
 SENSITIVITY = ['reba_conditional_certain_risk', 'reba_ungated_lower_acceptable', 'reba_certain_acceptable_share',
                'rula_acceptable_lower', 'reba_neck_source_acceptable_lower']
+CLASS_PREFIX = 'reba'
 REPORTED = [PRIMARY, *[f'reba_{c}_share' for c in CLASSES], *SENSITIVITY, 'feasible_share']
+
+
+def use_r3():
+    global PRIMARY, SENSITIVITY, CLASS_PREFIX, REPORTED
+    PRIMARY, CLASS_PREFIX = 'reba_r3_certain_acceptable_share', 'reba_r3'
+    SENSITIVITY = ['reba_r3_common_certain_acceptable_share', 'reba_r3_repeat1_certain_acceptable_share', 'reba_r3_acceptable_lower', 'reba_r3_conditional_certain_risk',
+                   'reba_r3_ungated_certain_acceptable', 'rula_r3_certain_acceptable_share', 'reba_acceptable_lower']
+    REPORTED = [PRIMARY, *[f'reba_r3_{c}_share' for c in CLASSES], *SENSITIVITY, 'feasible_share']
 
 
 def ergo_rows(set_name):
@@ -37,8 +49,8 @@ def ergo_rows(set_name):
 
 def flat(r):
     out = {'feasible_share': r['feasible_share'], 'ergo_frames': r['frames']}
-    for m in ('reba', 'rula'):
-        out.update({f'{m}_{k}': v for k, v in r[m].items()})
+    for m in ('reba', 'rula', 'reba_r3', 'rula_r3', 'reba_r3_common', 'rula_r3_common', 'reba_r3_repeat1'):
+        out.update({f'{m}_{k}': v for k, v in r.get(m, {}).items()})
     # Registered revision: neck-from-source needs skeleton-neutral offsets; not reported until computed.
     out.pop('reba_neck_source_acceptable_lower', None); out.pop('rula_neck_source_acceptable_lower', None)
     return out
@@ -48,7 +60,7 @@ def pooled_classes(rows):
     frames = np.array([r['ergo_frames'] for r in rows], float)
     if not len(frames):
         return None
-    return {c: float(np.sum([r[f'reba_{c}_share'] for r in rows]*frames)/frames.sum()) for c in CLASSES}
+    return {c: float(np.sum([r[f'{CLASS_PREFIX}_{c}_share'] for r in rows]*frames)/frames.sum()) for c in CLASSES}
 
 
 def x3(stage):
@@ -84,7 +96,7 @@ def x3(stage):
                       'direction': 'higher' if r['mean'] > 0 else 'lower',
                       'all_pairs_sensitivity': ax.paired(table, method, on, off, PRIMARY, [1.0], valid=False, fk_gate=False),
                       'sensitivity': {s: ax.paired(table, method, on, off, s, [1.0], valid=True) for s in SENSITIVITY},
-                      'class_shares': {c: ax.paired(table, method, on, off, f'reba_{c}_share', [1.0], valid=True) for c in CLASSES}}
+                      'class_shares': {c: ax.paired(table, method, on, off, f'{CLASS_PREFIX}_{c}_share', [1.0], valid=True) for c in CLASSES}}
         secondary = {'kimodo': [('TO', 'T')], 'omnicontrol': [('TS', 'T')], 'dart': [('W0', 'G4')]}.get(method, [])
         arms = sorted({a for (m, a, d, *_), r in table.items() if m == method and d == 1.0 and PRIMARY in r})
         result['methods'][method] = {
@@ -134,7 +146,10 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument('--set', required=True, choices=['x3', 'e4'])
     p.add_argument('--stage', default='confirm', choices=['pilot', 'confirm', 'top_up'])
+    p.add_argument('--revision', default='registered', choices=['registered', 'r3'])
     args = p.parse_args()
+    if args.revision == 'r3':
+        use_r3()
     if args.set == 'x3':
         result = x3(args.stage); name = f'analysis_x3_{args.stage}.json'
         for method, r in result['methods'].items():
@@ -146,6 +161,8 @@ def main():
         for k, c in result['contrasts'].items():
             v = c.get(PRIMARY)
             print(k, None if v is None else (round(v['mean'], 3), [round(x, 3) for x in v['ci95']], round(v['p_sign_flip'], 4)))
+    if args.revision == 'r3':
+        result['revision'] = 'r3 (post hoc, config/ergo_rula_reba_20261105.json)'; name = name.replace('.json', '_r3.json')
     json_write(ERGO/name, result)
 
 

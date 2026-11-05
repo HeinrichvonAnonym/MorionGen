@@ -54,12 +54,12 @@ def object_free(set_name, metrics):
 
 
 def job(args):
-    set_name, path = args
+    set_name, path, force = args
     os.nice(19)
     import ergo_frames
     metrics = json.loads(Path(path).read_text())
     out = OUT/set_name/f"{metrics['id']}.json"
-    if out.exists():
+    if out.exists() and not force:
         return 'skip'
     row = {k: metrics.get(k) for k in ('id', 'method', 'task', 'seed', 'arm', 'condition', 'offset_m', 'source', 'work')}
     info = metrics.get('m1') or metrics.get('m2')
@@ -68,8 +68,9 @@ def job(args):
     row['valid'] = bool(metrics.get('valid'))
     row['object_free'] = object_free(set_name, metrics)
     try:
+        row['method'] = row['method'] or metrics['id'].split('_')[0]
         row.update(ergo_frames.score_run(metrics['work'], row['source'], row['object_free'],
-                                         float(metrics.get('scaling', {}).get('mass_kg', 75.))))
+                                         float(metrics.get('scaling', {}).get('mass_kg', 75.)), method=row['method']))
         row['status'] = 'success'
     except Exception as e:
         row.update(status='failed', error=f'{type(e).__name__}: {e}', trace=traceback.format_exc()[-1500:])
@@ -82,6 +83,7 @@ def main():
     p.add_argument('--set', required=True, choices=sorted(SETS))
     p.add_argument('--workers', type=int, default=2)
     p.add_argument('--only', nargs='*', help='run ids to score (smoke test)')
+    p.add_argument('--force', action='store_true', help='rescore runs that already have a result (after a scoring revision)')
     args = p.parse_args()
     (OUT/args.set).mkdir(parents=True, exist_ok=True)
     files = {f.parent.name: f for f in SETS[args.set].glob('*/metrics.json')}
@@ -92,7 +94,7 @@ def main():
         files = [f for f in files if f.parent.name in args.only]
     counts = {}
     with Pool(args.workers) as pool:
-        for status in pool.imap_unordered(job, [(args.set, str(f)) for f in files]):
+        for status in pool.imap_unordered(job, [(args.set, str(f), args.force) for f in files]):
             counts[status] = counts.get(status, 0)+1
     print(json.dumps({'set': args.set, 'runs': len(files), **counts}))
 

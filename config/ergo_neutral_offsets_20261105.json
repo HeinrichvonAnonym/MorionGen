@@ -1,0 +1,72 @@
+{
+ "definition": "rest-pose readings (degrees): neck flexion and side bend of neck-to-head against pelvis-to-neck; shoulder elevation [left, right] of clavicle-to-glenohumeral above the plane normal to pelvis-to-neck",
+ "assumption": "the rest pose head is neutral (rendered: SMPL, SMPL-X, cskel27 and SOMA77 rest poses are upright and face forward)",
+ "skeletons": {
+  "smpl": {
+   "neck_flexion_deg": 43.169995284058004,
+   "neck_side_bend_deg": -3.693256762485845,
+   "shoulder_elevation_deg": [
+    19.016329414743893,
+    18.855801659529725
+   ]
+  },
+  "smplx_neutral": {
+   "neck_flexion_deg": 12.34166278444279,
+   "neck_side_bend_deg": -10.612046639119205,
+   "shoulder_elevation_deg": [
+    24.06573206998078,
+    29.927293540873812
+   ]
+  },
+  "smplx_male": {
+   "neck_flexion_deg": 13.103687104122523,
+   "neck_side_bend_deg": -8.689914964754566,
+   "shoulder_elevation_deg": [
+    22.345329571864376,
+    25.68922314206523
+   ]
+  },
+  "smplx_female": {
+   "neck_flexion_deg": 13.61544933831529,
+   "neck_side_bend_deg": -4.512524817629776,
+   "shoulder_elevation_deg": [
+    26.9106293435635,
+    27.9322982217042
+   ]
+  },
+  "cskel27": {
+   "neck_flexion_deg": 13.47352650676392,
+   "neck_side_bend_deg": 0.0,
+   "shoulder_elevation_deg": [
+    0.0,
+    -1.9811380151095408e-05
+   ]
+  },
+  "somaskel77": {
+   "neck_flexion_deg": 18.90636285895487,
+   "neck_side_bend_deg": -0.2149115728658216,
+   "shoulder_elevation_deg": [
+    0.39769498038383744,
+    0.8543283355279107
+   ]
+  }
+ },
+ "methods": {
+  "closd": "smpl",
+  "dart": "smplx_male",
+  "primal": "smplx_neutral",
+  "chois": "per_run_fk",
+  "ardy": "cskel27",
+  "kimodo": "somaskel77"
+ },
+ "excluded": {
+  "motionlcm": "joint positions are predicted directly (HumanML3D representation): no rigid skeleton, so no verifiable zero; 18.5% of E4 frames put the head point less than 3 cm above the neck point",
+  "omnicontrol": "joint positions are predicted directly (HumanML3D representation): neck-to-head length 0.12-0.14 m against 0.083 m of SMPL, so the SMPL zero does not apply; with it nearly every frame reads 14-18 deg extension"
+ },
+ "notes": {
+  "dart": "zero of SMPL-X male, betas 0 (dart_feedback FK); the E4 path exports DART environment joints with a 2.4% within-clip neck-to-head length variation and a constant 22 deg side-bend median: E4 DART neck readings are flagged",
+  "chois": "per run: rest pose rebuilt from raw/native_prediction.npz (bone offsets in the parent frame are constant to 3e-7 m), fallback SMPL-X neutral",
+  "kimodo": "skeleton joints.p; the skin bind pose reads 20.5 deg (1.6 deg higher)"
+ },
+ "shoulder_check": "clavicle-to-glenohumeral length matches the zero skeleton: CLoSD 0.102 / SMPL 0.102, PRIMAL 0.116 / SMPL-X neutral 0.116, DART 0.143 / SMPL-X male 0.144, ARDY 0.159 / cskel27 0.159, Kimodo 0.160 / SOMA77 0.160 m; MotionLCM and OmniControl 0.12 m (+20% against SMPL) with within-clip variation up to 5.4%. The rest pose has arms out, so arms-down frames read below zero (SMPL family 11-24 deg, ARDY 3 deg, Kimodo 8.5 deg): the zero and the 10 deg threshold are conventions"
+}
