@@ -1,0 +1,82 @@
+{
+ "protocol": "E criterion v2 (plan: E 准则修正版)",
+ "created": "2026-11-05 23:00 (UTC+8)",
+ "registered_before": "any v2 validation result (static, injection, Moco test split) and any v2 score of e4 / x3 / m1 / e1; tau values are frozen into this file from the Moco calibration split before any of these is computed",
+ "decided_by": "user: fix the defects (e_v2); floor reference by per-method convention audit (audit); tau from 24 Moco references split by subject 12 / 12 (m24)",
+ "baseline": "v1 = config/e_criterion_domain_20261105.json; v1 results are reported unchanged next to v2",
+ "principle": "v1 parameters were seen on v1 validation data, so no v2 parameter is tuned on them; v2 is validated on newly drawn data (seed 20261106)",
+ "changes_from_v1": [
+  "world floor: each method's own floor convention (config/e_v2_floor_reference_20261106.json) instead of the per-run 5th-percentile floor",
+  "absolute contact: one world floor for all four landmarks; a landmark is in contact when its height above its flat-foot standing reference is <= the margin",
+  "tau: re-derived inside the model from dynamically consistent Moco references (calibration split only)"
+ ],
+ "contact": {
+  "elevation": "height of the landmark (heel = calcn origin, toe = toes origin of the scaled model, OpenSim Y-up) minus reference_m[variant][side][landmark]",
+  "rule": "contact if elevation <= 0.03 m (margin carried over from v1, 约定，未经推演)",
+  "velocity_components": "R0 height only; R4 also horizontal speed <= 1.2 m/s; R5 onset rule 0.5 m/s, exactly as in v1; R0 is primary, R4 and R5 are the bracket",
+  "grf_points": "the sole points of contacting landmarks placed on the world floor plane (world_floor_m)",
+  "references": "config/e_v2_floor_reference_20261106.json: generated methods by run_mapping; kin30 human clips by the subject leave-one-trial-out reference; Moco references reference_m = floor_m of the solve, world floor floor_m - 0.03",
+  "without_reference": "scored with v1 contact and reported with relative metrics only; no generated method lacks a reference at registration; kin30 trials without a subject reference are excluded from v2 human validation",
+  "code": "utils/motiogen/e_rules.py contact_v2 / evaluate(reference=..., world_floor=...)"
+ },
+ "depth": {
+  "lowest_elevation": "per frame, the minimum elevation over the four landmarks (m); reported as median, p5, p95 over scored frames",
+  "hover_share": "share of scored frames with lowest_elevation > +0.03 m (no landmark within the contact margin)",
+  "penetration_share": "share of scored frames with lowest_elevation < -0.03 m (约定，未经推演: symmetric with the margin)",
+  "role": "an independent report quantity, not part of the envelope verdict"
+ },
+ "tau": {
+  "source": "the 12 calibration references of config/e_v2_moco_refs_20261106.json, each solved by python/scripts/e_v2_moco_refs.py and evaluated with contact_v2 (python/scripts/e_domain_moco.py --evaluate, frames_v2.npz)",
+  "frames": "scored frames after E's 0.5 s trim at each end",
+  "states": "amendment 3: event = within 40 ms of a foot contact change, contact, flight (e_rules.states)",
+  "value": "tau[rule][state] = 99th percentile of residual_bw over the calibration frames pooled in that state",
+  "sparse_state": "a state with fewer than 30 pooled calibration frames takes the v1 tau of that rule and state, flagged in tau_source",
+  "failures": "failed calibration solves are not replaced; tau uses the successful ones; fewer than 6 successful calibration references: v2 is reported as not calibratable and stops here",
+  "verdict": "frame infeasible if residual_bw > tau[rule][state of the frame]; envelope_infeasible_share = mean over scored frames (as v1)"
+ },
+ "tau_envelope_bw": null,
+ "tau_source": null,
+ "tau_frozen_at": null,
+ "validation": {
+  "seed": 20261106,
+  "static": {
+   "poses": "216 new poses: human kin30 trials that have a subject reference, classes stand, squat, sts, wholebody, walk, jump, 8 trials x 2 frames each (trials not in the v1 static draw; all eligible if fewer than 8); generated: valid e4 runs, 6 runs x 2 frames per method (runs not in the v1 static draw); frames drawn from the middle half; plus 24 whole-pose vertical offsets of these poses: 12 at +0.05 m and 12 at -0.05 m",
+   "hold": "as v1: pose repeated 2 s at 30 fps, full pipeline, 0.5 s trim, mass 75 kg",
+   "truth": {
+    "foot_outline_m": "as v1 (heel vertices calcn origin -0.03 forward, +-0.035 lateral; toe vertices toes origin +0.05 forward, +-0.04 lateral)",
+    "vertex_elevation": "heel vertices take the heel landmark elevation, toe vertices the toe landmark elevation (the reference is the flat-foot standing height, so both are heights above the method floor)",
+    "support": "vertices with elevation <= 0.03 m (the contact margin, so that truth and E agree on which feet can carry load and the static test isolates balance; 约定，未经推演); sensitivity with 0.01 m reported",
+    "margin_and_label": "as v1: signed distance of the COM ground projection to the hull of the supporting vertices, mean over trimmed frames; feasible >= +0.02, infeasible <= -0.02 or no support, else indeterminate",
+    "categories": "balance (support exists), unsupported (no supporting vertex), penetrating (lowest elevation < -0.03 m)"
+   },
+   "flag": "envelope_infeasible_share > 0.5 (as v1); penetration flag: penetration_share > 0.5"
+  },
+  "injection": {
+   "bases": "the 12 Moco test references (truth feasible: their solved model markers resampled to 30 fps form the motion; reference = floor_m; mass = trial mass) and 12 human kin30 clips (6 walk, 6 sts; rng 20261106) that were not v1 injection bases, are not among the 24 Moco references and have a subject reference; human clips cropped to at most 6 s around the centre as in v1",
+   "defects": "the v1 kinds and sizes (float_window_m 0.02/0.05/0.10, float_whole_m 0.10, penetrate_window_m 0.02/0.05/0.10, lean_deg 5/10/20, slide_m_s 0.1/0.3/0.6 with slide_max_s 0.5, time_compression 1.25/1.5/2.0) plus float_whole_m 0.02/0.05 and penetrate_whole_m 0.02/0.05/0.10 for the whole-clip criterion",
+   "window": "as v1 (middle third with 0.1 s raised-cosine ramps; whole clip for *_whole and time compression, the latter with a 0.25 s trim)",
+   "outcome": "per rule, change against the base's control in the defect window: envelope_infeasible_share (detected if >= +0.10, as v1), hover_share and penetration_share (depth-detected if >= +0.10), residual rms, foot skate share"
+  },
+  "moco_test": {
+   "false_alarm": "mean over the 12 test references of envelope_infeasible_share over scored frames, per rule",
+   "agreement": "vertical GRF r and RMSE / BW against Moco, contact agreement with Moco sphere force > 20 N, per rule",
+   "v1": "the same references are also scored with v1 (answers whether v1 false-alarms on dynamically consistent motion)"
+  }
+ },
+ "pass_criteria": {
+  "note": "约定，未经推演; primary rule R0; R4 and R5 reported; not met -> reported as is, nothing is changed afterwards",
+  "moco_test_false_alarm_max": 0.05,
+  "static_detection_min": {"value": 0.80, "subset": "truth infeasible, support exists, margin <= -0.05 m"},
+  "whole_clip_hover_0.05_detection_min": {"value": 0.80, "measure": "envelope_infeasible_share change >= +0.10 (float_whole_m 0.05)"},
+  "whole_clip_penetration_0.05_detection_min": {"value": 0.80, "measure": "penetration_share change >= +0.10 (penetrate_whole_m 0.05)"}
+ },
+ "rescore": {
+  "sets": "e4, x3, m1 (after ARDY-fair finishes), e1",
+  "inputs": "each finished run's coordinates.mot and model.osim (no IK rerun)",
+  "per_run": "R0 / R4 / R5 under v2 with the registered tau: envelope share, residual rms, depth quantities; REBA r3 certain-acceptable share gated by the v2 envelope through a shadow directory per rule",
+  "comparisons": "the v1 comparisons of each set (as in python/scripts/analyze_e_domain.py bracket contrasts), recomputed with v2 metrics",
+  "consistency": "a comparison is a conclusion under a version if its 95% CI excludes 0; v1-v2 table: same-sign conclusion under both, conclusion under one only, null under both, opposite-sign conclusions",
+  "code": "python/scripts/e_v2_rescore.py, python/scripts/analyze_e_v2.py"
+ },
+ "outputs": "develop_logs/test_runs/20261106_e_v2/ (moco_refs, static, inject, rescore, analysis.json)"
+}
