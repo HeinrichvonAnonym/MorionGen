@@ -1,0 +1,93 @@
+{
+ "protocol": "e_criterion_domain_20261105",
+ "registered_before": "any static, injection, Moco or re-scoring result; the only numbers used below are the human thresholds of runs that already existed (kin30, kin30_a4, kin30_a5)",
+ "decided_by": "user (validation must live in the domain of the evaluated data; CLoSD and other simulators are not references; quasi-static + differential injection + a few Moco references)",
+ "principle": {
+  "what_E_judges": "whether a motion, placed on the one OpenSim model used for every method (Rajagopal 2023 scaled per run, 75 kg for generated motions), can be produced by ground reaction forces alone at the sole points (friction 0.8); feasibility is defined relative to this model, so ground truth must be built in this model",
+  "human_data_roles": [
+   "physics implementation: estimated vertical GRF against force plates, walking V1 r 0.951 (kin30)",
+   "one-sided threshold: the amendment-3 envelope (40 ms event window) means 'residual larger than any real human produced through the identical pipeline'; below the threshold does not mean feasible"
+  ],
+  "contact_accuracy": "human contact balanced accuracy (V3) is a diagnostic only: generated motions have no measured contact, so contact on generated motion is a definition and V3 does not transfer",
+  "simulators": "CLoSD and other physics-based generators run simplified dynamics models (different bodies, mass distribution and foot contact); their outputs and contact forces are neither feasibility references nor contact truth for this model; they are evaluated like any other method",
+  "rules": "conclusions must hold under the three registered contact rules R0, R4, R5 with each rule's own human threshold",
+  "no_overwrite": "original work directories are not modified (the ergonomic scoring reads their dynamics.npz)"
+ },
+ "history": {
+  "amendment_1": "vertical-speed contact rule, failed (config/val_a_addb_20261105_amend1.json)",
+  "amendment_4": "height + horizontal speed <= 1.2 m/s; registered 4fa616b, implemented 819d5d7; held-out V3 0.838 < 0.85, failed",
+  "amendment_5": "onset rule v_on 0.5; registered 56fd0f0, evaluated fe8f0d5; held-out V3 0.831 / 0.847 / 0.819 at 0.5 / 0.3 / 0.7, failed",
+  "reading": "both held-out failures stand as registered; their premise (a human contact-accuracy gate for using E on generated motion) does not transfer; post hoc diagnostics: about 60% of the Camargo2021 held-out frames are standing with a foot on unmeasured floor",
+  "consequence_kept": "X4 primary outcome is the REBA r3 certain-acceptable share without the feasibility gate; E is reported through this protocol"
+ },
+ "rules": {
+  "R0": {"contact": "registered height rule (landmark <= its 5th percentile + 3 cm)", "human_runs": "kin30",
+         "tau_envelope_bw": {"event": 0.643668272505001, "contact": 0.09333187692526736, "flight": 0.30656358948833407}},
+  "R4": {"contact": "R0 and horizontal landmark speed <= 1.2 m/s", "biomech": {"hmax": 1.2}, "human_runs": "kin30_a4",
+         "tau_envelope_bw": {"event": 0.6430962171751343, "contact": 0.11471482944301277, "flight": 0.30937478876750696}},
+  "R5": {"contact": "onset rule on R0 runs, v_on 0.5 m/s", "biomech": {"onset": 0.5}, "human_runs": "kin30_a5",
+         "tau_envelope_bw": {"event": 0.6455399887214077, "contact": 0.34707817178414496, "flight": 0.3065244370303531},
+         "note": "the R5 steady-contact envelope is set by human walking (p99 0.347 BW): the onset rule drops part of real walking support, so its threshold is the most lenient"},
+  "states": "per frame, from that rule's own masks: event = within 40 ms of any foot contact change (foot = heel or toe); contact = otherwise any contact; flight = otherwise",
+  "frame_infeasible": "residual force / BW > tau_envelope_bw[state]; also reported: residual > 0.05 BW (the fixed threshold of the ergonomic protocol)"
+ },
+ "metrics": {
+  "residual_force_rms_bw": "trimmed frames",
+  "unsupported_fraction_5pct_bw": "share of trimmed frames with residual > 0.05 BW",
+  "envelope_infeasible_share": "share of trimmed frames that are frame_infeasible",
+  "foot_skate_share": "share of landmark contact frames whose horizontal landmark speed > 0.3 m/s (约定，未经推演)",
+  "contact_lost_vs_R0": "share of R0 landmark contact frames that the rule removes"
+ },
+ "static": {
+  "purpose": "exact ground truth in the model for quasi-static postures: required external force = body weight at the COM, so feasibility reduces to the COM ground projection lying in the support polygon",
+  "poses": "rng 20261105; human kin30 (registered selection) classes stand, squat, sts, wholebody, walk, jump: 8 trials x 2 frames each; generated: E4 source motions, 6 runs x 2 frames per method; plus a whole-clip hover variant (+10 cm) of 24 of these poses",
+  "hold": "the pose repeated for 2 s at 30 fps, written as motion.npz, then biomech.prepare, biomech.write_coordinates and the three rules; trim 0.5 s; mass 75 kg",
+  "truth": {
+   "foot_outline_m": "in each foot's ground frame (forward = calcn origin to toes origin, horizontal): heel vertices at calcn origin -0.03 forward, +-0.035 lateral; toe vertices at toes origin +0.05 forward, +-0.04 lateral (约定，未经推演)",
+   "vertex_heights": "heel vertices take the calcn origin height, toe vertices the toes origin height minus the toes-calcn height difference of the model's default pose (flat foot)",
+   "support": "vertices within 1 cm of the lowest vertex of the pose (约定，未经推演); none or a hover variant: no support",
+   "margin": "signed distance (m) of the whole-body COM ground projection to the convex hull of the supporting vertices, positive inside; mean over the trimmed frames",
+   "label": "feasible if margin >= +0.02, infeasible if margin <= -0.02 or no support, indeterminate otherwise (excluded)"
+  },
+  "E_label": "infeasible if envelope_infeasible_share > 0.5 (约定，未经推演); also with the fixed 0.05 BW",
+  "outcomes": "false-alarm rate on truth-feasible poses; detection rate on truth-infeasible poses by margin band (-0.02..-0.05, -0.05..-0.10, < -0.10 m, no support, hover); per rule; by support type (two feet / one foot) and source (human / generated)",
+  "expected_blind_spots": "every landmark of a held pose sits at its own 5th percentile, so the height rule marks a lifted foot as contact, and the floor is estimated from the motion itself, so a whole-clip hover is invisible; the static set measures these"
+ },
+ "injection": {
+  "purpose": "differential sensitivity on dynamic motion: the same human motion with and without a defect of known size, through the full pipeline",
+  "bases": "kin30 registered selection: the 12 longest walking trials and 12 squat trials of >= 8 s (rng 20261105), each cropped to at most 6 s around its centre; mass = trial mass",
+  "control": "each base is also run unmodified",
+  "window": "middle third of the clip with 0.1 s raised-cosine ramps, unless stated",
+  "defects": {
+   "float_window_m": [0.02, 0.05, 0.10],
+   "float_whole_m": [0.10],
+   "penetrate_window_m": [0.02, 0.05, 0.10],
+   "lean_deg": [5, 10, 20],
+   "slide_m_s": [0.1, 0.3, 0.6],
+   "time_compression": [1.25, 1.5, 2.0]
+  },
+  "defect_definitions": {
+   "float / penetrate": "all joints shifted up / down",
+   "lean": "joints above the pelvis rotated forward about the pelvis joint around the horizontal left axis",
+   "slide": "right ankle and foot joints (knee at half amplitude) displaced forward at the given speed over the longest right-foot stance of the source (foot <= 5th percentile + 3 cm, speed <= 0.2 m/s, >= 0.3 s), then returned over 0.3 s; skipped if no such stance",
+   "time_compression": "fps multiplied by the factor (same frames, shorter clip); analysed over the whole clip with a 0.25 s trim"
+  },
+  "outcome": "per rule: change against the control in the defect window of residual rms, envelope_infeasible_share and foot_skate_share; detected if envelope_infeasible_share in the window exceeds the control's by >= 0.10 (约定，未经推演); detection rate per defect and size",
+  "amplitudes_note": "defect sizes 约定，未经推演"
+ },
+ "moco": {
+  "purpose": "a few dynamic references that are exactly dynamically consistent in this model",
+  "model": "the E-pipeline scaled model of a kin30 trial with muscles removed, coordinate actuators on every unlocked non-pelvis coordinate, mtp/subtalar/wrist locked, no pelvis actuators; per foot SmoothSphereHalfSpaceForce spheres at E's sole points (heel at calcn origin, toe at toes origin +0.04 forward) on a ground half-space at that trial's floor height",
+  "problem": "MocoTrack of the trial's filtered coordinates; 1 walking trial as smoke test, then 4 walking + 2 squat clips of about 2 s (shorter if one solve exceeds 2 h)",
+  "evaluation": "the solved motion's model markers (joint centres and axial markers) become a generated motion (motion.npz) and go through the full pipeline; outcomes: envelope_infeasible_share (truth feasible), residual rms, estimated vs Moco vertical GRF (r, RMSE / BW), contact agreement with Moco sphere forces > 20 N",
+  "limitations": "the sphere contact model and its stiffness, dissipation and friction are conventions; sphere placement follows E's sole points, so this tests E's inference and fitting, not its foot geometry"
+ },
+ "bracket": {
+  "sets": "run_ergo.SETS e4, x3, m1 (ARDY fair, after its E evaluation finishes), e1 with the e1y overrides",
+  "computation": "per run one forward-kinematics pass on the original coordinates.mot; R0, R4, R5 each give contacts, GRF fit and residual (no inverse dynamics); a shadow directory (links to model.osim and coordinates.mot, new dynamics.npz) is scored by ergo_frames.score_run for REBA r3",
+  "outcomes_per_run": "metrics above; REBA r3 certain-acceptable share ungated, and gated by the fixed 0.05 BW and by the envelope",
+  "consistency": "registered comparisons of each experiment: E4 layer contrasts (analyze_e4.contrast, valid pairs); X3 each arm against C0 paired by task and seed; E1 and ARDY fair each arm against C0 paired by task, seed and offset; a comparison is a conclusion only if the sign of its effect agrees and its 95% interval excludes zero under all three rules, 'rule-dependent' otherwise",
+  "metrics_compared": ["residual_force_rms_bw", "unsupported_fraction_5pct_bw", "envelope_infeasible_share", "reba_r3_certain_acceptable_ungated"]
+ },
+ "outputs": "develop_logs/test_runs/20261105_e_domain/{static,inject,moco,bracket}/ and analysis.json"
+}
