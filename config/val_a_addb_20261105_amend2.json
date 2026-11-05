@@ -1,0 +1,26 @@
+{
+ "protocol": "val_a_addb_20261105_amend2",
+ "amends": ["config/val_a_addb_20261105.json", "config/val_a_addb_20261105_amend1.json"],
+ "registered_before": "the scoped threshold values; after the per-class and per-task residuals of the registered estimator were seen (declared post hoc scope decision)",
+ "why": {
+  "scope": "the E criterion targets industrial and service tasks; running and non-standing yoga poses are out of scope (user decision)",
+  "findings": "contact-frame residual above 5% BW: treadmill running 41% (Hammer2013, the only running source), warrior I 22% and 43% (2 trials), overground walking, jumping, standing, squatting and the other whole-body tasks 0-3%; in all of them the residual vanishes when the moment rows of the GRF fit are dropped and is unchanged with friction 2.0 or without the vertical moment; the pipeline is invariant to a constant belt velocity (stance foot speed within +-5% of belt speed, belt slope <= 1.8 deg), so the treadmill does not explain it; cause in running not identified",
+  "decided_by": "user"
+ },
+ "scope": {
+  "excluded_classes": ["run"],
+  "excluded_tasks": {"yoga": ["worrier", "tree", "treearms", "chair", "dog"]},
+  "kept_by_default": "ballet tasks (balletsmalljump, ballethighleg, ballet_high_leg); a variant without them is reported",
+  "consequence": "E results on generated running or yoga-like motions are not interpreted against the human threshold"
+ },
+ "estimator": "registered contact rule (height only); amendment 1 failed and is not used",
+ "gate": {
+  "checks": "registered checks without the run class: walk V1 r >= 0.9, walk V1 RMSE <= 0.15 BW, walk and jump V3 >= 0.85",
+  "status": "walk V3 fails (0.77); the use of E for X4 is decided separately"
+ },
+ "threshold": {
+  "rule": "amendment 1 threshold rule (exclusions, tau_contact, tau_flight, tau_run) on the registered estimator (kin30), after the scope exclusions",
+  "variant": "the same without ballet tasks"
+ },
+ "reported": ["per-class tau and frame counts", "share of kept human frames above each tau", "scope-excluded trials per class"]
+}

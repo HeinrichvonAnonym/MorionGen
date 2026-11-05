@@ -3,7 +3,10 @@
 
 Per variant and class: median and IQR over trials of V1-V4; the gate (walk and run V1, walk/run/jump V3);
 tau_frame (99th percentile of per-frame residual, classes weighted equally, sts excluded) and tau_run (95th
-percentile of per-trial residual RMS). Writes develop_logs/test_runs/20261105_val_a/analysis.json.
+percentile of per-trial residual RMS). Amendment 1 (config/val_a_addb_20261105_amend1.json): the same on kin30_a1,
+the held-out walk V3, and tau_contact / tau_flight after the registered exclusions. Amendment 2
+(config/val_a_addb_20261105_amend2.json): the same threshold rule on kin30 without running and yoga tasks.
+Writes develop_logs/test_runs/20261105_val_a/analysis.json.
 """
 import collections
 import json
@@ -14,6 +17,10 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 LOG = ROOT/'develop_logs/test_runs/20261105_val_a'
 SPEC = json.loads((ROOT/'config/val_a_addb_20261105.json').read_text())
+AMEND = json.loads((ROOT/'config/val_a_addb_20261105_amend1.json').read_text())
+AMEND2 = json.loads((ROOT/'config/val_a_addb_20261105_amend2.json').read_text())
+WORK = Path('/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/addb_val_20261105/work')
+BALLET = ('balletsmalljump', 'ballethighleg', 'ballet_high_leg')
 THRESHOLD_CLASSES = ('stand', 'walk', 'run', 'squat', 'jump', 'wholebody')
 METRICS = ('V1_r', 'V1_rmse_bw', 'V1_bias_bw', 'V2_r', 'V2_rmse_bw', 'V3_balanced_accuracy_20N', 'V3_balanced_accuracy_50N',
            'V4_residual_rms_bw', 'V4_share_above_5pct', 'V4_residual_p95_bw', 'measured_vertical_mean_bw')
@@ -32,8 +39,13 @@ def summary(xs):
     return {'median': float(np.median(xs)), 'q25': float(np.percentile(xs, 25)), 'q75': float(np.percentile(xs, 75)), 'n': int(len(xs))}
 
 
-def variant(name):
+def ids(selection):
+    return {r['id'] for r in json.loads((LOG/selection).read_text())['trials']}
+
+
+def variant(name, keep_ids=None):
     rows = [json.loads(f.read_text()) for f in sorted((LOG/'runs'/name).glob('*.json'))]
+    rows = [r for r in rows if keep_ids is None or r['id'] in keep_ids]
     ok = [r for r in rows if r['status'] == 'success']
     by = collections.defaultdict(list)
     for r in ok:
@@ -64,11 +76,79 @@ def variant(name):
             'threshold': tau, 'gate': {'checks': checks, 'pass': bool(all(checks.values()))}}
 
 
+def contact_any(name, r, f):
+    if 'contact_any' in f:
+        return f['contact_any']
+    d = np.load(WORK/name/r['id']/'dynamics.npz')
+    dt = np.median(np.diff(d['times'])); trim = slice(int(.5/dt), len(d['times'])-int(.5/dt))
+    return np.any([d[f'contact_{s}_{k}'][trim] for s in 'rl' for k in ('heel', 'toe')], axis=0)
+
+
+def state_threshold(name, keep_ids, scope_tasks=()):
+    ex = AMEND['threshold']['exclusions']
+    rows = [json.loads(f.read_text()) for f in sorted((LOG/'runs'/name).glob('*.json'))]
+    rows = [r for r in rows if r['id'] in keep_ids and r['status'] == 'success' and r['class'] in THRESHOLD_CLASSES]
+    excluded = collections.Counter(); kept = collections.defaultdict(list)
+    for r in rows:
+        if r['task'] in scope_tasks or (scope_tasks and r['class'] in AMEND2['scope']['excluded_classes']):
+            excluded[(r['class'], 'scope')] += 1
+        elif r['task'] in ex['unmodeled_support_tasks']:
+            excluded[(r['class'], 'unmodeled_support')] += 1
+        elif r['ik_marker_error']['rms_mean_m'] > .03:
+            excluded[(r['class'], 'ik_rms_over_3cm')] += 1
+        else:
+            kept[r['class']].append(r)
+    out = {'kept_trials': {c: len(v) for c, v in kept.items()}, 'excluded_trials': {f'{c}/{k}': n for (c, k), n in excluded.items()}}
+    per = {}
+    for state in ('contact', 'flight'):
+        values, weights, per[state] = [], [], {}
+        for c, v in kept.items():
+            x = []
+            for r in v:
+                f = np.load(LOG/'runs'/name/f"{r['id']}_frames.npz")
+                ca = contact_any(name, r, f)
+                sel = f['keep'] & (ca if state == 'contact' else ~ca)
+                x.append(f['residual_bw'][sel])
+            x = np.concatenate(x)
+            if len(x):
+                values.append(x); weights.append(np.full(len(x), 1/len(x)))
+                per[state][c] = {'frames': int(len(x)), 'p99_bw': float(np.percentile(x, 99))}
+        v, w = np.concatenate(values), np.concatenate(weights)
+        out[f'tau_{state}_bw'] = weighted_quantile(v, w, .99)
+        out[f'{state}_share_above_5pct_bw_equal_class_weight'] = float(np.sum(w*(v > .05))/w.sum())
+    rms = [r['V4_residual_rms_bw'] for v in kept.values() for r in v if r.get('V4_residual_rms_bw') is not None]
+    out['tau_run_bw'] = float(np.percentile(rms, 95)); out['per_class'] = per
+    return out
+
+
+def amendment():
+    reg, held = ids('selection.json'), ids('selection_heldout.json')
+    main = variant('kin30_a1', reg)
+    h = variant('kin30_a1', held)
+    hv3 = (h['classes'].get('walk', {}).get('V3_balanced_accuracy_20N') or {}).get('median')
+    checks = {**main['gate']['checks'], 'held-out walk V3 >= 0.85': bool(hv3 is not None and hv3 >= .85)}
+    return {'registered_trials': main, 'heldout_walk': h, 'gate': {'checks': checks, 'pass': bool(all(checks.values()))},
+            'threshold': state_threshold('kin30_a1', reg)}
+
+
+def amendment2():
+    reg = ids('selection.json')
+    yoga = tuple(AMEND2['scope']['excluded_tasks']['yoga'])
+    base = variant('kin30', reg)
+    checks = {k: v for k, v in base['gate']['checks'].items() if not k.startswith('run ')}
+    return {'gate': {'checks': checks, 'pass': bool(all(checks.values()))},
+            'threshold': state_threshold('kin30', reg, yoga),
+            'threshold_without_ballet': state_threshold('kin30', reg, yoga+BALLET)}
+
+
 def main():
     result = {'protocol': SPEC['protocol'], 'variants': {}}
     for name in ('kin30', 'dyn30', 'kin_native'):
         if (LOG/'runs'/name).exists():
             result['variants'][name] = variant(name)
+    if (LOG/'runs/kin30_a1').exists() and (LOG/'selection_heldout.json').exists():
+        result['amendment1'] = amendment()
+    result['amendment2'] = amendment2()
     (LOG/'analysis.json').write_text(json.dumps(result, indent=1))
     for name, v in result['variants'].items():
         print(f"== {name}: {v['success']}/{v['runs']} success; gate pass {v['gate']['pass']}", v['gate']['checks'])
@@ -78,6 +158,19 @@ def main():
                   f" | V3 {g('V3_balanced_accuracy_20N')} | resid rms {g('V4_residual_rms_bw')} >5% {g('V4_share_above_5pct')} p95 {g('V4_residual_p95_bw')}"
                   f" | meas Fy {g('measured_vertical_mean_bw')}")
         print('  threshold', json.dumps(v['threshold']))
+    if 'amendment1' in result:
+        a = result['amendment1']
+        print('== amendment 1: gate pass', a['gate']['pass'], a['gate']['checks'])
+        for tag, v in (('registered trials', a['registered_trials']), ('held-out walk', a['heldout_walk'])):
+            for c, s in v['classes'].items():
+                g = lambda m: '   -  ' if s[m] is None else f"{s[m]['median']:6.3f}"
+                print(f"  {tag:17s} {c:9s} n={s['trials']:2d} V1 r {g('V1_r')} rmse {g('V1_rmse_bw')} | V3 {g('V3_balanced_accuracy_20N')}"
+                      f" | resid rms {g('V4_residual_rms_bw')} >5% {g('V4_share_above_5pct')}")
+        print('  threshold', json.dumps(a['threshold']))
+    a = result['amendment2']
+    print('== amendment 2: gate pass', a['gate']['pass'], a['gate']['checks'])
+    for k in ('threshold', 'threshold_without_ballet'):
+        print(' ', k, json.dumps(a[k]))
 
 
 if __name__ == '__main__':
