@@ -6,13 +6,13 @@ from pathlib import Path
 import numpy as np
 
 import biomech
+from evalkit.residual import states
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = json.loads((ROOT/'config/e_criterion_domain_20261105.json').read_text())
 RULES = {k: SPEC['rules'][k].get('biomech', {}) for k in ('R0', 'R4', 'R5')}
 TAU = {k: SPEC['rules'][k]['tau_envelope_bw'] for k in RULES}
 SKATE_M_S = .3
-WINDOW_MS = 40.
 
 
 def kinematics(work):
@@ -67,15 +67,6 @@ def evaluate(times, kin, mass, rule, reference=None, world_floor=0.):
             'residual_bw': np.linalg.norm(rF, axis=1)/bw, 'speed': speed, 'com': C, 'required_force': F, **extra}
 
 
-def states(masks, dt):
-    foot = [masks[s]['heel'] | masks[s]['toe'] for s in ('r', 'l')]
-    events = np.concatenate([np.flatnonzero(np.diff(x.astype(int)) != 0)+.5 for x in foot])
-    i = np.arange(len(foot[0]))
-    near = (np.min(np.abs(i[:, None]-events[None, :]), 1)*dt*1000 <= WINDOW_MS) if len(events) else np.zeros(len(i), bool)
-    contact = foot[0] | foot[1]
-    return {'event': near, 'contact': ~near & contact, 'flight': ~near & ~contact}
-
-
 def infeasible(res, rule, tau=None):
     """tau: {state: BW} envelope; default the v1 registered TAU of the rule."""
     st = states(res['masks'], res['dt'])
@@ -111,17 +102,3 @@ def trim(times, seconds=.5):
     dt = float(np.median(np.diff(times))); n = len(times); k = int(round(seconds/dt))
     sel = np.zeros(n, bool); sel[k:n-k] = True
     return sel
-
-
-def write_shadow(work, shadow, times, res):
-    """A directory that ergo_frames.score_run can read: links to model.osim and coordinates.mot, a dynamics.npz of this rule."""
-    shadow = Path(shadow); shadow.mkdir(parents=True, exist_ok=True)
-    for name in ('model.osim', 'coordinates.mot'):
-        link = shadow/name
-        if link.is_symlink() or link.exists():
-            link.unlink()
-        link.symlink_to(Path(work).resolve()/name)
-    np.savez_compressed(shadow/'dynamics.npz', times=times, residual_force=res['residual_force'], residual_moment=res['residual_moment'],
-                        **{f'contact_{s}_{k}': res['masks'][s][k] for s in res['masks'] for k in res['masks'][s]},
-                        **{f'grf_{s}': res['grf'][s]['force'] for s in res['grf']})
-    return shadow
