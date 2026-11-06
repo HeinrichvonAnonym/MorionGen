@@ -87,7 +87,15 @@
       "clips": "the control clip of every base and subject"
     },
     "pass": "false-kill and missed-kill rates <= 5% with the one-sided 95% Clopper-Pearson upper bound <= 10%, per dimension (REBA and RULA separately); muscle effort relative error <= 10% (median over clips, and the share of clips within 10% reported). A relaxation to 10% / 15% needs the user's consent and is stated in the report",
-    "independence_note": "frames of one clip are correlated, so the Clopper-Pearson bound over frames is optimistic; a clip-level bootstrap interval is reported alongside"
+    "videos": {
+   "registered": "2026-11-07 06:23, before any dev score and before the held-out run",
+   "pool": "held-out clips except slide",
+   "positive_clip": "truth positive in any dimension within the scored frames: residual e_label 1, REBA or RULA truth class certain_risk, or unmeasurable_label 1",
+   "negative_clip": "no truth positive in any dimension (the remaining pool clips)",
+   "draw": "10 + 10 with numpy default_rng(crc32('evalkit_v1_videos')): positives round-robin over defect types (control counted as a type), negatives round-robin over base motions, each type / base shuffled once; no redraw after seeing the tool result",
+   "content": "evalkit_render: tool left, truth right, residual / REBA / RULA / muscle strips; static optimization run on tool and truth for the 20 clips"
+  },
+  "independence_note": "frames of one clip are correlated, so the Clopper-Pearson bound over frames is optimistic; a clip-level bootstrap interval is reported alongside"
   },
   "calibration_receipt": {
     "clips": 228,

@@ -222,9 +222,10 @@ def draw(ax, panel, pose):
     ax.scatter(com[:, 0], com[:, 1], s=30, c='#d81b8c', edgecolors='white', linewidths=.6, zorder=5)
     arrow(ax, pose['com'], residual*BW_LENGTH, centre, '#d81b8c', 3.)
     m = panel.metrics
-    ax.set_title(f"{panel.label}\n残余力 RMS {m['metrics']['residual_force_rms_bw']:.3f} BW · IK 均方根 "
-                 f"{m['ik']['rms_mean_m']*100:.1f} cm / 最大 {m['ik']['max_m']*100:.1f} cm · "
-                 f"{'评估有效' if m['valid'] else '评估无效'}", fontsize=12)
+    title = getattr(panel, 'title', None) or (
+        f"{panel.label}\n残余力 RMS {m['metrics']['residual_force_rms_bw']:.3f} BW · IK 均方根 "
+        f"{m['ik']['rms_mean_m']*100:.1f} cm / 最大 {m['ik']['max_m']*100:.1f} cm · {'评估有效' if m['valid'] else '评估无效'}")
+    ax.set_title(title, fontsize=12)
     ax.text(.02, .02, f"当前残余力 {np.linalg.norm(residual):.2f} BW", transform=ax.transAxes, fontsize=11,
             color='#d81b8c', zorder=6)
 
