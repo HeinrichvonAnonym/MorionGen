@@ -1,0 +1,57 @@
+{
+  "created": "2026-11-07 05:50 UTC+8, before any tool output on the synthetic set was scored (one plumbing run on a control clip with a placeholder reference, not scored)",
+  "plan": "plans/20261107_evaluation_chain_meta_plan.md, P2 / P3",
+  "version": "v1-dev",
+  "version_note": "v1-dev until the development-split tuning below is filled in; then version v1 is frozen (commit hash recorded in frozen_commit) and the held-out split is evaluated once. No field changes after the held-out evaluation.",
+  "frozen_commit": null,
+  "trim_s": 0.5,
+  "trim_note": "every dimension scores frames from trim_s after the start to trim_s before the end (Butterworth and double-differentiation edges), as e_rules.trim / ergo_frames",
+  "ik_gate": {"max_marker_error_m": 0.10, "note": "a frame whose IK max marker error exceeds this is unmeasurable: kept in every denominator and counted as non-acceptable (convention from the earlier E / ergo sessions, not derived)"},
+  "floor": {
+    "input": "floor height (m, canonical Z) is an explicit input of every evaluation; contact and GRF points use it",
+    "method_references": "config/e_v2_floor_reference_20261106.json",
+    "reference_definition": "per floor-reference variant, the flat-foot heights of the heel (calcn origin) and toe (toes origin) landmarks of the scaled model above the method's own floor (reference_m - world_floor_m of the E v2 config); absolute reference = input floor + offset",
+    "calibrated": {},
+    "calibrated_note": "synthetic: median over the development-split stand controls of (tool landmark height - floor_height_m) in frames where both landmarks of the foot are in truth contact; filled before freezing"
+  },
+  "residual": {
+    "contact_margin_m": 0.03,
+    "contact_rule": "height only (E v2 R0): landmark in contact when height - absolute reference <= margin; no horizontal-speed or onset rule (both raised false kills on human data)",
+    "event_window_ms": 40,
+    "tau_bw": null,
+    "penetration_depth_m": null,
+    "judgment": "frame positive when residual_bw > tau_bw[state] (state event / contact / flight, residual.states) or lowest landmark elevation < -penetration_depth_m",
+    "tuning": "tau_bw (event, contact, flight) and penetration_depth_m chosen on the development split only: minimize the larger of the false-kill and missed-kill rates (definitions under validation), ties to the larger tau / depth; grid tau 0.02-0.50 BW step 0.01, depth 0.01-0.06 m step 0.005 (grids: convention, not derived)"
+  },
+  "ergo": {
+    "protocol": "config/ergo_rula_reba_20261105.json revision r3, frame_stride, thresholds REBA 4 / RULA 5",
+    "neutral_offsets": "config/ergo_neutral_offsets_20261105.json",
+    "neutral_calibrated": {},
+    "neutral_note": "synthetic: rest reading (neck angles, shoulder elevation) of the synthetic export skeleton in the model default pose, computed from the station definition (not tuned)",
+    "object_free": "task text with no object keyword, or no text at all (e.g. unconditioned generation), is object-free (load and coupling known zero)",
+    "contact": "legs and flight from the height-only contact of the residual dimension; not gated by the residual"
+  },
+  "muscle": {"so_step": 2, "effort": "sum over muscles of activation^2 per SO frame; clip effort = mean over scored frames", "reserves": "biomech.static_optimization (lower-limb reserves 1 N m, pelvis residual actuators 1000)"},
+  "validation": {
+    "data": "config/evalkit_synth_20261107.json; development split subject seeds 101, 102; held-out 201, 202",
+    "frame_matching": "truth frames matched to tool frames by nearest time",
+    "residual": {
+      "truth": "e_label of the synthetic truth (1 positive, 0 negative, -1 ambiguous, excluded)",
+      "tool_positive": "residual.judge positive, or IK-gate unmeasurable (non-acceptable)",
+      "false_kill_rate": "tool positive among truth-negative frames",
+      "missed_kill_rate": "tool negative among truth-positive frames",
+      "clips": "every clip except bone_stretch (its truth is about measurability) and slide (kinematic dimension)"
+    },
+    "ergo": {
+      "truth": "the same ergo.score on the truth model (with the neck_c station), truth coordinates, truth contact and the clean source joints",
+      "false_kill_rate": "per method: tool certain_risk or unmeasurable among frames whose truth class is certain_acceptable",
+      "missed_kill_rate": "per method: tool certain_acceptable among frames whose truth class is certain_risk",
+      "reported": "indeterminate share of the tool among truth-certain frames (inconclusive, not a kill error), full confusion matrix; truth-indeterminate frames are excluded from both rates",
+      "clips": "every clip except bone_stretch and slide"
+    },
+    "unmeasurable": {"truth": "unmeasurable_label (bone stretch >= 0.1 positive, <= 0.02 negative)", "reported": "detection rate per stretch size and false-unmeasurable rate on every other clip"},
+    "muscle": {"metric": "|tool effort - truth effort| / truth effort per clip (clip effort as above)", "clips": "the control clip of every base and subject"},
+    "pass": "false-kill and missed-kill rates <= 5% with the one-sided 95% Clopper-Pearson upper bound <= 10%, per dimension (REBA and RULA separately); muscle effort relative error <= 10% (median over clips, and the share of clips within 10% reported). A relaxation to 10% / 15% needs the user's consent and is stated in the report",
+    "independence_note": "frames of one clip are correlated, so the Clopper-Pearson bound over frames is optimistic; a clip-level bootstrap interval is reported alongside"
+  }
+}

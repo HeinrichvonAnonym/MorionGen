@@ -1,0 +1,68 @@
+{
+  "created": "2026-11-07 05:20 UTC+8, before any synthetic clip was built or scored",
+  "plan": "plans/20261107_evaluation_chain_meta_plan.md, P1",
+  "purpose": "Model-internal synthetic validation set for evalkit: foot contacts and floor are fixed by construction, so the residual-force, RULA/REBA and muscle-load truths are computed, not assumed. It measures the error the pipeline adds (sparse generator joints, scaling and IK, contact from heights, floor parameter, GRF estimation); it does not measure the gap between the Rajagopal model and real people.",
+  "truth_model": {
+    "constructed": "RajagopalLaiUhlrich2023 (OpenSim Creator resources), scaled per subject",
+    "demo_walk": "Moco example3DWalking subject_walk_scaled.osim (Rajagopal 2016 with Uhlrich 2022 / Lai 2017 passive forces, welded subtalar / mtp / wrist), its RRA coordinates and measured GRF"
+  },
+  "demo_dir": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/outputs/assets/opensim-rajagopal-demo",
+  "demo_excluded": {"pipelines_rajagopal run": "treadmill (grf_run.mot centre of pressure x constant near 1.1 m); a fixed-floor model does not apply"},
+  "demo_walk": {"stride_s": [0.45, 1.799], "tiles": 3, "crossfade_s": 0.15, "exclude_margin_s": 0.1, "exclude_note": "added about 05:45, before scoring: the stride is not periodic, so the cross-fade seams (and the clip ends, one-sided differences) produce accelerations that are construction artifacts (0.19 BW at both seams in the first check); seam +- margin and the first / last margin are E-ambiguous by construction", "grf_contact_n": 20.0,
+                "note": "one stride, not periodic; tiles are cross-faded on every coordinate except pelvis_tx, which continues at the stride mean speed; truth is recomputed frame by frame on the tiled motion, so seams that are not realizable are labelled positive by the truth itself"},
+  "fps_truth": 100.0,
+  "fps_export": 30.0,
+  "subject": {"scale": [0.92, 1.08], "segment_jitter": 0.03, "mass_kg": [55.0, 95.0], "convention": "约定，未经推演"},
+  "landmark_floor_offset_m": 0.0115,
+  "landmark_floor_offset_note": "flat-foot height of the toes origin above the floor in the unscaled generic model at its default pose (toes origin y = 0.0115 m with the heel pad on y = 0); scaled with the foot",
+  "constructed": {
+    "duration_s": 3.0,
+    "classes": ["stand", "squat", "stoop", "reach", "weight_shift", "single_leg", "step", "single_leg_unbalanced"],
+    "balance_iterations": 2,
+    "foot_slip_max_m": 0.005,
+    "ik_weights": {"foot_station": 1.0, "coordinate": 1.0, "leg_coordinate": 0.001, "pelvis_balance": 1.0},
+    "balance_gain": 0.65,
+    "truth_cutoff_hz": 6.0,
+    "note": "keyframes in coordinate space with minimum-jerk interpolation; planted feet are fixed by IK on 3 stations per foot body. Pass 1 leaves the 6 pelvis coordinates free and tracks the leg keyframes only weakly so the legs close the chain; each balance pass then prescribes the pelvis rotations and x, z (previous pelvis plus the COM-to-support offset / balance_gain), leaves pelvis_ty free and keeps the weak leg tracking of pass 1 (a weakly tracked pelvis_ty with free legs left the crouch-depth null space uncontrolled: 18 cm pelvis steps); the IK result is low-passed (4th-order zero-phase Butterworth at truth_cutoff_hz, as biomech.write_coordinates) because the per-frame IK noise is amplified by double differentiation in the residual; the subtalar joint unlocked in the synthetic models so each leg has exactly 6 DOF to its foot. Every class except single_leg_unbalanced is balanced so the linear-inverted-pendulum ZMP (COM - h / g * COM acceleration) sits over the keyframed support point. step is a full two-step (right then left foot 0.35 m forward, 0.6 s swings, knees kept at 8 deg so the trailing leg is not at the straight-knee singularity where IK stalled at 9 mm) so that the end pose is the keyframed upright stance; single_leg lifts and lowers over 0.6 s each. foot_slip_max_m amended 0.001 -> 0.005 (the IK closes planted feet to 1-3 mm, well inside the 5 mm contact band). Amended 05:25-05:45 after the first cheap checks (foot slip 1.4-4 cm from competing soft tasks, squat COM off the support) before any scoring; weights and gain: convention, not derived"
+  },
+  "export": {
+    "joints": ["pelvis", "left_hip", "right_hip", "Spine", "left_knee", "right_knee", "left_ankle", "right_ankle", "Spine3", "left_foot", "right_foot", "neck", "left_collar", "right_collar", "head", "left_shoulder", "right_shoulder", "left_elbow", "right_elbow", "left_wrist", "right_wrist"],
+    "landmark_offset_sd_m": 0.01,
+    "jitter_sd_m": 0.002,
+    "floor_shift_m": [-0.05, 0.05],
+    "frame": "canonical Z-up metres (motion.npz joints, joint_names, fps), like the generators",
+    "convention": "offset and jitter sizes 约定，未经推演 (stand in for the landmark mismatch between a generator skeleton and the Rajagopal joint centres)"
+  },
+  "defects": {
+    "float_window_m": [0.02, 0.05, 0.1],
+    "float_whole_m": [0.02, 0.05, 0.1],
+    "penetrate_window_m": [0.02, 0.05, 0.1],
+    "penetrate_whole_m": [0.02, 0.05, 0.1],
+    "lean_deg": [10, 20, 40],
+    "time_compression": [1.25, 1.5, 2.0],
+    "bone_stretch": [0.1, 0.3, 0.6],
+    "slide_m_s": [0.1, 0.3, 0.6]
+  },
+  "defect_definitions": {
+    "float / penetrate": "pelvis_ty +- size (window: raised-cosine ramp over the middle third, 0.1 s edges); truth recomputed on the shifted motion",
+    "lean_deg": "lumbar_extension - size (forward flexion) over the middle third, feet unchanged",
+    "time_compression": "the same frames played size times faster",
+    "bone_stretch": "export only: right humerus and forearm lengthened by the factor over the middle third (no body can produce these joints)",
+    "slide_m_s": "constructed classes only: the planted right foot target moves forward at size m/s during the middle third, re-solved by IK (stays on the floor)"
+  },
+  "truth": {
+    "contact_band_m": {"constructed": [0.005, 0.015], "demo_walk": [0.02, 0.03]},
+    "contact_rule": "a landmark (calcn / toes origin) is in contact when the construction (planted interval) or the force plate (demo, > 20 N) says so and its elevation above its flat-foot height is <= the lower band value; above the upper value it is off the floor; between: ambiguous frame",
+    "penetration_m": {"constructed": [-0.005, -0.015], "demo_walk": [-0.02, -0.03]},
+    "residual_bw": {"negative_max": 0.02, "positive_min": 0.1},
+    "realizability": "biomech.estimate_grf on the true contact landmarks projected to the floor (friction 0.8, sole points of biomech.SOLE)",
+    "e_label": "positive: lowest elevation below the penetration upper value, or truth residual >= 0.10 BW; negative: no landmark below the penetration lower value and residual <= 0.02 BW; otherwise ambiguous (excluded from the error rates, share reported)",
+    "measurable_label": "bone_stretch frames with stretch >= 0.1 are positive for the measurability judgment; stretch <= 0.02 negative",
+    "ergo_label": "evalkit.ergo on the true coordinates, true contact and the noise-free exported joints",
+    "muscle": "static optimization (biomech.static_optimization) on the true coordinates and the truth GRF; whole-body effort = mean over frames of the sum of squared activations",
+    "convention": "band edges 约定，未经推演"
+  },
+  "splits": {"dev": {"subject_seeds": [101, 102]}, "heldout": {"subject_seeds": [201, 202]},
+             "rule": "tune only on dev; freeze (commit hash) before the single held-out run"},
+  "muscle_subset": "controls of every base and subject (truth and tool static optimization)"
+}
