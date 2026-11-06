@@ -47,7 +47,8 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
     res = residual.evaluate(kin, times, mass, floor, ref)
     biomech.write_loads(times, res['grf'], floor, work/'grf.mot', work/'grf.xml')
     frames = {'times': times, 'scored': sel, 'unmeasurable': f['unmeasurable'], 'ik_max_error_m': f['ik_max_error_m'],
-              'residual_bw': res['residual_bw'], 'lowest_elevation_m': res['lowest_elevation'], 'state': res['state'],
+              'residual_bw': res['residual_bw'], 'residual_force': res['residual_force'], 'com': res['com'],
+              'lowest_elevation_m': res['lowest_elevation'], 'state': res['state'],
               **{f'contact_{s}_{k}': res['masks'][s][k] for s in SIDES for k in LANDMARKS},
               **{f'elevation_{s}_{k}': res['elevation'][s][k] for s in SIDES for k in LANDMARKS}}
     summary = {'ik': {**f['receipt']['ik_marker_error'], 'unmeasurable_share': float(f['unmeasurable'][sel].mean())}}

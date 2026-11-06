@@ -63,31 +63,48 @@ def neutral_reading(base_dir, info):
     return ergo.rest_reading(ex['clean_joints'][0], ex['joint_names'])
 
 
+CALIBRATION_DEFECTS = ('control', 'lean_deg', 'time_compression', 'bone_stretch', 'slide_m_s')
+
+
+def calib_job(clip):
+    """Fit and residual with zero reference offsets (the elevations are then landmark height above the input floor);
+    the fit is written where the tool run reuses it."""
+    _quiet()
+    from evalkit import run
+    from evalkit.validate import match
+    m = meta(clip); out = DATA/'tool'/'dev'/clip['id']
+    zero = {s: {k: 0. for k in LANDMARKS} for s in SIDES}
+    run.evaluate(Path(clip['dir'])/'input', out, m['floor_height_m'], zero, m['mass_kg'], dims=('residual',))
+    f = np.load(out/'frames.npz'); tr = np.load(Path(clip['dir'])/'truth/truth.npz')
+    j = match(f['times'], tr['times'])
+    heights = {}
+    for s in SIDES:
+        both = (tr[f'contact_{s}_heel'] & tr[f'contact_{s}_toe'])[j] & f['scored']
+        heights[s] = {k: f[f'elevation_{s}_{k}'][both].tolist() for k in LANDMARKS}
+    return heights
+
+
 def calibrate(args):
     if SPEC['version'] != 'v1-dev':
         raise SystemExit('registration is frozen')
     _quiet()
-    from evalkit import run
-    stand = [c for c in clips('dev') if c['id'].endswith('stand__control')]
+    items = [c for c in clips('dev') if meta(c)['defect'] in CALIBRATION_DEFECTS]
+    stand = [c for c in items if c['id'].endswith('stand__control')]
     readings = [neutral_reading(c['base_dir'], c['info']) for c in stand]
     neck = np.mean([r[0] for r in readings], 0); shoulder = np.mean([r[1] for r in readings], 0)
     heights = {s: {k: [] for k in LANDMARKS} for s in SIDES}
-    zero = {s: {k: 0. for k in LANDMARKS} for s in SIDES}
-    for c in stand:
-        m = meta(c); out = DATA/'calibration'/c['id']
-        run.evaluate(Path(c['dir'])/'input', out, m['floor_height_m'], zero, m['mass_kg'], dims=('residual',))
-        f = np.load(out/'frames.npz'); tr = np.load(Path(c['dir'])/'truth/truth.npz')
-        from evalkit.validate import match
-        j = match(f['times'], tr['times'])
-        for s in SIDES:
-            both = (tr[f'contact_{s}_heel'] & tr[f'contact_{s}_toe'])[j] & f['scored']
-            for k in LANDMARKS:
-                heights[s][k] += list(f[f'elevation_{s}_{k}'][both])
+    with ProcessPoolExecutor(args.workers, mp_context=mp.get_context('spawn'), max_tasks_per_child=1) as p:
+        for h in p.map(calib_job, items):
+            for s in SIDES:
+                for k in LANDMARKS:
+                    heights[s][k] += h[s][k]
     ref = {s: {k: float(np.median(heights[s][k])) for k in LANDMARKS} for s in SIDES}
     spec = json.loads(SPEC_PATH.read_text())
     spec['floor']['calibrated']['synthetic'] = ref
     spec['ergo']['neutral_calibrated']['synthetic'] = {'neck_deg': neck.tolist(), 'shoulder_elevation_deg': shoulder.tolist()}
-    spec['calibration_receipt'] = {'clips': [c['id'] for c in stand], 'reference_frames': {s: len(heights[s]['heel']) for s in SIDES},
+    spec['calibration_receipt'] = {'clips': len(items), 'defects': list(CALIBRATION_DEFECTS),
+                                   'reference_frames': {s: len(heights[s]['heel']) for s in SIDES},
+                                   'reference_iqr_m': {s: {k: np.percentile(heights[s][k], [25, 75]).tolist() for k in LANDMARKS} for s in SIDES},
                                    'neutral_subjects': [c['info']['seed'] for c in stand]}
     SPEC_PATH.write_text(json.dumps(spec, indent=2))
     print(json.dumps({'reference': ref, 'neutral_neck_deg': neck.tolist(), 'neutral_shoulder_deg': shoulder.tolist()}, indent=1))
@@ -97,7 +114,7 @@ def calibrate(args):
 
 def tool_job(clip):
     out = DATA/'tool'/clip['split']/clip['id']
-    if (out/'evalkit.json').exists():
+    if (out/'evalkit.json').exists() and json.loads((out/'evalkit.json').read_text())['receipt']['reference'] == 'synthetic':
         return 'skip'
     try:
         _quiet()

@@ -6,13 +6,27 @@
   "frozen_commit": null,
   "trim_s": 0.5,
   "trim_note": "every dimension scores frames from trim_s after the start to trim_s before the end (Butterworth and double-differentiation edges), as e_rules.trim / ergo_frames",
-  "ik_gate": {"max_marker_error_m": 0.10, "note": "a frame whose IK max marker error exceeds this is unmeasurable: kept in every denominator and counted as non-acceptable (convention from the earlier E / ergo sessions, not derived)"},
+  "ik_gate": {
+    "max_marker_error_m": 0.1,
+    "note": "a frame whose IK max marker error exceeds this is unmeasurable: kept in every denominator and counted as non-acceptable (convention from the earlier E / ergo sessions, not derived)"
+  },
   "floor": {
     "input": "floor height (m, canonical Z) is an explicit input of every evaluation; contact and GRF points use it",
     "method_references": "config/e_v2_floor_reference_20261106.json",
     "reference_definition": "per floor-reference variant, the flat-foot heights of the heel (calcn origin) and toe (toes origin) landmarks of the scaled model above the method's own floor (reference_m - world_floor_m of the E v2 config); absolute reference = input floor + offset",
-    "calibrated": {},
-    "calibrated_note": "synthetic: median over the development-split stand controls of (tool landmark height - floor_height_m) in frames where both landmarks of the foot are in truth contact; filled before freezing"
+    "calibrated": {
+      "synthetic": {
+        "r": {
+          "heel": 0.010239549049421676,
+          "toe": 0.009037700944530921
+        },
+        "l": {
+          "heel": 0.012420704757211853,
+          "toe": 0.011421096716773188
+        }
+      }
+    },
+    "calibrated_note": "synthetic: median over the development-split clips whose defect leaves the feet at their truth heights (control, lean_deg, time_compression, bone_stretch, slide_m_s) of (tool landmark height - floor_height_m) in frames where both landmarks of the foot are in truth contact. Amended before any scoring: calibrations on the stand controls (2 clips) and on all controls (18 clips) both gave a left heel / toe asymmetry (0.034 / 0.006 and 0.032 / 0.001 m against right 0.024 / 0.025) because the export seed subject*1000+defect_index gave every control of a subject the same landmark-offset draw (2 draws in total; both raise the left ankle); the export seed is now crc32 of the clip id (config/evalkit_synth_20261107.json)"
   },
   "residual": {
     "contact_margin_m": 0.03,
@@ -26,12 +40,27 @@
   "ergo": {
     "protocol": "config/ergo_rula_reba_20261105.json revision r3, frame_stride, thresholds REBA 4 / RULA 5",
     "neutral_offsets": "config/ergo_neutral_offsets_20261105.json",
-    "neutral_calibrated": {},
+    "neutral_calibrated": {
+      "synthetic": {
+        "neck_deg": [
+          19.28381548631652,
+          0.0
+        ],
+        "shoulder_elevation_deg": [
+          1.6324069910023127,
+          1.6324069910023127
+        ]
+      }
+    },
     "neutral_note": "synthetic: rest reading (neck angles, shoulder elevation) of the synthetic export skeleton in the model default pose, computed from the station definition (not tuned)",
     "object_free": "task text with no object keyword, or no text at all (e.g. unconditioned generation), is object-free (load and coupling known zero)",
     "contact": "legs and flight from the height-only contact of the residual dimension; not gated by the residual"
   },
-  "muscle": {"so_step": 2, "effort": "sum over muscles of activation^2 per SO frame; clip effort = mean over scored frames", "reserves": "biomech.static_optimization (lower-limb reserves 1 N m, pelvis residual actuators 1000)"},
+  "muscle": {
+    "so_step": 2,
+    "effort": "sum over muscles of activation^2 per SO frame; clip effort = mean over scored frames",
+    "reserves": "biomech.static_optimization (lower-limb reserves 1 N m, pelvis residual actuators 1000)"
+  },
   "validation": {
     "data": "config/evalkit_synth_20261107.json; development split subject seeds 101, 102; held-out 201, 202",
     "frame_matching": "truth frames matched to tool frames by nearest time",
@@ -49,9 +78,55 @@
       "reported": "indeterminate share of the tool among truth-certain frames (inconclusive, not a kill error), full confusion matrix; truth-indeterminate frames are excluded from both rates",
       "clips": "every clip except bone_stretch and slide"
     },
-    "unmeasurable": {"truth": "unmeasurable_label (bone stretch >= 0.1 positive, <= 0.02 negative)", "reported": "detection rate per stretch size and false-unmeasurable rate on every other clip"},
-    "muscle": {"metric": "|tool effort - truth effort| / truth effort per clip (clip effort as above)", "clips": "the control clip of every base and subject"},
+    "unmeasurable": {
+      "truth": "unmeasurable_label (bone stretch >= 0.1 positive, <= 0.02 negative)",
+      "reported": "detection rate per stretch size and false-unmeasurable rate on every other clip"
+    },
+    "muscle": {
+      "metric": "|tool effort - truth effort| / truth effort per clip (clip effort as above)",
+      "clips": "the control clip of every base and subject"
+    },
     "pass": "false-kill and missed-kill rates <= 5% with the one-sided 95% Clopper-Pearson upper bound <= 10%, per dimension (REBA and RULA separately); muscle effort relative error <= 10% (median over clips, and the share of clips within 10% reported). A relaxation to 10% / 15% needs the user's consent and is stated in the report",
     "independence_note": "frames of one clip are correlated, so the Clopper-Pearson bound over frames is optimistic; a clip-level bootstrap interval is reported alongside"
+  },
+  "calibration_receipt": {
+    "clips": 228,
+    "defects": [
+      "control",
+      "lean_deg",
+      "time_compression",
+      "bone_stretch",
+      "slide_m_s"
+    ],
+    "reference_frames": {
+      "r": 36689,
+      "l": 28267
+    },
+    "reference_iqr_m": {
+      "r": {
+        "heel": [
+          0.002086133199853818,
+          0.018797267188822284
+        ],
+        "toe": [
+          0.003851363293168597,
+          0.01636553247605542
+        ]
+      },
+      "l": {
+        "heel": [
+          0.005536742041406244,
+          0.01975658366309055
+        ],
+        "toe": [
+          0.0037038665841794896,
+          0.017564789566992048
+        ]
+      }
+    },
+    "neutral_subjects": [
+      101,
+      102
+    ]
   }
 }

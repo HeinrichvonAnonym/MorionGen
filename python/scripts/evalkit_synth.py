@@ -14,6 +14,7 @@ import os
 import sys
 import time
 import traceback
+import zlib
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
@@ -48,6 +49,29 @@ def defects(base):
 
 def clip_id(task, defect, size):
     return f"{task['split']}_{task['seed']}_{task['base']}__{defect}" + (f'_{size:g}' if defect != 'control' else '')
+
+
+def export_seed(cid):
+    return zlib.crc32(cid.encode())
+
+
+def reexport(base_dir):
+    """Re-draw the generator-like input of every clip of a built base from its truth (export seed amendment)."""
+    os.nice(19)
+    import biomech
+    from evalkit import synth
+    root = Path(base_dir); done = json.loads((root/'done.json').read_text()); info = done['info']
+    for cid in done['clips']:
+        d = root/cid; m = json.loads((d/'input/meta.json').read_text()); tr = np.load(d/'truth/truth.npz')
+        _, labels, coords = biomech.read_storage(d/'truth/coordinates.mot')
+        clip = {'labels': labels, 'coords': coords, 'fps': m['fps_truth'], 'floor': m['truth_floor_m'],
+                'stretch': tr['stretch'] if 'stretch' in tr.files else None}
+        ex = synth.export(root/'model.osim', clip, info, seed=export_seed(cid))
+        np.savez_compressed(d/'input/motion.npz', joints=ex['joints'], joint_names=np.array(ex['joint_names']), fps=ex['fps'])
+        np.savez_compressed(d/'truth/clean_joints.npz', joints=ex['clean_joints'], joint_names=np.array(ex['joint_names']), fps=ex['fps'])
+        m.update(floor_height_m=ex['floor_height_m'], floor_shift_m=ex['floor_shift_m'], export_seed=export_seed(cid))
+        (d/'input/meta.json').write_text(json.dumps(m, indent=1))
+    return str(root)
 
 
 def build(task):
@@ -92,7 +116,7 @@ def build(task):
                                 **{f'contact_{s}_{k2}': tr['contact'][s][k2] for s in synth.SIDES for k2 in ('heel', 'toe')},
                                 **{f'elevation_{s}_{k2}': tr['elevation'][s][k2] for s in synth.SIDES for k2 in ('heel', 'toe')},
                                 **({'stretch': clip['stretch']} if clip.get('stretch') is not None else {}))
-            ex = synth.export(root/'model.osim', clip, info, seed=task['seed']*1000+k)
+            ex = synth.export(root/'model.osim', clip, info, seed=export_seed(cid))
             np.savez_compressed(d/'input/motion.npz', joints=ex['joints'], joint_names=np.array(ex['joint_names']), fps=ex['fps'])
             np.savez_compressed(d/'truth/clean_joints.npz', joints=ex['clean_joints'], joint_names=np.array(ex['joint_names']), fps=ex['fps'])
             meta = {'id': cid, 'split': task['split'], 'seed': task['seed'], 'base': task['base'], 'source': source, 'defect': defect,
@@ -116,7 +140,14 @@ def main():
     a = argparse.ArgumentParser()
     a.add_argument('--split', choices=('dev', 'heldout')); a.add_argument('--only'); a.add_argument('--limit', type=int)
     a.add_argument('--workers', type=int, default=1)
+    a.add_argument('--reexport', action='store_true', help='re-draw the inputs of built bases from their truth')
     args = a.parse_args()
+    if args.reexport:
+        bases = [str(p.parent) for p in sorted(DISK.glob('*/*/done.json'))]
+        with ProcessPoolExecutor(args.workers, mp_context=mp.get_context('spawn'), max_tasks_per_child=1) as pool:
+            for r in pool.map(reexport, bases):
+                print(r, flush=True)
+        return
     todo = tasks(args.split, args.only.split(',') if args.only else None)[:args.limit]
     LOG.mkdir(parents=True, exist_ok=True)
     results = []
