@@ -1,6 +1,6 @@
 {
   "protocol": "evalkit_addb_paired_20261107",
-  "registered": "2026-11-07 15:30, before any fit -4 run on AddBiomechanics data",
+  "registered": "2026-11-07 15:26, before any fit -4 run on AddBiomechanics data",
   "question": "On real people, how close are the evalkit ground reaction forces (kinematics only, height contact, per-foot split) to force plates, on the scale of the published video pipeline (OpenCap, Uhlrich 2023, Table 1)?",
   "use": "descriptive anchor for the residual / contact / muscle criteria; no pass line",
   "data": {
