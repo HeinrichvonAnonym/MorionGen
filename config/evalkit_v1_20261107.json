@@ -6,6 +6,15 @@
   "frozen_commit": null,
   "trim_s": 0.5,
   "trim_note": "every dimension scores frames from trim_s after the start to trim_s before the end (Butterworth and double-differentiation edges), as e_rules.trim / ergo_frames",
+  "fit": {
+    "calibration_s": 1.0,
+    "planted_height_m": 0.05,
+    "planted_speed_m_s": 0.1,
+    "min_planted_frames": 5,
+    "upright_tolerance_deg": 5.0,
+    "min_calibration_frames": 3,
+    "note": "2026-11-07 11:42 dev amendment after the muscle diagnosis (constant per-clip coordinate biases: stoop pelvis tilt -17 / lumbar +24 / hip +17 deg from a non-upright first second under the lumbar-locked calibration; ankle +16 deg from foot joint-definition offsets, gone with zero offsets): calibration on the most upright frames instead of the first second, and ankle / toe markers registered on planted feet levelled on the given floor (evalkit.fit). Values 约定，未经推演"
+  },
   "ik_gate": {
     "max_marker_error_m": 0.1,
     "note": "a frame whose IK max marker error exceeds this is unmeasurable: kept in every denominator and counted as non-acceptable (convention from the earlier E / ergo sessions, not derived)"
@@ -35,7 +44,8 @@
     "tau_bw": null,
     "penetration_depth_m": null,
     "judgment": "frame positive when residual_bw > tau_bw[state] (state event / contact / flight, residual.states) or lowest landmark elevation < -penetration_depth_m",
-    "tuning": "tau_bw (event, contact, flight) and penetration_depth_m chosen on the development split only: minimize the larger of the false-kill and missed-kill rates (definitions under validation), ties to the larger tau / depth; grid tau 0.02-0.50 BW step 0.01, depth 0.01-0.06 m step 0.005 (grids: convention, not derived)"
+    "tuning": "tau_bw (event, contact, flight) and penetration_depth_m chosen on the development split only: minimize the larger of the false-kill and missed-kill rates (definitions under validation), ties to the larger tau / depth; grid tau 0.02-0.50 BW step 0.01, depth 0.01-0.06 m step 0.005 (grids: convention, not derived)",
+    "tuning_amendment": "2026-11-07 11:48 dev amendment (user: a real-data contact tolerance on generated data with a given floor manufactures misses): contact_margin_m joins the development grid, 0.005-0.030 m step 0.005, chosen jointly with tau / depth by the same objective over the pass clips (ties to the larger margin); the dev fit is redone first (fit amendment) and the synthetic floor reference recalibrated on it. Grid 约定，未经推演"
   },
   "ergo": {
     "protocol": "config/ergo_rula_reba_20261105.json revision r3, frame_stride, thresholds REBA 4 / RULA 5",

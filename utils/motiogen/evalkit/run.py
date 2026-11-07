@@ -40,7 +40,7 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
     variant = reference if isinstance(reference, str) else None
     offsets = reference_offsets(reference) if variant else reference
     ref = absolute_reference(offsets, floor)
-    f = fit_mod.fit(run, work, mass)
+    f = fit_mod.fit(run, work, mass, floor)
     times, labels, coords = f['times'], f['labels'], f['coords']
     sel = fit_mod.scored(times)
     kin = biomech.body_kinematics(osim.Model(str(work/'model.osim')), labels, coords)
@@ -83,6 +83,7 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
     np.savez_compressed(out/'frames.npz', **frames)
     receipt = {'run': str(run), 'floor_m': float(floor), 'reference': variant or offsets, 'mass_kg': mass, 'method': method,
                'prompt': prompt, 'dims': list(dims), 'spec': str(SPEC_PATH.relative_to(ROOT)), 'spec_version': SPEC['version'],
+               'fit_prepare': fit_mod.PREPARE, 'contact_margin_m': residual.C['contact_margin_m'],
                'commit': _commit(), 'seconds': round(time.time()-start, 1)}
     (out/'evalkit.json').write_text(json.dumps({'receipt': receipt, **summary}, indent=1))
     return summary

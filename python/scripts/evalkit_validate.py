@@ -28,6 +28,18 @@ DATA = Path('/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/outp
 SYNTH = DATA/'synth'
 LOG = ROOT/'develop_logs/test_runs/20261107_evalkit/validation'
 SKIP_KILL = ('bone_stretch', 'slide_m_s')
+MARGINS = tuple(float(x) for x in np.round(np.arange(.005, .0305, .005), 3))
+MIN_PASS_SIZE_M = .05
+
+
+def residual_pass(m):
+    """Clips of the residual pass line (user decision 11:14): float / penetrate below 5 cm are reported separately."""
+    return m['defect'] not in SKIP_KILL and not (m['defect'].startswith(('float', 'penetrate')) and m['size'] < MIN_PASS_SIZE_M)
+
+
+def ergo_pass(m):
+    """Clips of the ergonomics pass line (user decision 11:14): whole-clip float has no truth contact."""
+    return m['defect'] not in SKIP_KILL and m['defect'] != 'float_whole_m'
 
 
 def clips(split):
@@ -114,8 +126,11 @@ def calibrate(args):
 
 def tool_job(clip):
     out = DATA/'tool'/clip['split']/clip['id']
-    if (out/'evalkit.json').exists() and json.loads((out/'evalkit.json').read_text())['receipt']['reference'] == 'synthetic':
-        return 'skip'
+    from evalkit.fit import PREPARE
+    if (out/'evalkit.json').exists():
+        r = json.loads((out/'evalkit.json').read_text())['receipt']
+        if r['reference'] == 'synthetic' and r.get('fit_prepare') == PREPARE and r.get('contact_margin_m') == SPEC['residual']['contact_margin_m']:
+            return 'skip'
     try:
         _quiet()
         from evalkit import run
@@ -173,6 +188,33 @@ def truth_job(clip):
         return 'failed'
 
 
+def margins_job(clip):
+    """Residual of one development clip at every contact margin of the tuning grid (the fit is shared)."""
+    out = DATA/'tool'/clip['split']/clip['id']
+    if (out/'margins.npz').exists():
+        return 'skip'
+    try:
+        _quiet()
+        import opensim as osim
+        import biomech
+        from evalkit import fit, residual
+        from evalkit.spec import absolute_reference, reference_offsets
+        m = meta(clip)
+        f = fit.fit(Path(clip['dir'])/'input', out/'work', m['mass_kg'], m['floor_height_m'])
+        kin = biomech.body_kinematics(osim.Model(str(out/'work/model.osim')), f['labels'], f['coords'])
+        ref = absolute_reference(reference_offsets('synthetic'), m['floor_height_m'])
+        arrays = {'times': f['times'], 'scored': fit.scored(f['times']), 'unmeasurable': f['unmeasurable']}
+        for g in MARGINS:
+            res = residual.evaluate(kin, f['times'], m['mass_kg'], m['floor_height_m'], ref, margin=g)
+            arrays.update({f'{g}_residual_bw': res['residual_bw'], f'{g}_lowest': res['lowest_elevation'], f'{g}_state': res['state']})
+        np.savez_compressed(out/'margins.npz', **arrays)
+        return 'ok'
+    except Exception as e:
+        out.mkdir(parents=True, exist_ok=True)
+        (out/'error_margins.json').write_text(json.dumps({'error': f'{type(e).__name__}: {e}', 'trace': traceback.format_exc()[-2000:]}))
+        return 'failed'
+
+
 def pool(fn, items, workers):
     counts = {}
     with ProcessPoolExecutor(workers, mp_context=mp.get_context('spawn'), max_tasks_per_child=1) as p:
@@ -187,26 +229,33 @@ def pool(fn, items, workers):
 def load_clip(clip):
     d = Path(clip['dir']); m = meta(clip)
     tool, truth = DATA/'tool'/clip['split']/clip['id'], DATA/'truth_eval'/clip['split']/clip['id']
-    if not (tool/'frames.npz').exists():
+    if not (tool/'frames.npz').exists() and not (tool/'margins.npz').exists():
         return None
-    return {'meta': m, 'truth': dict(np.load(d/'truth/truth.npz')), 'tool': dict(np.load(tool/'frames.npz', allow_pickle=True)),
+    return {'meta': m, 'truth': dict(np.load(d/'truth/truth.npz')),
+            'tool': dict(np.load(tool/'frames.npz', allow_pickle=True)) if (tool/'frames.npz').exists() else None,
+            'margins': dict(np.load(tool/'margins.npz', allow_pickle=True)) if (tool/'margins.npz').exists() else None,
             'truth_eval': dict(np.load(truth/'truth_eval.npz', allow_pickle=True)) if (truth/'truth_eval.npz').exists() else None,
             'truth_muscle': json.loads((truth/'muscle.json').read_text()) if (truth/'muscle.json').exists() else None,
-            'tool_summary': json.loads((tool/'evalkit.json').read_text())}
+            'tool_summary': json.loads((tool/'evalkit.json').read_text()) if (tool/'evalkit.json').exists() else None}
 
 
-def residual_frames(rows):
-    """Concatenated per-frame arrays over the kill-rate clips: truth label, tool residual, lowest elevation, state,
-    unmeasurable, clip index."""
+def residual_frames(rows, include=residual_pass, margin=None):
+    """Concatenated per-frame arrays over the included clips: truth label, tool residual, lowest elevation, state,
+    unmeasurable, clip index; margin: from the margin grid (margins step) instead of the tool run."""
     from evalkit.validate import match
     out = {k: [] for k in ('label', 'residual', 'lowest', 'state', 'unmeasurable', 'clip')}
     for n, r in enumerate(rows):
-        if r['meta']['defect'] in SKIP_KILL:
+        if not include(r['meta']):
             continue
-        tr, tl = r['truth'], r['tool']
+        tr = r['truth']
+        if margin is None:
+            tl = r['tool']; tl = {**tl, 'lowest': tl['lowest_elevation_m']}
+        else:
+            g = r['margins']; tl = {k: g[k] for k in ('times', 'scored', 'unmeasurable')}
+            tl.update(residual_bw=g[f'{margin}_residual_bw'], lowest=g[f'{margin}_lowest'], state=g[f'{margin}_state'])
         j = match(tr['times'], tl['times']); keep = tl['scored'][j]
         out['label'].append(tr['e_label'][keep]); out['residual'].append(tl['residual_bw'][j][keep])
-        out['lowest'].append(tl['lowest_elevation_m'][j][keep]); out['state'].append(tl['state'][j][keep])
+        out['lowest'].append(tl['lowest'][j][keep]); out['state'].append(tl['state'][j][keep])
         out['unmeasurable'].append(tl['unmeasurable'][j][keep]); out['clip'].append(np.full(keep.sum(), n))
     return {k: np.concatenate(v) for k, v in out.items()}
 
@@ -214,6 +263,19 @@ def residual_frames(rows):
 def residual_positive(f, tau, depth):
     bound = np.select([f['state'] == 'event', f['state'] == 'contact'], [tau['event'], tau['contact']], tau['flight'])
     return (f['residual'] > bound) | (f['lowest'] < -depth) | f['unmeasurable']
+
+
+def tune_margins(rows):
+    """Registered grid search on the development split (amendment 11:48): contact margin jointly with tau and depth,
+    minimizing the larger kill rate over the pass clips; ties to the larger margin."""
+    best = None
+    for g in MARGINS:
+        t = tune(residual_frames(rows, margin=g))
+        cand = (max(t['dev_false_kill'], t['dev_missed_kill']), -g)
+        print(json.dumps({'margin': g, **t}), flush=True)
+        if best is None or cand < best[0]:
+            best = (cand, {'contact_margin_m': g, **t})
+    return best[1]
 
 
 def tune(f):
@@ -244,7 +306,7 @@ def ergo_frames(rows):
     from evalkit.validate import match
     out = {m: {'truth': [], 'tool': [], 'clip': []} for m in ('reba', 'rula')}
     for n, r in enumerate(rows):
-        if r['meta']['defect'] in SKIP_KILL or r['truth_eval'] is None:
+        if not ergo_pass(r['meta']) or r['truth_eval'] is None or r['tool'] is None:
             continue
         te, tl = r['truth_eval'], r['tool']
         j = match(te['ergo_times'], tl['ergo_times'])
@@ -256,20 +318,28 @@ def ergo_frames(rows):
 
 
 def score(args):
+    from scipy.stats import spearmanr
     from evalkit import validate
     from evalkit.ergo import CLASSES
     items = clips(args.split)
     rows = [r for r in (load_clip({**c, 'split': args.split}) for c in items) if r is not None]
     res = {'split': args.split, 'clips': len(rows), 'spec_version': SPEC['version']}
-    f = residual_frames(rows)
-    if args.split == 'dev':
-        res['tuning'] = tune(f)
-    tau, depth = (res['tuning']['tau_bw'], res['tuning']['penetration_depth_m']) if args.split == 'dev' else (SPEC['residual']['tau_bw'], SPEC['residual']['penetration_depth_m'])
+    if args.split == 'dev' and args.tune:
+        res['tuning'] = tune_margins(rows)
+        margin, tau, depth = res['tuning']['contact_margin_m'], res['tuning']['tau_bw'], res['tuning']['penetration_depth_m']
+    else:
+        margin, tau, depth = None, SPEC['residual']['tau_bw'], SPEC['residual']['penetration_depth_m']
     if tau:
-        p = residual_positive(f, tau, depth)
-        res['residual'] = validate.kill_rates(f['label'] == 1, f['label'] == 0, p, f['clip'])
-        res['residual']['frames'] = {'positive': int((f['label'] == 1).sum()), 'negative': int((f['label'] == 0).sum()), 'ambiguous': int((f['label'] == -1).sum())}
-        res['residual']['pass'] = validate.passes(res['residual'])
+        res['residual'] = {}
+        below = lambda m: m['defect'].startswith(('float', 'penetrate')) and m['size'] < MIN_PASS_SIZE_M
+        for name, include in (('pass_clips', residual_pass), ('below_resolution_2cm', below),
+                              ('all_kill_clips', lambda m: m['defect'] not in SKIP_KILL)):
+            f = residual_frames(rows, include, margin)
+            p = residual_positive(f, tau, depth)
+            r = validate.kill_rates(f['label'] == 1, f['label'] == 0, p, f['clip'])
+            r['frames'] = {'positive': int((f['label'] == 1).sum()), 'negative': int((f['label'] == 0).sum()), 'ambiguous': int((f['label'] == -1).sum())}
+            res['residual'][name] = r
+        res['residual']['pass'] = validate.passes(res['residual']['pass_clips'])
     ef = ergo_frames(rows)
     res['ergo'] = {}
     for m, d in ef.items():
@@ -281,6 +351,7 @@ def score(args):
         r['confusion'] = {CLASSES[a]: {CLASSES[b]: int(((t == a) & (x == b)).sum()) for b in range(4)} for a in range(4)}
         r['pass'] = validate.passes(r)
         res['ergo'][m] = r
+    rows = [r for r in rows if r['tool'] is not None]
     det = {}
     for r in rows:
         if r['meta']['defect'] == 'bone_stretch':
@@ -293,12 +364,13 @@ def score(args):
                            'false_unmeasurable': validate.rate(int(sum(o.sum() for o in other)), int(sum(len(o) for o in other)))}
     mus = []
     for r in rows:
-        if r['meta']['defect'] == 'control' and r['truth_muscle'] and 'muscle' in r['tool_summary']:
+        if r['meta']['defect'] == 'control' and r['truth_muscle'] and 'muscle' in (r['tool_summary'] or {}):
             a, b = r['tool_summary']['muscle']['muscle_effort_sum_a2_mean'], r['truth_muscle']['muscle_effort_sum_a2_mean']
             mus.append({'id': r['meta']['id'], 'tool': a, 'truth': b, 'relative_error': abs(a-b)/b})
     errs = np.array([m['relative_error'] for m in mus])
     res['muscle'] = {'clips': mus, 'median_relative_error': float(np.median(errs)) if len(errs) else None,
                      'share_within_10pct': float(np.mean(errs <= .1)) if len(errs) else None,
+                     'spearman': float(spearmanr([m['tool'] for m in mus], [m['truth'] for m in mus])[0]) if len(mus) > 2 else None,
                      'pass': bool(len(errs) and np.median(errs) <= .1)}
     LOG.mkdir(parents=True, exist_ok=True)
     (LOG/f'{args.split}_score.json').write_text(json.dumps(res, indent=1))
@@ -308,7 +380,8 @@ def score(args):
 
 def main():
     a = argparse.ArgumentParser()
-    a.add_argument('step', choices=('calibrate', 'tool', 'truth', 'score'))
+    a.add_argument('step', choices=('calibrate', 'margins', 'tool', 'truth', 'score'))
+    a.add_argument('--tune', action='store_true', help='score on dev: run the registered margin / tau / depth grid')
     a.add_argument('--split', choices=('dev', 'heldout'), default='dev'); a.add_argument('--workers', type=int, default=6)
     a.add_argument('--limit', type=int); a.add_argument('--only')
     args = a.parse_args()
@@ -319,7 +392,7 @@ def main():
     if args.split == 'heldout' and SPEC['version'] == 'v1-dev':
         raise SystemExit('freeze the registration (version v1) before the held-out split')
     items = [{**c, 'split': args.split} for c in clips(args.split) if not args.only or args.only in c['id']][:args.limit]
-    print(json.dumps(pool(tool_job if args.step == 'tool' else truth_job, items, args.workers)))
+    print(json.dumps(pool({'tool': tool_job, 'truth': truth_job, 'margins': margins_job}[args.step], items, args.workers)))
 
 
 if __name__ == '__main__':

@@ -24,13 +24,13 @@ def states(masks, dt, window_ms=C['event_window_ms']):
     return {'event': near, 'contact': ~near & down, 'flight': ~near & ~down}
 
 
-def evaluate(kin, times, mass, floor, reference):
+def evaluate(kin, times, mass, floor, reference, margin=None):
     dt = float(np.median(np.diff(times)))
     F, M, com = biomech.required_wrench(kin, dt)
     points, heights = {}, {}
     for s in SIDES:
         points[s], heights[s] = biomech.sole_points(kin, s)
-    masks, elevation = contact(heights, reference)
+    masks, elevation = contact(heights, reference, C['contact_margin_m'] if margin is None else margin)
     bw = mass*9.80665
     grf, rF, rM = biomech.estimate_grf(F, M, com, points, masks, floor, bw)
     st = states(masks, dt)
