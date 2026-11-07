@@ -361,5 +361,6 @@
     "spec": "config/evalkit_v1_20261107.json",
     "frozen_commit": "829f017",
     "heldout_result": "develop_logs/test_runs/20261107_evalkit/validation/heldout_score.json"
-  }
+  },
+  "frozen_commit": "b2f507a"
 }
