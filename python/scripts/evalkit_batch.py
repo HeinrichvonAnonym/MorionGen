@@ -1,13 +1,14 @@
 #!/usr/bin/env python
-"""evalkit over a manifest of generated runs (residual force, RULA/REBA classes, muscle load). OpenSim python.
+"""evalkit over a manifest of generated runs (residual force, RULA/REBA classes, muscle load, kinematics). OpenSim python.
 
   evalkit_batch.py manifest-e4 --per-method N --out M.json   draw N runs per method from the E4 control arm (C0: every
                                                              intervention off) with numpy default_rng(crc32(--draw-key))
-  evalkit_batch.py run --manifest M.json --out DIR [--dims residual,ergo,muscle] [--workers 6] [--dry-run]
+  evalkit_batch.py run --manifest M.json --out DIR [--dims residual,ergo,muscle,kinematic] [--workers 6] [--dry-run]
 
-Manifest rows: {id, method, source, condition?, mass_kg?, floor_m?, reference?, object_free?}; floor, reference and
+Manifest rows: {id, method, source, condition?, mass_kg?, floor_m?, reference?, object_free?, reach_task?}; floor, reference and
 object-free default to evalkit.sources. Each row writes DIR/<id>/ (evalkit outputs); a row is skipped when its
-evalkit.json has the same input sha256, dims, registration version, fit preparation and contact margin (resume).
+evalkit.json has the same input sha256, dims, registration version, fit preparation and contact margin (resume); a row
+missing only the kinematic dimension gets it from its saved frames without refitting.
 """
 import argparse
 import hashlib
@@ -26,7 +27,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT/'utils/motiogen'))
 E4_PLAN = ROOT/'develop_logs/test_runs/20261103_e4_cross_method/plan.json'
-SECONDS_PER_MOTION_SECOND = {'residual': 5., 'ergo': 3., 'muscle': 6.}  # timed on the synthetic set (3 s clips), --dry-run only
+SECONDS_PER_MOTION_SECOND = {'residual': 5., 'ergo': 3., 'muscle': 6., 'kinematic': 0.}  # timed on the synthetic set (3 s clips), --dry-run only
 
 
 def control_arm(job):
@@ -91,13 +92,19 @@ def job(task):
     try:
         os.nice(19)
         k = key(row, dims)
+        from evalkit import run
+        source, ref, floor, free = resolve(row)
         if (out/'evalkit.json').exists():
             old = json.loads((out/'evalkit.json').read_text()).get('batch', {})
             if old == k:
                 return row['id'], 'skip'
-        from evalkit import run
-        source, ref, floor, free = resolve(row)
-        summary = run.evaluate(source, out, floor, ref, row.get('mass_kg', 75.), method=row['method'], dims=dims, object_free=free)
+            if old and {**old, 'dims': k['dims']} == k and set(k['dims'])-set(old['dims']) == {'kinematic'}:
+                run.add_kinematic(source, out, row.get('reach_task'))
+                rec = json.loads((out/'evalkit.json').read_text()); rec['batch'] = k
+                (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
+                return row['id'], 'ok_kinematic_added'
+        run.evaluate(source, out, floor, ref, row.get('mass_kg', 75.), method=row['method'], dims=dims, object_free=free,
+                     reach_task=row.get('reach_task'))
         rec = json.loads((out/'evalkit.json').read_text())
         rec['batch'] = k; rec['row'] = row
         (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
@@ -136,7 +143,7 @@ def main():
     m = sub.add_parser('manifest-e4'); m.add_argument('--per-method', type=int, default=5); m.add_argument('--out', required=True)
     m.add_argument('--draw-key', default='evalkit_p4_smoke')
     r = sub.add_parser('run'); r.add_argument('--manifest', required=True); r.add_argument('--out', required=True)
-    r.add_argument('--dims', default='residual,ergo,muscle'); r.add_argument('--workers', type=int, default=6)
+    r.add_argument('--dims', default='residual,ergo,muscle,kinematic'); r.add_argument('--workers', type=int, default=6)
     r.add_argument('--dry-run', action='store_true')
     args = a.parse_args()
     (manifest_e4 if args.step == 'manifest-e4' else run_batch)(args)

@@ -11,9 +11,9 @@ from pathlib import Path
 import numpy as np
 
 from .spec import SPEC, SPEC_PATH, ROOT, SIDES, LANDMARKS, reference_offsets, absolute_reference
-from . import fit as fit_mod, residual, ergo, muscle
+from . import fit as fit_mod, residual, ergo, muscle, kinematic
 
-DIMS = ('residual', 'ergo', 'muscle')
+DIMS = ('residual', 'ergo', 'muscle', 'kinematic')
 
 
 def _commit():
@@ -28,11 +28,29 @@ def _stats(x):
     return {k: float(np.percentile(x, q)) for k, q in (('p5', 5), ('median', 50), ('p95', 95))} if len(x) else None
 
 
-def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dims=DIMS, source=None, object_free=None):
+def kinematic_summary(run, frames, reach_task=None):
+    z = np.load(Path(run)/'motion.npz' if Path(run).is_dir() else run, allow_pickle=True)
+    k = kinematic.evaluate(z['joints'], z['joint_names'], float(z['fps']), frames, reach_task)
+    k['skating'] = {n: v for n, v in k['skating'].items() if n != 'per_span'}
+    return k
+
+
+def add_kinematic(run, out, reach_task=None):
+    """Kinematic dimension on an existing evaluation (frames.npz, evalkit.json), without refitting."""
+    out = Path(out); rec = json.loads((out/'evalkit.json').read_text())
+    rec['kinematic'] = kinematic_summary(run, dict(np.load(out/'frames.npz', allow_pickle=True)), reach_task)
+    rec['receipt']['dims'] = sorted(set(rec['receipt']['dims']) | {'kinematic'}, key=DIMS.index)
+    rec['receipt']['kinematic_commit'] = _commit()
+    (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
+    return rec['kinematic']
+
+
+def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dims=DIMS, source=None, object_free=None,
+             reach_task=None):
     """run: directory with motion.npz (canonical Z-up joints). floor: floor height (m, canonical Z) of this motion.
     reference: floor-reference variant (spec.reference_offsets) or {side: {landmark: m}} offsets above the floor.
     method: ergo neutral key (default: the reference variant). prompt: task text (None: object-free).
-    object_free: overrides the text rule (evalkit.sources.object_free)."""
+    object_free: overrides the text rule (evalkit.sources.object_free). reach_task: kinematic.evaluate wrist target."""
     import opensim as osim
     import biomech
     import biomech_sources
@@ -81,6 +99,8 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
         mu = muscle.evaluate(work, t0, t1)
         frames.update(muscle_times=mu['times'], muscle_effort=mu['effort'], muscle_reserve_abs_sum_nm=mu['reserve_abs_sum_nm'])
         summary['muscle'] = mu['summary']
+    if 'kinematic' in dims:
+        summary['kinematic'] = kinematic_summary(run, frames, reach_task)
     np.savez_compressed(out/'frames.npz', **frames)
     receipt = {'run': str(run), 'floor_m': float(floor), 'reference': variant or offsets, 'mass_kg': mass, 'method': method,
                'prompt': prompt, 'dims': list(dims), 'spec': str(SPEC_PATH.relative_to(ROOT)), 'spec_version': SPEC['version'],
