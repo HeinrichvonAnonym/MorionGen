@@ -1,9 +1,9 @@
 {
   "created": "2026-11-07 05:50 UTC+8, before any tool output on the synthetic set was scored (one plumbing run on a control clip with a placeholder reference, not scored)",
   "plan": "plans/20261107_evaluation_chain_meta_plan.md, P2 / P3",
-  "version": "v1-dev",
+  "version": "v1",
   "version_note": "v1-dev until the development-split tuning below is filled in; then version v1 is frozen (commit hash recorded in frozen_commit) and the held-out split is evaluated once. No field changes after the held-out evaluation.",
-  "frozen_commit": null,
+  "frozen_commit": "961da9b",
   "trim_s": 0.5,
   "trim_note": "every dimension scores frames from trim_s after the start to trim_s before the end (Butterworth and double-differentiation edges), as e_rules.trim / ergo_frames",
   "fit": {
@@ -306,5 +306,7 @@
       "reference": "released CHOIS results (res_npz_files/chois) through the same evaluator, for scale only",
       "seed": "R-precision batches from default_rng(crc32(\"evalkit_dist_omomo_r_precision\")) permutations, 20 repeats"
     }
-  }
+  },
+  "frozen_at": "2026-11-07 16:38",
+  "frozen_note": "frozen after the fit -4 dev amendments (residual tau / depth at 0.02 m, muscle descriptive) and before any held-out tool or truth run; the smoke8x5 rows started 16:30 under the label v1-dev with the same parameters"
 }
