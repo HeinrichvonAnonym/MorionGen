@@ -3,7 +3,7 @@
   selfcheck --evaluator E    split half, round trip, perturbation monotone, text match, FID-vs-N -> <out>/<E>/selfcheck.json
   smoke --evaluator E        C0 rows of the 8x5 manifest through the same evaluator -> <out>/<E>/smoke.json
   figure --evaluator E       PCA projection, FID vs perturbation, FID vs N, retrieval -> <out>/<E>/page.png
-Evaluators: t2m (motiogen-motionlcm), tmr_soma (motiogen-kimodo; re-executes itself there with the Kimodo environment).
+Evaluators: t2m and omomo (motiogen-motionlcm), tmr_soma (motiogen-kimodo; re-executes itself there with the Kimodo environment).
 """
 import argparse
 import json
@@ -146,7 +146,70 @@ class TMRAdapter:
         return emb, record
 
 
-ADAPTERS = {'t2m': T2MAdapter, 'tmr_soma': TMRAdapter}
+def chois_native(source):
+    """CHOIS run -> its native evaluation file (raw/chois_results/res_npz_files/<setting>/<sequence>.npz)."""
+    files = sorted((Path(source)/'raw/chois_results/res_npz_files').glob('*/*.npz'))
+    if len(files) != 1:
+        raise ValueError(f'expected one native CHOIS evaluation file, found {len(files)}')
+    return files[0]
+
+
+class OMOMOAdapter:
+    name = 'omomo'
+
+    def __init__(self):
+        self.ev = D.OMOMO()
+        self.files, self.jpos, self.tokens = self.ev.ground_truth()
+
+    def fid(self, a, b):
+        return self.ev.fid(a, b)
+
+    def info(self):
+        rel = lambda p: str(p.relative_to(D.DATA))
+        return {'checkpoint': rel(D.CHOIS_CHECKPOINT), 'epoch': self.ev.epoch, 'ground_truth_files': rel(D.CHOIS_RELATED/'res_npz_files/gt'),
+                'official_chois_reference': self.official()}
+
+    def official(self):
+        """Released CHOIS results (res_npz_files/chois, same test windows) through this evaluator, for scale only."""
+        files = sorted((D.CHOIS_RELATED/'res_npz_files/chois').glob('*.npz'))
+        loaded = [self.ev.load(f) for f in files]
+        emb = self.ev.embed_motions([j for j, _ in loaded]); text = self.ev.embed_texts([self.ev.tokens(s) for _, s in loaded])
+        gt = self.ev.embed_motions(self.jpos)
+        return {'samples': len(files), 'fid_vs_ground_truth': self.ev.fid(emb, gt), **self.ev.text_metrics(text, emb),
+                'diversity': D.diversity(emb)}
+
+    def ground_truth(self):
+        return self.ev.embed_motions(self.jpos), self.ev.embed_texts(self.tokens)
+
+    def text_metrics(self, text, motion):
+        return self.ev.text_metrics(text, motion)
+
+    def real(self, gt, text):
+        return {**self.ev.text_metrics(text, gt), 'diversity': D.diversity(gt)}
+
+    def perturbed(self, index, r):
+        ev = self.ev
+        joints = [self.jpos[i] for i in index]
+        emb = {'original': ev.embed_motions(joints), 'roundtrip_native_reencode': ev.embed_motions([ev.load(self.files[i])[0] for i in index])}
+        for kind, level, label in levels(): emb[label] = ev.embed_motions([perturb(j, kind, level, r) for j in joints])
+        return emb, {'input': 'native global_jpos files (no conversion); round trip = reload and re-encode'}
+
+    def smoke(self, rows):
+        ev, record, jpos, text = self.ev, [], [], []
+        for r in rows:
+            f = chois_native(r['source']); j, seq = ev.load(f)
+            z = np.load(motion_file(r['source']), allow_pickle=True)
+            jpos.append(j); text.append(ev.tokens(seq))
+            record.append({'id': r['id'], 'method': r['method'], 'sequence': seq, 'native_file': f.parent.name, 'frames': len(j),
+                           'finite': bool(np.isfinite(j).all()), 'prompt': sources.prompt(r['source']),
+                           'native_vs_motion_npz_shape': [list(j.shape), list(z['joints'].shape)]})
+        emb = ev.embed_motions(jpos)
+        for rec, t, e in zip(record, ev.embed_texts(text), emb):
+            rec['matching_distance'] = float(np.linalg.norm(t-e))
+        return emb, record
+
+
+ADAPTERS = {'t2m': T2MAdapter, 'tmr_soma': TMRAdapter, 'omomo': OMOMOAdapter}
 
 
 def selfcheck(adapter, out):
@@ -155,37 +218,50 @@ def selfcheck(adapter, out):
     n = len(gt)
     halves = [D.rng(f'evalkit_dist_{name}_split_{s}').permutation(n) for s in range(5)]
     split = [adapter.fid(gt[p[:n//2]], gt[p[n//2:]]) for p in halves]
-    a, b = halves[0][:n//2], halves[0][n//2:]
+    full = not np.isfinite(split).any()
+    a, b = (np.arange(n), np.arange(n)) if full else (halves[0][:n//2], halves[0][n//2:])
     matched = adapter.text_metrics(text, gt)
     shuffled = adapter.text_metrics(text[D.rng(f'evalkit_dist_{name}_text_shuffle').permutation(n)], gt)
     emb, extra = adapter.perturbed(a, D.rng(f'evalkit_dist_{name}_perturb'))
     ref = gt[b]
     curve = {k: adapter.fid(v, ref) for k, v in emb.items()}
-    rn = D.rng(f'evalkit_dist_{name}_n_bias')
-    sizes = [N for N in N_LIST if N <= len(a)]
-    bias = {lab: {str(N): [adapter.fid(x[rn.choice(len(x), N, replace=False)], ref) for _ in range(REPEATS)] for N in sizes}
-            for lab, x in (('ground_truth', emb['original']), ('noise_0.02', emb['noise_0.02']), ('noise_0.05', emb['noise_0.05']))}
-    defined = lambda N: all(np.isfinite(bias[k][str(N)]).all() for k in bias)
-    min_n = next((N for N in sizes if defined(N) and np.percentile(bias['ground_truth'][str(N)], 95) < np.percentile(bias['noise_0.02'][str(N)], 5)), None)
     noise = [curve['original']] + [curve[f'noise_{s}'] for s in NOISE_M]
     shuffle = [curve['original']] + [curve[f'shuffle_{p}'] for p in SHUFFLE]
     roundtrip = next(k for k in emb if k.startswith('roundtrip'))
     drift = adapter.fid(emb[roundtrip], emb['original'])
+    rn = D.rng(f'evalkit_dist_{name}_n_bias')
+    sizes = [N for N in N_LIST if N < len(a)] + ([len(a)] if full else [])
+    bias = {lab: {str(N): [adapter.fid(x[rn.choice(len(x), N, replace=False)], ref) for _ in range(REPEATS)] for N in sizes}
+            for lab, x in (('ground_truth', emb['original']), ('noise_0.02', emb['noise_0.02']), ('noise_0.05', emb['noise_0.05']))}
+    defined = lambda N: all(np.isfinite(bias[k][str(N)]).all() for k in bias)
+    min_n = next((N for N in sizes if defined(N) and np.percentile(bias['ground_truth'][str(N)], 95) < np.percentile(bias['noise_0.02'][str(N)], 5)), None)
+    nb = {'n': sizes, 'repeats': REPEATS, 'fid': bias, 'min_n_rule': 'p95 ground truth < p5 noise 0.02 m (约定，未经推演)',
+          'undefined_n': [N for N in sizes if not defined(N)], 'min_n': min_n}
+    if full:
+        nb['reference'] = 'full test set (draws are subsets of it, so the ground-truth curve is biased low)'
+        reencode = float(np.abs(emb[roundtrip]-emb['original']).max())
+        rt = {'kind': roundtrip, 'fid_to_original': drift, 'embedding_max_abs_diff': reencode, **extra, 'pass': reencode == 0.,
+              'rule': 'full-set mode: identical embeddings on re-encode (no conversion between the native file and the evaluator)'}
+    else:
+        rt = {'kind': roundtrip, 'fid_to_reference_half': curve[roundtrip], 'fid_original_half_vs_half': curve['original'],
+              'fid_to_original': drift, **extra, 'pass': bool(drift < min(split)),
+              'rule': 'FID(round trip, original) below the smallest split-half FID (约定，未经推演; set after the t2m trial)'}
     result = {
-        'evaluator': name, **adapter.info(), 'ground_truth': n, 'real': adapter.real(gt, text),
+        'evaluator': name, **adapter.info(), 'ground_truth': n, 'real': adapter.real(gt, text), 'mode': 'full_set' if full else 'split_half',
         'checks': {
-            'split_half_fid': {'values': split, 'max': max(split)},
-            'round_trip': {'kind': roundtrip, 'fid_to_reference_half': curve[roundtrip], 'fid_original_half_vs_half': curve['original'],
-                           'fid_to_original': drift, **extra, 'pass': bool(drift < min(split)),
-                           'rule': 'FID(round trip, original) below the smallest split-half FID (约定，未经推演; set after the t2m trial)'},
+            'split_half_fid': {'values': split, 'max': max(split), 'defined': not full},
+            'round_trip': rt,
             'perturbation_monotone': {'fid': curve, 'noise_monotone': bool(np.all(np.diff(noise) > 0)),
                                       'shuffle_monotone': bool(np.all(np.diff(shuffle) > 0)),
-                                      'pass': bool(np.all(np.diff(noise) > 0) and np.all(np.diff(shuffle) > 0))},
+                                      'pass': bool(np.all(np.diff(noise) > 0) and np.all(np.diff(shuffle) > 0)),
+                                      'undefined_levels': [k for k, v in curve.items() if not np.isfinite(v)],
+                                      'monotone_on_defined_levels': bool(all(np.all(np.diff([v for v in c if np.isfinite(v)]) > 0)
+                                                                             for c in (noise, shuffle)))},
             'text_match': {'matched': matched, 'shuffled': shuffled, 'chance_batch32': [1/32, 2/32, 3/32],
                            'pass': bool(matched['top3'] > 3*shuffled['top3'])},
-            'n_bias': {'n': sizes, 'repeats': REPEATS, 'fid': bias, 'min_n_rule': 'p95 ground truth < p5 noise 0.02 m (约定，未经推演)',
-                       'undefined_n': [N for N in sizes if not defined(N)], 'min_n': min_n}},
-        'scope': 'ground truth only; perturbed sets come from half A, the reference is half B'}
+            'n_bias': nb},
+        'scope': 'ground truth only; ' + ('full-set mode: perturbed sets and the reference are the whole test set' if full
+                                          else 'perturbed sets come from half A, the reference is half B')}
     (out/name).mkdir(parents=True, exist_ok=True)
     np.savez_compressed(out/name/'embeddings.npz', ground_truth=gt, text=text, half_a=a, half_b=b,
                         **{f'perturbed_{k}': v for k, v in emb.items()})
@@ -233,19 +309,23 @@ def figure(name, out):
                              label=f"{m}{'' if native else ' (non-native)'} C0 x{len(i)}")
     ax[0, 0].set_title('Evaluator embedding, PCA fit on ground truth'); ax[0, 0].legend(fontsize=8)
     c = check['checks']['perturbation_monotone']['fid']
-    ax[0, 1].plot([0, *NOISE_M], [c['original']]+[c[f'noise_{s}'] for s in NOISE_M], 'o-', label='joint noise sigma (m)')
-    ax[0, 1].plot([0, *SHUFFLE], [c['original']]+[c[f'shuffle_{p}'] for p in SHUFFLE], 's-', label='frame shuffle fraction')
+    shown = lambda keys: np.clip([c[k] for k in keys], 1e-6, None)
+    ax[0, 1].plot([0, *NOISE_M], shown(['original']+[f'noise_{s}' for s in NOISE_M]), 'o-', label='joint noise sigma (m)')
+    ax[0, 1].plot([0, *SHUFFLE], shown(['original']+[f'shuffle_{p}' for p in SHUFFLE]), 's-', label='frame shuffle fraction')
     rt = check['checks']['round_trip']
-    ax[0, 1].axhline(rt['fid_to_reference_half'], ls=':', c='k', label=f"{rt['kind']} {rt['fid_to_reference_half']:.3g}")
+    rt_fid = rt.get('fid_to_reference_half', rt['fid_to_original'])
+    ax[0, 1].axhline(max(rt_fid, 1e-6), ls=':', c='k', label=f"{rt['kind']} {rt_fid:.3g}")
     ax[0, 1].set_yscale('log'); ax[0, 1].set_xlabel('perturbation level'); ax[0, 1].set_ylabel('FID vs reference half')
     ax[0, 1].set_title('FID rises with perturbation (level 0 = unperturbed half A)'); ax[0, 1].legend(fontsize=8)
     b = check['checks']['n_bias']
     for lab, col in (('ground_truth', 'k'), ('noise_0.02', 'tab:orange'), ('noise_0.05', 'tab:red')):
-        v = np.array([b['fid'][lab][str(N)] for N in b['n']])
+        v = np.clip(np.array([b['fid'][lab][str(N)] for N in b['n']]), 1e-6, None)
         ax[1, 0].plot(b['n'], np.nanmedian(v, 1), 'o-', c=col, label=lab)
         ax[1, 0].fill_between(b['n'], np.nanpercentile(v, 5, 1), np.nanpercentile(v, 95, 1), color=col, alpha=.2)
     if b['min_n']: ax[1, 0].axvline(b['min_n'], ls='--', c='g', label=f"min N = {b['min_n']} (convention)")
-    ax[1, 0].set_xscale('log'); ax[1, 0].set_yscale('log'); ax[1, 0].set_xlabel('N samples'); ax[1, 0].set_ylabel('FID vs reference half')
+    if b['undefined_n']: ax[1, 0].plot([], [], ' ', label=f"official FID undefined at N = {b['undefined_n']}")
+    ax[1, 0].set_xscale('log'); ax[1, 0].set_yscale('log'); ax[1, 0].set_xlabel('N samples')
+    ax[1, 0].set_ylabel('FID vs ' + ('full test set' if 'reference' in b else 'reference half'))
     ax[1, 0].set_title(f"FID bias vs sample size (5-95% band, {b['repeats']} draws)"); ax[1, 0].legend(fontsize=8)
     t = check['checks']['text_match']
     bars = [('matched', [t['matched'][f'top{i}'] for i in (1, 2, 3)]), ('shuffled text', [t['shuffled'][f'top{i}'] for i in (1, 2, 3)])]

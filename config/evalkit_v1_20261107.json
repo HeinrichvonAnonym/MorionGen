@@ -258,7 +258,21 @@
         "evaluator": "t2m",
         "change": "R-precision batches are drawn from a seeded permutation (20 repeats) as in the official shuffled DataLoader",
         "reason": "t2m_test.npy is sorted by length; consecutive batches gave top-1 0.398 vs the published 0.511, shuffled batches give 0.512 (trial before the registered run)"
+      },
+      {
+        "when": "2026-11-07 13:52",
+        "evaluator": "omomo",
+        "change": "R-precision batches of 32 from seeded permutations (20 repeats) instead of the official unshuffled os.listdir order",
+        "reason": "same rule as the t2m amendment; listdir order is filesystem-dependent. Recorded before the first omomo run."
       }
-    ]
+    ],
+    "omomo": {
+      "evaluator": "CHOIS t2m_eval text_motion_features finest.tar (OMOMO-trained, 72-d = 24 joints x 3, unit length 4, tokens <= 30)",
+      "ground_truth": "released res_npz_files/gt (480 test windows of 120 frames, global_jpos), archive sha256 matches the source receipt",
+      "text": "caption tokens of the sequence annotation (omomo_text_anno_txt_data, pre-tagged), as the official loader; the generated rows use the annotation of their native sequence, not our prompt text",
+      "input": "native CHOIS evaluation files (raw/chois_results/res_npz_files/<setting>/<sequence>.npz), no conversion; round trip = reload and re-encode",
+      "reference": "released CHOIS results (res_npz_files/chois) through the same evaluator, for scale only",
+      "seed": "R-precision batches from default_rng(crc32(\"evalkit_dist_omomo_r_precision\")) permutations, 20 repeats"
+    }
   }
 }

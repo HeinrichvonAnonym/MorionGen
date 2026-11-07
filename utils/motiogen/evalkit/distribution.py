@@ -173,6 +173,100 @@ class T2M:
         return np.stack([np.stack([np.interp(u, t, x[:, j, k]) for k in range(3)], -1) for j in range(22)], 1)
 
 
+CHOIS_EVAL = BASELINES/'chois_release/t2m_eval'
+CHOIS_RELATED = ASSETS/'chois/evaluators/chois_eval_related'
+CHOIS_CHECKPOINT = ASSETS/'chois/evaluators/checkpoints/omomo/text_motion_features/model/finest.tar'
+
+
+class OMOMO:
+    """CHOIS text-motion evaluator trained on OMOMO (t2m_eval/final_evaluations.py): 24 global joint positions
+    (CHOIS res_npz global_jpos) normalised by t2m_mean_std_jpos, captions of the sequence annotation."""
+    UNIT, MAX_TOKENS = 4, 30
+
+    def __init__(self, device=None):
+        sys.path.insert(0, str(CHOIS_EVAL))
+        import joblib
+        import torch
+        from networks.modules import MotionEncoderBiGRUCo, MovementConvEncoder, TextEncoderBiGRUCo
+        from utils import metrics
+        from utils.word_vectorizer import POS_enumerator, WordVectorizer
+        self.torch, self.metrics = torch, metrics
+        self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
+        state = torch.load(CHOIS_CHECKPOINT, map_location='cpu', weights_only=False)
+        self.text_net = TextEncoderBiGRUCo(300, len(POS_enumerator), 512, 512, self.device)
+        self.movement_net = MovementConvEncoder(72, 512, 512)
+        self.motion_net = MotionEncoderBiGRUCo(512, 1024, 512, self.device)
+        for net, key in ((self.text_net, 'text_encoder'), (self.movement_net, 'movement_encoder'), (self.motion_net, 'motion_encoder')):
+            net.load_state_dict(state[key]); net.to(self.device).eval()
+        self.epoch = int(state['epoch'])
+        norm = joblib.load(CHOIS_RELATED/'t2m_mean_std_jpos.p')
+        self.mean, self.std = np.asarray(norm['jpos_mean'], np.float32), np.asarray(norm['jpos_std'], np.float32)
+        self.words = WordVectorizer(str(CHOIS_RELATED/'glove_840B'), 'our_vab')
+
+    @staticmethod
+    def load(path):
+        z = np.load(path)
+        return np.asarray(z['global_jpos'], np.float32), str(z['seq_name'])
+
+    @staticmethod
+    def tokens(seq_name):
+        """Caption tokens of the sequence (last line of its annotation file, as the official loader)."""
+        lines = (CHOIS_RELATED/'omomo_text_anno_txt_data'/f'{seq_name}.txt').read_text().strip().splitlines()
+        return lines[-1].split('#')[1].split(' ')
+
+    def ground_truth(self):
+        files = sorted((CHOIS_RELATED/'res_npz_files/gt').glob('*.npz'))
+        return files, [self.load(f)[0] for f in files], [self.tokens(self.load(f)[1]) for f in files]
+
+    def embed_motions(self, jpos, batch=256):
+        torch, out = self.torch, []
+        for i in range(0, len(jpos), batch):
+            chunk = jpos[i:i+batch]; lens = np.array([len(j) for j in chunk])
+            x = np.zeros((len(chunk), lens.max(), 72), np.float32)
+            for k, j in enumerate(chunk): x[k, :len(j)] = (np.reshape(j, (len(j), 72))-self.mean)/self.std
+            order = np.argsort(-lens, kind='stable')
+            with torch.no_grad():
+                moved = self.movement_net(torch.from_numpy(x[order]).to(self.device))
+                em = self.motion_net(moved, torch.from_numpy(lens[order]//self.UNIT)).cpu().numpy()
+            out.append(em[np.argsort(order)])
+        return np.concatenate(out)
+
+    def embed_texts(self, token_lists, batch=256):
+        torch, out = self.torch, []
+        for i in range(0, len(token_lists), batch):
+            words, pos, lens = [], [], []
+            for tokens in token_lists[i:i+batch]:
+                t = ['sos/OTHER'] + list(tokens)[:self.MAX_TOKENS] + ['eos/OTHER']
+                lens.append(len(t)); t += ['unk/OTHER']*(self.MAX_TOKENS+2-len(t))
+                w, p = zip(*(self.words[x] for x in t)); words.append(w); pos.append(p)
+            lens = np.array(lens); order = np.argsort(-lens, kind='stable')
+            with torch.no_grad():
+                em = self.text_net(torch.tensor(np.array(words)[order], dtype=torch.float32, device=self.device),
+                                   torch.tensor(np.array(pos)[order], dtype=torch.float32, device=self.device),
+                                   torch.from_numpy(lens[order])).cpu().numpy()
+            out.append(em[np.argsort(order)])
+        return np.concatenate(out)
+
+    def fid(self, a, b):
+        m = self.metrics
+        try:
+            return float(m.calculate_frechet_distance(*m.calculate_activation_statistics(a), *m.calculate_activation_statistics(b)))
+        except ValueError:  # official sqrtm check on a singular small-N covariance product
+            return float('nan')
+
+    def text_metrics(self, text, motion, batch=32, repeats=20, key='evalkit_dist_omomo_r_precision'):
+        """Official matching score and R-precision (batches of 32, drop last) on seeded shuffled batches, mean of repeats."""
+        m, r, n = self.metrics, rng(key), len(text)//batch*batch
+        top, match = np.zeros(3), 0.
+        for _ in range(repeats):
+            order = r.permutation(len(text))[:n]
+            for i in range(0, n, batch):
+                d = m.euclidean_distance_matrix(text[order[i:i+batch]], motion[order[i:i+batch]])
+                match += np.trace(d); top += m.calculate_top_k(np.argsort(d, axis=1), top_k=3).sum(0)
+        n_all = n*repeats
+        return {'top1': top[0]/n_all, 'top2': top[1]/n_all, 'top3': top[2]/n_all, 'matching': match/n_all, 'samples': n}
+
+
 KIMODO_CASES = DATA/'benchmarks/kimodo-stratified-20261008/generated_raw'
 
 
