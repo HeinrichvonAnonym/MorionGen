@@ -21,21 +21,22 @@
   },
   "floor": {
     "input": "floor height (m, canonical Z) is an explicit input of every evaluation; contact and GRF points use it",
-    "method_references": "config/e_v2_floor_reference_20261106.json",
+    "method_references": "config/evalkit_floor_reference_20261107.json",
     "reference_definition": "per floor-reference variant, the flat-foot heights of the heel (calcn origin) and toe (toes origin) landmarks of the scaled model above the method's own floor (reference_m - world_floor_m of the E v2 config); absolute reference = input floor + offset",
     "calibrated": {
       "synthetic": {
         "r": {
-          "heel": 0.010239549049421676,
-          "toe": 0.009037700944530921
+          "heel": 0.010064897592346883,
+          "toe": 0.008235019801110775
         },
         "l": {
-          "heel": 0.012420704757211853,
-          "toe": 0.011421096716773188
+          "heel": 0.012053884948764568,
+          "toe": 0.009016786335394975
         }
       }
     },
-    "calibrated_note": "synthetic: median over the development-split clips whose defect leaves the feet at their truth heights (control, lean_deg, time_compression, bone_stretch, slide_m_s) of (tool landmark height - floor_height_m) in frames where both landmarks of the foot are in truth contact. Amended before any scoring: calibrations on the stand controls (2 clips) and on all controls (18 clips) both gave a left heel / toe asymmetry (0.034 / 0.006 and 0.032 / 0.001 m against right 0.024 / 0.025) because the export seed subject*1000+defect_index gave every control of a subject the same landmark-offset draw (2 draws in total; both raise the left ankle); the export seed is now crc32 of the clip id (config/evalkit_synth_20261107.json)"
+    "calibrated_note": "synthetic: median over the development-split clips whose defect leaves the feet at their truth heights (control, lean_deg, time_compression, bone_stretch, slide_m_s) of (tool landmark height - floor_height_m) in frames where both landmarks of the foot are in truth contact. Amended before any scoring: calibrations on the stand controls (2 clips) and on all controls (18 clips) both gave a left heel / toe asymmetry (0.034 / 0.006 and 0.032 / 0.001 m against right 0.024 / 0.025) because the export seed subject*1000+defect_index gave every control of a subject the same landmark-offset draw (2 draws in total; both raise the left ankle); the export seed is now crc32 of the clip id (config/evalkit_synth_20261107.json)",
+    "method_references_note": "2026-11-07 11:57 with the fit amendment: per-method references re-measured through evalkit.fit on the same e_v2 standing poses (python/scripts/evalkit_floor_refs.py); heel -2 to -6 mm, toe +1.2 to +2.2 cm (SMPL-family) / -0.5 to -1.9 cm (ARDY, Kimodo rigs) against e_v2; the e_v2 values are kept in the file (e_v2_reference_m)"
   },
   "residual": {
     "contact_margin_m": 0.03,
@@ -125,22 +126,22 @@
     "reference_iqr_m": {
       "r": {
         "heel": [
-          0.002086133199853818,
-          0.018797267188822284
+          0.003111499964800174,
+          0.017618037917028997
         ],
         "toe": [
-          0.003851363293168597,
-          0.01636553247605542
+          0.00021728966028653623,
+          0.015619358920149568
         ]
       },
       "l": {
         "heel": [
-          0.005536742041406244,
-          0.01975658366309055
+          0.005195491583107087,
+          0.018512757948036154
         ],
         "toe": [
-          0.0037038665841794896,
-          0.017564789566992048
+          0.0006870393690543777,
+          0.016576973697604004
         ]
       }
     },

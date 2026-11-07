@@ -1,0 +1,1851 @@
+{
+ "created": "2026-11-07 11:57",
+ "definition": "reference_m[side][landmark]: median height of the landmark (heel = calcn origin, toe = toes origin) over the scored frames of a 3 s hold of the method's flat-foot standing pose (the e_v2 poses, that side's foot on the method's floor), through evalkit.fit (upright calibration, feet levelled on the floor); world_floor_m as in e_v2",
+ "scripts": [
+  "python/scripts/e_v2_floor_poses.py",
+  "python/scripts/evalkit_floor_refs.py"
+ ],
+ "poses": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/outputs/e_v2_20261106/floor_audit/poses",
+ "methods": {
+  "ardy": {
+   "world_floor_m": 0.0,
+   "pose": {
+    "l": "ardy@l",
+    "r": "ardy@r"
+   },
+   "body": "cskel27 bind skeleton (skin_standard.npz)",
+   "convention": "mesh sole at z=0: raw output follows the training floor (bind skin flat on y=0)",
+   "placement": {
+    "l": {
+     "placement_rule": "mesh",
+     "placement_value_m": 0.0,
+     "shift_m": 0.0013492627441883088
+    },
+    "r": {
+     "placement_rule": "mesh",
+     "placement_value_m": 0.0,
+     "shift_m": 0.0013492627441883088
+    }
+   },
+   "source_ankle_minus_foot_m": {
+    "r": 0.05847506783902645,
+    "l": 0.05847507622092962
+   },
+   "method": "ardy",
+   "scope": "raw output (correction=0)",
+   "confidence": "medium: convention from the training data floor; raw toe base in its lowest 10% of frames 0.013-0.018 m vs 0.0152 m bind",
+   "reference_m": {
+    "l": {
+     "heel": 0.014836262308579429,
+     "toe": 0.012124966292852687
+    },
+    "r": {
+     "heel": 0.014851908335704947,
+     "toe": 0.012127746371058524
+    }
+   },
+   "fit": {
+    "l": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 0.012725349650574064
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 0.010201259031074572
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.012831856444444442,
+      "rms_p95_m": 0.012854721,
+      "max_m": 0.02419834
+     }
+    },
+    "r": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 0.012725349650574064
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 0.010201259031074572
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.012831856444444442,
+      "rms_p95_m": 0.012854721,
+      "max_m": 0.02419834
+     }
+    }
+   },
+   "e_v2_reference_m": {
+    "l": {
+     "heel": 0.016339293903922948,
+     "toe": 0.016903303962179102
+    },
+    "r": {
+     "heel": 0.016359362653084263,
+     "toe": 0.016903156424156976
+    }
+   }
+  },
+  "ardy__correction": {
+   "world_floor_m": 0.0,
+   "pose": {
+    "l": "ardy__correction@l",
+    "r": "ardy__correction@r"
+   },
+   "body": "cskel27 bind skeleton (skin_standard.npz)",
+   "convention": "correction=1: contact frames pin the toe base at the rig height 0.007 m (ardy postprocess.py:117,156-161; BindingsPython.cpp:194-203; Utility.cpp:841-852)",
+   "placement": {
+    "l": {
+     "placement_rule": "toe",
+     "placement_value_m": 0.007,
+     "shift_m": -0.008209116972982884
+    },
+    "r": {
+     "placement_rule": "toe",
+     "placement_value_m": 0.007,
+     "shift_m": -0.008209125354886056
+    }
+   },
+   "source_ankle_minus_foot_m": {
+    "r": 0.05847506783902646,
+    "l": 0.05847507622092963
+   },
+   "method": "ardy",
+   "scope": "correction=1 (with or without write-back: the emitted motion is the corrected one, ardy_native.py:313-320)",
+   "confidence": "high: enforced by the correction",
+   "reference_m": {
+    "l": {
+     "heel": 0.005272816422704489,
+     "toe": 0.0025700480759648587
+    },
+    "r": {
+     "heel": 0.005268927524893274,
+     "toe": 0.002589463688172047
+    }
+   },
+   "fit": {
+    "l": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 0.012308542581252732
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 0.010798929239565401
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.012811942555555553,
+      "rms_p95_m": 0.012829997999999999,
+      "max_m": 0.02420947
+     }
+    },
+    "r": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 0.02172190057715574
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 0.015234450299752789
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.012817431777777779,
+      "rms_p95_m": 0.012835973,
+      "max_m": 0.02426744
+     }
+    }
+   },
+   "e_v2_reference_m": {
+    "l": {
+     "heel": 0.006789669880511058,
+     "toe": 0.007342059554008163
+    },
+    "r": {
+     "heel": 0.006792347284729074,
+     "toe": 0.007341822268990505
+    }
+   }
+  },
+  "kimodo": {
+   "world_floor_m": 0.0,
+   "pose": {
+    "l": "kimodo@l",
+    "r": "kimodo@r"
+   },
+   "body": "somaskel77 bind skeleton (skin_standard.npz)",
+   "convention": "mesh sole at z=0: raw output and benchmark ground truth keep the BVH floor",
+   "placement": {
+    "l": {
+     "placement_rule": "mesh",
+     "placement_value_m": 0.0,
+     "shift_m": 0.0026277515292167665
+    },
+    "r": {
+     "placement_rule": "mesh",
+     "placement_value_m": 0.0,
+     "shift_m": 0.002460450530052185
+    }
+   },
+   "source_ankle_minus_foot_m": {
+    "r": 0.051857735961675644,
+    "l": 0.051949162036180496
+   },
+   "method": "kimodo",
+   "scope": "raw output (post_processing=False)",
+   "confidence": "high: bind mesh flat on y=0; ground truth toe base 0.013-0.026 m",
+   "reference_m": {
+    "l": {
+     "heel": 0.020265616046811444,
+     "toe": 0.004354082819694068
+    },
+    "r": {
+     "heel": 0.02008666159565885,
+     "toe": 0.004212509986415033
+    }
+   },
+   "fit": {
+    "l": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 4.901018401200687
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 4.889797255387707
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.02358651844444444,
+      "rms_p95_m": 0.023619424,
+      "max_m": 0.06712388
+     }
+    },
+    "r": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 4.90171387830958
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 4.889836548596178
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.023586353999999997,
+      "rms_p95_m": 0.0236246745,
+      "max_m": 0.06720863
+     }
+    }
+   },
+   "e_v2_reference_m": {
+    "l": {
+     "heel": 0.024758740125725393,
+     "toe": 0.02352437094891001
+    },
+    "r": {
+     "heel": 0.024538020598153132,
+     "toe": 0.02336159603587198
+    }
+   }
+  },
+  "kimodo__postprocess": {
+   "world_floor_m": 0.0,
+   "pose": {
+    "l": "kimodo__postprocess@l",
+    "r": "kimodo__postprocess@r"
+   },
+   "body": "somaskel77 bind skeleton (skin_standard.npz)",
+   "convention": "post-processing: above_ground_offset 0.02 for SOMA skeletons (kimodo/postprocess.py:276); post-processed toe base observed at 0.0202 m",
+   "placement": {
+    "l": {
+     "placement_rule": "toe",
+     "placement_value_m": 0.02,
+     "shift_m": -0.0009857560694217678
+    },
+    "r": {
+     "placement_rule": "toe",
+     "placement_value_m": 0.02,
+     "shift_m": -0.0009285877645015712
+    }
+   },
+   "source_ankle_minus_foot_m": {
+    "r": 0.051857735961675644,
+    "l": 0.051949162036180496
+   },
+   "method": "kimodo",
+   "scope": "post_processing=True",
+   "confidence": "high: enforced; observed toe base 0.0202 m",
+   "reference_m": {
+    "l": {
+     "heel": 0.016653342004626235,
+     "toe": 0.0007341650200628422
+    },
+    "r": {
+     "heel": 0.016672618388741286,
+     "toe": 0.000791624127492634
+    }
+   },
+   "fit": {
+    "l": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 4.900327056631936
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 4.890626928388001
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.023598401444444445,
+      "rms_p95_m": 0.023635569,
+      "max_m": 0.06721256
+     }
+    },
+    "r": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 4.900185469053335
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 4.8915110945315545
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.023586522666666672,
+      "rms_p95_m": 0.023621569,
+      "max_m": 0.06710967
+     }
+    }
+   },
+   "e_v2_reference_m": {
+    "l": {
+     "heel": 0.02115014502750239,
+     "toe": 0.019898214691692118
+    },
+    "r": {
+     "heel": 0.021129094909639438,
+     "toe": 0.019995085905021415
+    }
+   }
+  },
+  "primal": {
+   "world_floor_m": 0.0,
+   "pose": {
+    "l": "primal@l",
+    "r": "primal@r"
+   },
+   "body": "SMPL-X neutral, betas 0, zero pose",
+   "convention": "ground snap: lowest of 22 joints at 0.01 m (PRIMAL motion_diffuser.py:533-554, 971-986)",
+   "placement": {
+    "l": {
+     "placement_rule": "toe",
+     "placement_value_m": 0.01,
+     "shift_m": 1.2939810848236084
+    },
+    "r": {
+     "placement_rule": "toe",
+     "placement_value_m": 0.01,
+     "shift_m": 1.2967517471313477
+    }
+   },
+   "source_ankle_minus_foot_m": {
+    "r": 0.05832839012145996,
+    "l": 0.05799722671508789
+   },
+   "method": "primal",
+   "scope": "ground_snap=1 (E4 uses only ground1; ground0 has no floor and is not scored)",
+   "confidence": "high: enforced by the snap",
+   "sensitivity_mesh_sole": {
+    "l": {
+     "heel": 0.04684302066386785,
+     "toe": 0.017429220691820294
+    },
+    "r": {
+     "heel": 0.04712369171020786,
+     "toe": 0.01540297408206327
+    }
+   },
+   "sensitivity_shape_beta0_pm2": {
+    "l_heel": [
+     0.036955503707191584,
+     0.0575650880210119
+    ],
+    "l_toe": [
+     0.01569470219923894,
+     0.019326253993293272
+    ],
+    "r_heel": [
+     0.03822128931319767,
+     0.056133147417711915
+    ],
+    "r_toe": [
+     0.013741548934092296,
+     0.01712186592424533
+    ]
+   },
+   "reference_m": {
+    "l": {
+     "heel": 0.033727733932512355,
+     "toe": 0.028785434372163875
+    },
+    "r": {
+     "heel": 0.036689322947316916,
+     "toe": 0.03126037427335159
+    }
+   },
+   "fit": {
+    "l": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 3.617167400394747
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 2.2709844831442645
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.01626695311111111,
+      "rms_p95_m": 0.0162798665,
+      "max_m": 0.03510185
+     }
+    },
+    "r": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 3.6258504346516283
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 2.2677798101331237
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.016268471555555556,
+      "rms_p95_m": 0.016287496500000002,
+      "max_m": 0.03521601
+     }
+    }
+   },
+   "e_v2_reference_m": {
+    "l": {
+     "heel": 0.03902428697403904,
+     "toe": 0.009567283789648377
+    },
+    "r": {
+     "heel": 0.04203934855871543,
+     "toe": 0.01031466716527622
+    }
+   }
+  },
+  "dart": {
+   "world_floor_m": 0.0,
+   "pose": {
+    "l": "dart@l",
+    "r": "dart@r"
+   },
+   "body": "SMPL-X locked-head male, betas 0, zero pose",
+   "convention": "lowest predicted joint of the reset frame at z=0 (DART control/env/env_reach_location_mld.py:131,144)",
+   "placement": {
+    "l": {
+     "placement_rule": "toe",
+     "placement_value_m": 0.0,
+     "shift_m": 1.340272307395935
+    },
+    "r": {
+     "placement_rule": "toe",
+     "placement_value_m": 0.0,
+     "shift_m": 1.3464106321334839
+    }
+   },
+   "source_ankle_minus_foot_m": {
+    "r": 0.05966973304748535,
+    "l": 0.06073570251464844
+   },
+   "method": "dart",
+   "scope": "all DART runs",
+   "confidence": "high: enforced at reset, kept within 3 cm by the policy reward (env_reach_location_mld.py:365-374)",
+   "sensitivity_mesh_sole": {
+    "l": {
+     "heel": 0.04621308484891769,
+     "toe": 0.017489320317413844
+    },
+    "r": {
+     "heel": 0.04407005553095035,
+     "toe": 0.013397676458396374
+    }
+   },
+   "reference_m": {
+    "l": {
+     "heel": 0.02339485739315131,
+     "toe": 0.01576644397107857
+    },
+    "r": {
+     "heel": 0.02622165546287771,
+     "toe": 0.021165203292192656
+    }
+   },
+   "fit": {
+    "l": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 3.8681789372183593
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 3.0988290944878756
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.018084778,
+      "rms_p95_m": 0.018269075,
+      "max_m": 0.04327235
+     }
+    },
+    "r": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 3.7859540209733256
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 3.1102991873266705
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.018173041444444444,
+      "rms_p95_m": 0.0182843945,
+      "max_m": 0.04320578
+     }
+    }
+   },
+   "e_v2_reference_m": {
+    "l": {
+     "heel": 0.02758255350944442,
+     "toe": -0.0011757449861043677
+    },
+    "r": {
+     "heel": 0.03134773801756283,
+     "toe": 0.000822448392572379
+    }
+   }
+  },
+  "closd": {
+   "world_floor_m": 0.0,
+   "pose": {
+    "l": "closd@l",
+    "r": "closd@r"
+   },
+   "body": "smpl_humanoid_0.xml (fixed shape, box feet), qpos0",
+   "convention": "IsaacGym plane z=0 (humanoid.py:589-599), rest_offset 0; box feet bottoms at z=0",
+   "placement": {
+    "l": {
+     "placement_rule": "geom",
+     "placement_value_m": 0.0,
+     "shift_m": -1.0651000000000002
+    },
+    "r": {
+     "placement_rule": "geom",
+     "placement_value_m": 0.0,
+     "shift_m": -1.0632999999999997
+    }
+   },
+   "source_ankle_minus_foot_m": {
+    "r": 0.04810000000000003,
+    "l": 0.05580000000000007
+   },
+   "method": "closd",
+   "scope": "all CLoSD runs",
+   "confidence": "high: simulator plane; box-foot bottoms",
+   "reference_m": {
+    "l": {
+     "heel": 0.03288604458005888,
+     "toe": 0.026977106071504605
+    },
+    "r": {
+     "heel": 0.030459392434984613,
+     "toe": 0.02856005878152304
+    }
+   },
+   "fit": {
+    "l": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 2.778972881066231
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 2.8937863619011996
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.010402162666666666,
+      "rms_p95_m": 0.010426818,
+      "max_m": 0.02104776
+     }
+    },
+    "r": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 2.739397468594982
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 2.913145186033121
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.010380974222222221,
+      "rms_p95_m": 0.010406043,
+      "max_m": 0.02107884
+     }
+    }
+   },
+   "e_v2_reference_m": {
+    "l": {
+     "heel": 0.03748218343877615,
+     "toe": 0.014148948732246409
+    },
+    "r": {
+     "heel": 0.03248900270177145,
+     "toe": 0.016947807583208956
+    }
+   }
+  },
+  "humanml3d": {
+   "world_floor_m": 0.0,
+   "pose": {
+    "l": "humanml3d@l",
+    "r": "humanml3d@r"
+   },
+   "body": "t2m bone lengths on SMPL neutral rest directions",
+   "convention": "HumanML3D floors each sequence at its lowest joint (motion_process.py:169-179); standing: toe joints at z=0",
+   "placement": {
+    "l": {
+     "placement_rule": "toe",
+     "placement_value_m": 0.0,
+     "shift_m": 1.1863587805526064
+    },
+    "r": {
+     "placement_rule": "toe",
+     "placement_value_m": 0.0,
+     "shift_m": 1.1757175336534078
+    }
+   },
+   "source_ankle_minus_foot_m": {
+    "r": 0.053357474609426525,
+    "l": 0.059562644637868756
+   },
+   "method": "motionlcm, omnicontrol",
+   "scope": "HumanML3D-trained text/control models",
+   "confidence": "MotionLCM high for the convention, medium for outputs (learned, not enforced); OmniControl medium (per-run bone lengths deviate from t2m)",
+   "sensitivity_omnicontrol_foot_length": {
+    "l_heel": [
+     0.03220983135907067,
+     0.037374168947604
+    ],
+    "l_toe": [
+     -0.0001399631895028751,
+     0.0006545150639227469
+    ],
+    "r_heel": [
+     0.01407895856597607,
+     0.017412542219007513
+    ],
+    "r_toe": [
+     -0.0003576860135480137,
+     0.00041057144368155697
+    ]
+   },
+   "reference_m": {
+    "l": {
+     "heel": 0.03015882466878481,
+     "toe": 0.02213363129945374
+    },
+    "r": {
+     "heel": 0.015428700411444691,
+     "toe": 0.012408748938486838
+    }
+   },
+   "fit": {
+    "l": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 2.740250011227945
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 2.8965193142981307
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.016327611,
+      "rms_p95_m": 0.016341682,
+      "max_m": 0.03244287
+     }
+    },
+    "r": {
+     "feet": {
+      "r": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 2.731506167706978
+      },
+      "l": {
+       "registered": true,
+       "planted_frames": 30,
+       "level_residual_deg_max": 2.897597237217484
+      }
+     },
+     "ik_marker_error": {
+      "rms_mean_m": 0.016326420666666668,
+      "rms_p95_m": 0.0163403985,
+      "max_m": 0.03236565
+     }
+    }
+   },
+   "e_v2_reference_m": {
+    "l": {
+     "heel": 0.036368712740009454,
+     "toe": -0.0001399631895028751
+    },
+    "r": {
+     "heel": 0.017412542219007513,
+     "toe": 0.00041057144368155697
+    }
+   }
+  },
+  "chois": {
+   "method": "chois",
+   "scope": "per run, by the CHOIS test window (scenario native_window_index; runs without it ran the default window 0, sub16_clothesstand_000, per their stdout)",
+   "confidence": "high: mesh sole on z=0 in the source windows",
+   "world_floor_m": 0.0,
+   "range_over_windows": {
+    "l_heel": [
+     0.048443749914596004,
+     0.04888955092449371
+    ],
+    "l_toe": [
+     0.017962102944543035,
+     0.01841855908731593
+    ],
+    "r_heel": [
+     0.04600238545474497,
+     0.04615527060837322
+    ],
+    "r_toe": [
+     0.013998604440798985,
+     0.014389365363774952
+    ]
+   },
+   "windows": {
+    "0": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w0@l",
+      "r": "chois_w0@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025641441345215
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025636672973633
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.05642569065093994,
+      "l": 0.05713379383087158
+     },
+     "sequence": "sub16_clothesstand_000",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.04510840381061708,
+       "toe": 0.03647757814470905
+      },
+      "r": {
+       "heel": 0.04312584378909151,
+       "toe": 0.035498576436428994
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.551017453705815
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4057444752154433
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025914797777777783,
+        "rms_p95_m": 0.02643898,
+        "max_m": 0.04981818
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.541046332549754
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4252171518128773
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025856566,
+        "rms_p95_m": 0.0258634565,
+        "max_m": 0.04990662
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.048443749914596004,
+       "toe": 0.017962102944543035
+      },
+      "r": {
+       "heel": 0.04615527060837322,
+       "toe": 0.013998604440798985
+      }
+     }
+    },
+    "30": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w30@l",
+      "r": "chois_w30@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025641441345215
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025636672973633
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.05642569065093994,
+      "l": 0.05713379383087158
+     },
+     "sequence": "sub16_largebox_002",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.045108403810617134,
+       "toe": 0.03647757814470903
+      },
+      "r": {
+       "heel": 0.043125843789091456,
+       "toe": 0.035498576436428994
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.551017453705815
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4057444752154433
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025914797777777783,
+        "rms_p95_m": 0.02643898,
+        "max_m": 0.04981818
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.541046332549754
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4252171518128773
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025856566,
+        "rms_p95_m": 0.0258634565,
+        "max_m": 0.04990662
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.048443749914596004,
+       "toe": 0.017962102944543035
+      },
+      "r": {
+       "heel": 0.04615527060837322,
+       "toe": 0.013998604440798985
+      }
+     }
+    },
+    "80": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w80@l",
+      "r": "chois_w80@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025641441345215
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025636672973633
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.05642569065093994,
+      "l": 0.05713379383087158
+     },
+     "sequence": "sub16_largetable_000",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.045108403810617134,
+       "toe": 0.03647757814470903
+      },
+      "r": {
+       "heel": 0.043125843789091456,
+       "toe": 0.035498576436428994
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.551017453705815
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4057444752154433
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025914797777777783,
+        "rms_p95_m": 0.02643898,
+        "max_m": 0.04981818
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.541046332549754
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4252171518128773
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025856566,
+        "rms_p95_m": 0.0258634565,
+        "max_m": 0.04990662
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.048443749914596004,
+       "toe": 0.017962102944543035
+      },
+      "r": {
+       "heel": 0.04615527060837322,
+       "toe": 0.013998604440798985
+      }
+     }
+    },
+    "120": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w120@l",
+      "r": "chois_w120@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025641441345215
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025636672973633
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.05642569065093994,
+      "l": 0.05713379383087158
+     },
+     "sequence": "sub16_plasticbox_000",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.04510840381061708,
+       "toe": 0.03647757814470905
+      },
+      "r": {
+       "heel": 0.04312584378909151,
+       "toe": 0.035498576436428994
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.551017453705815
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4057444752154433
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025914797777777783,
+        "rms_p95_m": 0.02643898,
+        "max_m": 0.04981818
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.541046332549754
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4252171518128773
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025856566,
+        "rms_p95_m": 0.0258634565,
+        "max_m": 0.04990662
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.048443749914596004,
+       "toe": 0.017962102944543035
+      },
+      "r": {
+       "heel": 0.04615527060837322,
+       "toe": 0.013998604440798985
+      }
+     }
+    },
+    "172": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w172@l",
+      "r": "chois_w172@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025641441345215
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025636672973633
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.05642569065093994,
+      "l": 0.05713379383087158
+     },
+     "sequence": "sub16_trashcan_000",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.04510840381061708,
+       "toe": 0.03647757814470905
+      },
+      "r": {
+       "heel": 0.04312584378909151,
+       "toe": 0.035498576436428994
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.551017453705815
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4057444752154433
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025914797777777783,
+        "rms_p95_m": 0.02643898,
+        "max_m": 0.04981818
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.541046332549754
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4252171518128773
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025856566,
+        "rms_p95_m": 0.0258634565,
+        "max_m": 0.04990662
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.048443749914596004,
+       "toe": 0.017962102944543035
+      },
+      "r": {
+       "heel": 0.04615527060837322,
+       "toe": 0.013998604440798985
+      }
+     }
+    },
+    "213": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w213@l",
+      "r": "chois_w213@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025641441345215
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3025636672973633
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.05642569065093994,
+      "l": 0.05713379383087158
+     },
+     "sequence": "sub16_whitechair_000",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.04510840381061708,
+       "toe": 0.03647757814470905
+      },
+      "r": {
+       "heel": 0.04312584378909151,
+       "toe": 0.035498576436428994
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.551017453705815
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4057444752154433
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025914797777777783,
+        "rms_p95_m": 0.02643898,
+        "max_m": 0.04981818
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.541046332549754
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.4252171518128773
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.025856566,
+        "rms_p95_m": 0.0258634565,
+        "max_m": 0.04990662
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.048443749914596004,
+       "toe": 0.017962102944543035
+      },
+      "r": {
+       "heel": 0.04615527060837322,
+       "toe": 0.013998604440798985
+      }
+     }
+    },
+    "253": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w253@l",
+      "r": "chois_w253@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.305050253868103
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3050508499145508
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.0565180778503418,
+      "l": 0.0572819709777832
+     },
+     "sequence": "sub17_floorlamp_000",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.045823971265646087,
+       "toe": 0.03650831131785255
+      },
+      "r": {
+       "heel": 0.0432452163069712,
+       "toe": 0.035739183733911786
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.4580499835285456
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2857786169945147
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.027110865,
+        "rms_p95_m": 0.0278176595,
+        "max_m": 0.05280141
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.465132488768948
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2806565754269545
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.026980399555555555,
+        "rms_p95_m": 0.0269899855,
+        "max_m": 0.05262523
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.04888955092449371,
+       "toe": 0.01841855908731593
+      },
+      "r": {
+       "heel": 0.04600238545474497,
+       "toe": 0.014389365363774952
+      }
+     }
+    },
+    "274": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w274@l",
+      "r": "chois_w274@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.305050253868103
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3050508499145508
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.0565180778503418,
+      "l": 0.0572819709777832
+     },
+     "sequence": "sub17_monitor_000",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.045823971265646087,
+       "toe": 0.03650831131785255
+      },
+      "r": {
+       "heel": 0.0432452163069712,
+       "toe": 0.035739183733911786
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.4580499835285456
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2857786169945147
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.027110865,
+        "rms_p95_m": 0.0278176595,
+        "max_m": 0.05280141
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.465132488768948
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2806565754269545
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.026980399555555555,
+        "rms_p95_m": 0.0269899855,
+        "max_m": 0.05262523
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.04888955092449371,
+       "toe": 0.01841855908731593
+      },
+      "r": {
+       "heel": 0.04600238545474497,
+       "toe": 0.014389365363774952
+      }
+     }
+    },
+    "307": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w307@l",
+      "r": "chois_w307@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.305050253868103
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3050508499145508
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.0565180778503418,
+      "l": 0.0572819709777832
+     },
+     "sequence": "sub17_smallbox_003",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.04582397126564612,
+       "toe": 0.036508311317852565
+      },
+      "r": {
+       "heel": 0.0432452163069712,
+       "toe": 0.0357391837339118
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.4580499835285456
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2857786169945147
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.027110865,
+        "rms_p95_m": 0.0278176595,
+        "max_m": 0.05280141
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.465132488768948
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2806565754269545
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.026980399555555555,
+        "rms_p95_m": 0.0269899855,
+        "max_m": 0.05262523
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.04888955092449371,
+       "toe": 0.01841855908731593
+      },
+      "r": {
+       "heel": 0.04600238545474497,
+       "toe": 0.014389365363774952
+      }
+     }
+    },
+    "344": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w344@l",
+      "r": "chois_w344@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.305050253868103
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3050508499145508
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.0565180778503418,
+      "l": 0.0572819709777832
+     },
+     "sequence": "sub17_smalltable_005",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.04582397126564612,
+       "toe": 0.036508311317852565
+      },
+      "r": {
+       "heel": 0.0432452163069712,
+       "toe": 0.0357391837339118
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.4580499835285456
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2857786169945147
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.027110865,
+        "rms_p95_m": 0.0278176595,
+        "max_m": 0.05280141
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.465132488768948
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2806565754269545
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.026980399555555555,
+        "rms_p95_m": 0.0269899855,
+        "max_m": 0.05262523
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.04888955092449371,
+       "toe": 0.01841855908731593
+      },
+      "r": {
+       "heel": 0.04600238545474497,
+       "toe": 0.014389365363774952
+      }
+     }
+    },
+    "386": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w386@l",
+      "r": "chois_w386@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.305050253868103
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3050508499145508
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.0565180778503418,
+      "l": 0.0572819709777832
+     },
+     "sequence": "sub17_suitcase_000",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.04582397126564612,
+       "toe": 0.036508311317852565
+      },
+      "r": {
+       "heel": 0.0432452163069712,
+       "toe": 0.0357391837339118
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.4580499835285456
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2857786169945147
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.027110865,
+        "rms_p95_m": 0.0278176595,
+        "max_m": 0.05280141
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.465132488768948
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2806565754269545
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.026980399555555555,
+        "rms_p95_m": 0.0269899855,
+        "max_m": 0.05262523
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.04888955092449371,
+       "toe": 0.01841855908731593
+      },
+      "r": {
+       "heel": 0.04600238545474497,
+       "toe": 0.014389365363774952
+      }
+     }
+    },
+    "411": {
+     "world_floor_m": 0.0,
+     "pose": {
+      "l": "chois_w411@l",
+      "r": "chois_w411@r"
+     },
+     "body": "gendered SMPL-X, window betas, zero pose",
+     "convention": "mesh sole at z=0 (OMOMO world; CHOIS canonicalisation rotates about z and zeroes xy only)",
+     "placement": {
+      "l": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.305050253868103
+      },
+      "r": {
+       "placement_rule": "mesh",
+       "placement_value_m": 0.0,
+       "shift_m": 1.3050508499145508
+      }
+     },
+     "source_ankle_minus_foot_m": {
+      "r": 0.0565180778503418,
+      "l": 0.0572819709777832
+     },
+     "sequence": "sub17_tripod_000",
+     "gender": "male",
+     "reference_m": {
+      "l": {
+       "heel": 0.04582397126564612,
+       "toe": 0.036508311317852565
+      },
+      "r": {
+       "heel": 0.0432452163069712,
+       "toe": 0.0357391837339118
+      }
+     },
+     "fit": {
+      "l": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.4580499835285456
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2857786169945147
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.027110865,
+        "rms_p95_m": 0.0278176595,
+        "max_m": 0.05280141
+       }
+      },
+      "r": {
+       "feet": {
+        "r": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 3.465132488768948
+        },
+        "l": {
+         "registered": true,
+         "planted_frames": 30,
+         "level_residual_deg_max": 2.2806565754269545
+        }
+       },
+       "ik_marker_error": {
+        "rms_mean_m": 0.026980399555555555,
+        "rms_p95_m": 0.0269899855,
+        "max_m": 0.05262523
+       }
+      }
+     },
+     "e_v2_reference_m": {
+      "l": {
+       "heel": 0.04888955092449371,
+       "toe": 0.01841855908731593
+      },
+      "r": {
+       "heel": 0.04600238545474497,
+       "toe": 0.014389365363774952
+      }
+     }
+    }
+   }
+  }
+ },
+ "run_mapping": {
+  "e4": "ardy: condition.correction 0 -> ardy, 1 -> ardy__correction; kimodo: condition.correction 0 -> kimodo, 1 -> kimodo__postprocess; chois: window; primal -> primal (all ground_snap=1); dart, closd; motionlcm and omnicontrol -> humanml3d",
+  "x3": "dart -> dart; kimodo arms C0, T -> kimodo, O, TO -> kimodo__postprocess (run_x3.py:416-437 post flag); omnicontrol -> humanml3d",
+  "m1": "ARDY: run config _intervention.correction 0 -> ardy, 1 -> ardy__correction",
+  "e1": "ARDY: run config _intervention.correction 0 -> ardy, 1 -> ardy__correction (correction_writeback=False still emits the corrected motion)"
+ },
+ "no_floor_reference": {
+  "methods": [],
+  "note": "every scored variant has a determinable floor; PRIMAL ground_snap=0 would not, and is not in any scored set"
+ }
+}
