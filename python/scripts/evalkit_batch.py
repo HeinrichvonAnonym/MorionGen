@@ -36,7 +36,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT/'utils/motiogen'))
 E4_PLAN = ROOT/'develop_logs/test_runs/20261103_e4_cross_method/plan.json'
 # --dry-run only: smoke8x5 median 18.2 wall s per motion s for the three (p90 24.1), split 5:3:6 as timed on the synthetic set
-SECONDS_PER_MOTION_SECOND = {'residual': 6.5, 'ergo': 3.9, 'muscle': 7.8, 'kinematic': 0.}
+SECONDS_PER_MOTION_SECOND = {'residual': 6.5, 'ergo': 3.9, 'muscle': 7.8, 'kinematic': 0., 'upper': 30.}
 
 
 def control_arm(job):
@@ -154,6 +154,10 @@ def offset_references(rows, out_root):
     return {m: {'offset_reference_m': float(np.median(v)), 'rows': len(v)} for m, v in sorted(by.items())}
 
 
+# dimensions an existing evaluation can gain from its saved fit and frames without refitting
+ADDABLE = {'kinematic', 'upper'}
+
+
 def job(task):
     row, out_root, dims, offset_reference = task
     out = Path(out_root)/row['id']
@@ -166,11 +170,15 @@ def job(task):
             old = json.loads((out/'evalkit.json').read_text()).get('batch', {})
             if old == k:
                 return row['id'], 'skip'
-            if old and {**old, 'dims': k['dims']} == k and set(k['dims'])-set(old['dims']) == {'kinematic'}:
-                run.add_kinematic(source, out, row.get('reach_task'))
+            added = set(k['dims'])-set(old.get('dims', ()))
+            if old and {**old, 'dims': k['dims']} == k and set(old['dims']) <= set(k['dims']) and added <= ADDABLE:
+                if 'kinematic' in added:
+                    run.add_kinematic(source, out, row.get('reach_task'))
+                if 'upper' in added:
+                    run.add_upper(source, out)
                 rec = json.loads((out/'evalkit.json').read_text()); rec['batch'] = k
                 (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
-                return row['id'], 'ok_kinematic_added'
+                return row['id'], 'ok_added_' + '_'.join(sorted(added))
         run.evaluate(source, out, floor, ref, row.get('mass_kg', 75.), method=row['method'], dims=dims, object_free=free,
                      reach_task=row.get('reach_task'), offset_reference=offset_reference)
         rec = json.loads((out/'evalkit.json').read_text())
@@ -276,17 +284,35 @@ def manifest_self_floor(args):
     print(f'{len(rows)} rows -> {args.out}')
 
 
-def upper_body(d, e):
-    """Descriptive lumbar / shoulder moments (config/evalkit_upper_body_20261107.json); read from the row's static
-    optimization when the row predates them."""
-    from evalkit import muscle
-    keys = [f'{p}_moment_nm_kg_{s}' for p in muscle.UPPER_BODY for s in ('mean', 'p95')]
-    if all(k in e['muscle'] for k in keys):
-        return {f'muscle_{k}': e['muscle'][k] for k in keys}
+def net_moments(d, e):
+    """Net joint moments of the torque-driven Rajagopal trunk and arms (config/evalkit_upper_body_20261107.json, renamed
+    by config/evalkit_upper_muscle_20261108.json: no trunk, neck or shoulder muscles, so not a load); read under the
+    pre-rename keys or from the row's static optimization when the row predates them."""
+    from evalkit import muscle, run
+    new = [f'net_moment_{p}_nm_kg_{s}' for p in muscle.UPPER_BODY for s in ('mean', 'p95')]
+    if all(k in e['muscle'] for k in new):
+        return {k: e['muscle'][k] for k in new}
+    if all(f'{p}_moment_nm_kg_{s}' in e['muscle'] for p in muscle.UPPER_BODY for s in ('mean', 'p95')):
+        return run.net_moments(e['muscle'])
     if not (d/'work/so/so_so_force.sto').exists():
         return {}
-    up = muscle.upper_body(d/'work/so', d/'work/model_so.osim')
-    return {f'muscle_{k}': up[k] for k in keys}
+    return run.net_moments(muscle.upper_body(d/'work/so', d/'work/model_so.osim'))
+
+
+UPPER_METRICS = ('L5_S1_compression_p95_bw', 'L5_S1_compression_mean_bw', 'L5_S1_ap_shear_p95_n', 'L5_S1_over_niosh_fraction',
+                 'type2_fraction', 'type2_external_fraction', 'type2_internal_fraction', 'type2_kinematic_fraction',
+                 'erector_spinae_activation_mean', 'multifidus_activation_mean', 'quadratus_lumborum_activation_mean',
+                 'psoas_activation_mean', 'abdominals_activation_mean', 'latissimus_activation_mean')
+
+
+def upper(e):
+    """Upper-body muscle dimension (config/evalkit_upper_muscle_20261108.json): region statuses and lumbar metrics;
+    the lumbar metrics of type-1 rows are not reported."""
+    u = e['upper']; lumbar = u['lumbar']
+    out = {f'upper_{r}_status': u[r]['status'] for r in ('lumbar', 'neck', 'shoulder')}
+    if lumbar['status'] == 'measured':
+        out.update({f'upper_lumbar_{k}': lumbar['metrics'].get(k) for k in UPPER_METRICS})
+    return out
 
 
 def rows_summary(rows_dir, rows):
@@ -319,7 +345,8 @@ def rows_summary(rows_dir, rows):
                for c in ('unmeasurable', 'certain_risk', 'indeterminate', 'certain_acceptable')},
             **({f'muscle_{k}': e['muscle'][k] for k in ('muscle_effort_sum_a2_mean', 'muscle_activation_peak', 'reserve_rms_nm', 'reserve_peak_nm')}
                if 'muscle' in e else {}),
-            **(upper_body(d, e) if 'muscle' in e else {}),
+            **(net_moments(d, e) if 'muscle' in e else {}),
+            **(upper(e) if 'upper' in e else {}),
             **({'penetration_depth_p95_m': e['kinematic']['floor']['penetration_depth_p95_m'],
                 'hover_height_p95_m': e['kinematic']['floor']['hover_height_p95_m'],
                 'max_slip_m': e['kinematic']['skating']['max_slip_m'], 'jerk_0p1s': e['kinematic']['jerk_0p1s'],
@@ -348,7 +375,8 @@ def check(args):
     OmniControl: left-hand reach floats at the method floor, right-hand reach does not), where one median misleads."""
     rows = json.loads(Path(args.manifest).read_text())['rows']
     per = rows_summary(args.rows, rows)
-    keys = sorted({k for v in per.values() for k in v if k not in ('method', 'unmeasurable_by_third', 'input_sha256', 'prompt')})
+    status = lambda k: k.startswith('upper_') and k.endswith('_status')
+    keys = sorted({k for v in per.values() for k in v if k not in ('method', 'unmeasurable_by_third', 'input_sha256', 'prompt') and not status(k)})
     medians = lambda vs: {k: float(np.median([v[k] for v in vs if v.get(k) is not None])) for k in keys if any(v.get(k) is not None for v in vs)}
     methods = {}
     for m in sorted({v['method'] for v in per.values()}):
@@ -358,7 +386,9 @@ def check(args):
             if v['input_sha256'] is None or v['input_sha256'] not in seen:
                 seen.add(v['input_sha256']); vs.append(v)
         prompts = sorted({v['prompt'] for v in vs if v['prompt']})
-        methods[m] = {'rows': len(allv), 'unique_inputs': len(vs), **medians(vs),
+        statuses = {k: {s: sum(v.get(k) == s for v in vs) for s in sorted({v[k] for v in vs if k in v})}
+                    for k in sorted({k for v in vs for k in v if status(k)})}
+        methods[m] = {'rows': len(allv), 'unique_inputs': len(vs), **medians(vs), **({'upper_status': statuses} if statuses else {}),
                       'unmeasurable_by_third': np.mean([v['unmeasurable_by_third'] for v in vs], 0).tolist(),
                       **({'by_prompt': {p: {'unique_inputs': sum(v['prompt'] == p for v in vs), **medians([v for v in vs if v['prompt'] == p])}
                                         for p in prompts}} if 1 < len(prompts) < len(vs) else {})}
@@ -395,7 +425,8 @@ def main():
     c = sub.add_parser('check'); c.add_argument('--manifest', required=True); c.add_argument('--rows', required=True)
     c.add_argument('--out', required=True); c.add_argument('--shift-manifest'); c.add_argument('--shift-rows')
     r = sub.add_parser('run'); r.add_argument('--manifest', required=True); r.add_argument('--out', required=True)
-    r.add_argument('--dims', default='residual,ergo,muscle,kinematic'); r.add_argument('--workers', type=int, default=6)
+    r.add_argument('--dims', default='residual,ergo,muscle,kinematic', help='add upper for the upper-body muscle dimension')
+    r.add_argument('--workers', type=int, default=6)
     r.add_argument('--dry-run', action='store_true')
     f = sub.add_parser('manifest-self-floor'); f.add_argument('--manifest', required=True); f.add_argument('--rows', required=True)
     f.add_argument('--out', required=True)

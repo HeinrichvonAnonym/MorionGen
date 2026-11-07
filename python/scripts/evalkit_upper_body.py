@@ -1,4 +1,6 @@
-"""Upper-body load (config/evalkit_upper_body_20261107.json): validation against the synthetic truth and floor robustness.
+"""Lumbar / shoulder net joint moments (config/evalkit_upper_body_20261107.json; Rajagopal torque-driven trunk and arms,
+no upper-body muscles, so not a load: config/evalkit_upper_muscle_20261108.json): validation against the synthetic
+truth and floor robustness.
 
   validate   [--splits dev heldout2]            control clips, tool vs truth -> <out>/validation.json
   robustness --rows A --compare B               the same rows evaluated twice (e.g. main vs self-floor) -> <out>/robustness.json

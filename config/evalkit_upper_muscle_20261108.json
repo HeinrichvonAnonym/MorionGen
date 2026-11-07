@@ -1,0 +1,79 @@
+{
+ "registered": "2026-11-08 00:31",
+ "protocol": "evalkit_upper_muscle_20261108",
+ "why": "Correction of an omission (user, 2026-11-08 00:14): the upper-body 'load' of config/evalkit_upper_body_20261107.json came from the Rajagopal model, whose 80 muscles are all in the legs and whose lumbar and shoulder coordinates are ideal torque actuators; there is no neck joint. Those values are net joint moments, not muscle loads. This protocol adds muscle-level upper-body load as its own dimension. Registered before any result of it.",
+ "renamed": {
+  "from": "muscle_lumbar_nm_kg / muscle_shoulder_nm_kg and lumbar_/shoulder_moment_nm_kg_{mean,p95} of the muscle dimension",
+  "to": "net_moment_lumbar_nm_kg / net_moment_shoulder_nm_kg and net_moment_{lumbar,shoulder}_nm_kg_{mean,p95}",
+  "meaning": "net joint moment of the torque-driven trunk / arms of the Rajagopal model (no trunk, neck or shoulder muscles); kept as a descriptive quantity, never called a load"
+ },
+ "regions": {
+  "lumbar": {
+   "status": "measured",
+   "model": "FBLS full-body lumbar spine model (Raabe & Chaudhari 2016), 324 muscles, five lumbar intervertebral joints; data_root/third_party_models/fbls/FBLSmodel.osim",
+   "pipeline": "the E3 lumbar helpers of utils/motiogen/upper_body.py (commit cf575d3), imported read-only: per-segment scaling, joint-centre IK with axial markers registered on a lumbar-locked calibration pass, 100 Hz coordinates low-passed at 6 Hz, reserves of E3 (1 N m legs and lumbar, 200 N m arms, 1000 pelvis), static optimization (activation exponent 2, muscle physiology), JointReaction at the five IVD joints from the static-optimization forces",
+   "previous_validation": "E3 reproduction of the authors' running trial of the FBLS release (develop_logs/notes/e3_key_context_20261103.md): activations r 0.965 vs the authors, L5/S1 tangent compression time-course r 0.988, mean 9 % and peak 12.5 % below the authors; absolute values are read as a lower bound"
+  },
+  "neck": {
+   "status": "reserved",
+   "needs": "HYOID head-neck model (Mortensen 2018, 72 muscles, in data_root/third_party_models) posed on chest, neck and head global rotations. Native rotations exist for ARDY, CHOIS (raw/native_prediction.npz) and Kimodo; DART needs the SMPL-X export rerun on the E4 inputs; PRIMAL, CLoSD, MotionLCM and OmniControl need rotations recovered from their native outputs (user decision 2026-11-08: recover, else 'neck not measurable')",
+   "deferred_by": "user decision 2026-11-08 00:20: lumbar first, neck and shoulder keep module slots"
+  },
+  "shoulder": {
+   "status": "reserved",
+   "needs": "a shoulder muscle model (deltoid, rotator cuff, scapular muscles, glenohumeral reaction), none downloaded: MASI (data_root/third_party_models/masi) is a cervical model with only trapezius and levator scapulae at the shoulder. Candidates: MoBL-ARMS (Saul 2015), thoracoscapular model (Seth 2016/2019)",
+   "deferred_by": "user decision 2026-11-08 00:20"
+  }
+ },
+ "ground_reactions": {
+  "primary": "evalkit: the per-frame contact decision of the evaluation (frames.npz contact_{r,l}_{heel,toe}, nearest time) and its floor (receipt floor_eval_m), sole points from the FBLS kinematics, biomech.estimate_grf; so the lumbar dimension uses the same contact and floor as the residual dimension. Calibration frames: evalkit.fit.upright_frames (a generated motion need not start upright). Window: evalkit.fit.scored",
+  "cross_check": "e3: the E3 front end unchanged (calibration on the first second, biomech.contact_masks on the 5th-percentile landmark heights, 0.5 s trimmed at both ends)"
+ },
+ "classification": {
+  "source": "E3 preregistration revision 2 (config/e3_upper_body_20261103.json), values unchanged",
+  "type1_run": "median IK marker RMS over the window > 0.03 m, or joint-reaction rows valid < 0.95; type-1 rows are reported, their loads are not interpreted",
+  "type2_frame": "FBLS whole-body residual force > 0.05 BW, or |lumbar reserve| > 1 N m, or a lumbar coordinate within 0.5 deg of its range limit",
+  "type3": "loads only on reachable frames (not type 2, finite reactions)"
+ },
+ "metrics": {
+  "primary": "L5_S1_compression_p95_bw: 95th percentile over reachable frames of the L5/S1 reaction on lumbar5 along the model spine tangent (forward tilt 18.7 deg, from the generic geometry), / body weight",
+  "secondary": [
+   "L5_S1_compression_mean_bw",
+   "{L4_L5,L3_L4,L2_L3,L1_L2}_compression_p95_bw",
+   "L5_S1_ap_shear_p95_n",
+   "L5_S1_ml_shear_p95_n",
+   "L5_S1_over_niosh_fraction (3400 N)",
+   "L5_S1_ap_shear_over_{700,1000}_fraction",
+   "type2_fraction and its external / internal / kinematic parts",
+   "reachable activation means of erector spinae, multifidus, quadratus lumborum, psoas, abdominals, latissimus"
+  ],
+  "mass_kg": "the evaluation mass (75 unless the manifest row sets it)"
+ },
+ "conventions_not_derived": {
+  "so_rate": "static optimization and joint reaction every 10th 100 Hz frame (10 Hz), as E3 (约定，未经推演)",
+  "niosh": "the 3400 N NIOSH action limit applied frame by frame to dynamic motion (约定，未经推演)",
+  "thresholds": "E3 type-1/2 thresholds above (约定，未经推演 there)",
+  "pass_lines": "every pass line below (约定，未经推演)",
+  "workers": "10 parallel workers (memory), nice 19, max_tasks_per_child=1"
+ },
+ "validation": {
+  "V1_equivalence": "3 E3 runs (one each of e1 C0, e1 W0X, e2 G4; first by id with a valid E3 lumbar record) rerun with the e3 mode of the new module; reference = analyze_e3.classify_lumbar on the E3 work directories. Pass: |delta| <= 0.01 BW for L5_S1_compression_p95_bw and mean, <= 0.01 for type2_fraction and every group activation mean",
+  "V2_ground_truth_grf": "the 18 heldout2 synthetic control clips (truth ground reactions with centres of pressure in truth_eval): the same FBLS kinematics once with the evalkit ground reactions of the tool evaluation, once with the truth grf.xml. Statistics over clips: median |relative error| and median signed error of L5_S1_compression_p95_bw and mean, Spearman, type2_fraction difference. Gate for reading the primary metric across methods: Spearman >= 0.8 and median |relative error| <= 0.15; otherwise the dimension is reported as ground-reaction sensitive and descriptive only",
+  "V3_floor": "first row by id of each method in the smoke8x5 manifest, floor -2 cm and +2 cm (manifest_floor2cm rows): median |relative change| of the primary metric and type2_fraction; descriptive",
+  "V4_front_end": "the same 8 rows in e3 mode vs evalkit mode: per-row differences; descriptive",
+  "V5_addb": "not executable: the AddB measured.npz of the paired check holds force vectors only, no centre of pressure or free moment, so a measured-GRF lumbar solve cannot be formed. Recorded rather than replaced by a weaker check"
+ },
+ "smoke": {
+  "rows": "v11 smoke8x5 manifest (40 rows, E4 C0, 5 per method) and the text-only C0 supplement (v11/unique_c0, 20 rows)",
+  "acceptance": "every row ends as measured, type1 or failed with a stored error; failure share reported per method; check gives per-method and (where 1 < prompts < unique inputs) per-prompt medians of the primary metric, type2_fraction and group activations",
+  "outputs": "develop_logs/test_runs/20261107_evalkit/upper_muscle/"
+ },
+ "amendments": [
+  {
+   "at": "2026-11-08 00:36",
+   "after": "one functional trial of the evalkit mode on one heldout2 control clip (heldout2_301_reach__control); no comparison with truth, E3 or any arm made",
+   "implementation": "E3 registers six axial markers on ARDY spine joints (Spine, spine1, spine2, Spine3, neck, pelvis). Skeletons without a joint (SMPL-family and SOMA77 after the biomech_sources renaming lack 'spine1'; the synthetic skeleton also lacks 'spine2') leave that marker out of the IK (receipt axial_markers_missing); e3.write_trc is copied into evalkit.upper_muscle restricted to the present markers and biomech.register_axial (same computation as e3.register_axial) takes the subset. The FBLS lumbar has three independent coordinates coupled over the five vertebrae, so the remaining axial markers still constrain it; limb markers stay required. Rule and thresholds unchanged",
+   "timing": "3 s clip: 90 s for one lumbar solve (single worker)"
+  }
+ ]
+}

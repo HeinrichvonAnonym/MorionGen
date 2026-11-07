@@ -14,6 +14,8 @@ from .spec import SPEC, SPEC_PATH, ROOT, SIDES, LANDMARKS, reference_offsets, ab
 from . import fit as fit_mod, residual, ergo, muscle, kinematic
 
 DIMS = ('residual', 'ergo', 'muscle', 'kinematic')
+# upper: muscle-level upper-body load (config/evalkit_upper_muscle_20261108.json), about 20 min per clip, so opt-in
+ALL_DIMS = DIMS+('upper',)
 
 
 def _commit():
@@ -49,10 +51,39 @@ def add_kinematic(run, out, reach_task=None):
     """Kinematic dimension on an existing evaluation (frames.npz, evalkit.json), without refitting."""
     out = Path(out); rec = json.loads((out/'evalkit.json').read_text())
     rec['kinematic'] = kinematic_summary(run, dict(np.load(out/'frames.npz', allow_pickle=True)), reach_task)
-    rec['receipt']['dims'] = sorted(set(rec['receipt']['dims']) | {'kinematic'}, key=DIMS.index)
+    rec['receipt']['dims'] = sorted(set(rec['receipt']['dims']) | {'kinematic'}, key=ALL_DIMS.index)
     rec['receipt']['kinematic_commit'] = _commit()
     (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
     return rec['kinematic']
+
+
+def net_moments(up):
+    """Net joint moments of the torque-driven Rajagopal trunk and arms (no trunk, neck or shoulder muscles), not loads."""
+    return {f'net_moment_{p}_nm_kg_{s}': up[f'{p}_moment_nm_kg_{s}'] for p in muscle.UPPER_BODY for s in ('mean', 'p95')}
+
+
+def upper_summary(result):
+    return {k: ({n: x for n, x in v.items() if n not in ('key', 'prepare_key')} if isinstance(v, dict) else v)
+            for k, v in result.items()}
+
+
+def add_upper(run, out, mode='evalkit', truth=None):
+    """Upper-body muscle dimension on an existing evaluation: its contact decision (frames.npz) and floor_eval, no
+    refit of the shared IK. mode evalkit writes out/upper and evalkit.json['upper']; e3 and truth (truth: external-loads
+    xml) write out/upper_<mode> only (validation arms)."""
+    from . import upper_muscle
+    out = Path(out); rec = json.loads((out/'evalkit.json').read_text())
+    f = np.load(out/'frames.npz', allow_pickle=True)
+    contact = (f['times'], {s: {k: f[f'contact_{s}_{k}'] for k in LANDMARKS} for s in SIDES})
+    floor = rec['receipt'].get('floor_eval_m', rec['receipt']['floor_m'])
+    result = upper_muscle.evaluate(run, out/('upper' if mode == 'evalkit' else f'upper_{mode}'), rec['receipt']['mass_kg'],
+                                   mode, floor, contact, truth)
+    if mode == 'evalkit':
+        rec['upper'] = upper_summary(result)
+        rec['receipt']['dims'] = sorted(set(rec['receipt']['dims']) | {'upper'}, key=ALL_DIMS.index)
+        rec['receipt']['upper_commit'] = _commit()
+        (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
+    return result
 
 
 def foot_offset(run, work, mass, floor, source=None):
@@ -124,10 +155,13 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
         frames.update(muscle_times=mu['times'], muscle_effort=mu['effort'], muscle_reserve_abs_sum_nm=mu['reserve_abs_sum_nm'])
         summary['muscle'] = mu['summary']
         up = muscle.upper_body(work/'so', work/'model_so.osim')
-        frames.update(muscle_lumbar_nm_kg=up['lumbar'], muscle_shoulder_nm_kg=up['shoulder'])
-        summary['muscle'].update({k: v for k, v in up.items() if k.endswith(('_mean', '_p95'))})
+        frames.update(net_moment_lumbar_nm_kg=up['lumbar'], net_moment_shoulder_nm_kg=up['shoulder'])
+        summary['muscle'].update(net_moments(up))
     if 'kinematic' in dims:
         summary['kinematic'] = kinematic_summary(run, frames, reach_task)
+    if 'upper' in dims:
+        from . import upper_muscle
+        summary['upper'] = upper_summary(upper_muscle.evaluate(run, out/'upper', mass, 'evalkit', floor_eval, (times, res['masks'])))
     np.savez_compressed(out/'frames.npz', **frames)
     receipt = {'run': str(run), 'floor_m': float(floor), 'foot_offset_m': offset, 'offset_reference_m': offset_reference,
                'floor_eval_m': float(floor_eval), 'reference': variant or offsets, 'mass_kg': mass, 'method': method,
