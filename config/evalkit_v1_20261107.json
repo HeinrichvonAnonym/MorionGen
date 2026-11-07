@@ -3,7 +3,7 @@
   "plan": "plans/20261107_evaluation_chain_meta_plan.md, P2 / P3",
   "version": "v1",
   "version_note": "v1-dev until the development-split tuning below is filled in; then version v1 is frozen (commit hash recorded in frozen_commit) and the held-out split is evaluated once. No field changes after the held-out evaluation.",
-  "frozen_commit": "961da9b",
+  "frozen_commit": "829f017",
   "trim_s": 0.5,
   "trim_note": "every dimension scores frames from trim_s after the start to trim_s before the end (Butterworth and double-differentiation edges), as e_rules.trim / ergo_frames",
   "fit": {
@@ -308,5 +308,13 @@
     }
   },
   "frozen_at": "2026-11-07 16:38",
-  "frozen_note": "frozen after the fit -4 dev amendments (residual tau / depth at 0.02 m, muscle descriptive) and before any held-out tool or truth run; the smoke8x5 rows started 16:30 under the label v1-dev with the same parameters"
+  "frozen_note": "frozen after the fit -4 dev amendments (residual tau / depth at 0.02 m, muscle descriptive) and before any held-out tool or truth run; the smoke8x5 rows started 16:30 under the label v1-dev with the same parameters",
+  "frozen_commit_amendments": [
+    {
+      "when": "2026-11-07 16:40",
+      "from": "961da9b",
+      "to": "829f017",
+      "reason": "crash fix found by the held-out truth step (static optimization of the demo_walk truth model, which has no subtalar joint, under muscle.unlock_subtalar): unlock skips absent coordinates. No metric change: every other synthetic base model has the subtalar joints unlocked already and the tool model always has them; no held-out tool run or score existed"
+    }
+  ]
 }
