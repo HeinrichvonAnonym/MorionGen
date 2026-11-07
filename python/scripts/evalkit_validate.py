@@ -68,7 +68,7 @@ def _quiet():
 def neutral_reading(base_dir, info):
     import opensim as osim
     from evalkit import synth, ergo
-    model = osim.Model(str(Path(base_dir)/'model.osim')); state = model.initSystem(); cs = model.getCoordinateSet()
+    model = osim.Model(str(Path(base_dir)/'model.osim')); model.initSystem(); cs = model.getCoordinateSet()
     labels = synth.coordinate_names(model)
     d = np.array([cs.get(n).getDefaultValue()*(180/np.pi if cs.get(n).getMotionType() == 1 else 1.) for n in labels])
     ex = synth.export(Path(base_dir)/'model.osim', {'labels': labels, 'coords': np.repeat(d[None], 2, 0), 'fps': synth.FPS,
@@ -319,8 +319,35 @@ def ergo_frames(rows):
     return {m: {k: np.concatenate(v) for k, v in d.items()} for m, d in out.items()}
 
 
-def score(args):
+def muscle_summary(mus, high_load=2.):
+    """Descriptive muscle agreement (no pass line, spec muscle.criterion): relative and absolute error overall and by
+    truth load (effort >= high_load, 约定，未经推演), Spearman, and the share of clip pairs whose order the tool keeps."""
+    from itertools import combinations
     from scipy.stats import spearmanr
+    from evalkit.validate import rate
+    if not mus:
+        return {'clips': mus, 'criterion': SPEC['muscle'].get('criterion')}
+    t, g = np.array([m['tool'] for m in mus]), np.array([m['truth'] for m in mus])
+    rel, err = np.abs(t-g)/g, np.abs(t-g)
+    out = {'clips': mus, 'criterion': SPEC['muscle'].get('criterion'), 'high_load_effort': high_load}
+    for name, k in (('all', np.ones(len(g), bool)), ('high_load', g >= high_load), ('low_load', g < high_load)):
+        out[name] = {'clips': int(k.sum()),
+                     'median_relative_error': float(np.median(rel[k])) if k.any() else None,
+                     'median_absolute_error': float(np.median(err[k])) if k.any() else None,
+                     'mean_signed_relative_error': float(np.mean((t-g)[k]/g[k])) if k.any() else None,
+                     'share_within_10pct': float(np.mean(rel[k] <= .1)) if k.any() else None}
+    out['spearman'] = float(spearmanr(t, g)[0]) if len(mus) > 2 else None
+    out['pair_order'] = {}
+    for ratio in (1.1, 1.2, 1.5):
+        pairs = [(i, j) for i, j in combinations(range(len(g)), 2) if max(g[i], g[j])/min(g[i], g[j]) >= ratio]
+        kept = sum(np.sign(t[i]-t[j]) == np.sign(g[i]-g[j]) for i, j in pairs)
+        out['pair_order'][str(ratio)] = rate(int(kept), len(pairs))
+    out['median_relative_error'] = out['all']['median_relative_error']
+    out['pass'] = None if SPEC['muscle'].get('criterion') == 'descriptive' else bool(out['median_relative_error'] <= .1)
+    return out
+
+
+def score(args):
     from evalkit import validate
     from evalkit.ergo import CLASSES
     items = clips(args.split)
@@ -373,12 +400,8 @@ def score(args):
     for r in rows:
         if r['meta']['defect'] == 'control' and r['truth_muscle'] and 'muscle' in (r['tool_summary'] or {}):
             a, b = r['tool_summary']['muscle']['muscle_effort_sum_a2_mean'], r['truth_muscle']['muscle_effort_sum_a2_mean']
-            mus.append({'id': r['meta']['id'], 'tool': a, 'truth': b, 'relative_error': abs(a-b)/b})
-    errs = np.array([m['relative_error'] for m in mus])
-    res['muscle'] = {'clips': mus, 'median_relative_error': float(np.median(errs)) if len(errs) else None,
-                     'share_within_10pct': float(np.mean(errs <= .1)) if len(errs) else None,
-                     'spearman': float(spearmanr([m['tool'] for m in mus], [m['truth'] for m in mus])[0]) if len(mus) > 2 else None,
-                     'pass': bool(len(errs) and np.median(errs) <= .1)}
+            mus.append({'id': r['meta']['id'], 'tool': a, 'truth': b, 'signed_error': a-b, 'relative_error': abs(a-b)/b})
+    res['muscle'] = muscle_summary(mus)
     res['kinematic'] = kinematic_check(rows)
     LOG.mkdir(parents=True, exist_ok=True)
     (LOG/f'{args.split}_score.json').write_text(json.dumps(res, indent=1))

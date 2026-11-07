@@ -36,12 +36,12 @@
     "calibrated": {
       "synthetic": {
         "r": {
-          "heel": 0.008538532921270825,
-          "toe": 0.006526173088442078
+          "heel": 0.0076915988349648,
+          "toe": 0.0064149518310543385
         },
         "l": {
-          "heel": 0.010509290801183936,
-          "toe": 0.0062374644837956406
+          "heel": 0.008805528353987763,
+          "toe": 0.0061924552444984765
         }
       }
     },
@@ -53,8 +53,8 @@
     "contact_rule": "height only (E v2 R0): landmark in contact when height - absolute reference <= margin; no horizontal-speed or onset rule (both raised false kills on human data)",
     "event_window_ms": 40,
     "tau_bw": {
-      "event": 0.37,
-      "contact": 0.06,
+      "event": 0.47,
+      "contact": 0.08,
       "flight": 0.5
     },
     "penetration_depth_m": 0.03,
@@ -62,40 +62,60 @@
     "tuning": "tau_bw (event, contact, flight) and penetration_depth_m chosen on the development split only: minimize the larger of the false-kill and missed-kill rates (definitions under validation), ties to the larger tau / depth; grid tau 0.02-0.50 BW step 0.01, depth 0.01-0.06 m step 0.005 (grids: convention, not derived)",
     "tuning_amendment": "2026-11-07 11:48 dev amendment (user: a real-data contact tolerance on generated data with a given floor manufactures misses): contact_margin_m joins the development grid, 0.005-0.030 m step 0.005, chosen jointly with tau / depth by the same objective over the pass clips (ties to the larger margin); the dev fit is redone first (fit amendment) and the synthetic floor reference recalibrated on it. Grid 约定，未经推演",
     "tuned": {
-      "when": "2026-11-07 13:26",
+      "when": "2026-11-07 16:05",
       "split": "dev",
-      "fit_prepare": "evalkit-upright-flatfoot-torso95-3",
-      "log": "develop_logs/test_runs/20261107_evalkit/validation/score_dev_tune_v3.log",
+      "fit_prepare": "evalkit-upright-flatfoot-torso95-limbreg-4",
+      "log": "develop_logs/test_runs/20261107_evalkit/validation/fit4_score_tune.log",
       "dev_pass_clips": {
-        "false_kill": 0.064,
-        "missed_kill": 0.0638
+        "false_kill": 0.0736,
+        "missed_kill": 0.0734
       },
       "margin_grid": {
-        "0.005": 0.1333,
-        "0.01": 0.0887,
-        "0.015": 0.0706,
-        "0.02": 0.064,
-        "0.025": 0.0659,
-        "0.03": 0.0667
+        "0.005": 0.1931,
+        "0.01": 0.1184,
+        "0.015": 0.0768,
+        "0.02": 0.0736,
+        "0.025": 0.0691,
+        "0.03": 0.0666
       },
+      "margin_amendment": "2026-11-07 16:25 user decision after the fit -4 dev tuning, before freezing and before any held-out run: the registered joint rule picks 0.03 m (grid edge, 6.7% / 6.6%); the user sets three principles - smaller margin first (the evalkit targets generated data), fewer false kills, easier alignment with the baselines (smoke8x5 and the per-method floor references use 0.02 m) - so contact_margin_m stays 0.02 m and tau / depth are retuned at that margin by the registered tau / depth rule. Deviation from the registered margin rule, stated in the report",
       "note": "larger kill rate at each margin; above the 5% line, the relaxed 10% / 15% line applies (user decision 11:14) and is stated in the report",
       "previous": {
-        "when": "2026-11-07 12:23",
+        "when": "2026-11-07 13:26",
         "split": "dev",
-        "log": "develop_logs/test_runs/20261107_evalkit/validation/score_dev_tune.log",
+        "fit_prepare": "evalkit-upright-flatfoot-torso95-3",
+        "log": "develop_logs/test_runs/20261107_evalkit/validation/score_dev_tune_v3.log",
         "dev_pass_clips": {
-          "false_kill": 0.0651,
-          "missed_kill": 0.065
+          "false_kill": 0.064,
+          "missed_kill": 0.0638
         },
         "margin_grid": {
-          "0.005": 0.1335,
-          "0.01": 0.0866,
-          "0.015": 0.0722,
-          "0.02": 0.0681,
-          "0.025": 0.0651,
-          "0.03": 0.0677
+          "0.005": 0.1333,
+          "0.01": 0.0887,
+          "0.015": 0.0706,
+          "0.02": 0.064,
+          "0.025": 0.0659,
+          "0.03": 0.0667
         },
-        "note": "larger kill rate at each margin; tighter margins lose stance (calibrated landmark-height IQR about 1.5 cm). Above the 5% line: the relaxed 10% / 15% line applies (user decision 11:14) and is stated in the report. Remaining sources: lean false kills (22% at 40 deg; COM within 5 mm and contacts right, cause not identified), event-state misses (48%)"
+        "note": "larger kill rate at each margin; above the 5% line, the relaxed 10% / 15% line applies (user decision 11:14) and is stated in the report",
+        "previous": {
+          "when": "2026-11-07 12:23",
+          "split": "dev",
+          "log": "develop_logs/test_runs/20261107_evalkit/validation/score_dev_tune.log",
+          "dev_pass_clips": {
+            "false_kill": 0.0651,
+            "missed_kill": 0.065
+          },
+          "margin_grid": {
+            "0.005": 0.1335,
+            "0.01": 0.0866,
+            "0.015": 0.0722,
+            "0.02": 0.0681,
+            "0.025": 0.0651,
+            "0.03": 0.0677
+          },
+          "note": "larger kill rate at each margin; tighter margins lose stance (calibrated landmark-height IQR about 1.5 cm). Above the 5% line: the relaxed 10% / 15% line applies (user decision 11:14) and is stated in the report. Remaining sources: lean false kills (22% at 40 deg; COM within 5 mm and contacts right, cause not identified), event-state misses (48%)"
+        }
       }
     }
   },
@@ -123,7 +143,9 @@
     "effort": "sum over muscles of activation^2 per SO frame; clip effort = mean over scored frames",
     "reserves": "biomech.static_optimization (lower-limb reserves 1 N m, pelvis residual actuators 1000)",
     "unlock_subtalar": true,
-    "subtalar_note": "2026-11-07 15:21 dev amendment (user-approved): the static-optimization model frees the subtalar joints (the fit keeps them locked, coordinate 0), matching the synthetic subject model, whose static optimization balances the subtalar moment with muscles. Dev controls, effort vs truth (scratch/muscle_subtalar_diag.py, fit -3, margin 0.02): median |relative error| 23.7% -> 16.6%, high-load clips (truth >= 1, n=12) 25.6% -> 13.8%, single-leg / step -18..-32% -> -5..-15%, Spearman 0.89 -> 0.97; low-load clips rise by about 0.04 absolute"
+    "subtalar_note": "2026-11-07 15:21 dev amendment (user-approved): the static-optimization model frees the subtalar joints (the fit keeps them locked, coordinate 0), matching the synthetic subject model, whose static optimization balances the subtalar moment with muscles. Dev controls, effort vs truth (scratch/muscle_subtalar_diag.py, fit -3, margin 0.02): median |relative error| 23.7% -> 16.6%, high-load clips (truth >= 1, n=12) 25.6% -> 13.8%, single-leg / step -18..-32% -> -5..-15%, Spearman 0.89 -> 0.97; low-load clips rise by about 0.04 absolute",
+    "criterion": "descriptive",
+    "criterion_amendment": "2026-11-07 16:25 user decision after the fit -4 dev run, before freezing and before any held-out run: the muscle dimension has no pass line (the registered 10% median relative error is withdrawn; dev fit -4: 21.6%). Reported descriptively: median relative and absolute error (all, truth effort >= 2, < 2), Spearman, pair-order agreement for truth ratios >= 1.1 / 1.2 / 1.5, signed error per clip; known biases listed (single-leg stance hip abductors low, walk high)"
   },
   "kinematic": {
     "reach_thresholds_m": [
@@ -202,22 +224,22 @@
     "reference_iqr_m": {
       "r": {
         "heel": [
-          0.002054104166023779,
-          0.01603242237473184
+          -0.00038520313648207627,
+          0.016050176058834298
         ],
         "toe": [
-          -0.0015417390272915651,
-          0.013161968774211857
+          -0.002019494237613384,
+          0.01318014929104401
         ]
       },
       "l": {
         "heel": [
-          0.004118616736191252,
-          0.01684812069430964
+          0.001521802824599995,
+          0.017124487423122545
         ],
         "toe": [
-          -0.0010983679058632042,
-          0.014823116132972807
+          -0.0016718682509805557,
+          0.014683974105688943
         ]
       }
     },
