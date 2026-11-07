@@ -69,14 +69,16 @@
       "tool_positive": "residual.judge positive, or IK-gate unmeasurable (non-acceptable)",
       "false_kill_rate": "tool positive among truth-negative frames",
       "missed_kill_rate": "tool negative among truth-positive frames",
-      "clips": "every clip except bone_stretch (its truth is about measurability) and slide (kinematic dimension)"
+      "clips": "every clip except bone_stretch (its truth is about measurability) and slide (kinematic dimension)",
+      "pass_clips_amendment": "2026-11-07 11:14, user decision after the dev diagnosis (develop_logs/notes/20261107_evalkit_dev_diagnosis.md), before freezing and before any held-out run: the pass line counts float / penetrate defects of size >= 0.05 m only (2 cm is below the input resolution: truth penetration line 1.5 cm vs 1 cm landmark offset SD, tool contact margin 3 cm); the 0.02 m level is reported as a detection curve. Tool improvements continue on dev against the 5% line; if 5% is not reached the relaxed 10% / 15% line applies and is stated in the report"
     },
     "ergo": {
       "truth": "the same ergo.score on the truth model (with the neck_c station), truth coordinates, truth contact and the clean source joints",
       "false_kill_rate": "per method: tool certain_risk or unmeasurable among frames whose truth class is certain_acceptable",
       "missed_kill_rate": "per method: tool certain_acceptable among frames whose truth class is certain_risk",
       "reported": "indeterminate share of the tool among truth-certain frames (inconclusive, not a kill error), full confusion matrix; truth-indeterminate frames are excluded from both rates",
-      "clips": "every clip except bone_stretch and slide"
+      "clips": "every clip except bone_stretch and slide",
+      "pass_clips_amendment": "2026-11-07 11:14, user decision, same conditions: float_whole_m clips are excluded from the ergonomics kill rates (no truth contact, so the REBA legs-support term is undefined there); the rates including them are reported alongside"
     },
     "unmeasurable": {
       "truth": "unmeasurable_label (bone stretch >= 0.1 positive, <= 0.02 negative)",
@@ -88,14 +90,14 @@
     },
     "pass": "false-kill and missed-kill rates <= 5% with the one-sided 95% Clopper-Pearson upper bound <= 10%, per dimension (REBA and RULA separately); muscle effort relative error <= 10% (median over clips, and the share of clips within 10% reported). A relaxation to 10% / 15% needs the user's consent and is stated in the report",
     "videos": {
-   "registered": "2026-11-07 06:23, before any dev score and before the held-out run",
-   "pool": "held-out clips except slide",
-   "positive_clip": "truth positive in any dimension within the scored frames: residual e_label 1, REBA or RULA truth class certain_risk, or unmeasurable_label 1",
-   "negative_clip": "no truth positive in any dimension (the remaining pool clips)",
-   "draw": "10 + 10 with numpy default_rng(crc32('evalkit_v1_videos')): positives round-robin over defect types (control counted as a type), negatives round-robin over base motions, each type / base shuffled once; no redraw after seeing the tool result",
-   "content": "evalkit_render: tool left, truth right, residual / REBA / RULA / muscle strips; static optimization run on tool and truth for the 20 clips"
-  },
-  "independence_note": "frames of one clip are correlated, so the Clopper-Pearson bound over frames is optimistic; a clip-level bootstrap interval is reported alongside"
+      "registered": "2026-11-07 06:23, before any dev score and before the held-out run",
+      "pool": "held-out clips except slide",
+      "positive_clip": "truth positive in any dimension within the scored frames: residual e_label 1, REBA or RULA truth class certain_risk, or unmeasurable_label 1",
+      "negative_clip": "no truth positive in any dimension (the remaining pool clips)",
+      "draw": "10 + 10 with numpy default_rng(crc32('evalkit_v1_videos')): positives round-robin over defect types (control counted as a type), negatives round-robin over base motions, each type / base shuffled once; no redraw after seeing the tool result",
+      "content": "evalkit_render: tool left, truth right, residual / REBA / RULA / muscle strips; static optimization run on tool and truth for the 20 clips"
+    },
+    "independence_note": "frames of one clip are correlated, so the Clopper-Pearson bound over frames is optimistic; a clip-level bootstrap interval is reported alongside"
   },
   "calibration_receipt": {
     "clips": 228,
