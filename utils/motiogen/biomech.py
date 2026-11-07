@@ -42,15 +42,18 @@ def _child_origin(model, state, joint):
     return np.array([frame.getPositionInGround(state).get(k) for k in range(3)])
 
 
-def segment_lengths(points, names):
+def segment_lengths(points, names, torso_percentile=50.):
+    """Median joint distances; the torso span crosses the lumbar joint, whose flexion only shortens it, so a high
+    torso_percentile approximates the zero-lumbar length the model scale needs."""
     p = {n: points[:, names.index(n)] for n in names}
     d = lambda a, b: float(np.median(np.linalg.norm(p[a]-p[b], axis=-1)))
     mid = lambda a, b: .5*(p[a]+p[b])
+    torso = np.linalg.norm(mid('right_shoulder', 'left_shoulder')-mid('right_hip', 'left_hip'), axis=-1)
     return {'pelvis': d('right_hip', 'left_hip'),
             'femur': .5*(d('right_hip', 'right_knee')+d('left_hip', 'left_knee')),
             'tibia': .5*(d('right_knee', 'right_ankle')+d('left_knee', 'left_ankle')),
             'foot': .5*(d('right_ankle', 'right_foot')+d('left_ankle', 'left_foot')),
-            'torso': float(np.median(np.linalg.norm(mid('right_shoulder', 'left_shoulder')-mid('right_hip', 'left_hip'), axis=-1))),
+            'torso': float(np.percentile(torso, torso_percentile)),
             'humerus': .5*(d('right_shoulder', 'right_elbow')+d('left_shoulder', 'left_elbow')),
             'forearm': .5*(d('right_elbow', 'right_wrist')+d('left_elbow', 'left_wrist'))}
 
@@ -68,10 +71,10 @@ SEGMENTS = {'pelvis': ['pelvis'], 'femur': ['femur_r', 'femur_l', 'patella_r', '
             'humerus': ['humerus_r', 'humerus_l'], 'forearm': ['ulna_r', 'ulna_l', 'radius_r', 'radius_l', 'hand_r', 'hand_l']}
 
 
-def scaled_model(points, names, mass, path, free_yaw=False):
+def scaled_model(points, names, mass, path, free_yaw=False, torso_percentile=50.):
     """free_yaw: also unclamp pelvis_rotation, the global heading (the model clamps it to +-90 degrees)."""
     model = osim.Model(str(MODEL)); state = model.initSystem()
-    target, base = segment_lengths(points, names), model_lengths(model, state)
+    target, base = segment_lengths(points, names, torso_percentile), model_lengths(model, state)
     factors = {k: target[k]/base[k] for k in target}
     scales = osim.ScaleSet()
     for segment, bodies in SEGMENTS.items():

@@ -13,7 +13,7 @@ import numpy as np
 from .spec import SPEC
 import biomech
 
-PREPARE = 'evalkit-upright-flatfoot-2'
+PREPARE = 'evalkit-upright-flatfoot-torso95-3'
 C = SPEC['fit']
 
 
@@ -43,7 +43,8 @@ def prepare(run, out, mass, floor):
     import biomech_sources
     points, names, fps = biomech_sources.load(run)
     receipt = {'fps': fps, 'frames': int(points.shape[0]), 'free_yaw': True}
-    receipt['scaling'] = biomech.scaled_model(points, names, mass, out/'scaled.osim', free_yaw=True)
+    receipt['scaling'] = biomech.scaled_model(points, names, mass, out/'scaled.osim', free_yaw=True,
+                                              torso_percentile=C['torso_length_percentile'])
     calib, receipt['calibration'] = upright_frames(points, names, fps)
     biomech.write_trc(points, names, fps, out/'calibration.trc', calib)
     limb_only = {n: (w if n in biomech.MARKERS else 0.) for n, w in biomech.WEIGHTS.items()}

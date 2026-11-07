@@ -13,7 +13,9 @@
     "min_planted_frames": 5,
     "upright_tolerance_deg": 5.0,
     "min_calibration_frames": 3,
-    "note": "2026-11-07 11:42 dev amendment after the muscle diagnosis (constant per-clip coordinate biases: stoop pelvis tilt -17 / lumbar +24 / hip +17 deg from a non-upright first second under the lumbar-locked calibration; ankle +16 deg from foot joint-definition offsets, gone with zero offsets): calibration on the most upright frames instead of the first second, and ankle / toe markers registered on planted feet levelled on the given floor (evalkit.fit). Values 约定，未经推演"
+    "note": "2026-11-07 11:42 dev amendment after the muscle diagnosis (constant per-clip coordinate biases: stoop pelvis tilt -17 / lumbar +24 / hip +17 deg from a non-upright first second under the lumbar-locked calibration; ankle +16 deg from foot joint-definition offsets, gone with zero offsets): calibration on the most upright frames instead of the first second, and ankle / toe markers registered on planted feet levelled on the given floor (evalkit.fit). Values 约定，未经推演",
+    "torso_length_percentile": 95.0,
+    "torso_length_note": "2026-11-07 12:57: the shoulder-mid to hip-mid span crosses the lumbar joint and only shortens with flexion; the clip median under-scaled the torso of flexed clips (dev stoop 101: 0.92 of the truth model, pelvis tilt / lumbar errors -10 / +14 deg growing with flexion, identical with clean joints). Dev controls, ratio to truth torso length: median 0.974 (0.900-1.019), p95 0.990 (0.953-1.026), max 0.995 (0.963-1.033); p95 chosen over max for robustness to bad frames (约定，未经推演)"
   },
   "ik_gate": {
     "max_marker_error_m": 0.1,
@@ -201,6 +203,20 @@
       "seed": "default_rng(crc32(\"evalkit_dist_t2m\"))",
       "input": "canonical Z-up SMPL-22 joints mapped back with motion.native_positions(Y-up), resampled to 20 fps, upstream process_file(feet_thre 0.002) with target offsets from a recovered ground-truth frame"
     },
-    "smoke_c0": "the 8x5 manifest rows; pipeline runs, values finite; N=5 FID is not a quality estimate"
+    "smoke_c0": "the 8x5 manifest rows; pipeline runs, values finite; N=5 FID is not a quality estimate",
+    "amendments": [
+      {
+        "when": "2026-11-07 12:45",
+        "evaluator": "tmr_soma",
+        "change": "ground truth = Kimodo stratified benchmark cases with a non-empty prompt (832 no-text cases have none), deduplicated by ground-truth embedding (1856 cases hold 1724 distinct motions); retrieval follows the upstream whole-set TMR protocol, not batches of 32",
+        "reason": "duplicates in both halves would bias the split-half FID low; no-text cases cannot enter text matching. Recorded before the run."
+      },
+      {
+        "when": "2026-11-07 12:45",
+        "evaluator": "t2m",
+        "change": "R-precision batches are drawn from a seeded permutation (20 repeats) as in the official shuffled DataLoader",
+        "reason": "t2m_test.npy is sorted by length; consecutive batches gave top-1 0.398 vs the published 0.511, shuffled batches give 0.512 (trial before the registered run)"
+      }
+    ]
   }
 }
