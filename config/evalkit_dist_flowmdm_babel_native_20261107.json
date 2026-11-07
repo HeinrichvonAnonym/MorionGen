@@ -1,0 +1,41 @@
+{
+  "registered": "2026-11-07 22:16",
+  "scope": "Native-rotation input path for the DART distribution evaluator (flowmdm_babel). Amends config/evalkit_dist_flowmdm_babel_20261107.json, which stays the joint-only (IK) path for rows without rotations. Registered after the export smoke and before any exported row is scored.",
+  "export": {
+    "code": "utils/motiogen/dart_native.py: the same env.get_new_state_human hook that captured the joints also copies the world-frame SMPL-X dict of each primitive (transform_primitive_to_world); the initial history frames come from the reset state through the same two upstream functions. Written to smplx_params.npz next to motion.npz; no change to sampling, seeds or the joint output.",
+    "fields": "global_orient (T,3,3), body_pose (T,21,3,3) rotation matrices, transl (T,3), betas (T,10), pelvis_delta (3), gender; Z-up, m, 30 fps",
+    "smoke": "seed 900, goal update 0: exported joints identical to motion.npz (max diff 0); pelvis_delta equals the SMPL-X rest root (2e-9 m); SMPL-X forward kinematics of the exported parameters vs the network joints 7.0 mm mean, 27 mm p99 (DART predicts joints and rotations separately); rotation orthonormality error 5e-7"
+  },
+  "input_path": {
+    "rotations": "22 rotations = [global_orient, body_pose 1..21]; SMPL-X body joints 0..21 have the SMPL-H body topology and order (deviation: the evaluator was trained on SMPL-H AMASS fits; DART was trained on SMPL-X fits of AMASS)",
+    "translation": "pelvis = transl + pelvis_delta; trans = pelvis - zero-beta SMPL-H rest root, the convention of the IK path and of AMASS trans (pelvis = trans + rest root)",
+    "features": "FlowMDMBabel.features (upstream Globalvelandy), no resampling (rows are 30 fps)"
+  },
+  "reference": "ground-truth native features (BABEL val segments from the official SMPL-H poses), the evaluator's own input; the IK reference stays the reference of the IK path",
+  "rows": {
+    "generation": "python/scripts/dart_feedback_smoke.py --native --frames 600, goal update 0 and 1 (the E4 DART conditions), seeds 1000..1085 for each: 172 rows, 516 windows",
+    "why_new_rows": "the 48 E4 DART rows have no rotations and cannot be regenerated: rows with the same command already differ from frame 2 on (up to 4.6 m), so a rerun is a new sample, not a copy",
+    "windows": "non-overlapping 200-frame windows from frame 0 (as the IK smoke), 3 per row"
+  },
+  "metrics": {
+    "fid_native": "FID(516 native windows, all ground-truth native segments)",
+    "fid_ik_same_rows": "the same rows through the IK path vs the IK reference (paired: what the joint-only path reports for these rows)",
+    "matched_n_floor": "FID of 516 random ground-truth native segments vs all ground-truth native segments, 20 repeats (seeds evalkit_dist_flowmdm_babel_native_floor_k): the value a sample from the ground-truth distribution gets at this N",
+    "e4_consistency": "IK-path FID of the new rows vs the 48 E4 DART rows (144 windows), next to the IK-path FID of the E4 rows vs the IK reference: the new rows must be closer to E4 than E4 is to ground truth for them to stand in for E4 DART",
+    "diversity": "upstream diversity rule on the native windows",
+    "text": "all rows use the goal text 'walk': no R-precision (needs distinct texts); matching distance of the windows to the 'walk' text embedding, next to that of the ground-truth segments labelled 'walk'"
+  },
+  "amendment_2026-11-07_23:10": {
+    "when": "after a pipeline trial on the first 122 rows (366 windows: every FID undefined below 512, as the n_bias check predicts) and a per-joint diagnostic (scratch/dart_native_gap_diag.py), before any scoring of the registered 172 rows",
+    "finding_toes": "the evaluator's ground truth has the toe rotations (left_foot, right_foot) exactly zero in 87% of the BABEL val sequences (94.5% of frames; AMASS subsets captured without toe markers); the other 13% have real toe rotations, median 14 deg. DART outputs 13-15 deg (its SMPL-X seed stand.pkl: 11-15 deg), which the evaluator normalisation turns into ~2.3 normalised units per toe dimension vs 0.24 in the ground truth (10x). The difference reflects which marker set the training data had, not the motion",
+    "toes": "primary native score: toe rotations set to identity before the features (as the 94.5% of ground-truth frames); the unmodified native path is reported next to it (fid_native_toes_kept)",
+    "head_note": "SMPL-X (locked head) and SMPL-H rest bone directions differ by 21 deg at the head and 19 deg at spine3: the same pose needs different rotations there; not corrected (no derivable correction without a body-model transfer), listed as a known bias of the native path",
+    "e4_consistency": "FID is undefined at the 144 E4 windows: replaced by the mean term of FID, |mu_a - mu_b|^2 (defined at any N): new rows vs E4 rows must be below E4 rows vs the IK reference (both IK path)"
+  },
+  "minimum_validity": {
+    "export_consistency": "every row: exported joints equal motion.npz; SMPL-X FK vs network joints mean <= 15 mm (约定，未经推演)",
+    "n_sufficient": "516 windows >= 512, the min-N rule of the main protocol",
+    "above_floor": "fid_native is reported against matched_n_floor; a value inside the floor's range means no detectable difference from ground truth at this N",
+    "scope": "descriptive distribution distance of DART's goal-reaching walks to BABEL val, not a text-conditioned quality score; segment-length mismatch (ground truth 15..200 frames, rows 200) is shared with the IK path"
+  }
+}

@@ -294,6 +294,18 @@ SMPLH_MALE = ASSETS/'chois/processed_data/smpl_all_models/smplh_amass/male/model
 SMPL22_PARENTS = (-1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 12, 13, 14, 16, 17, 18, 19)
 
 
+def smplx_joints(p):
+    """SMPL-X body-joint forward kinematics (22 joints) of world-frame parameters with rotation matrices."""
+    model = np.load(ASSETS/f"smplx-locked-head/{p['gender']}/model.npz", allow_pickle=True)
+    J = (model['J_regressor'] @ (model['v_template'] + model['shapedirs'][..., :10] @ p['betas'][0]))[:22]
+    R = np.concatenate([p['global_orient'][:, None], p['body_pose']], 1)
+    G, P = [R[:, 0]], [p['transl'] + J[0]]
+    for j in range(1, 22):
+        q = SMPL22_PARENTS[j]
+        P.append(P[q] + G[q] @ (J[j]-J[q])); G.append(G[q] @ R[:, j])
+    return np.stack(P, 1).astype(np.float32)
+
+
 class FlowMDMBabel:
     """FlowMDM BABEL text-motion evaluator (DART's vendored FlowMDM): 135-d Globalvelandy features (root height, canonical
     root xy velocity, 22 SMPL rotations in 6d, babel-amass normalisation) at 30 fps; ground truth = BABEL_SingleEval val."""
@@ -469,6 +481,18 @@ class FlowMDMBabel:
         s = torch.ones(len(b), 3, device=b.device); s[:, 2] = torch.sign(torch.det(u @ vt))
         R = u @ torch.diag_embed(s) @ vt
         return torch.cat((R[..., 0], R[..., 1]), -1)
+
+    def features_from_smplx(self, path, zero_toes=True):
+        """DART smplx_params.npz (world frame, 30 fps) -> upstream features without IK
+        (config/evalkit_dist_flowmdm_babel_native_20261107.json): rotations [global_orient, body_pose 1..21],
+        trans = pelvis - zero-beta SMPL-H rest root, pelvis = transl + pelvis_delta. zero_toes: toe rotations set to
+        identity, as in 94.5% of the ground-truth frames (amendment 23:10). Also returns the SMPL-X joints."""
+        p = dict(np.load(path))
+        rots = np.concatenate([p['global_orient'][:, None], p['body_pose']], 1)
+        if zero_toes:
+            rots[:, [HUMANML_NAMES.index('left_foot'), HUMANML_NAMES.index('right_foot')]] = np.eye(3, dtype=rots.dtype)
+        trans = p['transl'] + p['pelvis_delta'] - self.rest[0]
+        return self.features(rots, trans), smplx_joints(p)
 
     def features_from_joints(self, joints, fps=30., **ik):
         """Joint positions -> 30 fps (linear) -> IK -> upstream features; returns features and the IK records."""

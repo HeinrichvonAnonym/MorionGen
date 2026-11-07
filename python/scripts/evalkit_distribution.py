@@ -424,6 +424,108 @@ def figure(name, out, reference):
     print(d/'page.png')
 
 
+E4_PLAN = ROOT/'develop_logs/test_runs/20261103_e4_cross_method/plan.json'
+DART_FK_MAX_MM = 15.
+
+
+def dart_native(out, runs, plan=E4_PLAN):
+    """config/evalkit_dist_flowmdm_babel_native_20261107.json: DART rows with exported SMPL-X rotations, native path vs
+    the ground-truth native features, the IK path on the same rows, matched-N floor, E4 consistency, figure."""
+    ad = FlowMDMAdapter(); ev, W = ad.ev, FlowMDMAdapter.WINDOW
+    cut = lambda f: [f[s:s+W] for s in range(0, len(f), W) if len(f)-s >= ev.MIN_FRAMES]
+    record, native, toes, ik = [], [], [], []
+    for run in sorted(p for p in Path(runs).iterdir() if (p/'smplx_params.npz').exists()):
+        net = np.load(run/'motion.npz', allow_pickle=True)
+        names = [str(n) for n in net['joint_names']]
+        joints = np.asarray(net['joints'], np.float32)[:, [names.index(n) for n in D.HUMANML_NAMES]]
+        f, fk = ev.features_from_smplx(run/'smplx_params.npz')
+        toes += cut(ev.features_from_smplx(run/'smplx_params.npz', zero_toes=False)[0])
+        g, fits = ev.features_from_joints([joints])
+        err = np.linalg.norm(fk-joints, axis=-1)
+        record.append({'run': run.name, 'frames': len(f), 'windows': len(cut(f)), 'fk_vs_network_mm_mean': float(err.mean()*1e3),
+                       'fk_vs_network_mm_p99': float(np.percentile(err, 99)*1e3), 'ik_residual_mm_mean': float(fits[0]['residual_m'].mean()*1e3),
+                       'finite': bool(np.isfinite(f).all() and np.isfinite(g[0]).all())})
+        native += cut(f); ik += cut(g[0])
+    e4 = []
+    for j in (j for j in json.loads(Path(plan).read_text())['jobs'] if j['method'] == 'dart'):
+        z = np.load(Path(j['source'])/'motion.npz', allow_pickle=True); names = [str(n) for n in z['joint_names']]
+        e4 += cut(ev.features_from_joints([np.asarray(z['joints'], np.float32)[:, [names.index(n) for n in D.HUMANML_NAMES]]])[0][0])
+    emb = {k: ev.embed_motions(v) for k, v in (('native', native), ('native_toes_kept', toes), ('ik', ik), ('e4_ik', e4),
+                                                ('gt_native', ad.gt['features']), ('gt_ik', ad.ref['features']))}
+    mean_term = lambda a, b: float(np.sum((emb[a].mean(0)-emb[b].mean(0))**2))
+    n, gt = len(emb['native']), emb['gt_native']
+    floor = {k: [ad.fid(emb[ref][D.rng(f'evalkit_dist_flowmdm_babel_native_floor_{i}').choice(len(emb[ref]), n, replace=False)], emb[ref])
+                 for i in range(20)] for k, ref in (('native', 'gt_native'), ('ik', 'gt_ik'))}
+    walk = ad.ev.embed_texts(D.tag_from_ground_truth(['walk'], unknown='OTHER'))[0]
+    is_walk = np.array([t == 'walk' for t in ad.gt['text']])
+    q = lambda x: {'median': float(np.median(x)), 'p5': float(np.percentile(x, 5)), 'p95': float(np.percentile(x, 95))}
+    fk = np.array([r['fk_vs_network_mm_mean'] for r in record])
+    result = {'protocol': 'config/evalkit_dist_flowmdm_babel_native_20261107.json', 'runs': str(runs), 'rows': len(record), 'windows': n,
+              'minimum_validity': {'export_consistency': {'rule': f'FK vs network mean <= {DART_FK_MAX_MM} mm every row',
+                                                          'max_mm': float(fk.max()), 'pass': bool(fk.max() <= DART_FK_MAX_MM and all(r['finite'] for r in record))},
+                                   'n_sufficient': {'windows': n, 'min_n': 512, 'pass': n >= 512}},
+              'fid_native': ad.fid(emb['native'], gt), 'matched_n_floor_native': q(floor['native']),
+              'fid_native_toes_kept': ad.fid(emb['native_toes_kept'], gt),
+              'fid_ik_same_rows': ad.fid(emb['ik'], emb['gt_ik']), 'matched_n_floor_ik': q(floor['ik']),
+              'fid_native_vs_ik_same_rows': ad.fid(emb['native'], emb['ik']),
+              'e4_consistency': {'statistic': '|mu_a - mu_b|^2 (FID mean term; FID undefined at 144 windows)',
+                                 'new_ik_vs_e4_ik': mean_term('ik', 'e4_ik'), 'e4_ik_vs_gt_ik': mean_term('e4_ik', 'gt_ik'),
+                                 'new_ik_vs_gt_ik': mean_term('ik', 'gt_ik'), 'e4_windows': len(emb['e4_ik'])},
+              'diversity_native': D.diversity(emb['native'], key='evalkit_dist_flowmdm_babel_diversity'),
+              'diversity_native_toes_kept': D.diversity(emb['native_toes_kept'], key='evalkit_dist_flowmdm_babel_diversity'),
+              'diversity_ik': D.diversity(emb['ik'], key='evalkit_dist_flowmdm_babel_diversity'),
+              'diversity_gt_ik': D.diversity(emb['gt_ik'], key='evalkit_dist_flowmdm_babel_diversity'),
+              'diversity_gt_native': D.diversity(gt, key='evalkit_dist_flowmdm_babel_diversity'),
+              'text_walk_matching_distance': {'rows_native': q(np.linalg.norm(emb['native']-walk, axis=1)),
+                                              'rows_native_toes_kept': q(np.linalg.norm(emb['native_toes_kept']-walk, axis=1)),
+                                              'gt_walk_segments': q(np.linalg.norm(gt[is_walk]-walk, axis=1)), 'gt_walk_count': int(is_walk.sum()),
+                                              'gt_all_segments': q(np.linalg.norm(gt-walk, axis=1))},
+              'per_row': record}
+    c = result['e4_consistency']; c['pass'] = bool(c['new_ik_vs_e4_ik'] < c['e4_ik_vs_gt_ik'])
+    d = out/'flowmdm_babel'; d.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(d/'dart_native_embeddings.npz', **emb)
+    (d/'dart_native.json').write_text(json.dumps(result, indent=1, default=float))
+    dart_native_figure(d, result, emb)
+    print(json.dumps({k: v for k, v in result.items() if k != 'per_row'}, indent=1, default=float))
+
+
+def dart_native_figure(d, result, emb):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    gt = emb['gt_native']; mu = gt.mean(0); basis = np.linalg.svd(gt-mu, full_matrices=False)[2][:2].T
+    fig, ax = plt.subplots(1, 3, figsize=(19, 6))
+    ax[0].scatter(*((gt-mu)@basis).T, s=2, c='0.8', label=f'BABEL val, native rotations ({len(gt)})')
+    for k, c, lab in (('native_toes_kept', 'tab:cyan', 'DART, exported rotations, toes kept'),
+                      ('native', 'tab:blue', 'DART, exported rotations (toes zero, primary)'), ('ik', 'tab:orange', 'DART same rows, joints + IK'),
+                      ('e4_ik', 'tab:red', 'DART E4 rows, joints + IK')):
+        ax[0].scatter(*((emb[k]-mu)@basis).T, s=6, c=c, alpha=.5, label=f'{lab} ({len(emb[k])})')
+    ax[0].set_title('FlowMDM BABEL embedding, PCA fit on ground truth'); ax[0].legend(fontsize=8, markerscale=3)
+    r = result; fl, fi = r['matched_n_floor_native'], r['matched_n_floor_ik']
+    bars = [('native path, toes zero\n(primary) vs GT native', r['fid_native'], fl),
+            ('native path, toes kept\nvs GT native', r['fid_native_toes_kept'], fl),
+            ('IK path (same rows)\nvs GT through IK', r['fid_ik_same_rows'], fi)]
+    e = r['e4_consistency']
+    ax[1].text(.02, .97, f"E4 consistency (|mu_a-mu_b|^2, IK path):\nnew vs E4 {e['new_ik_vs_e4_ik']:.2f}   E4 vs GT {e['e4_ik_vs_gt_ik']:.2f}"
+               f"   new vs GT {e['new_ik_vs_gt_ik']:.2f}", transform=ax[1].transAxes, va='top', fontsize=8)
+    for i, (lab, v, f) in enumerate(bars):
+        ax[1].bar(i, v, color='tab:blue' if i == 0 else '0.6')
+        ax[1].text(i, v, f'{v:.2f}', ha='center', va='bottom', fontsize=9)
+        if f: ax[1].errorbar(i, f['median'], yerr=[[f['median']-f['p5']], [f['p95']-f['median']]], fmt='_', c='k', capsize=8, ms=20)
+    ax[1].set_xticks(range(len(bars)), [b[0] for b in bars], fontsize=8)
+    ax[1].set_ylabel('FID'); ax[1].set_title(f"FID, N = {r['windows']} windows (black: same-N ground-truth floor, 5-95%)")
+    t = r['text_walk_matching_distance']
+    keys = (('rows_native', 'DART windows\n(native, toes zero)'), ('rows_native_toes_kept', 'DART windows\n(native, toes kept)'),
+            ('gt_walk_segments', f"GT 'walk' ({t['gt_walk_count']})"), ('gt_all_segments', 'GT all segments'))
+    for i, (k, _) in enumerate(keys):
+        ax[2].errorbar(i, t[k]['median'], yerr=[[t[k]['median']-t[k]['p5']], [t[k]['p95']-t[k]['median']]], fmt='o', capsize=6)
+    ax[2].set_xticks(range(len(keys)), [lab for _, lab in keys], fontsize=8)
+    ax[2].set_ylabel("distance to the 'walk' text embedding (median, 5-95%)"); ax[2].set_title('Text matching (descriptive; one text, no R-precision)')
+    fig.suptitle('DART distribution with exported SMPL-X rotations (config/evalkit_dist_flowmdm_babel_native_20261107.json)')
+    fig.tight_layout(); fig.savefig(d/'dart_native.png', dpi=110)
+    print(d/'dart_native.png')
+
+
 def reexec_kimodo():
     from motiogen.config import environment_root, load_config, repo_root
     from motiogen.stratified import _environment
@@ -440,7 +542,9 @@ def reexec_kimodo():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('step', choices=['selfcheck', 'smoke', 'figure'])
+    ap.add_argument('step', choices=['selfcheck', 'smoke', 'figure', 'dart-native'])
+    ap.add_argument('--runs', type=Path, default=ROOT/'develop_logs/test_runs/20261107_evalkit/dart_export/runs',
+                    help='dart-native: directory of DART runs with smplx_params.npz')
     ap.add_argument('--evaluator', default='t2m', choices=sorted(ADAPTERS))
     ap.add_argument('--manifest', type=Path, default=MANIFEST)
     ap.add_argument('--out', type=Path, default=OUT)
@@ -448,6 +552,7 @@ def main():
     a = ap.parse_args()
     a.out, a.reference = a.out.resolve(), a.reference.resolve()
     if a.step == 'figure': return figure(a.evaluator, a.out, a.reference)
+    if a.step == 'dart-native': return dart_native(a.out, a.runs.resolve())
     if a.step == 'smoke' and not any(D.REGISTRY[r['method']] == a.evaluator for r in json.loads(a.manifest.read_text())['rows']):
         return print(json.dumps({'evaluator': a.evaluator, 'rows': 0, 'skipped': 'no manifest row maps to this evaluator'}))
     if a.evaluator == 'tmr_soma' and not os.environ.get('EVALKIT_KIMODO'): return reexec_kimodo()

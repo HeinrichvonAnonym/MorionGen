@@ -1,8 +1,11 @@
-"""Fixed pretrained DART policy, official step/state update, no pose extrapolation."""
+"""Fixed pretrained DART policy, official step/state update, no pose extrapolation.
+Besides motion.npz, writes the world-frame SMPL-X body parameters of the same frames to smplx_params.npz."""
 import json
 import random
 import time
 from pathlib import Path
+
+SMPLX_KEYS = ('transl', 'global_orient', 'body_pose', 'betas', 'joints')
 
 
 def run(args, data, root):
@@ -48,11 +51,18 @@ def run(args, data, root):
     goal1 = torch.tensor([[*args.goal_next,0.]],device='cuda')
     observation, _ = env.reset(goal_location=goal0, goal_texts=['walk'])
     initial = env.get_global_joints()[0].detach().cpu().numpy()
-    captured = []
+    def body(primitive):
+        return {k:primitive[k][0].detach().float().cpu().numpy() for k in SMPLX_KEYS}
+    utility = env.primitive_utility
+    bodies = [body(utility.transform_primitive_to_world(utility.feature_dict_to_smpl_dict(dict(env.state_human))))]
+    pelvis_delta = env.state_human['pelvis_delta'][0].detach().float().cpu().numpy()
+    gender = str(env.state_human['gender'])
+    captured, captured_bodies = [], []
     native_transition = env.get_new_state_human
     def capture(action):
         result = native_transition(action)
         captured.append(result[2]['joints'][0].detach().cpu().numpy())
+        captured_bodies.append(body(result[2]))
         return result
     env.get_new_state_human = capture
     torch.cuda.synchronize()
@@ -87,6 +97,7 @@ def run(args, data, root):
         boundaries.append(frame)
         future = captured.pop()
         chunks.append(future)
+        bodies.append(captured_bodies.pop())
         trace.append({'frame':frame,'seconds':elapsed,'success':bool(success.item()),
                       'request_wall_seconds':wall_elapsed,'scheduled_motion_seconds':scheduled,
                       'completion_wall_seconds':time.perf_counter()-execution_start,
@@ -99,9 +110,17 @@ def run(args, data, root):
     verify_unchanged(weight_binding)
     if not np.isfinite(xyz).all():
         raise ValueError('Non-finite native output')
+    params={k:np.concatenate([b[k] for b in bodies])[:args.frames] for k in SMPLX_KEYS}
+    joints_diff=np.abs(params.pop('joints')-xyz).max()
+    if len(params['transl'])!=len(xyz) or joints_diff>1e-4 or not all(np.isfinite(v).all() for v in params.values()):
+        raise ValueError('SMPL-X export does not match the joint output')
     save_motion(out/'motion.npz',xyz,HUMANML_NAMES,30,
         {'units':'m','axes':'right-handed Z-up','model':'DART','seed':args.seed,
          'variant':'official env.step, same target retained after success, original termination reset'})
+    np.savez(out/'smplx_params.npz',**params,pelvis_delta=pelvis_delta,gender=gender,fps=30,
+        joints_vs_motion_max_abs_m=np.float32(joints_diff),
+        description='DART world-frame SMPL-X body parameters of the same frames as motion.npz (Z-up, m): global_orient (T,3,3) and '
+                    'body_pose (T,21,3,3) rotation matrices, transl, betas; pelvis = transl + pelvis_delta')
     motion={'joints':xyz,'joint_names':HUMANML_NAMES,'fps':30,'chunk_boundaries':np.array(boundaries)}
     json_write(out/'metrics.json',evaluate(motion,{'name':'native_goal_change'}))
     requested=np.repeat(goal0.cpu().numpy(),len(xyz),axis=0)
