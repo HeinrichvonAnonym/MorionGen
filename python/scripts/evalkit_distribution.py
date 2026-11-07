@@ -1,8 +1,9 @@
 """Distribution evaluators: ground-truth self-checks, C0 smoke and figures (config/evalkit_v1_20261107.json `distribution`).
 
   selfcheck --evaluator E    split half, round trip, perturbation monotone, text match, FID-vs-N -> <out>/<E>/selfcheck.json
-  smoke --evaluator E        C0 rows of the 8x5 manifest through the same evaluator -> <out>/<E>/smoke.json
+  smoke --evaluator E [--manifest M]   manifest rows of that evaluator -> <out>/<E>/smoke.json (ground truth from --reference)
   figure --evaluator E       PCA projection, FID vs perturbation, FID vs N, retrieval -> <out>/<E>/page.png
+--reference (default: the registered self-check directory) holds <E>/selfcheck.json and embeddings.npz.
 Evaluators: t2m, omomo and flowmdm_babel (motiogen-motionlcm; flowmdm_babel in its own process, its upstream package name
 collides with OmniControl's), tmr_soma (motiogen-kimodo; re-executes itself there with the Kimodo environment).
 """
@@ -349,10 +350,11 @@ def selfcheck(adapter, out):
                      | {'min_n': min_n, 'split_max': max(split), 'noise': noise, 'shuffle': shuffle}, default=float))
 
 
-def smoke(adapter, manifest, out):
+def smoke(adapter, manifest, out, reference):
     name = adapter.name
     rows = [r for r in json.loads(Path(manifest).read_text())['rows'] if D.REGISTRY[r['method']] == name]
-    gt = np.load(out/name/'embeddings.npz')['ground_truth']
+    gt = np.load(reference/name/'embeddings.npz')['ground_truth']
+    (out/name).mkdir(parents=True, exist_ok=True)
     emb, record = adapter.smoke(rows)
     owner = getattr(adapter, 'windows', {}).get('owner', np.arange(len(rows)))
     methods = {}
@@ -370,12 +372,12 @@ def smoke(adapter, manifest, out):
     print(json.dumps(methods, indent=1, default=float))
 
 
-def figure(name, out):
+def figure(name, out, reference):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
-    d, check = out/name, json.loads((out/name/'selfcheck.json').read_text())
-    emb = np.load(d/'embeddings.npz')
+    d, check = out/name, json.loads((reference/name/'selfcheck.json').read_text())
+    emb = np.load(reference/name/'embeddings.npz')
     gt = emb['ground_truth']
     mu = gt.mean(0)
     basis = np.linalg.svd(gt-mu, full_matrices=False)[2][:2].T
@@ -439,12 +441,15 @@ def main():
     ap.add_argument('--evaluator', default='t2m', choices=sorted(ADAPTERS))
     ap.add_argument('--manifest', type=Path, default=MANIFEST)
     ap.add_argument('--out', type=Path, default=OUT)
+    ap.add_argument('--reference', type=Path, default=OUT, help='directory holding <evaluator>/selfcheck.json and embeddings.npz')
     a = ap.parse_args()
-    a.out = a.out.resolve()
-    if a.step == 'figure': return figure(a.evaluator, a.out)
+    a.out, a.reference = a.out.resolve(), a.reference.resolve()
+    if a.step == 'figure': return figure(a.evaluator, a.out, a.reference)
+    if a.step == 'smoke' and not any(D.REGISTRY[r['method']] == a.evaluator for r in json.loads(a.manifest.read_text())['rows']):
+        return print(json.dumps({'evaluator': a.evaluator, 'rows': 0, 'skipped': 'no manifest row maps to this evaluator'}))
     if a.evaluator == 'tmr_soma' and not os.environ.get('EVALKIT_KIMODO'): return reexec_kimodo()
     adapter = ADAPTERS[a.evaluator]()
-    selfcheck(adapter, a.out) if a.step == 'selfcheck' else smoke(adapter, a.manifest.resolve(), a.out)
+    selfcheck(adapter, a.out) if a.step == 'selfcheck' else smoke(adapter, a.manifest.resolve(), a.out, a.reference)
 
 
 if __name__ == '__main__':
