@@ -12,7 +12,8 @@ import biomech
 def evaluate(work, t0, t1):
     """work holds model.osim, coordinates.mot and grf.xml. Returns per-frame effort and the summary metrics."""
     work = Path(work)
-    summary = biomech.static_optimization(work, t0, t1, step=SPEC['muscle']['so_step'])
+    unlock = [f'subtalar_angle_{s}' for s in 'rl'] if SPEC['muscle'].get('unlock_subtalar') else []
+    summary = biomech.static_optimization(work, t0, t1, step=SPEC['muscle']['so_step'], unlock=unlock)
     import opensim as osim
     model = osim.Model(str(work/'model_so.osim')); model.initSystem()
     times, labels, act = biomech.read_storage(work/'so/so_so_activation.sto')

@@ -3,8 +3,11 @@ coordinates and the frame-level IK gate. OpenSim python.
 
 Calibration (registration of the marker offsets that the generated skeleton does not define the way the model does):
 the most upright frames of the clip (not its first second, which a generated motion need not start upright in)
-carry a lumbar-locked limb-only IK; axial markers are registered there (biomech.register_axial), and on each foot that
-is planted in those frames the ankle and toe markers are registered with the foot levelled on the given floor."""
+carry a lumbar-locked limb-only IK; axial markers are registered there (biomech.register_axial), on each foot that
+is planted in those frames the ankle and toe markers are registered with the foot levelled on the given floor, and the
+remaining limb markers (fit.registered_limb_markers) are registered like the axial ones. Unregistered limb markers sit
+at the model joint centres with weight 1 against 0.3 for the axial ones, so the full IK moves the pelvis to absorb
+their landmark offsets and the pelvis / lumbar split takes the error."""
 import json
 from pathlib import Path
 
@@ -13,7 +16,7 @@ import numpy as np
 from .spec import SPEC
 import biomech
 
-PREPARE = 'evalkit-upright-flatfoot-torso95-3'
+PREPARE = 'evalkit-upright-flatfoot-torso95-limbreg-4'
 C = SPEC['fit']
 
 
@@ -53,7 +56,11 @@ def prepare(run, out, mass, floor):
                                limb_only, lock_lumbar=True)
     receipt['axial_markers_body_frame_m'] = biomech.register_axial(out/'scaled.osim', out/'calib/ik.mot', points, names, fps,
                                                                     calib, out/'axial.osim')
-    receipt['feet'] = register_feet(out/'axial.osim', out/'calib/ik.mot', points, names, fps, floor, out/'model.osim')
+    receipt['feet'] = register_feet(out/'axial.osim', out/'calib/ik.mot', points, names, fps, floor, out/'feet.osim')
+    limbs = {n: (body, src) for n, (_, body, src) in biomech.MARKERS.items()
+             if n.rsplit('_', 1)[0] in C['registered_limb_markers'] and src in names}
+    receipt['limb_markers_body_frame_m'] = biomech.register_axial(out/'feet.osim', out/'calib/ik.mot', points, names, fps,
+                                                                  calib, out/'model.osim', markers=limbs)
     biomech.write_trc(points, names, fps, out/'markers.trc')
     (out/'ik').mkdir(exist_ok=True)
     biomech.inverse_kinematics(out/'model.osim', out/'markers.trc', out/'ik/ik.mot', 0., (points.shape[0]-1)/fps, biomech.WEIGHTS)

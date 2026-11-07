@@ -15,7 +15,15 @@
     "min_calibration_frames": 3,
     "note": "2026-11-07 11:42 dev amendment after the muscle diagnosis (constant per-clip coordinate biases: stoop pelvis tilt -17 / lumbar +24 / hip +17 deg from a non-upright first second under the lumbar-locked calibration; ankle +16 deg from foot joint-definition offsets, gone with zero offsets): calibration on the most upright frames instead of the first second, and ankle / toe markers registered on planted feet levelled on the given floor (evalkit.fit). Values 约定，未经推演",
     "torso_length_percentile": 95.0,
-    "torso_length_note": "2026-11-07 12:57: the shoulder-mid to hip-mid span crosses the lumbar joint and only shortens with flexion; the clip median under-scaled the torso of flexed clips (dev stoop 101: 0.92 of the truth model, pelvis tilt / lumbar errors -10 / +14 deg growing with flexion, identical with clean joints). Dev controls, ratio to truth torso length: median 0.974 (0.900-1.019), p95 0.990 (0.953-1.026), max 0.995 (0.963-1.033); p95 chosen over max for robustness to bad frames (约定，未经推演)"
+    "torso_length_note": "2026-11-07 12:57: the shoulder-mid to hip-mid span crosses the lumbar joint and only shortens with flexion; the clip median under-scaled the torso of flexed clips (dev stoop 101: 0.92 of the truth model, pelvis tilt / lumbar errors -10 / +14 deg growing with flexion, identical with clean joints). Dev controls, ratio to truth torso length: median 0.974 (0.900-1.019), p95 0.990 (0.953-1.026), max 0.995 (0.963-1.033); p95 chosen over max for robustness to bad frames (约定，未经推演)",
+    "registered_limb_markers": [
+      "hip",
+      "knee",
+      "shoulder",
+      "elbow",
+      "wrist"
+    ],
+    "limb_registration_note": "2026-11-07 15:21 dev amendment (fit -4, user-approved): limb markers registered at their mean body-frame location over the calibration frames like the axial ones. Diagnosis on the 18 dev controls: the calibration solution fits the axial markers to 0.4 cm but the unregistered limb markers only to 1.4-2.4 cm; the full IK (limb weight 1, axial 0.3, lumbar free) moved the pelvis to absorb the limb landmark offsets, axial error 1.4-3.4 cm, constant pelvis tilt / lumbar biases up to 10 / 19 deg. IK-only check (scratch/limbreg_ik.py): coordinate RMS over 15 DOFs mean 3.71 -> 2.73 deg, max 18.8 -> 13.5; lumbar extension 6.5 -> 3.2; pelvis tilt 4.4 -> 2.6; knee and ankle unchanged; registered shift median 1.16 cm"
   },
   "ik_gate": {
     "max_marker_error_m": 0.1,
@@ -113,7 +121,9 @@
   "muscle": {
     "so_step": 2,
     "effort": "sum over muscles of activation^2 per SO frame; clip effort = mean over scored frames",
-    "reserves": "biomech.static_optimization (lower-limb reserves 1 N m, pelvis residual actuators 1000)"
+    "reserves": "biomech.static_optimization (lower-limb reserves 1 N m, pelvis residual actuators 1000)",
+    "unlock_subtalar": true,
+    "subtalar_note": "2026-11-07 15:21 dev amendment (user-approved): the static-optimization model frees the subtalar joints (the fit keeps them locked, coordinate 0), matching the synthetic subject model, whose static optimization balances the subtalar moment with muscles. Dev controls, effort vs truth (scratch/muscle_subtalar_diag.py, fit -3, margin 0.02): median |relative error| 23.7% -> 16.6%, high-load clips (truth >= 1, n=12) 25.6% -> 13.8%, single-leg / step -18..-32% -> -5..-15%, Spearman 0.89 -> 0.97; low-load clips rise by about 0.04 absolute"
   },
   "kinematic": {
     "reach_thresholds_m": [

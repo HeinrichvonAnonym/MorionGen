@@ -119,7 +119,7 @@ def calibrate(args):
                                    'reference_frames': {s: len(heights[s]['heel']) for s in SIDES},
                                    'reference_iqr_m': {s: {k: np.percentile(heights[s][k], [25, 75]).tolist() for k in LANDMARKS} for s in SIDES},
                                    'neutral_subjects': [c['info']['seed'] for c in stand]}
-    SPEC_PATH.write_text(json.dumps(spec, indent=2))
+    SPEC_PATH.write_text(json.dumps(spec, indent=2, ensure_ascii=False)+'\n')
     print(json.dumps({'reference': ref, 'neutral_neck_deg': neck.tolist(), 'neutral_shoulder_deg': shoulder.tolist()}, indent=1))
 
 

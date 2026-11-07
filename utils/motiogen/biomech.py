@@ -135,12 +135,14 @@ def read_storage(path):
     return np.array(list(table.getIndependentColumn())), labels, data
 
 
-def register_axial(model_path, ik_mot, points, names, fps, frames, out_path):
-    """Place axial markers at the mean body-frame location of their generated joints over the calibration frames."""
+def register_axial(model_path, ik_mot, points, names, fps, frames, out_path, markers=None):
+    """Place markers ({name: (body, source joint)}, default the axial ones) at the mean body-frame location of their
+    generated joints over the calibration frames."""
+    markers = AXIAL if markers is None else markers
     model = osim.Model(str(model_path)); state = model.initSystem()
     times, labels, data = read_storage(ik_mot)
     coords = model.getCoordinateSet()
-    sums = {name: np.zeros(3) for name in AXIAL}
+    sums = {name: np.zeros(3) for name in markers}
     for row in range(len(times)):
         for k, label in enumerate(labels):
             if coords.contains(label):
@@ -148,15 +150,15 @@ def register_axial(model_path, ik_mot, points, names, fps, frames, out_path):
                 c.setValue(state, np.deg2rad(data[row, k]) if c.getMotionType() == 1 else data[row, k], False)
         model.realizePosition(state)
         frame = int(round(times[row]*fps))
-        for name, (body, source) in AXIAL.items():
+        for name, (body, source) in markers.items():
             ground = osim.Vec3(*points[frame, names.index(source)])
             local = model.getGround().findStationLocationInAnotherFrame(state, ground, model.getBodySet().get(body))
             sums[name] += [local.get(k) for k in range(3)]
-    markers = model.updMarkerSet()
-    for name in AXIAL:
-        markers.get(name).set_location(osim.Vec3(*(sums[name]/len(times))))
+    marker_set = model.updMarkerSet()
+    for name in markers:
+        marker_set.get(name).set_location(osim.Vec3(*(sums[name]/len(times))))
     model.printToXML(str(out_path))
-    return {name: (sums[name]/len(times)).tolist() for name in AXIAL}
+    return {name: (sums[name]/len(times)).tolist() for name in markers}
 
 
 def marker_errors(ik_dir):
@@ -395,10 +397,13 @@ RESERVE_NM = 1.
 RESIDUAL = {'pelvis_tx': 1e3, 'pelvis_ty': 1e3, 'pelvis_tz': 1e3, 'pelvis_tilt': 1e3, 'pelvis_list': 1e3, 'pelvis_rotation': 1e3}
 
 
-def static_optimization(out, t0, t1, step=2):
-    """Muscle activations (activation exponent 2) with weak lower-limb reserves and strong pelvis residual actuators."""
+def static_optimization(out, t0, t1, step=2, unlock=()):
+    """Muscle activations (activation exponent 2) with weak lower-limb reserves and strong pelvis residual actuators.
+    unlock: coordinates freed in the optimization model only (held at their coordinates-file value, default 0)."""
     out = Path(out).resolve()
     model = osim.Model(str(out/'model.osim'))
+    for name in unlock:
+        model.updCoordinateSet().get(name).setDefaultLocked(False)
     state = model.initSystem(); coords = model.getCoordinateSet()
     names = [coords.get(i).getName() for i in range(coords.getSize())
              if not coords.get(i).isConstrained(state) and not coords.get(i).getName().startswith(('lumbar', 'arm', 'elbow', 'pro_sup', 'wrist'))]
