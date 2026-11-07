@@ -428,6 +428,14 @@ E4_PLAN = ROOT/'develop_logs/test_runs/20261103_e4_cross_method/plan.json'
 DART_FK_MAX_MM = 15.
 
 
+DART_TEXT = 'walk'
+
+
+def subset_mask(labels, text):
+    """Matched-action subset (amendment 23:26): labels containing every word of the text as a substring."""
+    return np.array([all(w in t for w in text.split()) for t in labels])
+
+
 def dart_native(out, runs, plan=E4_PLAN):
     """config/evalkit_dist_flowmdm_babel_native_20261107.json: DART rows with exported SMPL-X rotations, native path vs
     the ground-truth native features, the IK path on the same rows, matched-N floor, E4 consistency, figure."""
@@ -456,14 +464,29 @@ def dart_native(out, runs, plan=E4_PLAN):
     n, gt = len(emb['native']), emb['gt_native']
     floor = {k: [ad.fid(emb[ref][D.rng(f'evalkit_dist_flowmdm_babel_native_floor_{i}').choice(len(emb[ref]), n, replace=False)], emb[ref])
                  for i in range(20)] for k, ref in (('native', 'gt_native'), ('ik', 'gt_ik'))}
-    walk = ad.ev.embed_texts(D.tag_from_ground_truth(['walk'], unknown='OTHER'))[0]
-    is_walk = np.array([t == 'walk' for t in ad.gt['text']])
     q = lambda x: {'median': float(np.median(x)), 'p5': float(np.percentile(x, 5)), 'p95': float(np.percentile(x, 95))}
+    sub = subset_mask(ad.gt['text'], DART_TEXT); ns = int(sub.sum())
+    defined = ns >= 512 and n >= 512
+    subset = {'text': DART_TEXT, 'segments': ns, 'defined': defined}
+    if defined:
+        for k, path, ref in (('fid_native', 'native', 'gt_native'), ('fid_native_toes_kept', 'native_toes_kept', 'gt_native'),
+                             ('fid_ik_same_rows', 'ik', 'gt_ik')):
+            subset[k] = ad.fid(emb[path], emb[ref][sub])
+        for k, ref in (('native', 'gt_native'), ('ik', 'gt_ik')):
+            s = emb[ref][sub]
+            subset[f'matched_n_floor_{k}'] = q([ad.fid(s[D.rng(f'evalkit_dist_flowmdm_babel_subset_floor_{i}').choice(ns, n, replace=False)], s)
+                                                for i in range(20)]) if ns > n else None
+            subset[f'subset_vs_whole_{k}'] = ad.fid(s, emb[ref])
+        subset['diversity_gt_native_subset'] = D.diversity(emb['gt_native'][sub], key='evalkit_dist_flowmdm_babel_diversity')
+    walk = ad.ev.embed_texts(D.tag_from_ground_truth([DART_TEXT], unknown='OTHER'))[0]
+    is_walk = np.array([t == DART_TEXT for t in ad.gt['text']])
     fk = np.array([r['fk_vs_network_mm_mean'] for r in record])
     result = {'protocol': 'config/evalkit_dist_flowmdm_babel_native_20261107.json', 'runs': str(runs), 'rows': len(record), 'windows': n,
               'minimum_validity': {'export_consistency': {'rule': f'FK vs network mean <= {DART_FK_MAX_MM} mm every row',
                                                           'max_mm': float(fk.max()), 'pass': bool(fk.max() <= DART_FK_MAX_MM and all(r['finite'] for r in record))},
                                    'n_sufficient': {'windows': n, 'min_n': 512, 'pass': n >= 512}},
+              'matched_action_subset_primary': subset,
+              'whole_set': 'the fid_* / matched_n_floor_* keys below use the whole BABEL val (reported next to the primary subset)',
               'fid_native': ad.fid(emb['native'], gt), 'matched_n_floor_native': q(floor['native']),
               'fid_native_toes_kept': ad.fid(emb['native_toes_kept'], gt),
               'fid_ik_same_rows': ad.fid(emb['ik'], emb['gt_ik']), 'matched_n_floor_ik': q(floor['ik']),
@@ -494,25 +517,27 @@ def dart_native_figure(d, result, emb):
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     gt = emb['gt_native']; mu = gt.mean(0); basis = np.linalg.svd(gt-mu, full_matrices=False)[2][:2].T
-    fig, ax = plt.subplots(1, 3, figsize=(19, 6))
+    fig, ax = plt.subplots(1, 3, figsize=(22, 6.5))
     ax[0].scatter(*((gt-mu)@basis).T, s=2, c='0.8', label=f'BABEL val, native rotations ({len(gt)})')
     for k, c, lab in (('native_toes_kept', 'tab:cyan', 'DART, exported rotations, toes kept'),
                       ('native', 'tab:blue', 'DART, exported rotations (toes zero, primary)'), ('ik', 'tab:orange', 'DART same rows, joints + IK'),
                       ('e4_ik', 'tab:red', 'DART E4 rows, joints + IK')):
         ax[0].scatter(*((emb[k]-mu)@basis).T, s=6, c=c, alpha=.5, label=f'{lab} ({len(emb[k])})')
     ax[0].set_title('FlowMDM BABEL embedding, PCA fit on ground truth'); ax[0].legend(fontsize=8, markerscale=3)
-    r = result; fl, fi = r['matched_n_floor_native'], r['matched_n_floor_ik']
-    bars = [('native path, toes zero\n(primary) vs GT native', r['fid_native'], fl),
-            ('native path, toes kept\nvs GT native', r['fid_native_toes_kept'], fl),
-            ('IK path (same rows)\nvs GT through IK', r['fid_ik_same_rows'], fi)]
+    r = result; fl, fi = r['matched_n_floor_native'], r['matched_n_floor_ik']; s = r['matched_action_subset_primary']
+    bars = ([(f"PRIMARY: native, toes zero\nvs GT '{s['text']}' subset ({s['segments']})", s['fid_native'], s['matched_n_floor_native']),
+             ('native, toes kept\nvs subset', s['fid_native_toes_kept'], s['matched_n_floor_native']),
+             ('IK path\nvs subset through IK', s['fid_ik_same_rows'], s['matched_n_floor_ik'])] if s['defined'] else []) + [
+            ('native, toes zero\nvs whole GT', r['fid_native'], fl), ('native, toes kept\nvs whole GT', r['fid_native_toes_kept'], fl),
+            ('IK path\nvs whole GT through IK', r['fid_ik_same_rows'], fi)]
     e = r['e4_consistency']
     ax[1].text(.02, .97, f"E4 consistency (|mu_a-mu_b|^2, IK path):\nnew vs E4 {e['new_ik_vs_e4_ik']:.2f}   E4 vs GT {e['e4_ik_vs_gt_ik']:.2f}"
                f"   new vs GT {e['new_ik_vs_gt_ik']:.2f}", transform=ax[1].transAxes, va='top', fontsize=8)
     for i, (lab, v, f) in enumerate(bars):
-        ax[1].bar(i, v, color='tab:blue' if i == 0 else '0.6')
+        ax[1].bar(i, v, color='tab:blue' if i == 0 else ('0.45' if i < 3 and s['defined'] else '0.75'))
         ax[1].text(i, v, f'{v:.2f}', ha='center', va='bottom', fontsize=9)
         if f: ax[1].errorbar(i, f['median'], yerr=[[f['median']-f['p5']], [f['p95']-f['median']]], fmt='_', c='k', capsize=8, ms=20)
-    ax[1].set_xticks(range(len(bars)), [b[0] for b in bars], fontsize=8)
+    ax[1].set_xticks(range(len(bars)), [b[0] for b in bars], fontsize=7)
     ax[1].set_ylabel('FID'); ax[1].set_title(f"FID, N = {r['windows']} windows (black: same-N ground-truth floor, 5-95%)")
     t = r['text_walk_matching_distance']
     keys = (('rows_native', 'DART windows\n(native, toes zero)'), ('rows_native_toes_kept', 'DART windows\n(native, toes kept)'),

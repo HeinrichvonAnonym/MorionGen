@@ -32,6 +32,14 @@
     "head_note": "SMPL-X (locked head) and SMPL-H rest bone directions differ by 21 deg at the head and 19 deg at spine3: the same pose needs different rotations there; not corrected (no derivable correction without a body-model transfer), listed as a known bias of the native path",
     "e4_consistency": "FID is undefined at the 144 E4 windows: replaced by the mean term of FID, |mu_a - mu_b|^2 (defined at any N): new rows vs E4 rows must be below E4 rows vs the IK reference (both IK path)"
   },
+  "amendment_2026-11-07_23:26_user_decision": {
+    "decision": "user (both_subset_primary): the batch primary reference is the matched-action subset of the ground truth; the whole BABEL val stays reported next to it",
+    "why": "on the 172 rows the whole-set FID mostly measures coverage: ground-truth walking segments vs the whole set give 51.4, DART vs the whole set 52.4 (dart_native_posthoc_walk.json)",
+    "subset_rule": "ground-truth segments whose processed label contains every word of the row's text as a substring, so 'walk' also matches 'walking' (DART: goal text 'walk' -> 1167 segments). Chosen after seeing the post-hoc values of both candidate rules (contains 16.3, exact label 'walk' 18.9; 616 segments, close to the 512 minimum): the reason is sample size, stated here because the choice followed the numbers",
+    "minimum": "subset FID only when the subset and the rows both have >= 512 windows; otherwise reported as undefined",
+    "floor": "matched-N floor inside the subset: N random subset segments vs the whole subset, 20 repeats (seeds evalkit_dist_flowmdm_babel_subset_floor_k)",
+    "scope": "protocol for the batch; the 172 rows above are the first application"
+  },
   "minimum_validity": {
     "export_consistency": "every row: exported joints equal motion.npz; SMPL-X FK vs network joints mean <= 15 mm (约定，未经推演)",
     "n_sufficient": "516 windows >= 512, the min-N rule of the main protocol",
