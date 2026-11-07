@@ -45,6 +45,25 @@ def tag(texts):
     return json.loads(run.stdout)
 
 
+def tag_from_ground_truth(texts):
+    """Fallback without spaCy: each word with its most frequent tag in the official test-caption tokens (lemmas of
+    nouns / verbs by the same lookup); None when a word never occurs there."""
+    import collections
+    data = np.load(T2M_GT, allow_pickle=True).item()
+    seen = collections.defaultdict(collections.Counter)
+    for v in data['data_dict'].values():
+        for t in v['text']:
+            words = [w for w in t['caption'].replace('-', '').lower().split()]
+            for w, tok in zip([w.strip('.,!?;:') for w in words if w.strip('.,!?;:').isalpha()], t['tokens']):
+                seen[w][tok] += 1
+    out = []
+    for s in texts:
+        words = [w.strip('.,!?;:') for w in s.replace('-', '').lower().split()]
+        toks = [seen[w].most_common(1)[0][0] if seen[w] else None for w in words if w.isalpha()]
+        out.append(None if None in toks else toks)
+    return out
+
+
 def fid(a, b):
     from data_loaders.humanml.utils.metrics import calculate_activation_statistics, calculate_frechet_distance
     return float(calculate_frechet_distance(*calculate_activation_statistics(a), *calculate_activation_statistics(b)))

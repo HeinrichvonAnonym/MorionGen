@@ -87,16 +87,20 @@ class T2MAdapter:
         ev = self.ev
         prompts = [sources.prompt(r['source']) for r in rows]
         unique = sorted({p for p in prompts if p})
-        tagged = dict(zip(unique, D.tag(unique)))
+        try:
+            tagged, tokenizer = dict(zip(unique, D.tag(unique))), 'spacy en_core_web_sm'
+        except Exception as e:  # model not installed: smoke-only fallback, recorded per row
+            tagged = dict(zip(unique, D.tag_from_ground_truth(unique)))
+            tokenizer = f'fallback: most frequent tag in the official test tokens ({type(e).__name__})'
         feats, record = [], []
         for row, prompt in zip(rows, prompts):
             z = np.load(motion_file(row['source']), allow_pickle=True)
             f = ev.features(ev.joints_from_motion(z['joints'], z['joint_names'], float(z['fps'])))
             feats.append(f)
-            record.append({'id': row['id'], 'method': row['method'], 'prompt': prompt, 'tokens': tagged.get(prompt),
+            record.append({'id': row['id'], 'method': row['method'], 'prompt': prompt, 'tokens': tagged.get(prompt), 'tokenizer': tokenizer,
                            'frames_20fps': len(f), 'finite': bool(np.isfinite(f).all())})
         emb = ev.embed_motions(feats, key='evalkit_dist_t2m_crop_smoke')
-        with_text = [i for i, p in enumerate(prompts) if p]
+        with_text = [i for i, p in enumerate(prompts) if p and tagged.get(p)]
         for i, t in zip(with_text, ev.embed_texts([tagged[prompts[i]] for i in with_text])):
             record[i]['matching_distance'] = float(np.linalg.norm(t-emb[i]))
         return emb, record
