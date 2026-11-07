@@ -89,6 +89,9 @@ def main():
     tr = dict(np.load(args.clip/'truth/truth.npz'))
     tool = dict(np.load(args.tool/'frames.npz', allow_pickle=True))
     te = dict(np.load(args.truth/'truth_eval.npz', allow_pickle=True))
+    for side, d in ((tool, args.tool), (te, args.truth)):
+        if 'muscle_effort' not in side and (d/'video_muscle.npz').exists():
+            side.update(np.load(d/'video_muscle.npz'))
     tw = args.tool/'work'
     tool_title = f"evalkit（输入地面 {meta['floor_height_m']:+.3f} m，含 ±5 cm 平移）"
     left = KitPanel('evalkit', tool_title, tw/'model.osim', tw/'coordinates.mot', tw/'grf.mot', tw/'so',
@@ -104,7 +107,7 @@ def main():
     fig.suptitle(args.title, fontsize=13, y=.99)
     axes = [fig.add_axes([.01+i*.495, .43, .48, .52]) for i in range(2)]
     strips = [fig.add_axes([.06, .05+k*.085, .9, .07]) for k in range(4)][::-1]
-    tau = SPEC['residual']['tau_bw']; depth = SPEC['residual']['penetration_depth_m']
+    tau = SPEC['residual']['tau_bw']
     fig.text(.5, .405, '左：评估工具（生成式稀疏关节 → 缩放 + IK → 高度接触 → GRF 拟合）；右：真值。绿箭头 GRF，品红箭头残余力（1 BW = 0.6 m），'
              '肌肉颜色为静态优化激活（未做 SO 的片段为蓝色）', ha='center', fontsize=9.5, color='#444')
 
@@ -116,14 +119,19 @@ def main():
                 ax.axvspan(tr['times'][a0], tr['times'][min(a1, len(m)-1)], color=colour, lw=0)
         ax.plot(tool['times'], tool['residual_bw'], color='#d81b8c', lw=1.1, label='工具残余力')
         ax.plot(tr['times'], tr['residual_bw'], color='#3a6fb0', lw=1.1, label='真值残余力')
+        for a0, a1 in runs(tr['unmeasurable_label'] == 1):
+            ax.axvspan(tr['times'][a0], tr['times'][min(a1, len(tr['times'])-1)], ymin=0, ymax=.07, color='#7b3fa0', lw=0)
         if 'residual_positive' in tool:
-            p = tool['residual_positive'] | tool['unmeasurable']
-            ax.scatter(tool['times'][p], np.full(p.sum(), 1.05), s=4, c='#d81b8c', marker='|')
+            p = tool['residual_positive']
+            ax.scatter(tool['times'][p], np.full(p.sum(), 1.07), s=4, c='#d81b8c', marker='|')
+        u = tool['unmeasurable']
+        ax.scatter(tool['times'][u], np.full(u.sum(), .97), s=4, c='#7b3fa0', marker='|')
         if tau:
             ax.axhline(tau['contact'], color='#999', lw=.7, ls='--')
         ax.set_ylim(0, 1.15); ax.set_xlim(start, end); ax.set_ylabel('残余力 BW', fontsize=9)
         ax.legend(loc='upper left', fontsize=8, frameon=False, ncol=2)
-        ax.text(.99, .85, '底色：真值阳性（红）/ 模糊（灰）；顶部竖线：工具判阳', transform=ax.transAxes, ha='right', va='top', fontsize=8)
+        ax.text(.99, .85, '底色：真值阳性（红）/ 模糊（灰）；底部紫条：真值不可测；顶部竖线：工具残余力判阳（品红）/ 工具不可测（紫）',
+                transform=ax.transAxes, ha='right', va='top', fontsize=8)
         for k, (m, risk) in enumerate((('reba', 4), ('rula', 5)), 1):
             ax = strips[k]; ax.cla()
             for src, colour, lab in ((tool, '#d81b8c', '工具'), (te, '#3a6fb0', '真值')):
@@ -187,7 +195,7 @@ def smoke(rows_dir, method, out, fps, seconds):
         w, floor = d/'work', rec['receipt']['floor_m']
         sc = f['times'][f['scored']]
         start = sc[0]; end = min(sc[-1], start+seconds); windows.append((start, end))
-        reba, rula = rec['ergo']['reba'], rec['ergo']['rula']
+        reba = rec['ergo']['reba']
         title = (f"{rec['row']['id']}\n{(rec['receipt']['prompt'] or '（无文本）')[:48]}\n"
                  f"残余力判阳 {rec['residual']['positive_share']:.0%}  不可测 {rec['ik']['unmeasurable_share']:.0%}\n"
                  f"REBA 风险/不定/可接受 {reba['certain_risk_share']:.0%}/{reba['indeterminate_share']:.0%}/{reba['certain_acceptable_share']:.0%}")

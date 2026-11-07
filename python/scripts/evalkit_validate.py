@@ -7,6 +7,8 @@
   truth --split S      the same ergo scoring and static optimization on the truth (truth model, coordinates, contact)
   score --split S      kill rates; on dev also the tau / depth tuning grid (writes nothing into the registration)
   kinematic --split S  only the kinematic check of score (injected size against the kinematic metrics)
+  videos --split S     the registered 10 + 10 acceptance draw (validation.videos), static optimization where the run
+                       had none, evalkit_render videos and an index page
 Outputs: per clip on the data disk (evalkit_20261107/{tool,truth_eval}/<split>/<clip>), summaries under
 develop_logs/test_runs/20261107_evalkit/validation.
 """
@@ -466,9 +468,104 @@ def kinematic_check(rows):
     return out
 
 
+# ---------------------------------------------------------------- acceptance videos
+
+DIM_NAME = {'residual': '残余力', 'unmeasurable': '不可测', 'reba': 'REBA', 'rula': 'RULA'}
+
+
+def video_draw(split):
+    """The registered draw (validation.videos): 10 positive clips round-robin over defect types, 10 negative clips
+    round-robin over base motions, numpy default_rng(crc32('evalkit_v1_videos')); written once, never redrawn."""
+    import zlib
+    from evalkit import fit
+    path = LOG/f'{split}_videos.json'
+    if path.exists():
+        return json.loads(path.read_text())
+    pos, neg = {}, {}
+    for c in clips(split):
+        m = meta(c)
+        if m['defect'] == 'slide_m_s':
+            continue
+        tr = np.load(Path(c['dir'])/'truth/truth.npz'); sel = fit.scored(tr['times'])
+        te = np.load(DATA/'truth_eval'/split/c['id']/'truth_eval.npz', allow_pickle=True)
+        why = [k for k, hit in (('residual', (tr['e_label'][sel] == 1).any()), ('unmeasurable', (tr['unmeasurable_label'][sel] == 1).any()),
+                                ('reba', (te['ergo_reba_class'] == 1).any()), ('rula', (te['ergo_rula_class'] == 1).any())) if hit]
+        rec = {'id': c['id'], 'defect': m['defect'], 'size': m['size'], 'base': Path(c['base_dir']).name, 'truth_positive': why}
+        (pos.setdefault(m['defect'], []) if why else neg.setdefault(rec['base'], [])).append(rec)
+    rng = np.random.default_rng(zlib.crc32(b'evalkit_v1_videos'))
+
+    def round_robin(groups, n):
+        queues = {k: [groups[k][i] for i in rng.permutation(len(groups[k]))] for k in sorted(groups)}
+        out = []
+        while len(out) < n and any(queues.values()):
+            for k in sorted(queues):
+                if queues[k] and len(out) < n:
+                    out.append(queues[k].pop(0))
+        return out
+    draw = {'split': split, 'rule': SPEC['validation']['videos'], 'pool': {'positive': sum(map(len, pos.values())),
+                                                                          'negative': sum(map(len, neg.values()))},
+            'positive': round_robin(pos, 10), 'negative': round_robin(neg, 10)}
+    path.write_text(json.dumps(draw, indent=1, ensure_ascii=False))
+    return draw
+
+
+def video_job(task):
+    """Static optimization on the tool and truth side of one drawn clip (if its run had none), then the render."""
+    clip, kind, out = task
+    try:
+        _quiet()
+        import subprocess
+        from evalkit import fit, muscle
+        m = meta(clip); tool, truth = DATA/'tool'/clip['split']/clip['id'], DATA/'truth_eval'/clip['split']/clip['id']
+        t = np.load(Path(clip['dir'])/'truth/truth.npz')['times']; sel = fit.scored(t)
+        for work, dest, links in ((tool/'work', tool, ()), (truth, truth, ('coordinates.mot', 'grf.xml', 'grf.mot'))):
+            if m['defect'] == 'control' or (dest/'video_muscle.npz').exists():
+                continue
+            for name in links:
+                if not (work/name).exists():
+                    (work/name).symlink_to(Path(clip['dir'])/'truth'/name)
+            mu = muscle.evaluate(work, float(t[sel][0]), float(t[sel][-1]))
+            np.savez_compressed(dest/'video_muscle.npz', muscle_times=mu['times'], muscle_effort=mu['effort'],
+                                muscle_reserve_abs_sum_nm=mu['reserve_abs_sum_nm'])
+        title = (f"{'阳性' if kind == 'positive' else '阴性'}：{clip['id']}（缺陷 {m['defect']} {m['size']}；"
+                 f"真值阳性维度 {'、'.join(DIM_NAME[d] for d in clip['truth_positive']) or '无'}）")
+        r = subprocess.run([sys.executable, str(ROOT/'python/scripts/evalkit_render.py'), '--clip', clip['dir'], '--tool', str(tool),
+                            '--truth', str(truth), '--out', str(out), '--title', title], capture_output=True, text=True)
+        return clip['id'], 'ok' if r.returncode == 0 else f'render failed: {r.stderr[-800:]}'
+    except Exception as e:
+        return clip['id'], f'{type(e).__name__}: {e} {traceback.format_exc()[-800:]}'
+
+
+def videos(args):
+    draw = video_draw(args.split)
+    dirs = {c['id']: c for c in clips(args.split)}
+    out = LOG/f'{args.split}_videos'
+    tasks = [({**dirs[r['id']], 'split': args.split, 'truth_positive': r['truth_positive']}, kind, out/f"{kind}_{r['id']}.mp4")
+             for kind in ('positive', 'negative') for r in draw[kind]]
+    status = {}
+    with ProcessPoolExecutor(args.workers, mp_context=mp.get_context('spawn'), max_tasks_per_child=1) as p:
+        for cid, s in p.map(video_job, tasks):
+            status[cid] = s; print(json.dumps({cid: s}, ensure_ascii=False), flush=True)
+    score_path = LOG/f'{args.split}_score.json'
+    rows = []
+    for kind in ('positive', 'negative'):
+        for r in draw[kind]:
+            v = f"{kind}_{r['id']}"
+            rows.append(f"<tr><td>{'阳性' if kind == 'positive' else '阴性'}</td><td>{r['id']}</td><td>{r['defect']} {r['size']}</td>"
+                        f"<td>{'、'.join(DIM_NAME[d] for d in r['truth_positive']) or '无'}</td><td><a href='{v}.mp4'><img src='{v}.png' width='480'></a></td></tr>")
+    (out/'index.html').write_text(
+        "<html><head><meta charset='utf-8'><title>evalkit 验收视频</title></head><body>"
+        f"<h2>evalkit v1 验收视频（{args.split}，登记抽样 10 阳 + 10 阴）</h2>"
+        f"<p>抽样规则：{SPEC['validation']['videos']['draw']}。池：阳性 {draw['pool']['positive']} 条，阴性 {draw['pool']['negative']} 条。"
+        f"{'汇总见 ' + score_path.name if score_path.exists() else ''}</p>"
+        "<table border='1' cellpadding='4'><tr><th>类</th><th>片段</th><th>缺陷</th><th>真值阳性维度</th><th>视频（点击）</th></tr>"
+        + ''.join(rows) + "</table></body></html>\n")
+    print(json.dumps({'status': status, 'index': str(out/'index.html')}, ensure_ascii=False, indent=1))
+
+
 def main():
     a = argparse.ArgumentParser()
-    a.add_argument('step', choices=('calibrate', 'margins', 'tool', 'truth', 'score', 'kinematic'))
+    a.add_argument('step', choices=('calibrate', 'margins', 'tool', 'truth', 'score', 'kinematic', 'videos'))
     a.add_argument('--tune', action='store_true', help='score on dev: run the registered margin / tau / depth grid')
     a.add_argument('--split', choices=('dev', 'heldout'), default='dev'); a.add_argument('--workers', type=int, default=6)
     a.add_argument('--limit', type=int); a.add_argument('--only')
@@ -477,6 +574,8 @@ def main():
         return calibrate(args)
     if args.step == 'score':
         return score(args)
+    if args.step == 'videos':
+        return videos(args)
     if args.step == 'kinematic':
         rows = [r for r in (load_clip({**c, 'split': args.split}) for c in clips(args.split)) if r is not None and r['tool'] is not None]
         res = kinematic_check(rows)
