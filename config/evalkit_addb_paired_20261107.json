@@ -1,0 +1,32 @@
+{
+  "protocol": "evalkit_addb_paired_20261107",
+  "registered": "2026-11-07 15:30, before any fit -4 run on AddBiomechanics data",
+  "question": "On real people, how close are the evalkit ground reaction forces (kinematics only, height contact, per-foot split) to force plates, on the scale of the published video pipeline (OpenCap, Uhlrich 2023, Table 1)?",
+  "use": "descriptive anchor for the residual / contact / muscle criteria; no pass line",
+  "data": {
+    "trials": "develop_logs/test_runs/20261105_val_a/selection.json, every trial with a kin30 source (160: walk 24, run 24, sts 24, wholebody 24, stand 22, squat 22, jump 20)",
+    "input": "kin30 motion.npz (18 AddB joint centres, 30 fps), as in val_a",
+    "mass": "row mass_kg (AddB dynamics mass), as in val_a",
+    "floor": "0 (force-plate plane)"
+  },
+  "pipeline": "evalkit.fit (PREPARE evalkit-upright-flatfoot-torso95-limbreg-4) and evalkit.residual.evaluate with the registered contact margin; no static optimization",
+  "reference": "per trial, leave-one-trial-out subject reference re-measured under fit -4 with the e_v2 floor-audit rules (frames with measured vertical GRF > 0.2 BW, valid, not excluded, both landmarks of that foot moving vertically slower than 0.1 m/s; tiers stand, then walk+sts+squat); subjects without either tier use the pooled other-subject median (reported as its own tier)",
+  "frames": "evalkit.fit.scored frames whose measured GRF is valid and not excluded",
+  "measured_filter": "measured GRF low-passed with the coordinate filter of the pipeline (4th-order Butterworth, 6 Hz, zero lag) before comparison, as OpenCap filtered both signals alike; unfiltered reported as sensitivity",
+  "metrics": {
+    "G1": "per-foot vertical GRF: MAE and RMSE in BW",
+    "G2": "per-foot horizontal GRF: MAE of the horizontal error vector magnitude in BW (lab axes are not aligned with the walking direction, so no AP / ML split)",
+    "G3": "total vertical GRF: MAE, RMSE in BW and Pearson r",
+    "G4": "per-foot contact: balanced accuracy of the tool mask (heel or toe) against measured vertical GRF > 20 N",
+    "G5": "residual force RMS in BW",
+    "summary": "per class median and IQR over trials; mean over classes"
+  },
+  "comparison": {
+    "opencap_table1_vertical_mae_bw": {"walk": 0.082, "squat": 0.064, "sts": 0.057, "drop_jump": 0.252, "mean": 0.114},
+    "opencap_table1_ap_mae_bw": {"walk": 0.021, "squat": 0.013, "sts": 0.019, "drop_jump": 0.089},
+    "opencap_table1_ml_mae_bw": {"walk": 0.011, "squat": 0.057, "sts": 0.032, "drop_jump": 0.053},
+    "opencap_note": "OpenCap does not state whether its GRF errors are per foot or summed; both are reported here. Its jump is a drop jump, ours is the AddB jump class. Its sit-to-stand GRF is measured with the seat; the evalkit models foot contact only, so sts per-foot errors include the seat load",
+    "val_a_kin30": "develop_logs/test_runs/20261105_val_a/analysis.json variants.kin30 (old E pipeline, total GRF only)"
+  },
+  "conventions_not_derived": ["0.2 BW loaded and 0.1 m/s flat thresholds of the reference (from e_v2)", "20 N plate contact", "6 Hz measured filter"]
+}
