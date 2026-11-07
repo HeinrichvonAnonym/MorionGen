@@ -28,10 +28,11 @@ def _stats(x):
     return {k: float(np.percentile(x, q)) for k, q in (('p5', 5), ('median', 50), ('p95', 95))} if len(x) else None
 
 
-def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dims=DIMS, source=None):
+def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dims=DIMS, source=None, object_free=None):
     """run: directory with motion.npz (canonical Z-up joints). floor: floor height (m, canonical Z) of this motion.
     reference: floor-reference variant (spec.reference_offsets) or {side: {landmark: m}} offsets above the floor.
-    method: ergo neutral key (default: the reference variant). prompt: task text (None: object-free)."""
+    method: ergo neutral key (default: the reference variant). prompt: task text (None: object-free).
+    object_free: overrides the text rule (evalkit.sources.object_free)."""
     import opensim as osim
     import biomech
     import biomech_sources
@@ -67,7 +68,7 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
         method = method or (variant.split('__')[0] if variant else None)
         src = source or biomech_sources.load(run)
         e = ergo.score(work/'model.osim', times, labels, coords, res['masks'], sel, src, ergo.neutral(method, run),
-                       ergo.object_free(prompt), f['unmeasurable'])
+                       ergo.object_free(prompt) if object_free is None else object_free, f['unmeasurable'])
         frames.update({f'ergo_{k}': v for k, v in e.items() if k != 'source_mode'})
         summary['ergo'] = {'source_mode': e['source_mode'], 'frames': int(len(e['index']))}
         for m in ergo.RISK:
@@ -84,6 +85,7 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
     receipt = {'run': str(run), 'floor_m': float(floor), 'reference': variant or offsets, 'mass_kg': mass, 'method': method,
                'prompt': prompt, 'dims': list(dims), 'spec': str(SPEC_PATH.relative_to(ROOT)), 'spec_version': SPEC['version'],
                'fit_prepare': fit_mod.PREPARE, 'contact_margin_m': residual.C['contact_margin_m'],
+               'object_free': None if 'ergo' not in dims else bool(ergo.object_free(prompt) if object_free is None else object_free),
                'commit': _commit(), 'seconds': round(time.time()-start, 1)}
     (out/'evalkit.json').write_text(json.dumps({'receipt': receipt, **summary}, indent=1))
     return summary

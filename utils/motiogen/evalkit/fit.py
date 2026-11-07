@@ -18,7 +18,8 @@ C = SPEC['fit']
 
 
 def fit(run, work, mass, floor):
-    """run: directory with motion.npz (canonical Z-up joints, joint_names, fps). Writes work/model.osim,
+    """run: any motion source biomech_sources.load reads (motion.npz run directory, PRIMAL factorial file, Kimodo case).
+    Writes work/model.osim,
     work/coordinates.mot and the IK files (reused when work already holds the fit of the same run, mass, floor and
     preparation); returns the 100 Hz coordinates and the per-frame gate."""
     work = Path(work).resolve(); work.mkdir(parents=True, exist_ok=True)
@@ -39,7 +40,8 @@ def fit(run, work, mass, floor):
 
 
 def prepare(run, out, mass, floor):
-    points, names, fps = biomech.load(run)
+    import biomech_sources
+    points, names, fps = biomech_sources.load(run)
     receipt = {'fps': fps, 'frames': int(points.shape[0]), 'free_yaw': True}
     receipt['scaling'] = biomech.scaled_model(points, names, mass, out/'scaled.osim', free_yaw=True)
     calib, receipt['calibration'] = upright_frames(points, names, fps)
