@@ -171,5 +171,36 @@
       101,
       102
     ]
+  },
+  "distribution": {
+    "registered": "2026-11-07 12:35",
+    "registry": {
+      "motionlcm": "t2m",
+      "omnicontrol": "t2m",
+      "closd": "t2m",
+      "ardy": "t2m (non-native, retargeted to SMPL-22)",
+      "primal": "t2m (non-native)",
+      "kimodo": "tmr_soma",
+      "chois": "omomo",
+      "dart": "flowmdm_babel"
+    },
+    "note_cross_evaluator": "scores from different evaluators are not comparable",
+    "self_checks_ground_truth_only": {
+      "split_half": "FID between two random halves of the ground-truth test set, 5 seeds; expected near 0 (HumanML3D paper reports 0.002 for real motion)",
+      "round_trip": "ground-truth features -> joints (recover_from_ric) -> features (upstream process_file); FID to the originals and feature RMSE; required near 0 before any joint-input method (all of ours) is scored",
+      "perturbation_monotone": "i.i.d. joint noise sigma 0.01/0.02/0.05/0.10 m and frame shuffle fractions 0.05/0.2/0.5 applied in joint space then re-extracted; FID against the other half must increase strictly with level",
+      "text_match": "R-precision top-1/2/3 (batches of 32) with matched captions vs captions permuted across motions; matched must be far above shuffled (chance 1/32, 2/32, 3/32)",
+      "n_bias": "FID of N draws (20 repeats) from half A vs all of half B, N in 8..1024; same for the 0.02 m and 0.05 m noise sets",
+      "min_n_rule": "smallest N with p95 of the ground-truth FID below p5 of the 0.02 m-noise FID (约定，未经推演)"
+    },
+    "t2m": {
+      "evaluator_choice": "two finest.tar copies on disk differ (closd-official epoch 11, motionlcm epoch 28); the one reproducing the published real-motion numbers (R-precision top-1/3 0.511/0.797, matching 2.974, diversity 9.503) is used, chosen before any generated sample is scored",
+      "crop": "official test-time crop: length to a multiple of 4 (one in three drops one more unit), random offset, pad to 196",
+      "text": "one caption per motion drawn with the seed; tokens truncated to 20 plus sos/eos",
+      "generated_text_tokens": "spaCy en_core_web_sm lemma/POS as in HumanML3D preprocessing",
+      "seed": "default_rng(crc32(\"evalkit_dist_t2m\"))",
+      "input": "canonical Z-up SMPL-22 joints mapped back with motion.native_positions(Y-up), resampled to 20 fps, upstream process_file(feet_thre 0.002) with target offsets from a recovered ground-truth frame"
+    },
+    "smoke_c0": "the 8x5 manifest rows; pipeline runs, values finite; N=5 FID is not a quality estimate"
   }
 }
