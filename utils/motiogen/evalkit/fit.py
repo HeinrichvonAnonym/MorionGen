@@ -133,6 +133,18 @@ def register_feet(model_path, ik_mot, points, names, fps, floor, out_path):
     return out
 
 
+def foot_offset(points, names, fps, kin, times):
+    """Per side, median over the scored frames of the fitted talus origin height minus median of the generated ankle
+    joint height over the same trimmed window (OpenSim Y, m); 'mean' averages the sides."""
+    sel = scored(times); k = int(round(SPEC['trim_s']*fps)); window = slice(k, max(k+1, points.shape[0]-k))
+    out = {}
+    for s, side in (('r', 'right'), ('l', 'left')):
+        talus = kin['origin'][sel, kin['names'].index(f'talus_{s}'), 1]
+        out[s] = float(np.median(talus)-np.median(points[window, names.index(f'{side}_ankle'), 1]))
+    out['mean'] = .5*(out['r']+out['l'])
+    return out
+
+
 def scored(times):
     """Frames scored by every dimension: the registered trim at both ends (filter and differentiation edges)."""
     dt = float(np.median(np.diff(times))); k = int(round(SPEC['trim_s']/dt))

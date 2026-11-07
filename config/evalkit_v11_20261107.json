@@ -1,0 +1,365 @@
+{
+  "created": "2026-11-07 18:48 UTC+8, after the v1 held-out run and the dev floor-correction experiment, before any heldout2 data existed",
+  "plan": "plans/20261107_evaluation_chain_meta_plan.md, P2 / P3",
+  "version": "v1.1",
+  "version_note": "v1.1 = v1 plus the per-clip floor correction (floor.per_clip_correction) and its retuned residual tau / depth. v1 (config/evalkit_v1_20261107.json, frozen 829f017) and its held-out results stay as they are; the held-out split of v1 is spent, so v1.1 is validated once on the new split heldout2 (subject seeds 301, 302). Version v1.1 is frozen (commit in frozen_commit) before any heldout2 tool or truth run. No field changes after that run.",
+  "trim_s": 0.5,
+  "trim_note": "every dimension scores frames from trim_s after the start to trim_s before the end (Butterworth and double-differentiation edges), as e_rules.trim / ergo_frames",
+  "fit": {
+    "calibration_s": 1.0,
+    "planted_height_m": 0.05,
+    "planted_speed_m_s": 0.1,
+    "min_planted_frames": 5,
+    "upright_tolerance_deg": 5.0,
+    "min_calibration_frames": 3,
+    "note": "2026-11-07 11:42 dev amendment after the muscle diagnosis (constant per-clip coordinate biases: stoop pelvis tilt -17 / lumbar +24 / hip +17 deg from a non-upright first second under the lumbar-locked calibration; ankle +16 deg from foot joint-definition offsets, gone with zero offsets): calibration on the most upright frames instead of the first second, and ankle / toe markers registered on planted feet levelled on the given floor (evalkit.fit). Values \u7ea6\u5b9a\uff0c\u672a\u7ecf\u63a8\u6f14",
+    "torso_length_percentile": 95.0,
+    "torso_length_note": "2026-11-07 12:57: the shoulder-mid to hip-mid span crosses the lumbar joint and only shortens with flexion; the clip median under-scaled the torso of flexed clips (dev stoop 101: 0.92 of the truth model, pelvis tilt / lumbar errors -10 / +14 deg growing with flexion, identical with clean joints). Dev controls, ratio to truth torso length: median 0.974 (0.900-1.019), p95 0.990 (0.953-1.026), max 0.995 (0.963-1.033); p95 chosen over max for robustness to bad frames (\u7ea6\u5b9a\uff0c\u672a\u7ecf\u63a8\u6f14)",
+    "registered_limb_markers": [
+      "hip",
+      "knee",
+      "shoulder",
+      "elbow",
+      "wrist"
+    ],
+    "limb_registration_note": "2026-11-07 15:21 dev amendment (fit -4, user-approved): limb markers registered at their mean body-frame location over the calibration frames like the axial ones. Diagnosis on the 18 dev controls: the calibration solution fits the axial markers to 0.4 cm but the unregistered limb markers only to 1.4-2.4 cm; the full IK (limb weight 1, axial 0.3, lumbar free) moved the pelvis to absorb the limb landmark offsets, axial error 1.4-3.4 cm, constant pelvis tilt / lumbar biases up to 10 / 19 deg. IK-only check (scratch/limbreg_ik.py): coordinate RMS over 15 DOFs mean 3.71 -> 2.73 deg, max 18.8 -> 13.5; lumbar extension 6.5 -> 3.2; pelvis tilt 4.4 -> 2.6; knee and ankle unchanged; registered shift median 1.16 cm"
+  },
+  "ik_gate": {
+    "max_marker_error_m": 0.1,
+    "note": "a frame whose IK max marker error exceeds this is unmeasurable: kept in every denominator and counted as non-acceptable (convention from the earlier E / ergo sessions, not derived)"
+  },
+  "floor": {
+    "input": "floor height (m, canonical Z) is an explicit input of every evaluation; contact and GRF points use it",
+    "method_references": "config/evalkit_floor_reference_20261107.json",
+    "reference_definition": "per floor-reference variant, the flat-foot heights of the heel (calcn origin) and toe (toes origin) landmarks of the scaled model above the method's own floor (reference_m - world_floor_m of the E v2 config); absolute reference = input floor + offset",
+    "calibrated": {
+      "synthetic": {
+        "r": {
+          "heel": 0.0076915988349648,
+          "toe": 0.0064149518310543385
+        },
+        "l": {
+          "heel": 0.008805528353987763,
+          "toe": 0.0061924552444984765
+        }
+      }
+    },
+    "calibrated_note": "synthetic: median over the development-split clips whose defect leaves the feet at their truth heights (control, lean_deg, time_compression, bone_stretch, slide_m_s) of (tool landmark height - floor_height_m) in frames where both landmarks of the foot are in truth contact. Amended before any scoring: calibrations on the stand controls (2 clips) and on all controls (18 clips) both gave a left heel / toe asymmetry (0.034 / 0.006 and 0.032 / 0.001 m against right 0.024 / 0.025) because the export seed subject*1000+defect_index gave every control of a subject the same landmark-offset draw (2 draws in total; both raise the left ankle); the export seed is now crc32 of the clip id (config/evalkit_synth_20261107.json)",
+    "method_references_note": "2026-11-07 11:57 with the fit amendment: per-method references re-measured through evalkit.fit on the same e_v2 standing poses (python/scripts/evalkit_floor_refs.py); heel -2 to -6 mm, toe +1.2 to +2.2 cm (SMPL-family) / -0.5 to -1.9 cm (ARDY, Kimodo rigs) against e_v2; the e_v2 values are kept in the file (e_v2_reference_m)",
+    "per_clip_correction": {
+      "registered": "2026-11-07 18:48, user decision (check_then_v11) after the smoke8x5 Kimodo foot-offset finding",
+      "definition": "foot offset d of a clip = mean over sides of [median over the scored frames of the fitted talus origin height - median of the generated ankle joint height over the same trimmed window] (fit.foot_offset). The residual, ergo and muscle dimensions (and the kinematic floor depth, which reads their elevations) use floor + d - D, D = median of d over the rows of the same method in the batch (the clips of the split for the synthetic set); the fit itself keeps the input floor. Single evaluations without D are uncorrected (offset_reference_m null in the receipt)",
+      "why": "d is the part of the model foot height the fit does not take from the input; within one method the joint definition is fixed, so its spread across clips is fit error, while a method-level offset (joint definition) stays with the per-method floor reference. Subtracting D keeps the dev-calibrated reference and tau valid",
+      "dev_check": {
+        "log": "develop_logs/test_runs/20261107_evalkit/scratch/dev_floor_v11/",
+        "clips": 444,
+        "method_median_offset_m": -0.003660610861702519,
+        "clip_elevation_error_sd_cm": {
+          "uncorrected": 1.06,
+          "corrected": 0.8
+        },
+        "clip_elevation_error_beyond_2cm_share": {
+          "uncorrected": 0.057,
+          "corrected": 0.015
+        },
+        "note": "elevation error = tool talus - truth talus - floor shift, per clip; the corrected remainder is the synthetic landmark offset (SD 1 cm, \u7ea6\u5b9a\uff0c\u672a\u7ecf\u63a8\u6f14), which no floor correction can see. Per-side correction was worse (SD 1.04 cm) and is not used"
+      },
+      "calibrated_reference_note": "floor.calibrated.synthetic is kept from v1 (the correction has zero median over the dev split by construction)"
+    }
+  },
+  "residual": {
+    "contact_margin_m": 0.02,
+    "contact_rule": "height only (E v2 R0): landmark in contact when height - absolute reference <= margin; no horizontal-speed or onset rule (both raised false kills on human data)",
+    "event_window_ms": 40,
+    "tau_bw": {
+      "event": 0.42,
+      "contact": 0.06,
+      "flight": 0.5
+    },
+    "penetration_depth_m": 0.025,
+    "judgment": "frame positive when residual_bw > tau_bw[state] (state event / contact / flight, residual.states) or lowest landmark elevation < -penetration_depth_m",
+    "tuning": "tau_bw (event, contact, flight) and penetration_depth_m chosen on the development split only: minimize the larger of the false-kill and missed-kill rates (definitions under validation), ties to the larger tau / depth; grid tau 0.02-0.50 BW step 0.01, depth 0.01-0.06 m step 0.005 (grids: convention, not derived)",
+    "tuning_amendment": "2026-11-07 11:48 dev amendment (user: a real-data contact tolerance on generated data with a given floor manufactures misses): contact_margin_m joins the development grid, 0.005-0.030 m step 0.005, chosen jointly with tau / depth by the same objective over the pass clips (ties to the larger margin); the dev fit is redone first (fit amendment) and the synthetic floor reference recalibrated on it. Grid \u7ea6\u5b9a\uff0c\u672a\u7ecf\u63a8\u6f14",
+    "tuned": {
+      "when": "2026-11-07 18:50",
+      "split": "dev",
+      "fit_prepare": "evalkit-upright-flatfoot-torso95-limbreg-4",
+      "floor": "per_clip_correction",
+      "log": "develop_logs/test_runs/20261107_evalkit/scratch/dev_floor_v11/run.log",
+      "rule": "the registered joint margin / tau / depth rule (residual.tuning_amendment); it picks 0.02 m itself, so the v1 margin deviation is not needed",
+      "dev_pass_clips": {
+        "false_kill": 0.0644,
+        "missed_kill": 0.0642
+      },
+      "margin_grid": {
+        "0.005": 0.1331,
+        "0.01": 0.0786,
+        "0.015": 0.0672,
+        "0.02": 0.0644,
+        "0.025": 0.0652,
+        "0.03": 0.0647
+      },
+      "v1_same_fit_margin_grid": {
+        "0.005": 0.1931,
+        "0.01": 0.1184,
+        "0.015": 0.0768,
+        "0.02": 0.0736,
+        "0.025": 0.0691,
+        "0.03": 0.0666
+      },
+      "previous": {
+        "when": "2026-11-07 16:05",
+        "split": "dev",
+        "fit_prepare": "evalkit-upright-flatfoot-torso95-limbreg-4",
+        "log": "develop_logs/test_runs/20261107_evalkit/validation/fit4_score_tune.log",
+        "dev_pass_clips": {
+          "false_kill": 0.0736,
+          "missed_kill": 0.0734
+        },
+        "margin_grid": {
+          "0.005": 0.1931,
+          "0.01": 0.1184,
+          "0.015": 0.0768,
+          "0.02": 0.0736,
+          "0.025": 0.0691,
+          "0.03": 0.0666
+        },
+        "margin_amendment": "2026-11-07 16:25 user decision after the fit -4 dev tuning, before freezing and before any held-out run: the registered joint rule picks 0.03 m (grid edge, 6.7% / 6.6%); the user sets three principles - smaller margin first (the evalkit targets generated data), fewer false kills, easier alignment with the baselines (smoke8x5 and the per-method floor references use 0.02 m) - so contact_margin_m stays 0.02 m and tau / depth are retuned at that margin by the registered tau / depth rule. Deviation from the registered margin rule, stated in the report",
+        "note": "larger kill rate at each margin; above the 5% line, the relaxed 10% / 15% line applies (user decision 11:14) and is stated in the report",
+        "previous": {
+          "when": "2026-11-07 13:26",
+          "split": "dev",
+          "fit_prepare": "evalkit-upright-flatfoot-torso95-3",
+          "log": "develop_logs/test_runs/20261107_evalkit/validation/score_dev_tune_v3.log",
+          "dev_pass_clips": {
+            "false_kill": 0.064,
+            "missed_kill": 0.0638
+          },
+          "margin_grid": {
+            "0.005": 0.1333,
+            "0.01": 0.0887,
+            "0.015": 0.0706,
+            "0.02": 0.064,
+            "0.025": 0.0659,
+            "0.03": 0.0667
+          },
+          "note": "larger kill rate at each margin; above the 5% line, the relaxed 10% / 15% line applies (user decision 11:14) and is stated in the report",
+          "previous": {
+            "when": "2026-11-07 12:23",
+            "split": "dev",
+            "log": "develop_logs/test_runs/20261107_evalkit/validation/score_dev_tune.log",
+            "dev_pass_clips": {
+              "false_kill": 0.0651,
+              "missed_kill": 0.065
+            },
+            "margin_grid": {
+              "0.005": 0.1335,
+              "0.01": 0.0866,
+              "0.015": 0.0722,
+              "0.02": 0.0681,
+              "0.025": 0.0651,
+              "0.03": 0.0677
+            },
+            "note": "larger kill rate at each margin; tighter margins lose stance (calibrated landmark-height IQR about 1.5 cm). Above the 5% line: the relaxed 10% / 15% line applies (user decision 11:14) and is stated in the report. Remaining sources: lean false kills (22% at 40 deg; COM within 5 mm and contacts right, cause not identified), event-state misses (48%)"
+          }
+        }
+      }
+    }
+  },
+  "ergo": {
+    "protocol": "config/ergo_rula_reba_20261105.json revision r3, frame_stride, thresholds REBA 4 / RULA 5",
+    "neutral_offsets": "config/ergo_neutral_offsets_20261105.json",
+    "neutral_calibrated": {
+      "synthetic": {
+        "neck_deg": [
+          19.28381548631652,
+          0.0
+        ],
+        "shoulder_elevation_deg": [
+          1.6324069910023127,
+          1.6324069910023127
+        ]
+      }
+    },
+    "neutral_note": "synthetic: rest reading (neck angles, shoulder elevation) of the synthetic export skeleton in the model default pose, computed from the station definition (not tuned)",
+    "object_free": "task text with no object keyword, or no text at all (e.g. unconditioned generation), is object-free (load and coupling known zero)",
+    "contact": "legs and flight from the height-only contact of the residual dimension; not gated by the residual"
+  },
+  "muscle": {
+    "so_step": 2,
+    "effort": "sum over muscles of activation^2 per SO frame; clip effort = mean over scored frames",
+    "reserves": "biomech.static_optimization (lower-limb reserves 1 N m, pelvis residual actuators 1000)",
+    "unlock_subtalar": true,
+    "subtalar_note": "2026-11-07 15:21 dev amendment (user-approved): the static-optimization model frees the subtalar joints (the fit keeps them locked, coordinate 0), matching the synthetic subject model, whose static optimization balances the subtalar moment with muscles. Dev controls, effort vs truth (scratch/muscle_subtalar_diag.py, fit -3, margin 0.02): median |relative error| 23.7% -> 16.6%, high-load clips (truth >= 1, n=12) 25.6% -> 13.8%, single-leg / step -18..-32% -> -5..-15%, Spearman 0.89 -> 0.97; low-load clips rise by about 0.04 absolute",
+    "criterion": "descriptive",
+    "criterion_amendment": "2026-11-07 16:25 user decision after the fit -4 dev run, before freezing and before any held-out run: the muscle dimension has no pass line (the registered 10% median relative error is withdrawn; dev fit -4: 21.6%). Reported descriptively: median relative and absolute error (all, truth effort >= 2, < 2), Spearman, pair-order agreement for truth ratios >= 1.1 / 1.2 / 1.5, signed error per clip; known biases listed (single-leg stance hip abductors low, walk high)"
+  },
+  "kinematic": {
+    "reach_thresholds_m": [
+      0.02,
+      0.05,
+      0.1
+    ],
+    "reach_bone_stretch_max": 0.1,
+    "reach_note": "Success = rigid refit wrist error <= threshold; any arm bone at the target frame over its clip median by more than 10% fails (\u7ea6\u5b9a\uff0c\u672a\u7ecf\u63a8\u6f14). Applied to every method; earlier reports re-labelled as post-hoc corrected.",
+    "skate_end_seconds": 0.1,
+    "skate_min_span_seconds": 0.3,
+    "skate_slip_m": null,
+    "skate_note": "Slip = horizontal distance of the foot joint (heel: ankle, toe: foot) between the first and last 0.1 s medians of each residual-dimension contact span >= 0.3 s inside the scored window (\u7ea6\u5b9a\uff0c\u672a\u7ecf\u63a8\u6f14). skate_slip_m stays null (descriptive only) unless the synthetic slide validation separates slide from control clips; otherwise the metric is reported as a description only.",
+    "floor_note": "Hover / penetration depth = lowest sole-landmark elevation of the residual dimension (input floor, calibrated reference), scored window.",
+    "jerk_note": "jerk_0p1s: third difference on a 0.1 s common step (component RMS, all joints); jerk_native: per-frame third difference.",
+    "validation_dev": {
+      "time": "2026-11-07 13:42 UTC+8",
+      "source": "python/scripts/evalkit_validate.py kinematic --split dev -> develop_logs/test_runs/20261107_evalkit/validation/dev_kinematic.json",
+      "skating": "constructed controls and slide 0.1/0.3/0.6 m/s: tool minus truth slip median <= 4 mm (truth = truth contact on clean joints); demo-walk controls (truth itself slides ~0.10 m on the right heel): tool +0.05 m median, +0.11 m max, from contact-span boundaries in gait; no slide injection on locomotion. Not clean -> skate_slip_m stays null, slip reported as a description only.",
+      "bone_stretch": "right-arm stretch 0.1/0.3/0.6 estimated 0.115/0.313/0.614 (median); control per-frame arm stretch p99 0.029, max 0.043, so the 10% reach rule never fires on dev controls; whole-skeleton bone_stretch_max on controls reaches 0.153 (short-bone jitter) and is descriptive.",
+      "floor": "penetrate_whole 0.02/0.05/0.1 m: p95 depth 0.030/0.063/0.104 (controls 0.009); float_whole: median hover 0.017/0.047/0.095 m.",
+      "jerk": "time compression 1.25/1.5/2: jerk_0p1s ratio 1.46/2.06/3.30 against the factor**3 1.95/3.38/8 of an ideal differentiator; monotone, attenuated by the 0.1 s step and the jitter floor, so jerk compares methods but is not scale-faithful."
+    }
+  },
+  "validation": {
+    "data": "config/evalkit_synth_20261107.json; development split subject seeds 101, 102; v1 held-out 201, 202 (spent); v1.1 held-out split heldout2, subject seeds 301, 302",
+    "frame_matching": "truth frames matched to tool frames by nearest time",
+    "residual": {
+      "truth": "e_label of the synthetic truth (1 positive, 0 negative, -1 ambiguous, excluded)",
+      "tool_positive": "residual.judge positive, or IK-gate unmeasurable (non-acceptable)",
+      "false_kill_rate": "tool positive among truth-negative frames",
+      "missed_kill_rate": "tool negative among truth-positive frames",
+      "clips": "every clip except bone_stretch (its truth is about measurability) and slide (kinematic dimension)",
+      "pass_clips_amendment": "2026-11-07 11:14, user decision after the dev diagnosis (develop_logs/notes/20261107_evalkit_dev_diagnosis.md), before freezing and before any held-out run: the pass line counts float / penetrate defects of size >= 0.05 m only (2 cm is below the input resolution: truth penetration line 1.5 cm vs 1 cm landmark offset SD, tool contact margin 3 cm); the 0.02 m level is reported as a detection curve. Tool improvements continue on dev against the 5% line; if 5% is not reached the relaxed 10% / 15% line applies and is stated in the report"
+    },
+    "ergo": {
+      "truth": "the same ergo.score on the truth model (with the neck_c station), truth coordinates, truth contact and the clean source joints",
+      "false_kill_rate": "per method: tool certain_risk or unmeasurable among frames whose truth class is certain_acceptable",
+      "missed_kill_rate": "per method: tool certain_acceptable among frames whose truth class is certain_risk",
+      "reported": "indeterminate share of the tool among truth-certain frames (inconclusive, not a kill error), full confusion matrix; truth-indeterminate frames are excluded from both rates",
+      "clips": "every clip except bone_stretch and slide",
+      "pass_clips_amendment": "2026-11-07 11:14, user decision, same conditions: float_whole_m clips are excluded from the ergonomics kill rates (no truth contact, so the REBA legs-support term is undefined there); the rates including them are reported alongside"
+    },
+    "unmeasurable": {
+      "truth": "unmeasurable_label (bone stretch >= 0.1 positive, <= 0.02 negative)",
+      "reported": "detection rate per stretch size and false-unmeasurable rate on every other clip"
+    },
+    "muscle": {
+      "metric": "|tool effort - truth effort| / truth effort per clip (clip effort as above)",
+      "clips": "the control clip of every base and subject"
+    },
+    "pass": "false-kill and missed-kill rates <= 5% with the one-sided 95% Clopper-Pearson upper bound <= 10%, per dimension (REBA and RULA separately); muscle effort relative error <= 10% (median over clips, and the share of clips within 10% reported). A relaxation to 10% / 15% needs the user's consent and is stated in the report",
+    "videos": {
+      "registered": "2026-11-07 06:23, before any dev score and before the held-out run",
+      "pool": "held-out clips except slide",
+      "positive_clip": "truth positive in any dimension within the scored frames: residual e_label 1, REBA or RULA truth class certain_risk, or unmeasurable_label 1",
+      "negative_clip": "no truth positive in any dimension (the remaining pool clips)",
+      "draw": "10 + 10 with numpy default_rng(crc32('evalkit_v1_videos')): positives round-robin over defect types (control counted as a type), negatives round-robin over base motions, each type / base shuffled once; no redraw after seeing the tool result",
+      "content": "evalkit_render: tool left, truth right, residual / REBA / RULA / muscle strips; static optimization run on tool and truth for the 20 clips"
+    },
+    "independence_note": "frames of one clip are correlated, so the Clopper-Pearson bound over frames is optimistic; a clip-level bootstrap interval is reported alongside",
+    "videos_v11": "no new videos: the 10 + 10 acceptance videos of v1 stand; v1.1 changes the floor used by the dimensions only"
+  },
+  "calibration_receipt": {
+    "clips": 228,
+    "defects": [
+      "control",
+      "lean_deg",
+      "time_compression",
+      "bone_stretch",
+      "slide_m_s"
+    ],
+    "reference_frames": {
+      "r": 36689,
+      "l": 28267
+    },
+    "reference_iqr_m": {
+      "r": {
+        "heel": [
+          -0.00038520313648207627,
+          0.016050176058834298
+        ],
+        "toe": [
+          -0.002019494237613384,
+          0.01318014929104401
+        ]
+      },
+      "l": {
+        "heel": [
+          0.001521802824599995,
+          0.017124487423122545
+        ],
+        "toe": [
+          -0.0016718682509805557,
+          0.014683974105688943
+        ]
+      }
+    },
+    "neutral_subjects": [
+      101,
+      102
+    ]
+  },
+  "distribution": {
+    "registered": "2026-11-07 12:35",
+    "registry": {
+      "motionlcm": "t2m",
+      "omnicontrol": "t2m",
+      "closd": "t2m",
+      "ardy": "t2m (non-native, retargeted to SMPL-22)",
+      "primal": "t2m (non-native)",
+      "kimodo": "tmr_soma",
+      "chois": "omomo",
+      "dart": "flowmdm_babel"
+    },
+    "note_cross_evaluator": "scores from different evaluators are not comparable",
+    "self_checks_ground_truth_only": {
+      "split_half": "FID between two random halves of the ground-truth test set, 5 seeds; expected near 0 (HumanML3D paper reports 0.002 for real motion)",
+      "round_trip": "ground-truth features -> joints (recover_from_ric) -> features (upstream process_file); FID to the originals and feature RMSE; required near 0 before any joint-input method (all of ours) is scored",
+      "perturbation_monotone": "i.i.d. joint noise sigma 0.01/0.02/0.05/0.10 m and frame shuffle fractions 0.05/0.2/0.5 applied in joint space then re-extracted; FID against the other half must increase strictly with level",
+      "text_match": "R-precision top-1/2/3 (batches of 32) with matched captions vs captions permuted across motions; matched must be far above shuffled (chance 1/32, 2/32, 3/32)",
+      "n_bias": "FID of N draws (20 repeats) from half A vs all of half B, N in 8..1024; same for the 0.02 m and 0.05 m noise sets",
+      "min_n_rule": "smallest N with p95 of the ground-truth FID below p5 of the 0.02 m-noise FID (\u7ea6\u5b9a\uff0c\u672a\u7ecf\u63a8\u6f14)"
+    },
+    "t2m": {
+      "evaluator_choice": "two finest.tar copies on disk differ (closd-official epoch 11, motionlcm epoch 28); the one reproducing the published real-motion numbers (R-precision top-1/3 0.511/0.797, matching 2.974, diversity 9.503) is used, chosen before any generated sample is scored",
+      "crop": "official test-time crop: length to a multiple of 4 (one in three drops one more unit), random offset, pad to 196",
+      "text": "one caption per motion drawn with the seed; tokens truncated to 20 plus sos/eos",
+      "generated_text_tokens": "spaCy en_core_web_sm lemma/POS as in HumanML3D preprocessing",
+      "seed": "default_rng(crc32(\"evalkit_dist_t2m\"))",
+      "input": "canonical Z-up SMPL-22 joints mapped back with motion.native_positions(Y-up), resampled to 20 fps, upstream process_file(feet_thre 0.002) with target offsets from a recovered ground-truth frame"
+    },
+    "smoke_c0": "the 8x5 manifest rows; pipeline runs, values finite; N=5 FID is not a quality estimate",
+    "amendments": [
+      {
+        "when": "2026-11-07 12:45",
+        "evaluator": "tmr_soma",
+        "change": "ground truth = Kimodo stratified benchmark cases with a non-empty prompt (832 no-text cases have none), deduplicated by ground-truth embedding (1856 cases hold 1724 distinct motions); retrieval follows the upstream whole-set TMR protocol, not batches of 32",
+        "reason": "duplicates in both halves would bias the split-half FID low; no-text cases cannot enter text matching. Recorded before the run."
+      },
+      {
+        "when": "2026-11-07 12:45",
+        "evaluator": "t2m",
+        "change": "R-precision batches are drawn from a seeded permutation (20 repeats) as in the official shuffled DataLoader",
+        "reason": "t2m_test.npy is sorted by length; consecutive batches gave top-1 0.398 vs the published 0.511, shuffled batches give 0.512 (trial before the registered run)"
+      },
+      {
+        "when": "2026-11-07 13:52",
+        "evaluator": "omomo",
+        "change": "R-precision batches of 32 from seeded permutations (20 repeats) instead of the official unshuffled os.listdir order",
+        "reason": "same rule as the t2m amendment; listdir order is filesystem-dependent. Recorded before the first omomo run."
+      }
+    ],
+    "omomo": {
+      "evaluator": "CHOIS t2m_eval text_motion_features finest.tar (OMOMO-trained, 72-d = 24 joints x 3, unit length 4, tokens <= 30)",
+      "ground_truth": "released res_npz_files/gt (480 test windows of 120 frames, global_jpos), archive sha256 matches the source receipt",
+      "text": "caption tokens of the sequence annotation (omomo_text_anno_txt_data, pre-tagged), as the official loader; the generated rows use the annotation of their native sequence, not our prompt text",
+      "input": "native CHOIS evaluation files (raw/chois_results/res_npz_files/<setting>/<sequence>.npz), no conversion; round trip = reload and re-encode",
+      "reference": "released CHOIS results (res_npz_files/chois) through the same evaluator, for scale only",
+      "seed": "R-precision batches from default_rng(crc32(\"evalkit_dist_omomo_r_precision\")) permutations, 20 repeats"
+    }
+  },
+  "frozen_at": "2026-11-07 18:52",
+  "frozen_note": "frozen after the dev floor-correction tuning and the implementation check (run.evaluate reproduces the dev experiment residual frame by frame), before the heldout2 split was built; frozen_commit is the commit that adds this file",
+  "previous_version": {
+    "spec": "config/evalkit_v1_20261107.json",
+    "frozen_commit": "829f017",
+    "heldout_result": "develop_logs/test_runs/20261107_evalkit/validation/heldout_score.json"
+  }
+}

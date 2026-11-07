@@ -5,7 +5,7 @@ One task per (split, subject seed, base class): the subject model, the base trut
 truth (truth/truth.npz, coordinates.mot, grf.mot / grf.xml for static optimization) and the generator-like input
 (input/motion.npz, input/meta.json). Index: develop_logs/test_runs/20261107_evalkit/synth/index.json.
 
-  --only CLASS[,CLASS]  --split dev|heldout  --limit N  --workers N
+  --only CLASS[,CLASS]  --split dev|heldout|heldout2  --limit N  --workers N
 """
 import argparse
 import json
@@ -138,7 +138,7 @@ def build(task):
 
 def main():
     a = argparse.ArgumentParser()
-    a.add_argument('--split', choices=('dev', 'heldout')); a.add_argument('--only'); a.add_argument('--limit', type=int)
+    a.add_argument('--split', choices=('dev', 'heldout', 'heldout2')); a.add_argument('--only'); a.add_argument('--limit', type=int)
     a.add_argument('--workers', type=int, default=1)
     a.add_argument('--reexport', action='store_true', help='re-draw the inputs of built bases from their truth')
     args = a.parse_args()

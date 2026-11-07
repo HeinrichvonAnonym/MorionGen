@@ -55,12 +55,25 @@ def add_kinematic(run, out, reach_task=None):
     return rec['kinematic']
 
 
+def foot_offset(run, work, mass, floor, source=None):
+    """Fit (cached in work) and fit.foot_offset of one run: the per-clip input of the floor correction."""
+    import opensim as osim
+    import biomech
+    import biomech_sources
+    osim.Logger.setLevelString('error')
+    f = fit_mod.fit(run, work, mass, floor)
+    kin = biomech.body_kinematics(osim.Model(str(Path(work)/'model.osim')), f['labels'], f['coords'])
+    return fit_mod.foot_offset(*(source or biomech_sources.load(run)), kin, f['times']), f, kin
+
+
 def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dims=DIMS, source=None, object_free=None,
-             reach_task=None):
+             reach_task=None, offset_reference=None):
     """run: directory with motion.npz (canonical Z-up joints). floor: floor height (m, canonical Z) of this motion.
     reference: floor-reference variant (spec.reference_offsets) or {side: {landmark: m}} offsets above the floor.
     method: ergo neutral key (default: the reference variant). prompt: task text (None: object-free).
-    object_free: overrides the text rule (evalkit.sources.object_free). reach_task: kinematic.evaluate wrist target."""
+    object_free: overrides the text rule (evalkit.sources.object_free). reach_task: kinematic.evaluate wrist target.
+    offset_reference: the method's median foot offset (spec floor.per_clip_correction); the residual, ergo and muscle
+    dimensions then use floor + this clip's foot offset - offset_reference. None: the input floor (no correction)."""
     import opensim as osim
     import biomech
     import biomech_sources
@@ -68,13 +81,15 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
     start = time.time(); out = Path(out).resolve(); work = out/'work'
     variant = reference if isinstance(reference, str) else None
     offsets = reference_offsets(reference) if variant else reference
-    ref = absolute_reference(offsets, floor)
-    f = fit_mod.fit(run, work, mass, floor)
+    src = source or biomech_sources.load(run)
+    offset, f, kin = foot_offset(run, work, mass, floor, src)
+    delta = 0. if offset_reference is None else offset['mean']-offset_reference
+    floor_eval = floor+delta
+    ref = absolute_reference(offsets, floor_eval)
     times, labels, coords = f['times'], f['labels'], f['coords']
     sel = fit_mod.scored(times)
-    kin = biomech.body_kinematics(osim.Model(str(work/'model.osim')), labels, coords)
-    res = residual.evaluate(kin, times, mass, floor, ref)
-    biomech.write_loads(times, res['grf'], floor, work/'grf.mot', work/'grf.xml')
+    res = residual.evaluate(kin, times, mass, floor_eval, ref)
+    biomech.write_loads(times, res['grf'], floor_eval, work/'grf.mot', work/'grf.xml')
     frames = {'times': times, 'scored': sel, 'unmeasurable': f['unmeasurable'], 'ik_max_error_m': f['ik_max_error_m'],
               'residual_bw': res['residual_bw'], 'residual_force': res['residual_force'], 'com': res['com'],
               'lowest_elevation_m': res['lowest_elevation'], 'state': res['state'],
@@ -94,7 +109,6 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
                                'state_share': {k: float(np.mean(res['state'][sel] == k)) for k in ('event', 'contact', 'flight')}}
     if 'ergo' in dims:
         method = method or (variant.split('__')[0] if variant else None)
-        src = source or biomech_sources.load(run)
         e = ergo.score(work/'model.osim', times, labels, coords, res['masks'], sel, src, ergo.neutral(method, run),
                        ergo.object_free(prompt) if object_free is None else object_free, f['unmeasurable'])
         frames.update({f'ergo_{k}': v for k, v in e.items() if k != 'source_mode'})
@@ -112,7 +126,8 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
     if 'kinematic' in dims:
         summary['kinematic'] = kinematic_summary(run, frames, reach_task)
     np.savez_compressed(out/'frames.npz', **frames)
-    receipt = {'run': str(run), 'floor_m': float(floor), 'reference': variant or offsets, 'mass_kg': mass, 'method': method,
+    receipt = {'run': str(run), 'floor_m': float(floor), 'foot_offset_m': offset, 'offset_reference_m': offset_reference,
+               'floor_eval_m': float(floor_eval), 'reference': variant or offsets, 'mass_kg': mass, 'method': method,
                'prompt': prompt, 'dims': list(dims), 'spec': str(SPEC_PATH.relative_to(ROOT)), 'spec_version': SPEC['version'],
                'fit_prepare': fit_mod.PREPARE, 'contact_margin_m': residual.C['contact_margin_m'],
                'object_free': None if 'ergo' not in dims else bool(ergo.object_free(prompt) if object_free is None else object_free),

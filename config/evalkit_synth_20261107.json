@@ -191,7 +191,14 @@
         202
       ]
     },
-    "rule": "tune only on dev; freeze (commit hash) before the single held-out run"
+    "rule": "tune only on dev; freeze (commit hash) before the single held-out run",
+    "heldout2": {
+      "subject_seeds": [
+        301,
+        302
+      ],
+      "added": "2026-11-07 18:48, for the single held-out run of evalkit v1.1 (the v1 held-out split is spent); same generator, defects and sizes"
+    }
   },
   "muscle_subset": "controls of every base and subject (truth and tool static optimization)"
 }

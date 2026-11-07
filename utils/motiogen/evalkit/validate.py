@@ -1,4 +1,4 @@
-"""Validation statistics of evalkit against the synthetic truth (config/evalkit_v1_20261107.json, validation)."""
+"""Validation statistics of evalkit against the synthetic truth (config/evalkit_v11_20261107.json, validation)."""
 import numpy as np
 
 

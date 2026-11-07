@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""evalkit validation on the synthetic set (config/evalkit_v1_20261107.json, validation). OpenSim python.
+"""evalkit validation on the synthetic set (config/evalkit_v11_20261107.json, validation). OpenSim python.
 
   calibrate            synthetic ergo neutral (skeleton definition) and floor reference (development stand controls);
                        writes the calibrated fields of the registration (refused once the version is frozen)
@@ -100,7 +100,7 @@ def calib_job(clip):
 
 
 def calibrate(args):
-    if SPEC['version'] != 'v1-dev':
+    if not SPEC['version'].endswith('-dev'):
         raise SystemExit('registration is frozen')
     _quiet()
     items = [c for c in clips('dev') if meta(c)['defect'] in CALIBRATION_DEFECTS]
@@ -127,19 +127,48 @@ def calibrate(args):
 
 # ---------------------------------------------------------------- tool and truth runs
 
-def tool_job(clip):
+def offset_job(clip):
+    """Fit and foot offset of one clip (floor.per_clip_correction), cached as foot_offset.json."""
+    out = DATA/'tool'/clip['split']/clip['id']
+    from evalkit.fit import PREPARE
+    path = out/'foot_offset.json'
+    if path.exists() and json.loads(path.read_text()).get('fit_prepare') == PREPARE:
+        return 'skip'
+    try:
+        _quiet()
+        from evalkit import run
+        m = meta(clip)
+        d = run.foot_offset(Path(clip['dir'])/'input', out/'work', m['mass_kg'], m['floor_height_m'])[0]
+        path.write_text(json.dumps({'foot_offset_m': d, 'fit_prepare': PREPARE}))
+        return 'ok'
+    except Exception as e:
+        out.mkdir(parents=True, exist_ok=True)
+        (out/'error_offset.json').write_text(json.dumps({'error': f'{type(e).__name__}: {e}', 'trace': traceback.format_exc()[-2000:]}))
+        return 'failed'
+
+
+def offset_reference(items):
+    """D of floor.per_clip_correction for a split: median foot offset over its clips (method 'synthetic')."""
+    d = [json.loads((DATA/'tool'/c['split']/c['id']/'foot_offset.json').read_text())['foot_offset_m']['mean'] for c in items]
+    return float(np.median(d))
+
+
+def tool_job(task):
+    clip, ref = task
     out = DATA/'tool'/clip['split']/clip['id']
     from evalkit.fit import PREPARE
     if (out/'evalkit.json').exists():
         r = json.loads((out/'evalkit.json').read_text())['receipt']
-        if r['reference'] == 'synthetic' and r.get('fit_prepare') == PREPARE and r.get('contact_margin_m') == SPEC['residual']['contact_margin_m']:
+        if (r['reference'] == 'synthetic' and r.get('fit_prepare') == PREPARE and r.get('spec_version') == SPEC['version']
+                and r.get('contact_margin_m') == SPEC['residual']['contact_margin_m'] and r.get('offset_reference_m') == ref):
             return 'skip'
     try:
         _quiet()
         from evalkit import run
         m = meta(clip)
         dims = ('residual', 'ergo', 'muscle') if m['defect'] == 'control' else ('residual', 'ergo')
-        run.evaluate(Path(clip['dir'])/'input', out, m['floor_height_m'], 'synthetic', m['mass_kg'], method='synthetic', dims=dims)
+        run.evaluate(Path(clip['dir'])/'input', out, m['floor_height_m'], 'synthetic', m['mass_kg'], method='synthetic', dims=dims,
+                     offset_reference=ref)
         return 'ok'
     except Exception as e:
         out.mkdir(parents=True, exist_ok=True)
@@ -567,7 +596,7 @@ def main():
     a = argparse.ArgumentParser()
     a.add_argument('step', choices=('calibrate', 'margins', 'tool', 'truth', 'score', 'kinematic', 'videos'))
     a.add_argument('--tune', action='store_true', help='score on dev: run the registered margin / tau / depth grid')
-    a.add_argument('--split', choices=('dev', 'heldout'), default='dev'); a.add_argument('--workers', type=int, default=6)
+    a.add_argument('--split', choices=('dev', 'heldout', 'heldout2'), default='dev'); a.add_argument('--workers', type=int, default=6)
     a.add_argument('--limit', type=int); a.add_argument('--only')
     args = a.parse_args()
     if args.step == 'calibrate':
@@ -581,10 +610,17 @@ def main():
         res = kinematic_check(rows)
         (LOG/f'{args.split}_kinematic.json').write_text(json.dumps(res, indent=1))
         return print(json.dumps({k: v for k, v in res.items() if k != 'clips'}, indent=1))
-    if args.split == 'heldout' and SPEC['version'] == 'v1-dev':
-        raise SystemExit('freeze the registration (version v1) before the held-out split')
+    if args.split.startswith('heldout') and SPEC['version'].endswith('-dev'):
+        raise SystemExit(f"freeze the registration ({SPEC['version']}) before a held-out split")
+    if args.split == 'heldout' and SPEC['version'] != 'v1':
+        raise SystemExit('the held-out split of v1 is spent; later versions validate on their own split')
     items = [{**c, 'split': args.split} for c in clips(args.split) if not args.only or args.only in c['id']][:args.limit]
-    print(json.dumps(pool({'tool': tool_job, 'truth': truth_job, 'margins': margins_job}[args.step], items, args.workers)))
+    if args.step == 'tool':
+        print(json.dumps(pool(offset_job, items, args.workers)))
+        ref = offset_reference(items)
+        print(json.dumps({'offset_reference_m': ref}), flush=True)
+        return print(json.dumps(pool(tool_job, [(c, ref) for c in items], args.workers)))
+    print(json.dumps(pool({'truth': truth_job, 'margins': margins_job}[args.step], items, args.workers)))
 
 
 if __name__ == '__main__':

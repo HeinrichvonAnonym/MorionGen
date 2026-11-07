@@ -1,4 +1,4 @@
-"""evalkit: standard evaluation toolset (config/evalkit_v1_20261107.json).
+"""evalkit: standard evaluation toolset (config/evalkit_v11_20261107.json).
 
 Dimensions share the input contract (io), the floor parameter (floor) and the IK pass (ik) and never gate each other:
 residual (whole-body residual force, hover / penetration depth), ergo (RULA/REBA frame classes), muscle (static

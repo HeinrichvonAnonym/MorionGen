@@ -9,9 +9,12 @@
                                                              per-method sanity medians, references, floor sensitivity
 
 Manifest rows: {id, method, source, condition?, mass_kg?, floor_m?, reference?, object_free?, reach_task?}; floor, reference and
-object-free default to evalkit.sources. Each row writes DIR/<id>/ (evalkit outputs); a row is skipped when its
-evalkit.json has the same input sha256, dims, registration version, fit preparation and contact margin (resume); a row
-missing only the kinematic dimension gets it from its saved frames without refitting.
+object-free default to evalkit.sources. run has two stages: every row is fitted and its foot offset written
+(DIR/<id>/foot_offset.json), then the per-method median offsets (DIR/floor_offsets.json, spec floor.per_clip_correction)
+set the corrected floor of every row's evaluation. Each row writes DIR/<id>/ (evalkit outputs); a row is skipped when its
+evalkit.json has the same input sha256, dims, registration version, fit preparation, contact margin and method offset
+(resume; adding rows of a method moves its median, so its rows are re-scored on the cached fit); a row missing only the
+kinematic dimension gets it from its saved frames without refitting.
 """
 import argparse
 import hashlib
@@ -82,20 +85,52 @@ def resolve(row):
     return source, ref, float(floor), bool(free)
 
 
-def key(row, dims):
+def key(row, dims, offset_reference=None):
     from evalkit.fit import PREPARE
     from evalkit.spec import SPEC
     source = resolve(row)[0]
     return {'input_sha256': sha256(input_file(source)), 'dims': list(dims), 'spec_version': SPEC['version'], 'fit_prepare': PREPARE,
-            'contact_margin_m': SPEC['residual']['contact_margin_m']}
+            'contact_margin_m': SPEC['residual']['contact_margin_m'], 'offset_reference_m': offset_reference}
 
 
-def job(task):
-    row, out_root, dims = task
+def offset_job(task):
+    """Stage 1: fit and foot offset of one row (spec floor.per_clip_correction), cached as DIR/<id>/foot_offset.json."""
+    row, out_root = task
     out = Path(out_root)/row['id']
     try:
         os.nice(19)
-        k = key(row, dims)
+        from evalkit import run
+        from evalkit.fit import PREPARE
+        source, _, floor, _ = resolve(row)
+        k = {'input_sha256': sha256(input_file(source)), 'fit_prepare': PREPARE, 'floor_m': floor, 'mass_kg': row.get('mass_kg', 75.)}
+        path = out/'foot_offset.json'
+        if path.exists() and json.loads(path.read_text()).get('key') == k:
+            return row['id'], 'skip'
+        d = run.foot_offset(source, out/'work', k['mass_kg'], floor)[0]
+        path.write_text(json.dumps({'key': k, 'foot_offset_m': d}))
+        return row['id'], 'ok'
+    except Exception as e:
+        out.mkdir(parents=True, exist_ok=True)
+        (out/'error.json').write_text(json.dumps({'error': f'{type(e).__name__}: {e}', 'trace': traceback.format_exc()[-3000:]}))
+        return row['id'], 'failed'
+
+
+def offset_references(rows, out_root):
+    """D per method: median foot offset over the manifest rows of the method whose stage 1 succeeded."""
+    by = {}
+    for r in rows:
+        p = Path(out_root)/r['id']/'foot_offset.json'
+        if p.exists():
+            by.setdefault(r['method'], []).append(json.loads(p.read_text())['foot_offset_m']['mean'])
+    return {m: {'offset_reference_m': float(np.median(v)), 'rows': len(v)} for m, v in sorted(by.items())}
+
+
+def job(task):
+    row, out_root, dims, offset_reference = task
+    out = Path(out_root)/row['id']
+    try:
+        os.nice(19)
+        k = key(row, dims, offset_reference)
         from evalkit import run
         source, ref, floor, free = resolve(row)
         if (out/'evalkit.json').exists():
@@ -108,7 +143,7 @@ def job(task):
                 (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
                 return row['id'], 'ok_kinematic_added'
         run.evaluate(source, out, floor, ref, row.get('mass_kg', 75.), method=row['method'], dims=dims, object_free=free,
-                     reach_task=row.get('reach_task'))
+                     reach_task=row.get('reach_task'), offset_reference=offset_reference)
         rec = json.loads((out/'evalkit.json').read_text())
         rec['batch'] = k; rec['row'] = row
         (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
@@ -132,13 +167,21 @@ def run_batch(args):
                           'methods': {m: sum(r['method'] == m for r in rows) for m in sorted({r['method'] for r in rows})}}, indent=1))
         return
     Path(args.out).mkdir(parents=True, exist_ok=True)
-    counts = {}
+    counts, refs = {}, None
     with ProcessPoolExecutor(args.workers, mp_context=mp.get_context('spawn'), max_tasks_per_child=1) as p:
-        for rid, status in p.map(job, [(r, args.out, dims) for r in rows]):
+        if any(d in dims for d in ('residual', 'ergo', 'muscle')):
+            for rid, status in p.map(offset_job, [(r, args.out) for r in rows]):
+                counts[f'offset_{status}'] = counts.get(f'offset_{status}', 0)+1
+                print(json.dumps({'id': rid, 'stage': 'offset', 'status': status}), flush=True)
+            refs = offset_references(rows, args.out)
+            (Path(args.out)/'floor_offsets.json').write_text(json.dumps(refs, indent=1))
+            print(json.dumps({'offset_reference': refs}), flush=True)
+        tasks = [(r, args.out, dims, refs[r['method']]['offset_reference_m'] if refs and r['method'] in refs else None) for r in rows]
+        for rid, status in p.map(job, tasks):
             counts[status] = counts.get(status, 0)+1
             print(json.dumps({'id': rid, 'status': status, **counts}), flush=True)
     (Path(args.out)/'batch.json').write_text(json.dumps({'manifest': str(args.manifest), 'dims': dims, 'counts': counts,
-                                                          'finished': time.strftime('%Y-%m-%d %H:%M')}, indent=1))
+                                                          'floor_offsets': refs, 'finished': time.strftime('%Y-%m-%d %H:%M')}, indent=1))
 
 
 def manifest_shift(args):

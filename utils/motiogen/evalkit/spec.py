@@ -8,7 +8,7 @@ if str(PACKAGE.parent) not in sys.path:
     sys.path.insert(0, str(PACKAGE.parent))
 
 ROOT = PACKAGE.parents[2]
-SPEC_PATH = ROOT/'config/evalkit_v1_20261107.json'
+SPEC_PATH = ROOT/'config/evalkit_v11_20261107.json'
 SPEC = json.loads(SPEC_PATH.read_text())
 FLOOR_REFERENCES = json.loads((ROOT/SPEC['floor']['method_references']).read_text())
 SIDES = ('r', 'l')
