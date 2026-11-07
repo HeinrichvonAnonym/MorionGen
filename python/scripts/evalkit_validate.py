@@ -191,7 +191,8 @@ def truth_job(clip):
 def margins_job(clip):
     """Residual of one development clip at every contact margin of the tuning grid (the fit is shared)."""
     out = DATA/'tool'/clip['split']/clip['id']
-    if (out/'margins.npz').exists():
+    from evalkit.fit import PREPARE
+    if (out/'margins.npz').exists() and str(np.load(out/'margins.npz').get('prepare', '')) == PREPARE:
         return 'skip'
     try:
         _quiet()
@@ -203,7 +204,7 @@ def margins_job(clip):
         f = fit.fit(Path(clip['dir'])/'input', out/'work', m['mass_kg'], m['floor_height_m'])
         kin = biomech.body_kinematics(osim.Model(str(out/'work/model.osim')), f['labels'], f['coords'])
         ref = absolute_reference(reference_offsets('synthetic'), m['floor_height_m'])
-        arrays = {'times': f['times'], 'scored': fit.scored(f['times']), 'unmeasurable': f['unmeasurable']}
+        arrays = {'times': f['times'], 'scored': fit.scored(f['times']), 'unmeasurable': f['unmeasurable'], 'prepare': PREPARE}
         for g in MARGINS:
             res = residual.evaluate(kin, f['times'], m['mass_kg'], m['floor_height_m'], ref, margin=g)
             arrays.update({f'{g}_residual_bw': res['residual_bw'], f'{g}_lowest': res['lowest_elevation'], f'{g}_state': res['state']})
@@ -340,6 +341,11 @@ def score(args):
             r['frames'] = {'positive': int((f['label'] == 1).sum()), 'negative': int((f['label'] == 0).sum()), 'ambiguous': int((f['label'] == -1).sum())}
             res['residual'][name] = r
         res['residual']['pass'] = validate.passes(res['residual']['pass_clips'])
+    if args.tune:  # tool frames of the other dimensions may predate the tuned fit; score them after the tool run
+        LOG.mkdir(parents=True, exist_ok=True)
+        (LOG/f'{args.split}_tune.json').write_text(json.dumps(res, indent=1))
+        print(json.dumps(res, indent=1)[:6000])
+        return
     ef = ergo_frames(rows)
     res['ergo'] = {}
     for m, d in ef.items():

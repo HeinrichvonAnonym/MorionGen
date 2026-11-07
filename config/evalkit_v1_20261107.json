@@ -28,12 +28,12 @@
     "calibrated": {
       "synthetic": {
         "r": {
-          "heel": 0.010064897592346883,
-          "toe": 0.008235019801110775
+          "heel": 0.008538532921270825,
+          "toe": 0.006526173088442078
         },
         "l": {
-          "heel": 0.012053884948764568,
-          "toe": 0.009016786335394975
+          "heel": 0.010509290801183936,
+          "toe": 0.0062374644837956406
         }
       }
     },
@@ -41,35 +41,54 @@
     "method_references_note": "2026-11-07 11:57 with the fit amendment: per-method references re-measured through evalkit.fit on the same e_v2 standing poses (python/scripts/evalkit_floor_refs.py); heel -2 to -6 mm, toe +1.2 to +2.2 cm (SMPL-family) / -0.5 to -1.9 cm (ARDY, Kimodo rigs) against e_v2; the e_v2 values are kept in the file (e_v2_reference_m)"
   },
   "residual": {
-    "contact_margin_m": 0.025,
+    "contact_margin_m": 0.02,
     "contact_rule": "height only (E v2 R0): landmark in contact when height - absolute reference <= margin; no horizontal-speed or onset rule (both raised false kills on human data)",
     "event_window_ms": 40,
     "tau_bw": {
-      "event": 0.41,
+      "event": 0.37,
       "contact": 0.06,
       "flight": 0.5
     },
-    "penetration_depth_m": 0.025,
+    "penetration_depth_m": 0.03,
     "judgment": "frame positive when residual_bw > tau_bw[state] (state event / contact / flight, residual.states) or lowest landmark elevation < -penetration_depth_m",
     "tuning": "tau_bw (event, contact, flight) and penetration_depth_m chosen on the development split only: minimize the larger of the false-kill and missed-kill rates (definitions under validation), ties to the larger tau / depth; grid tau 0.02-0.50 BW step 0.01, depth 0.01-0.06 m step 0.005 (grids: convention, not derived)",
     "tuning_amendment": "2026-11-07 11:48 dev amendment (user: a real-data contact tolerance on generated data with a given floor manufactures misses): contact_margin_m joins the development grid, 0.005-0.030 m step 0.005, chosen jointly with tau / depth by the same objective over the pass clips (ties to the larger margin); the dev fit is redone first (fit amendment) and the synthetic floor reference recalibrated on it. Grid 约定，未经推演",
     "tuned": {
-      "when": "2026-11-07 12:23",
+      "when": "2026-11-07 13:26",
       "split": "dev",
-      "log": "develop_logs/test_runs/20261107_evalkit/validation/score_dev_tune.log",
+      "fit_prepare": "evalkit-upright-flatfoot-torso95-3",
+      "log": "develop_logs/test_runs/20261107_evalkit/validation/score_dev_tune_v3.log",
       "dev_pass_clips": {
-        "false_kill": 0.0651,
-        "missed_kill": 0.065
+        "false_kill": 0.064,
+        "missed_kill": 0.0638
       },
       "margin_grid": {
-        "0.005": 0.1335,
-        "0.01": 0.0866,
-        "0.015": 0.0722,
-        "0.02": 0.0681,
-        "0.025": 0.0651,
-        "0.03": 0.0677
+        "0.005": 0.1333,
+        "0.01": 0.0887,
+        "0.015": 0.0706,
+        "0.02": 0.064,
+        "0.025": 0.0659,
+        "0.03": 0.0667
       },
-      "note": "larger kill rate at each margin; tighter margins lose stance (calibrated landmark-height IQR about 1.5 cm). Above the 5% line: the relaxed 10% / 15% line applies (user decision 11:14) and is stated in the report. Remaining sources: lean false kills (22% at 40 deg; COM within 5 mm and contacts right, cause not identified), event-state misses (48%)"
+      "note": "larger kill rate at each margin; above the 5% line, the relaxed 10% / 15% line applies (user decision 11:14) and is stated in the report",
+      "previous": {
+        "when": "2026-11-07 12:23",
+        "split": "dev",
+        "log": "develop_logs/test_runs/20261107_evalkit/validation/score_dev_tune.log",
+        "dev_pass_clips": {
+          "false_kill": 0.0651,
+          "missed_kill": 0.065
+        },
+        "margin_grid": {
+          "0.005": 0.1335,
+          "0.01": 0.0866,
+          "0.015": 0.0722,
+          "0.02": 0.0681,
+          "0.025": 0.0651,
+          "0.03": 0.0677
+        },
+        "note": "larger kill rate at each margin; tighter margins lose stance (calibrated landmark-height IQR about 1.5 cm). Above the 5% line: the relaxed 10% / 15% line applies (user decision 11:14) and is stated in the report. Remaining sources: lean false kills (22% at 40 deg; COM within 5 mm and contacts right, cause not identified), event-state misses (48%)"
+      }
     }
   },
   "ergo": {
@@ -150,22 +169,22 @@
     "reference_iqr_m": {
       "r": {
         "heel": [
-          0.003111499964800174,
-          0.017618037917028997
+          0.002054104166023779,
+          0.01603242237473184
         ],
         "toe": [
-          0.00021728966028653623,
-          0.015619358920149568
+          -0.0015417390272915651,
+          0.013161968774211857
         ]
       },
       "l": {
         "heel": [
-          0.005195491583107087,
-          0.018512757948036154
+          0.004118616736191252,
+          0.01684812069430964
         ],
         "toe": [
-          0.0006870393690543777,
-          0.016576973697604004
+          -0.0010983679058632042,
+          0.014823116132972807
         ]
       }
     },
