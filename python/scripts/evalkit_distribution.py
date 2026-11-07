@@ -430,9 +430,12 @@ def reexec_kimodo():
     cfg = load_config()
     # ~/.local carries huggingface-hub 2.x, which the Kimodo transformers pin rejects.
     env = _environment(cfg) | {'EVALKIT_KIMODO': '1', 'PYTHONNOUSERSITE': '1'}
+    argv = sys.argv[1:]
+    for i, arg in enumerate(argv[:-1]):
+        if arg in ('--manifest', '--out', '--reference'): argv[i+1] = os.path.abspath(argv[i+1])
     os.chdir(repo_root(cfg, 'kimodo'))
     python = str(environment_root(cfg, 'kimodo')/'bin/python')
-    os.execve(python, [python, __file__, *sys.argv[1:]], env)
+    os.execve(python, [python, os.path.abspath(__file__), *argv], env)
 
 
 def main():
