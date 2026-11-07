@@ -1,0 +1,20 @@
+{
+  "registered": "2026-11-07 22:19",
+  "scope": "Descriptive upper-body load for the muscle dimension (user decision upper_body = add_validate). Separate file because config/evalkit_v11_20261107.json is frozen. Registered before any tool-vs-truth comparison of these quantities.",
+  "source": "the existing static optimization of the muscle dimension (work/so/so_so_force.sto); no new solve. The model's lumbar and arm coordinates are driven only by CoordinateActuators (optimal force 10 N m, controls unbounded, no muscle spans them), so their force column is the inverse-dynamics joint moment of the distal segments, whatever the cost function",
+  "metrics": {
+    "lumbar_moment_nm_kg": "per SO frame |(lumbar_ext, lumbar_bend, lumbar_rot)| / model mass",
+    "shoulder_moment_nm_kg": "per SO frame max over sides of |(shoulder_flex, shoulder_add, shoulder_rot)| / model mass",
+    "clip": "mean and 95th percentile over the SO frames (the scored window, step 2, as the leg effort)",
+    "mass": "sum of body masses of the static-optimization model (model_so.osim)",
+    "excluded": "elbow, forearm and wrist moments (wrists locked: zero; elbow peak below 0.5 of the shoulder in the smoke rows); the lower-limb effort stays the leg effort of v1.1"
+  },
+  "validation": {
+    "clips": "control clips of dev and heldout2 (37: 19 + 18) with both tool and truth static optimization",
+    "clips_count_correction": "2026-11-07 22:24: the count above was a directory count; the control clips are 36 (18 + 18). The 19th dev static optimization is a non-control diagnostic clip (dev_102_stand__bone_stretch_0.6). The rule (control clips) is unchanged",
+    "truth": "truth_eval/<split>/<clip>/so on the synthetic subject model (truth coordinates and ground reactions)",
+    "statistics": "as the muscle dimension: median relative and absolute error, median signed relative error, Spearman over clips, pair-order agreement for truth ratios >= 1.1 / 1.2 / 1.5, signed error per clip; for clip mean and p95 of both metrics",
+    "floor_robustness": "smoke8x5 rows, main arm vs self-floor arm: median |relative change| of each upper-body metric next to that of the leg effort (the upper body has no ground contact, so its moments should change only through the refit kinematics)",
+    "integration_gate": "integrated into the batch summary as a descriptive metric if, for the clip mean on the 37 controls, Spearman >= 0.8 and pair-order agreement at truth ratio >= 1.5 is >= 0.9 (约定，未经推演); otherwise reported as not usable and discussed with the user before any use"
+  }
+}

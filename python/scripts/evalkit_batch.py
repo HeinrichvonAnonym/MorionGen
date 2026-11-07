@@ -250,6 +250,19 @@ def manifest_self_floor(args):
     print(f'{len(rows)} rows -> {args.out}')
 
 
+def upper_body(d, e):
+    """Descriptive lumbar / shoulder moments (config/evalkit_upper_body_20261107.json); read from the row's static
+    optimization when the row predates them."""
+    from evalkit import muscle
+    keys = [f'{p}_moment_nm_kg_{s}' for p in muscle.UPPER_BODY for s in ('mean', 'p95')]
+    if all(k in e['muscle'] for k in keys):
+        return {f'muscle_{k}': e['muscle'][k] for k in keys}
+    if not (d/'work/so/so_so_force.sto').exists():
+        return {}
+    up = muscle.upper_body(d/'work/so', d/'work/model_so.osim')
+    return {f'muscle_{k}': up[k] for k in keys}
+
+
 def rows_summary(rows_dir, rows):
     """Per-row sanity values; residual_positive_share_depth_{-,+}5mm: descriptive band at the registered penetration
     depth -+ 0.5 cm (generated feet often sit near it, so the binary share can flip there)."""
@@ -278,6 +291,7 @@ def rows_summary(rows_dir, rows):
                for c in ('unmeasurable', 'certain_risk', 'indeterminate', 'certain_acceptable')},
             **({f'muscle_{k}': e['muscle'][k] for k in ('muscle_effort_sum_a2_mean', 'muscle_activation_peak', 'reserve_rms_nm', 'reserve_peak_nm')}
                if 'muscle' in e else {}),
+            **(upper_body(d, e) if 'muscle' in e else {}),
             **({'penetration_depth_p95_m': e['kinematic']['floor']['penetration_depth_p95_m'],
                 'hover_height_p95_m': e['kinematic']['floor']['hover_height_p95_m'],
                 'max_slip_m': e['kinematic']['skating']['max_slip_m'], 'jerk_0p1s': e['kinematic']['jerk_0p1s'],

@@ -123,6 +123,9 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
         mu = muscle.evaluate(work, t0, t1)
         frames.update(muscle_times=mu['times'], muscle_effort=mu['effort'], muscle_reserve_abs_sum_nm=mu['reserve_abs_sum_nm'])
         summary['muscle'] = mu['summary']
+        up = muscle.upper_body(work/'so', work/'model_so.osim')
+        frames.update(muscle_lumbar_nm_kg=up['lumbar'], muscle_shoulder_nm_kg=up['shoulder'])
+        summary['muscle'].update({k: v for k, v in up.items() if k.endswith(('_mean', '_p95'))})
     if 'kinematic' in dims:
         summary['kinematic'] = kinematic_summary(run, frames, reach_task)
     np.savez_compressed(out/'frames.npz', **frames)
