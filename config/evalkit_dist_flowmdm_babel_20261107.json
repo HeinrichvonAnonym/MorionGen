@@ -1,0 +1,41 @@
+{
+ "registered": "2026-11-07 17:25",
+ "scope": "DART distribution evaluator (registry dart -> flowmdm_babel); separate file because config/evalkit_v1_20261107.json is frozen. Registered before any generated row is scored.",
+ "evaluator": {
+  "checkpoint": "outputs/assets/dart-official/flowmdm/text_mot_match_babel_random_motion_bs64/model/finest.tar (receipt sha256 of the zip in that directory)",
+  "code": "DART repository vendored FlowMDM (baselines/DART/FlowMDM, DART commit bb67ae1ed6ce051080468bf15bc6e54a6c3f8417); babel_flowmdm.py identical to upstream FlowMDM e81c67fa",
+  "networks": "TextEncoderBiGRUCo(300, POS, 512, 512), MovementConvEncoder(135, 512, 512), MotionEncoderBiGRUCo(512, 1024, 512); unit length 4; whole segments padded to 200 frames (BABEL_SingleEval, no crop)",
+  "features": "Globalvelandy rot6d, canonicalize + offset, babel-amass rfeats_mean/std: root translation z, canonical root xy velocity, 22 SMPL rotations; 30 fps",
+  "glove": "outputs/assets/motionlcm/glove (our_vab, the HumanML3D evaluator vocabulary FlowMDM downloads)"
+ },
+ "ground_truth": {
+  "source": "babel-smplh-30fps-male/val.pth.tar + babel-teach/val.json",
+  "rule": "BABEL_SingleEval load_mode gt: sequences with frame annotations; each segment start=int(start_t*fps), end=min(T, int(end_t*fps)); fix_spell(proc_label); transitions excluded; 15 <= end-start <= 200 (eval.py SEQ_LENS babel); standarize_text",
+  "trial_count": "7862 segments, 439787 frames, 1986 distinct labels"
+ },
+ "text": {
+  "tokens": "upstream process_text uses spaCy en_core_web_sm (not installed: the model download failed with a connection reset). Fallback: each word gets its most frequent token in the HumanML3D test captions (tag_from_ground_truth); words never seen there get word/OTHER (glove vector if known, else unk). Coverage is reported. Deviation from upstream.",
+  "r_precision": "batches of 32 from seeded permutations, 20 repeats (same rule as the t2m amendment)"
+ },
+ "input_path": {
+  "problem": "all generated rows (DART included) are SMPL-22 joint positions only; the evaluator needs SMPL rotations",
+  "ik": "SMPL-H male (AMASS smplh_amass/male/model.npz, sha256 be42bff1...) rest bone directions, per-sequence bone lengths (median over frames); joint-only forward kinematics; translation = pelvis - zero-beta rest root; Adam on 6d rotations, 500 iterations, lr 0.02, loss = joint error cm^2 + 1e-3 ||R - I||^2 + 1e-2 ||R_t - R_t-1||^2 (约定，未经推演)",
+  "pre_registration_trial": "300 ground-truth segments (seed flowmdm_ik_trial): SMPL-X zero-beta fixed skeleton gave 21.6 mm mean joint residual (BABEL neck/collars 4.8-5.2 cm longer, head 6.1 cm shorter); the per-sequence SMPL-H skeleton gives 1.5 mm (p99 7.8 mm) but the features still drift (mean |z| 0.98; embedding L2 6.4 vs mean norm 10.6), concentrated in knee/ankle/shoulder/elbow rotations: twist about the bone and the rotations of joints without a child among the 22 are not observable from joint positions",
+  "reference": "primary: ground-truth joints through the same IK (ik reference), so generated rows and reference carry the same information; the native-rotation reference (official) is reported descriptively, not used for scoring",
+  "resampling": "linear to 30 fps when the row fps differs"
+ },
+ "self_checks": {
+  "split_half": "FID between random halves of the ik reference, 5 seeds",
+  "round_trip": "ik reference half A -> fitted joints -> IK -> features; pass if FID(round trip, original) < min split-half FID (rule of the main protocol, 约定，未经推演)",
+  "native_vs_ik": "descriptive: FID(native half A, ik half A), FID(native half A, ik half B), text match on native features",
+  "perturbation_monotone": "joint noise 0.01/0.02/0.05/0.10 m and frame shuffle 0.05/0.2/0.5 on half A joints, then IK; FID vs ik half B strictly increasing",
+  "text_match": "matched top-3 > 3 x shuffled top-3 on the ik reference",
+  "n_bias": "as the main protocol (N 8..1024, 20 repeats, min-N rule 约定，未经推演)"
+ },
+ "smoke_c0": {
+  "rows": "the 5 DART rows of the 8x5 manifest (native goal change, 600 frames, 30 fps, no text prompt)",
+  "windows": "non-overlapping 200-frame windows from frame 0, last window kept if >= 15 frames (约定，未经推演); 3 per row",
+  "metrics": "FID of the 15 windows vs the full ik reference (N far below min N: not a quality estimate), diversity, IK residual per row; no text metrics (rows have no prompt)"
+ },
+ "seeds": "default_rng(crc32(key)), keys evalkit_dist_flowmdm_babel_*"
+}

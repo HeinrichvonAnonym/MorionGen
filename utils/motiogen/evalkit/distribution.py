@@ -45,9 +45,9 @@ def tag(texts):
     return json.loads(run.stdout)
 
 
-def tag_from_ground_truth(texts):
+def tag_from_ground_truth(texts, unknown=None):
     """Fallback without spaCy: each word with its most frequent tag in the official test-caption tokens (lemmas of
-    nouns / verbs by the same lookup); None when a word never occurs there."""
+    nouns / verbs by the same lookup); a word never seen there makes the caption None, or gets word/<unknown> if given."""
     import collections
     data = np.load(T2M_GT, allow_pickle=True).item()
     seen = collections.defaultdict(collections.Counter)
@@ -59,7 +59,7 @@ def tag_from_ground_truth(texts):
     out = []
     for s in texts:
         words = [w.strip('.,!?;:') for w in s.replace('-', '').lower().split()]
-        toks = [seen[w].most_common(1)[0][0] if seen[w] else None for w in words if w.isalpha()]
+        toks = [seen[w].most_common(1)[0][0] if seen[w] else (f'{w}/{unknown}' if unknown else None) for w in words if w.isalpha()]
         out.append(None if None in toks else toks)
     return out
 
@@ -284,6 +284,203 @@ class OMOMO:
                 match += np.trace(d); top += m.calculate_top_k(np.argsort(d, axis=1), top_k=3).sum(0)
         n_all = n*repeats
         return {'top1': top[0]/n_all, 'top2': top[1]/n_all, 'top3': top[2]/n_all, 'matching': match/n_all, 'samples': n}
+
+
+FLOWMDM = BASELINES/'DART/FlowMDM'
+FLOWMDM_ASSETS = ASSETS/'dart-official/flowmdm'
+FLOWMDM_CHECKPOINT = FLOWMDM_ASSETS/'text_mot_match_babel_random_motion_bs64/model/finest.tar'
+FLOWMDM_CACHE = DATA/'outputs/evalkit_20261107/distribution/flowmdm_babel_val_segments.pkl'
+SMPLH_MALE = ASSETS/'chois/processed_data/smpl_all_models/smplh_amass/male/model.npz'
+SMPL22_PARENTS = (-1, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 12, 13, 14, 16, 17, 18, 19)
+
+
+class FlowMDMBabel:
+    """FlowMDM BABEL text-motion evaluator (DART's vendored FlowMDM): 135-d Globalvelandy features (root height, canonical
+    root xy velocity, 22 SMPL rotations in 6d, babel-amass normalisation) at 30 fps; ground truth = BABEL_SingleEval val."""
+    UNIT, MIN_FRAMES, MAX_FRAMES, MAX_TOKENS, FPS = 4, 15, 200, 20, 30.
+
+    def __init__(self, device=None):
+        import os
+        sys.path.insert(0, str(FLOWMDM))
+        import torch
+        from data_loaders.amass.transforms.rots2rfeats import Globalvelandy
+        from data_loaders.humanml.networks.modules import MotionEncoderBiGRUCo, MovementConvEncoder, TextEncoderBiGRUCo
+        from data_loaders.humanml.utils.word_vectorizer import POS_enumerator, WordVectorizer
+        self.torch = torch
+        self.device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
+        cwd = os.getcwd()
+        os.chdir(FLOWMDM)  # upstream loads the normalisation statistics from a path relative to the repository
+        try:
+            self.transform = Globalvelandy(path='data_loaders/amass/deps', normalization=True, pose_rep='rot6d', canonicalize=True, offset=True)
+        finally:
+            os.chdir(cwd)
+        state = torch.load(FLOWMDM_CHECKPOINT, map_location='cpu')
+        self.text_net = TextEncoderBiGRUCo(300, len(POS_enumerator), 512, 512, self.device)
+        self.movement_net = MovementConvEncoder(135, 512, 512)
+        self.motion_net = MotionEncoderBiGRUCo(512, 1024, 512, self.device)
+        for net, key in ((self.text_net, 'text_encoder'), (self.movement_net, 'movement_encoder'), (self.motion_net, 'motion_encoder')):
+            net.load_state_dict(state[key]); net.to(self.device).eval()
+        self.epoch = int(state['epoch'])
+        self.words = WordVectorizer(str(ASSETS/'motionlcm/glove'), 'our_vab')
+        body = np.load(SMPLH_MALE, allow_pickle=True)
+        self.rest = (np.asarray(body['J_regressor'])[:22] @ np.asarray(body['v_template'])).astype(np.float32)
+        offsets = self.rest[1:] - self.rest[list(SMPL22_PARENTS[1:])]
+        self.directions = np.r_[np.zeros((1, 3)), offsets/np.linalg.norm(offsets, axis=1, keepdims=True)].astype(np.float32)
+
+    def features(self, rots, trans):
+        """Rotation matrices (T, 22, 3, 3) + root translation (T, 3), Z-up -> normalised 135-d features (upstream transform)."""
+        from data_loaders.amass.transforms.smpl import RotTransDatastruct
+        torch = self.torch
+        data = RotTransDatastruct(rots=torch.as_tensor(np.asarray(rots), dtype=torch.float32), trans=torch.as_tensor(np.asarray(trans), dtype=torch.float32))
+        return self.transform(data).numpy()
+
+    def ground_truth(self):
+        """BABEL val segments as BABEL_SingleEval (load_mode gt, sampler 15..200, no cropping): frame annotations only,
+        transitions excluded, proc_label with fix_spell / standarize_text; features from the SMPL-H poses, joints for the round trip."""
+        import pickle
+        if FLOWMDM_CACHE.exists():
+            return pickle.loads(FLOWMDM_CACHE.read_bytes())
+        import json
+        import joblib
+        from data_loaders.amass.nlp_consts import fix_spell
+        from data_loaders.amass.tools.smpl import smpl_data_to_matrix_and_trans
+        torch = self.torch
+        annots = json.loads((FLOWMDM_ASSETS/'babel-teach/val.json').read_text())
+        out = {'key': [], 'text': [], 'features': [], 'joints': []}
+        for sample in joblib.load(FLOWMDM_ASSETS/'babel-smplh-30fps-male/val.pth.tar'):
+            labels, n = annots[sample['babel_id']], len(sample['poses'])
+            if labels['frame_ann'] is None:
+                continue
+            for index, seg in enumerate(labels['frame_ann']['labels']):
+                action = fix_spell(seg['proc_label'])
+                start, end = int(seg['start_t']*sample['fps']), min(n, int(seg['end_t']*sample['fps']))
+                if action == 'transition' or not self.MIN_FRAMES <= end-start <= self.MAX_FRAMES:
+                    continue
+                rt = smpl_data_to_matrix_and_trans({'poses': torch.from_numpy(sample['poses'][start:end]).float(),
+                                                    'trans': torch.from_numpy(sample['trans'][start:end]).float()}, nohands=True)
+                out['key'].append(f"{sample['babel_id']}-{index}")
+                out['text'].append({'t-pose': 't-pose', 't pose': 't-pose', 'tpose': 't-pose', 'a-pose': 'a-pose', 'a pose': 'a-pose',
+                                    'apose': 'a-pose'}.get(action, action))
+                out['features'].append(self.transform(rt).numpy())
+                out['joints'].append(np.asarray(sample['joint_positions'][start:end, :22], np.float32))
+        FLOWMDM_CACHE.parent.mkdir(parents=True, exist_ok=True)
+        FLOWMDM_CACHE.write_bytes(pickle.dumps(out, protocol=4))
+        return out
+
+    def ik_reference(self):
+        """Ground-truth segment joints through the same IK as the generated rows (the scoring reference)."""
+        import pickle
+        path = FLOWMDM_CACHE.with_name('flowmdm_babel_val_ik.pkl')
+        if path.exists():
+            return pickle.loads(path.read_bytes())
+        feats, fits = self.features_from_joints(self.ground_truth()['joints'])
+        out = {'features': feats, 'joints': [f['joints'] for f in fits], 'residual_m': [f['residual_m'] for f in fits]}
+        path.write_bytes(pickle.dumps(out, protocol=4))
+        return out
+
+    def embed_motions(self, features, batch=256):
+        """Whole segments (no crop, as BABEL_SingleEval), zero-padded to 200 frames, lengths // 4 into the motion GRU."""
+        torch, out = self.torch, []
+        for i in range(0, len(features), batch):
+            chunk = features[i:i+batch]
+            lens = np.array([len(m) for m in chunk])
+            x = np.zeros((len(chunk), self.MAX_FRAMES, 135), np.float32)
+            for k, m in enumerate(chunk): x[k, :len(m)] = m
+            order = np.argsort(-lens, kind='stable')
+            with torch.no_grad():
+                moved = self.movement_net(torch.from_numpy(x[order]).to(self.device))
+                em = self.motion_net(moved, torch.from_numpy(lens[order]//self.UNIT)).cpu().numpy()
+            out.append(em[np.argsort(order)])
+        return np.concatenate(out)
+
+    embed_texts = T2M.embed_texts
+
+    def ik(self, joints, iterations=500, lr=.02, w_rest=1e-3, w_smooth=1e-2, chunk_frames=60000):
+        """SMPL-22 joint positions (list of (T, 22, 3), Z-up, m) -> SMPL-H rotations and root translation.
+
+        Skeleton: SMPL-H male (AMASS, the evaluator's training body) rest bone directions, bone lengths of each sequence
+        (median over frames), so any SMPL-topology skeleton is reachable. Forward kinematics on joints only (joint
+        locations do not depend on pose blend shapes); translation = pelvis - zero-beta rest root. Adam on 6d rotations
+        minimises squared joint error (cm^2) + w_rest ||R - I||^2 + w_smooth ||R_t - R_t-1||^2 per joint (weights
+        约定，未经推演). Twist and the rotations of joints without a child among the 22 (head, feet, wrists) are set by
+        the rest and smoothness terms only.
+        """
+        torch = self.torch
+        rest = torch.from_numpy(self.rest).to(self.device)
+        directions = torch.from_numpy(self.directions).to(self.device)
+        out, start = [], 0
+        while start < len(joints):
+            stop, frames = start, 0
+            while stop < len(joints) and (frames == 0 or frames+len(joints[stop]) <= chunk_frames):
+                frames += len(joints[stop]); stop += 1
+            seqs = joints[start:stop]
+            target = torch.from_numpy(np.concatenate(seqs).astype(np.float32)).to(self.device)
+            same = torch.from_numpy(np.concatenate([np.r_[False, np.ones(len(s)-1, bool)] for s in seqs])).to(self.device)
+            lengths = np.concatenate([np.repeat(self.bone_lengths(s)[None], len(s), 0) for s in seqs])
+            offsets = directions[None]*torch.from_numpy(lengths.astype(np.float32)).to(self.device)[..., None]
+            d6 = torch.tensor([1., 0, 0, 0, 1, 0], device=self.device).repeat(len(target), 22, 1)
+            d6[:, 0] = self._root_init(target, rest)
+            d6.requires_grad_(True)
+            opt = torch.optim.Adam([d6], lr=lr)
+            eye = torch.eye(3, device=self.device)
+            for _ in range(iterations):
+                R = self._rot6d(d6)
+                err = ((self._fk(R, target[:, 0], offsets)-target)*100).pow(2).sum(-1).mean()
+                reg = (R-eye).pow(2).sum((-1, -2)).mean()
+                smooth = (R[1:]-R[:-1]).pow(2).sum((-1, -2))[same[1:]].mean() if same.any() else 0.
+                loss = err + w_rest*reg + w_smooth*smooth
+                opt.zero_grad(); loss.backward(); opt.step()
+            with torch.no_grad():
+                R = self._rot6d(d6)
+                fitted = self._fk(R, target[:, 0], offsets)
+                residual = (fitted-target).norm(dim=-1).cpu().numpy()
+                trans = (target[:, 0]-rest[0]).cpu().numpy()
+            R, fitted, cut = R.cpu().numpy(), fitted.cpu().numpy(), np.cumsum([len(s) for s in seqs])[:-1]
+            out += [{'rots': r, 'trans': t, 'joints': p, 'residual_m': e}
+                    for r, t, p, e in zip(np.split(R, cut), np.split(trans, cut), np.split(fitted, cut), np.split(residual, cut))]
+            start = stop
+        return out
+
+    @staticmethod
+    def bone_lengths(joints):
+        j = np.asarray(joints)
+        return np.r_[0., np.median(np.linalg.norm(j[:, 1:]-j[:, list(SMPL22_PARENTS[1:])], axis=-1), 0)]
+
+    def _rot6d(self, d6):
+        F = self.torch.nn.functional
+        b1 = F.normalize(d6[..., :3], dim=-1)
+        b2 = F.normalize(d6[..., 3:]-(b1*d6[..., 3:]).sum(-1, keepdim=True)*b1, dim=-1)
+        return self.torch.stack((b1, b2, self.torch.cross(b1, b2, dim=-1)), -1)
+
+    def _fk(self, R, root, offsets):
+        G, P = [R[:, 0]], [root]
+        for j in range(1, 22):
+            p = SMPL22_PARENTS[j]
+            P.append(P[p] + (G[p] @ offsets[:, j, :, None])[..., 0])
+            G.append(G[p] @ R[:, j])
+        return self.torch.stack(P, 1)
+
+    def _root_init(self, target, rest):
+        """Kabsch of the rest pelvis children (hips, spine1) onto the target, as a 6d rotation (columns 1-2)."""
+        torch = self.torch
+        a = (rest[[1, 2, 3]]-rest[0])[None]
+        b = target[:, [1, 2, 3]]-target[:, [0]]
+        u, _, vt = torch.linalg.svd(b.transpose(1, 2) @ a)
+        s = torch.ones(len(b), 3, device=b.device); s[:, 2] = torch.sign(torch.det(u @ vt))
+        R = u @ torch.diag_embed(s) @ vt
+        return torch.cat((R[..., 0], R[..., 1]), -1)
+
+    def features_from_joints(self, joints, fps=30., **ik):
+        """Joint positions -> 30 fps (linear) -> IK -> upstream features; returns features and the IK records."""
+        resampled = []
+        for j in joints:
+            j = np.asarray(j, np.float32)
+            if abs(fps-self.FPS) > 1e-6:
+                t = np.arange(len(j))/fps; u = np.arange(0, t[-1]+1e-9, 1/self.FPS)
+                j = np.stack([np.stack([np.interp(u, t, j[:, k, c]) for c in range(3)], -1) for k in range(22)], 1).astype(np.float32)
+            resampled.append(j)
+        fits = self.ik(resampled, **ik)
+        return [self.features(f['rots'], f['trans']) for f in fits], fits
 
 
 KIMODO_CASES = DATA/'benchmarks/kimodo-stratified-20261008/generated_raw'

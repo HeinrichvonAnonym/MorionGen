@@ -3,7 +3,8 @@
   selfcheck --evaluator E    split half, round trip, perturbation monotone, text match, FID-vs-N -> <out>/<E>/selfcheck.json
   smoke --evaluator E        C0 rows of the 8x5 manifest through the same evaluator -> <out>/<E>/smoke.json
   figure --evaluator E       PCA projection, FID vs perturbation, FID vs N, retrieval -> <out>/<E>/page.png
-Evaluators: t2m and omomo (motiogen-motionlcm), tmr_soma (motiogen-kimodo; re-executes itself there with the Kimodo environment).
+Evaluators: t2m, omomo and flowmdm_babel (motiogen-motionlcm; flowmdm_babel in its own process, its upstream package name
+collides with OmniControl's), tmr_soma (motiogen-kimodo; re-executes itself there with the Kimodo environment).
 """
 import argparse
 import json
@@ -213,7 +214,81 @@ class OMOMOAdapter:
         return emb, record
 
 
-ADAPTERS = {'t2m': T2MAdapter, 'tmr_soma': TMRAdapter, 'omomo': OMOMOAdapter}
+class FlowMDMAdapter:
+    """Protocol: config/evalkit_dist_flowmdm_babel_20261107.json (scoring reference = ground-truth joints through the IK)."""
+    name = 'flowmdm_babel'
+    WINDOW = 200
+
+    def __init__(self):
+        self.ev = ev = D.FlowMDMBabel()
+        self.gt, self.ref = ev.ground_truth(), ev.ik_reference()
+        self.tokens = D.tag_from_ground_truth(self.gt['text'], unknown='OTHER')
+        self.coverage = float(np.mean([not t.endswith('/OTHER') for s in self.tokens for t in s]))
+
+    def fid(self, a, b):
+        try:
+            return D.fid(a, b)
+        except ValueError:  # official sqrtm check on a singular small-N covariance product
+            return float('nan')
+
+    def info(self):
+        res = np.concatenate(self.ref['residual_m'])
+        return {'checkpoint': str(D.FLOWMDM_CHECKPOINT.relative_to(D.DATA)), 'epoch': self.ev.epoch, 'segments': len(self.gt['key']),
+                'protocol': 'config/evalkit_dist_flowmdm_babel_20261107.json', 'token_coverage_fallback': self.coverage,
+                'reference': 'ground-truth joints through the IK', 'reference_ik_residual_mm': {'mean': float(res.mean()*1e3),
+                'p99': float(np.percentile(res, 99)*1e3)}, 'native': getattr(self, 'native', None)}
+
+    def ground_truth(self):
+        self.text = self.ev.embed_texts(self.tokens)
+        return self.ev.embed_motions(self.ref['features']), self.text
+
+    def text_metrics(self, text, motion):
+        return D.text_metrics(text, motion, key='evalkit_dist_flowmdm_babel_r_precision')
+
+    def real(self, gt, text):
+        return {**self.text_metrics(text, gt), 'diversity': D.diversity(gt, key='evalkit_dist_flowmdm_babel_diversity')}
+
+    def perturbed(self, index, r):
+        ev = self.ev
+        joints = [self.gt['joints'][i] for i in index]
+        sets = {'roundtrip': ev.features_from_joints([self.ref['joints'][i] for i in index])[0]}
+        for kind, level, label in levels():
+            sets[label] = ev.features_from_joints([perturb(j, kind, level, r).astype(np.float32) for j in joints])[0]
+            print(label, flush=True)
+        emb = {'original': ev.embed_motions([self.ref['features'][i] for i in index]), **{k: ev.embed_motions(v) for k, v in sets.items()}}
+        native = ev.embed_motions(self.gt['features'])
+        n = len(native); half = D.rng('evalkit_dist_flowmdm_babel_split_0').permutation(n)
+        a, b = half[:n//2], half[n//2:]
+        ik = ev.embed_motions(self.ref['features'])
+        self.native = {'fid_native_a_vs_ik_a': self.fid(native[a], ik[a]), 'fid_native_a_vs_ik_b': self.fid(native[a], ik[b]),
+                       'fid_native_a_vs_native_b': self.fid(native[a], native[b]), 'fid_ik_a_vs_ik_b': self.fid(ik[a], ik[b]),
+                       'text_match_native': self.text_metrics(self.text, native), 'diversity_native': D.diversity(native, key='evalkit_dist_flowmdm_babel_diversity'),
+                       'scope': 'descriptive: information the joint-only path loses relative to the official rotations'}
+        z = [np.abs(f-self.ref['features'][i]).mean() for f, i in zip(sets['roundtrip'], index)]
+        return emb, {'feature_abs_z_mean': float(np.mean(z))}
+
+    def smoke(self, rows):
+        ev, windows, record, owner = self.ev, [], [], []
+        for k, row in enumerate(rows):
+            z = np.load(motion_file(row['source']), allow_pickle=True)
+            names = [str(n) for n in z['joint_names']]
+            j = np.asarray(z['joints'], np.float32)[:, [names.index(n) for n in D.HUMANML_NAMES]]
+            feats, fits = ev.features_from_joints([j], fps=float(z['fps']))
+            f, fit = feats[0], fits[0]
+            starts = [s for s in range(0, len(f), self.WINDOW) if len(f)-s >= ev.MIN_FRAMES]
+            for s in starts: windows.append(f[s:s+self.WINDOW]); owner.append(k)
+            record.append({'id': row['id'], 'method': row['method'], 'prompt': sources.prompt(row['source']), 'frames_30fps': len(f),
+                           'windows': len(starts), 'ik_residual_mm_mean': float(fit['residual_m'].mean()*1e3),
+                           'ik_residual_mm_p99': float(np.percentile(fit['residual_m'], 99)*1e3),
+                           'bone_lengths_m': ev.bone_lengths(j).round(4).tolist(), 'finite': bool(np.isfinite(f).all())})
+        emb = ev.embed_motions(windows)
+        for k, rec in enumerate(record):
+            rec['window_embedding_norm'] = [float(np.linalg.norm(e)) for e, o in zip(emb, owner) if o == k]
+        self.windows = {'owner': np.array(owner)}
+        return emb, record
+
+
+ADAPTERS = {'t2m': T2MAdapter, 'tmr_soma': TMRAdapter, 'omomo': OMOMOAdapter, 'flowmdm_babel': FlowMDMAdapter}
 
 
 def selfcheck(adapter, out):
@@ -279,14 +354,18 @@ def smoke(adapter, manifest, out):
     rows = [r for r in json.loads(Path(manifest).read_text())['rows'] if D.REGISTRY[r['method']] == name]
     gt = np.load(out/name/'embeddings.npz')['ground_truth']
     emb, record = adapter.smoke(rows)
+    owner = getattr(adapter, 'windows', {}).get('owner', np.arange(len(rows)))
     methods = {}
     for m in sorted({r['method'] for r in rows}):
         i = [k for k, r in enumerate(rows) if r['method'] == m]
-        methods[m] = {'rows': len(i), 'native': D.NATIVE.get(m, True), 'fid_n5_vs_ground_truth': adapter.fid(emb[i], gt),
-                      'all_finite': bool(np.isfinite(emb[i]).all() and all(record[k]['finite'] for k in i))}
+        e = emb[np.isin(owner, i)]
+        methods[m] = {'rows': len(i), 'embeddings': len(e), 'native': D.NATIVE.get(m, True), 'fid_n5_vs_ground_truth': adapter.fid(e, gt),
+                      'diversity': float(np.linalg.norm(e[:, None]-e[None], axis=-1)[np.triu_indices(len(e), 1)].mean()),
+                      'all_finite': bool(np.isfinite(e).all() and all(record[k]['finite'] for k in i))}
     result = {'evaluator': name, 'rows': record, 'methods': methods,
-              'scope': 'smoke: pipeline runs and values are finite; N=5 FID and single-prompt text scores are not quality estimates'}
-    np.savez_compressed(out/name/'smoke_embeddings.npz', embeddings=emb, ids=np.array([r['id'] for r in rows]))
+              'scope': 'smoke: pipeline runs and values are finite; N=5 FID and single-prompt text scores are not quality estimates',
+              'diversity_note': 'mean pairwise distance of the smoke embeddings (all pairs; the official 300-pair draw needs more samples)'}
+    np.savez_compressed(out/name/'smoke_embeddings.npz', embeddings=emb, ids=np.array([r['id'] for r in rows]), owner=owner)
     (out/name/'smoke.json').write_text(json.dumps(result, indent=1, ensure_ascii=False, default=float))
     print(json.dumps(methods, indent=1, default=float))
 
@@ -306,11 +385,12 @@ def figure(name, out):
         ax[0, 0].scatter(*((emb[k]-mu)@basis).mean(0), marker='X', s=120, c=c, edgecolor='k', label=k.replace('perturbed_', 'GT + ')+' (centroid)')
     if (d/'smoke.json').exists():
         smoke_, se = json.loads((d/'smoke.json').read_text()), np.load(d/'smoke_embeddings.npz')
+        owner = se['owner'] if 'owner' in se.files else np.arange(len(smoke_['rows']))
         for m, color in zip(sorted(smoke_['methods']), plt.cm.tab10.colors):
             i = [k for k, r in enumerate(smoke_['rows']) if r['method'] == m]
-            native = smoke_['methods'][m]['native']
-            ax[0, 0].scatter(*((se['embeddings'][i]-mu)@basis).T, s=50, color=color, marker='o' if native else '^', edgecolor='k',
-                             label=f"{m}{'' if native else ' (non-native)'} C0 x{len(i)}")
+            native, e = smoke_['methods'][m]['native'], se['embeddings'][np.isin(owner, i)]
+            ax[0, 0].scatter(*((e-mu)@basis).T, s=50, color=color, marker='o' if native else '^', edgecolor='k',
+                             label=f"{m}{'' if native else ' (non-native)'} C0 x{len(i)}" + (f' ({len(e)} windows)' if len(e) != len(i) else ''))
     ax[0, 0].set_title('Evaluator embedding, PCA fit on ground truth'); ax[0, 0].legend(fontsize=8)
     c = check['checks']['perturbation_monotone']['fid']
     shown = lambda keys: np.clip([c[k] for k in keys], 1e-6, None)
