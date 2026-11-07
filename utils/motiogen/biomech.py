@@ -399,11 +399,13 @@ RESIDUAL = {'pelvis_tx': 1e3, 'pelvis_ty': 1e3, 'pelvis_tz': 1e3, 'pelvis_tilt':
 
 def static_optimization(out, t0, t1, step=2, unlock=()):
     """Muscle activations (activation exponent 2) with weak lower-limb reserves and strong pelvis residual actuators.
-    unlock: coordinates freed in the optimization model only (held at their coordinates-file value, default 0)."""
+    unlock: coordinates freed in the optimization model only (held at their coordinates-file value, default 0); names
+    the model lacks are ignored (some synthetic base models have no subtalar joint)."""
     out = Path(out).resolve()
     model = osim.Model(str(out/'model.osim'))
     for name in unlock:
-        model.updCoordinateSet().get(name).setDefaultLocked(False)
+        if model.getCoordinateSet().contains(name):
+            model.updCoordinateSet().get(name).setDefaultLocked(False)
     state = model.initSystem(); coords = model.getCoordinateSet()
     names = [coords.get(i).getName() for i in range(coords.getSize())
              if not coords.get(i).isConstrained(state) and not coords.get(i).getName().startswith(('lumbar', 'arm', 'elbow', 'pro_sup', 'wrist'))]
