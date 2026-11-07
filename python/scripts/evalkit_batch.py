@@ -5,6 +5,8 @@
                                                              intervention off) with numpy default_rng(crc32(--draw-key))
   evalkit_batch.py run --manifest M.json --out DIR [--dims residual,ergo,muscle,kinematic] [--workers 6] [--dry-run]
   evalkit_batch.py manifest-shift --manifest M.json --out M2.json [--shift 0.02]   the rows with the floor moved by +-shift
+  evalkit_batch.py manifest-self-floor --manifest M.json --rows DIR --out M3.json   descriptive self-floor arm (floor at each
+                                                             row's own still-landmark level, self_floor_shift)
   evalkit_batch.py check --manifest M.json --rows DIR --out C.json [--shift-manifest M2.json --shift-rows DIR2]
                                                              per-method sanity medians, references, floor sensitivity
 
@@ -116,11 +118,12 @@ def offset_job(task):
 
 
 def offset_references(rows, out_root):
-    """D per method: median foot offset over the manifest rows of the method whose stage 1 succeeded."""
+    """D per method: median foot offset over the manifest rows of the method whose stage 1 succeeded (rows with
+    per_clip_correction false, e.g. the self-floor arm, neither use nor enter it)."""
     by = {}
     for r in rows:
         p = Path(out_root)/r['id']/'foot_offset.json'
-        if p.exists():
+        if p.exists() and r.get('per_clip_correction', True):
             by.setdefault(r['method'], []).append(json.loads(p.read_text())['foot_offset_m']['mean'])
     return {m: {'offset_reference_m': float(np.median(v)), 'rows': len(v)} for m, v in sorted(by.items())}
 
@@ -176,7 +179,8 @@ def run_batch(args):
             refs = offset_references(rows, args.out)
             (Path(args.out)/'floor_offsets.json').write_text(json.dumps(refs, indent=1))
             print(json.dumps({'offset_reference': refs}), flush=True)
-        tasks = [(r, args.out, dims, refs[r['method']]['offset_reference_m'] if refs and r['method'] in refs else None) for r in rows]
+        use = lambda r: refs and r['method'] in refs and r.get('per_clip_correction', True)
+        tasks = [(r, args.out, dims, refs[r['method']]['offset_reference_m'] if use(r) else None) for r in rows]
         for rid, status in p.map(job, tasks):
             counts[status] = counts.get(status, 0)+1
             print(json.dumps({'id': rid, 'status': status, **counts}), flush=True)
@@ -209,6 +213,43 @@ def positive_share(f, sel, depth):
     return float(((f['residual_bw'] > bound) | (f['lowest_elevation_m'] < -depth) | f['unmeasurable'])[sel].mean())
 
 
+SELF_FLOOR_STILL_M_S = .05
+
+
+def self_floor_shift(f, still=SELF_FLOOR_STILL_M_S):
+    """Median over the scored frames of the lowest sole-landmark elevation among the landmarks whose vertical speed
+    is below `still` (m/s, convention, not derived). Checked on known-floor data before use
+    (scratch/self_floor_estimators.py): synthetic walk -0.6 cm, other synthetic -0.3 cm, CLoSD -0.2 cm, PRIMAL +0.1 cm;
+    the 10th percentile of the lowest elevation was biased by the rolling foot in walking (-1.8 / -1.3 cm)."""
+    E = np.stack([f[f'elevation_{s}_{k}'] for s in 'rl' for k in ('heel', 'toe')], 1)
+    E = np.where(np.abs(np.gradient(E, f['times'], axis=0)) < still, E, np.inf).min(1)
+    ok = f['scored'] & np.isfinite(E)
+    return float(np.median(E[ok])) if ok.any() else float(np.median(f['lowest_elevation_m'][f['scored']]))
+
+
+def manifest_self_floor(args):
+    """Descriptive self-floor arm (user decision 2026-11-07 21:19): every evaluated row again with its floor moved by
+    self_floor_shift of its main-arm frames under DIR (relative to the floor that arm used), refitted on that floor,
+    no per-clip correction, all dimensions. Separates 'does the method keep its own floor' from the dynamics,
+    ergonomics and muscle load of the motion."""
+    src = json.loads(Path(args.manifest).read_text())
+    rows = []
+    for r in src['rows']:
+        d = Path(args.rows)/r['id']
+        if not (d/'evalkit.json').exists():
+            continue
+        rec = json.loads((d/'evalkit.json').read_text())['receipt']; f = np.load(d/'frames.npz', allow_pickle=True)
+        base = rec.get('floor_eval_m', rec['floor_m'])
+        shift = self_floor_shift(f)
+        _, ref, _, free = resolve(r)
+        rows.append({**r, 'id': f"{r['id']}__selffloor", 'base_id': r['id'], 'floor_m': base+shift, 'reference': ref, 'object_free': free,
+                     'per_clip_correction': False,
+                     'self_floor': {'estimator': f'still-landmark median, {SELF_FLOOR_STILL_M_S} m/s', 'main_floor_eval_m': base, 'shift_m': shift}})
+    Path(args.out).write_text(json.dumps({'created': time.strftime('%Y-%m-%d %H:%M'), 'from': str(args.manifest), 'rows_dir': str(args.rows),
+                                          'arm': 'self_floor (descriptive)', 'rows': rows}, indent=1))
+    print(f'{len(rows)} rows -> {args.out}')
+
+
 def rows_summary(rows_dir, rows):
     """Per-row sanity values; residual_positive_share_depth_{-,+}5mm: descriptive band at the registered penetration
     depth -+ 0.5 cm (generated feet often sit near it, so the binary share can flip there)."""
@@ -223,7 +264,8 @@ def rows_summary(rows_dir, rows):
         sel = f['scored']; um = f['unmeasurable'][sel]; pos = np.flatnonzero(um)/max(len(um)-1, 1)
         rf = f['residual_bw'][sel]
         out[r['id']] = {
-            'method': r['method'], 'seconds': float(f['times'][sel][-1]-f['times'][sel][0]),
+            'method': r['method'], 'input_sha256': e.get('batch', {}).get('input_sha256'),
+            'seconds': float(f['times'][sel][-1]-f['times'][sel][0]),
             'residual_rms_bw': float(np.sqrt(np.mean(rf**2))), 'residual_p95_bw': float(np.percentile(rf, 95)),
             'residual_positive_share': e['residual']['positive_share'], 'penetration_share': e['residual']['penetration_share'],
             **{f'residual_positive_share_depth_{b*1000:+.0f}mm': positive_share(f, sel, depth+b) for b in DEPTH_BAND_M},
@@ -257,14 +299,20 @@ def synthetic_controls():
 
 
 def check(args):
-    """Sanity table of a smoke batch: per method medians, unmeasurable location, references, floor sensitivity."""
+    """Sanity table of a smoke batch: per method medians, unmeasurable location, references, floor sensitivity.
+    Rows with byte-identical inputs (E4 C0 MotionLCM / OmniControl: the 12 tasks share 2 texts, so control-off runs
+    repeat per text and seed) enter the per-method medians once; rows and unique_inputs are both reported."""
     rows = json.loads(Path(args.manifest).read_text())['rows']
     per = rows_summary(args.rows, rows)
-    keys = sorted({k for v in per.values() for k in v if k not in ('method', 'unmeasurable_by_third')})
+    keys = sorted({k for v in per.values() for k in v if k not in ('method', 'unmeasurable_by_third', 'input_sha256')})
     methods = {}
     for m in sorted({v['method'] for v in per.values()}):
-        vs = [v for v in per.values() if v['method'] == m]
-        methods[m] = {'rows': len(vs), **{k: float(np.median([v[k] for v in vs if v.get(k) is not None]))
+        allv = [v for v in per.values() if v['method'] == m]
+        seen, vs = set(), []
+        for v in allv:
+            if v['input_sha256'] is None or v['input_sha256'] not in seen:
+                seen.add(v['input_sha256']); vs.append(v)
+        methods[m] = {'rows': len(allv), 'unique_inputs': len(vs), **{k: float(np.median([v[k] for v in vs if v.get(k) is not None]))
                                           for k in keys if any(v.get(k) is not None for v in vs)},
                       'unmeasurable_by_third': np.mean([v['unmeasurable_by_third'] for v in vs], 0).tolist()}
     addb = json.loads((ROOT/'develop_logs/test_runs/20261105_val_a/analysis.json').read_text())['variants']['kin30']['classes']
@@ -302,8 +350,11 @@ def main():
     r = sub.add_parser('run'); r.add_argument('--manifest', required=True); r.add_argument('--out', required=True)
     r.add_argument('--dims', default='residual,ergo,muscle,kinematic'); r.add_argument('--workers', type=int, default=6)
     r.add_argument('--dry-run', action='store_true')
+    f = sub.add_parser('manifest-self-floor'); f.add_argument('--manifest', required=True); f.add_argument('--rows', required=True)
+    f.add_argument('--out', required=True)
     args = a.parse_args()
-    {'manifest-e4': manifest_e4, 'manifest-shift': manifest_shift, 'check': check, 'run': run_batch}[args.step](args)
+    {'manifest-e4': manifest_e4, 'manifest-shift': manifest_shift, 'manifest-self-floor': manifest_self_floor, 'check': check,
+     'run': run_batch}[args.step](args)
 
 
 if __name__ == '__main__':
