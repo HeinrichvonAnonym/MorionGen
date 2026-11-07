@@ -20,6 +20,7 @@ from motiogen.native_analysis import (boundary_kinematics, bone_length_cv, clust
                                       common_history_consistency, common_step_boundary_jerk, common_step_jerk,
                                       facing_heading, foot_sensitivity, holm, sign_flip_p, threshold_success)
 from motiogen.runtime import json_write
+from motiogen.evalkit import kinematic
 
 OUT = ROOT/'develop_logs/test_runs/20261030_next_round'
 CONTRACT = json.loads((ROOT/'config/native_metric_contract.json').read_text())
@@ -172,26 +173,14 @@ def analyze_m0(folder='m0'):
 
 def reach_row(job, run):
     motion = load_motion(run/'motion.npz'); joints = motion['joints']; fps = float(motion['fps'])
-    names = [str(n) for n in motion['joint_names']]; ix = {n: i for i, n in enumerate(names)}
+    names = [str(n) for n in motion['joint_names']]
     spec = job['scene']['constraints'][0]; meta = job['scene']['next_round_task']
-    frame = int(round(spec['time_seconds']*fps)); target = np.asarray(spec['position_m'])
-    side = spec['joint'].split('_')[0]; other = ('left' if side == 'right' else 'right')
-    sh, el, wr = (joints[:, ix[f'{side}_{j}']] for j in ('shoulder', 'elbow', 'wrist'))
-    upper = np.linalg.norm(el-sh, axis=-1); fore = np.linalg.norm(wr-el, axis=-1)
-    unit = lambda v: v/np.linalg.norm(v)
-    refit = sh[frame]+np.median(upper)*unit(el[frame]-sh[frame])+np.median(fore)*unit(wr[frame]-el[frame])
+    frame = int(round(spec['time_seconds']*fps))
+    values = kinematic.reach(joints, names, fps, spec['position_m'], spec['time_seconds'], spec['joint'])
     forward, heading = facing_heading(joints, names)
-    error = float(np.linalg.norm(wr[frame]-target))
-    values = {'wrist_error_m': error, 'other_wrist_distance_m': float(np.linalg.norm(joints[frame, ix[other+'_wrist']]-target)),
-              'refit_wrist_error_m': float(np.linalg.norm(refit-target)), 'frame0_heading_deg': heading,
-              'shoulder_distance_ratio': float(np.linalg.norm(target-sh[0])/(upper[0]+fore[0])),
-              'arm_bone_cv': float(np.mean([upper.std()/upper.mean(), fore.std()/fore.mean()])),
-              'pelvis_displacement_m': float(np.linalg.norm(joints[frame, 0, :2]-joints[0, 0, :2])),
-              'jerk_0p1s': common_step_jerk(joints, fps),
-              'jerk_native': float(np.sqrt(np.mean((np.diff(joints, n=3, axis=0)*fps**3)**2)))}
-    values['stretch_contribution_m'] = values['refit_wrist_error_m']-error
-    values['other_hand_closer'] = float(values['other_wrist_distance_m'] < error)
-    values.update(threshold_success([error]))
+    values.update({'frame0_heading_deg': heading,
+                   'pelvis_displacement_m': float(np.linalg.norm(joints[frame, 0, :2]-joints[0, 0, :2])),
+                   'jerk_0p1s': common_step_jerk(joints, fps), 'jerk_native': kinematic.native_jerk(joints, fps)})
     return values, meta
 
 

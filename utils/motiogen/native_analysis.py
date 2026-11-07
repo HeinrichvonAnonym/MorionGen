@@ -3,6 +3,9 @@ import numpy as np
 import itertools
 import math
 
+from .evalkit.kinematic import (  # noqa: F401
+    step_frames, common_step_jerk, bone_length_cv, threshold_success, facing_heading)
+
 def geometric_contact_persistence(distances,fps,threshold=.05):
     """Same-hand sampled geometric contact, not force or continuous grasp."""
     d=np.asarray(distances,float)
@@ -44,23 +47,6 @@ def boundary_kinematics(joints,fps,boundaries):
         'boundary_jerk_rms':float(np.sqrt(np.mean(jerk[bounds-2]**2)))}
 
 
-def step_frames(fps,step_seconds=.1):
-    if not np.isfinite(fps) or fps<=0 or step_seconds<=0:raise ValueError('Positive FPS and step required')
-    return max(1,int(round(step_seconds*fps)))
-
-
-def common_step_jerk(joints,fps,step_seconds=.1):
-    """Third difference on a common time step, so 20 Hz and 30 Hz outputs compare.
-
-    Same normalisation as the archived native metric (component RMS over all
-    joints and axes); only the difference step changes from 1/FPS to ~0.1 s.
-    """
-    xyz=np.asarray(joints,float);k=step_frames(fps,step_seconds)
-    if len(xyz)<=3*k:raise ValueError('Motion shorter than three common steps')
-    d=(xyz[3*k:]-3*xyz[2*k:-k]+3*xyz[k:-2*k]-xyz[:-3*k])/(k/fps)**3
-    return float(np.sqrt(np.mean(d**2)))
-
-
 def common_step_boundary_jerk(joints,fps,boundaries,step_seconds=.1):
     """Common-step third difference whose middle interval straddles each commit.
 
@@ -73,30 +59,6 @@ def common_step_boundary_jerk(joints,fps,boundaries,step_seconds=.1):
     if not len(s):return None
     d=(xyz[s+3*k]-3*xyz[s+2*k]+3*xyz[s+k]-xyz[s])/(k/fps)**3
     return float(np.sqrt(np.mean(d**2)))
-
-
-def bone_length_cv(joints,names,bones):
-    """Within-clip coefficient of variation of each named bone length."""
-    xyz=np.asarray(joints,float);index={str(n):i for i,n in enumerate(names)};result={}
-    for a,b in bones:
-        if a not in index or b not in index:continue
-        length=np.linalg.norm(xyz[:,index[a]]-xyz[:,index[b]],axis=-1)
-        result[f'{a}-{b}']={'mean_m':float(length.mean()),'cv':float(length.std()/length.mean())}
-    return result
-
-
-def threshold_success(errors,thresholds=(.02,.05,.1)):
-    errors=np.asarray(errors,float)
-    return {f'success_{round(t*100)}cm':float((errors<=t).mean()) for t in thresholds}
-
-
-def facing_heading(joints,names,frame=0):
-    """Planar facing from hip and shoulder axes; degrees from +X in the Z-up report frame."""
-    xyz=np.asarray(joints,float);ix={str(n):i for i,n in enumerate(names)}
-    across=xyz[frame,ix['right_hip']]-xyz[frame,ix['left_hip']]
-    if 'right_shoulder' in ix and 'left_shoulder' in ix:across=across+xyz[frame,ix['right_shoulder']]-xyz[frame,ix['left_shoulder']]
-    forward=np.cross([0.,0.,1.],across);forward[2]=0;forward/=np.linalg.norm(forward)
-    return forward,float(np.degrees(np.arctan2(forward[1],forward[0])))
 
 
 def cluster_t_interval(values,clusters,level=.95):

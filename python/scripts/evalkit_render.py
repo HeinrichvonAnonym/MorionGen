@@ -4,6 +4,7 @@ time: residual force (truth label shaded, tool judgment ticks), REBA and RULA sc
 thresholds, and muscle effort. Meshes, muscles, GRF and residual arrows as render_biomech_animation. OpenSim python.
 
   evalkit_render.py --clip <synth clip dir> --tool <evalkit out dir> --truth <truth_eval dir> --out <mp4> --title TEXT
+  evalkit_render.py --smoke-method M --rows <evalkit_batch out dir> --out <mp4>     five generated rows of one method
 """
 import argparse
 import json
@@ -164,10 +165,89 @@ def main():
     print(f'done {args.out}', flush=True)
 
 
+CLASS_COLOUR = {0: '#9e9e9e', 1: '#d84b3a', 2: '#f2c14e', 3: '#5aa469'}
+
+
+def smoke(rows_dir, method, out, fps, seconds):
+    """One generated method: five evalkit rows side by side, each with residual force (tool positives ticked),
+    REBA / RULA class bands and muscle effort under its model view (no truth exists for generated motion)."""
+    osim.Logger.setLevelString('error')
+    from evalkit.spec import SPEC
+    rows = []
+    for d in sorted(Path(rows_dir).iterdir()):
+        if (d/'evalkit.json').exists() and json.loads((d/'evalkit.json').read_text())['row']['method'] == method:
+            rows.append(d)
+    rows = rows[:5]
+    fig = plt.figure(figsize=(20, 10), dpi=96)
+    width = 1/len(rows)
+    tau = SPEC['residual']['tau_bw']
+    panels, windows, cursors, axes = [], [], [], []
+    for i, d in enumerate(rows):
+        rec, f = json.loads((d/'evalkit.json').read_text()), dict(np.load(d/'frames.npz', allow_pickle=True))
+        w, floor = d/'work', rec['receipt']['floor_m']
+        sc = f['times'][f['scored']]
+        start = sc[0]; end = min(sc[-1], start+seconds); windows.append((start, end))
+        reba, rula = rec['ergo']['reba'], rec['ergo']['rula']
+        title = (f"{rec['row']['id']}\n{(rec['receipt']['prompt'] or '（无文本）')[:48]}\n"
+                 f"残余力判阳 {rec['residual']['positive_share']:.0%}  不可测 {rec['ik']['unmeasurable_share']:.0%}\n"
+                 f"REBA 风险/不定/可接受 {reba['certain_risk_share']:.0%}/{reba['indeterminate_share']:.0%}/{reba['certain_acceptable_share']:.0%}")
+        panels.append(KitPanel(method, method, w/'model.osim', w/'coordinates.mot', w/'grf.mot', w/'so', f['times'], f['com'],
+                               f['residual_force'], rba.trc(w/'markers.trc'), floor))
+        axes.append(fig.add_axes([i*width+.005, .40, width-.01, .48]))
+        fig.text(i*width+width/2, .89, title, ha='center', va='bottom', fontsize=8)
+        strips = [fig.add_axes([i*width+.03, .27-k*.11, width-.045, .09]) for k in range(3)]
+        ax = strips[0]
+        ax.plot(f['times'], f['residual_bw'], color='#d81b8c', lw=1)
+        p = f['residual_positive'] | f['unmeasurable']
+        ax.scatter(f['times'][p], np.full(p.sum(), 1.05), s=3, c='#d81b8c', marker='|')
+        ax.axhline(tau['contact'], color='#999', lw=.7, ls='--'); ax.set_ylim(0, 1.15); ax.set_xlim(start, end)
+        ax.set_ylabel('残余力 BW', fontsize=8)
+        ax = strips[1]
+        for k, m in enumerate(('reba', 'rula')):
+            c = f[f'ergo_{m}_class']; t = f['ergo_times']
+            ax.scatter(t, np.full(len(t), 1-k), c=[CLASS_COLOUR[int(x)] for x in c], s=14, marker='s', lw=0)
+        ax.set_yticks([1, 0], ['REBA', 'RULA'], fontsize=8); ax.set_ylim(-.6, 1.6); ax.set_xlim(start, end)
+        ax = strips[2]
+        ax.plot(f['muscle_times'], f['muscle_effort'], color='#3a6fb0', lw=1)
+        ax.set_xlim(start, end); ax.set_ylim(0, None); ax.set_ylabel('Σa²', fontsize=8); ax.set_xlabel('时间 (s)', fontsize=8)
+        for s in strips: s.tick_params(labelsize=7)
+        cursors += [(s.axvline(start, color='k', lw=.8), i) for s in strips]
+    fig.suptitle(f'{method}：E4 C0 每方法 5 条（评估工具；生成数据无真值）', fontsize=13, y=.995)
+    fig.text(.5, .005, '类别色：红 确定风险 / 黄 不确定 / 绿 确定可接受 / 灰 不可测；残余力顶部竖线为工具判阳或不可测帧；'
+             '绿箭头 GRF，品红箭头残余力；肌肉颜色为静态优化激活', ha='center', fontsize=9, color='#444')
+    out.parent.mkdir(parents=True, exist_ok=True)
+    W, H = fig.canvas.get_width_height()
+    enc = subprocess.Popen(['ffmpeg', '-y', '-loglevel', 'error', '-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', f'{W}x{H}',
+                            '-r', str(fps), '-i', '-', '-c:v', 'libx264', '-preset', 'medium', '-crf', '23',
+                            '-pix_fmt', 'yuv420p', '-threads', '2', '-movflags', '+faststart', str(out)], stdin=subprocess.PIPE)
+    longest = max(e-s for s, e in windows)
+    for k, u in enumerate(np.arange(0, longest, 1/fps)):
+        for ax, panel, (s, e) in zip(axes, panels, windows):
+            rba.draw(ax, panel, panel.pose(min(s+u, e)))
+        for c, i in cursors:
+            t = min(windows[i][0]+u, windows[i][1]); c.set_xdata([t, t])
+        fig.canvas.draw()
+        enc.stdin.write(np.ascontiguousarray(np.asarray(fig.canvas.buffer_rgba())[:, :, :3]).tobytes())
+        if k == int(.5*longest*fps):
+            fig.savefig(out.with_suffix('.png'), dpi=96)
+    enc.stdin.close()
+    if enc.wait():
+        raise SystemExit(f'ffmpeg failed for {out}')
+    print(f'done {out}', flush=True)
+
+
 def runs(mask):
     edges = np.diff(np.r_[0, mask.astype(int), 0])
     return list(zip(np.flatnonzero(edges == 1), np.flatnonzero(edges == -1)))
 
 
 if __name__ == '__main__':
-    main()
+    if '--smoke-method' in sys.argv:
+        s = argparse.ArgumentParser()
+        s.add_argument('--smoke-method', required=True); s.add_argument('--rows', type=Path, required=True)
+        s.add_argument('--out', type=Path, required=True); s.add_argument('--fps', type=int, default=12)
+        s.add_argument('--seconds', type=float, default=8.)
+        x = s.parse_args()
+        smoke(x.rows, x.smoke_method, x.out, x.fps, x.seconds)
+    else:
+        main()

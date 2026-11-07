@@ -6,6 +6,7 @@
   tool --split S       evalkit on every clip of the split (muscle on control clips only)
   truth --split S      the same ergo scoring and static optimization on the truth (truth model, coordinates, contact)
   score --split S      kill rates; on dev also the tau / depth tuning grid (writes nothing into the registration)
+  kinematic --split S  only the kinematic check of score (injected size against the kinematic metrics)
 Outputs: per clip on the data disk (evalkit_20261107/{tool,truth_eval}/<split>/<clip>), summaries under
 develop_logs/test_runs/20261107_evalkit/validation.
 """
@@ -232,7 +233,7 @@ def load_clip(clip):
     tool, truth = DATA/'tool'/clip['split']/clip['id'], DATA/'truth_eval'/clip['split']/clip['id']
     if not (tool/'frames.npz').exists() and not (tool/'margins.npz').exists():
         return None
-    return {'meta': m, 'truth': dict(np.load(d/'truth/truth.npz')),
+    return {'meta': m, 'dir': str(d), 'truth': dict(np.load(d/'truth/truth.npz')),
             'tool': dict(np.load(tool/'frames.npz', allow_pickle=True)) if (tool/'frames.npz').exists() else None,
             'margins': dict(np.load(tool/'margins.npz', allow_pickle=True)) if (tool/'margins.npz').exists() else None,
             'truth_eval': dict(np.load(truth/'truth_eval.npz', allow_pickle=True)) if (truth/'truth_eval.npz').exists() else None,
@@ -378,15 +379,73 @@ def score(args):
                      'share_within_10pct': float(np.mean(errs <= .1)) if len(errs) else None,
                      'spearman': float(spearmanr([m['tool'] for m in mus], [m['truth'] for m in mus])[0]) if len(mus) > 2 else None,
                      'pass': bool(len(errs) and np.median(errs) <= .1)}
+    res['kinematic'] = kinematic_check(rows)
     LOG.mkdir(parents=True, exist_ok=True)
     (LOG/f'{args.split}_score.json').write_text(json.dumps(res, indent=1))
-    print(json.dumps({k: v for k, v in res.items() if k != 'muscle'}, indent=1)[:6000])
+    print(json.dumps({k: v for k, v in res.items() if k not in ('muscle', 'kinematic')}, indent=1)[:6000])
     print(json.dumps({k: v for k, v in res['muscle'].items() if k != 'clips'}))
+    print(json.dumps({k: v for k, v in res['kinematic'].items() if k != 'clips'}, indent=1))
+
+
+def kinematic_check(rows):
+    """Kinematic metrics against the injected size: slide (slip over the injected displacement, size m/s for one third
+    of the clip), bone_stretch (right-arm stretch), whole-clip penetration / hover depth, time compression (jerk over
+    the control of the same base, expected factor**3)."""
+    from evalkit import kinematic
+    per = {}
+    for r in rows:
+        m = r['meta']; mo = np.load(Path(r['dir'])/'input/motion.npz')
+        k = kinematic.evaluate(mo['joints'], mo['joint_names'], float(mo['fps']), r['tool'])
+        tr, cj = r['truth'], np.load(Path(r['dir'])/'truth/clean_joints.npz')
+        truth_frames = {'times': tr['times'], 'scored': np.ones(len(tr['times']), bool),
+                        **{f'contact_{s}_{l}': tr[f'contact_{s}_{l}'] for s in SIDES for l in LANDMARKS}}
+        truth_slip = kinematic.skating(cj['joints'], cj['joint_names'], float(cj['fps']), truth_frames)['max_slip_m']
+        per[m['id']] = {'base': m['id'].split('__')[0], 'defect': m['defect'], 'size': m['size'],
+                        'duration_s': (len(mo['joints'])-1)/float(mo['fps']), 'max_slip_m': k['skating']['max_slip_m'],
+                        'truth_max_slip_m': truth_slip,
+                        'bone_stretch_max': k['bone_stretch_max'], 'jerk_0p1s': k['jerk_0p1s'], **k['floor']}
+    control = {v['base']: v for v in per.values() if v['defect'] == 'control'}
+    ctrl_slip = [v['max_slip_m'] for v in control.values() if v['max_slip_m'] is not None]
+    ctrl_stretch = [v['bone_stretch_max'] for v in control.values()]
+    out = {'control': {'max_slip_m': {'max': max(ctrl_slip), 'median': float(np.median(ctrl_slip))},
+                       'bone_stretch_max': {'max': max(ctrl_stretch), 'median': float(np.median(ctrl_stretch))}}}
+
+    def by_size(defect, fn):
+        sizes = sorted({v['size'] for v in per.values() if v['defect'] == defect})
+        return {str(s): fn([v for v in per.values() if v['defect'] == defect and v['size'] == s], s) for s in sizes}
+
+    def slide(vs, s):
+        slip = np.array([v['max_slip_m'] for v in vs if v['max_slip_m'] is not None]); injected = s*vs[0]['duration_s']/3
+        return {'clips': len(vs), 'injected_m': injected, 'median_slip_m': float(np.median(slip)), 'min_slip_m': float(slip.min()),
+                'above_control_max': float(np.mean(slip > max(ctrl_slip))),
+                'auc_vs_controls': float(np.mean([(a > b)+.5*(a == b) for a in slip for b in ctrl_slip]))}
+    out['slide'] = by_size('slide_m_s', slide)
+    paired = [v for v in per.values() if v['defect'] in ('control', 'slide_m_s') and v['max_slip_m'] is not None
+              and v['truth_max_slip_m'] is not None]
+    groups = {'walk_control': lambda v: v['defect'] == 'control' and 'demo_walk' in v['base'],
+              'constructed_control': lambda v: v['defect'] == 'control' and 'demo_walk' not in v['base'],
+              **{f'slide_{s}': (lambda v, s=s: v['defect'] == 'slide_m_s' and v['size'] == s) for s in (.1, .3, .6)}}
+    out['slip_vs_truth'] = {g: {'clips': len(vs), 'truth_median_m': float(np.median([v['truth_max_slip_m'] for v in vs])),
+                                'tool_minus_truth_median_m': float(np.median([v['max_slip_m']-v['truth_max_slip_m'] for v in vs])),
+                                'abs_error_max_m': float(max(abs(v['max_slip_m']-v['truth_max_slip_m']) for v in vs))}
+                            for g, f in groups.items() for vs in [[v for v in paired if f(v)]] if vs}
+    out['bone_stretch'] = by_size('bone_stretch', lambda vs, s: {
+        'clips': len(vs), 'median_estimate': float(np.median([v['bone_stretch_max'] for v in vs])),
+        'above_control_max': float(np.mean([v['bone_stretch_max'] > max(ctrl_stretch) for v in vs]))})
+    for defect, key in (('penetrate_whole_m', 'penetration_depth_p95_m'), ('float_whole_m', 'hover_height_median_m')):
+        out[defect] = by_size(defect, lambda vs, s, key=key: {
+            'clips': len(vs), 'median_estimate_m': float(np.median([v[key] for v in vs])),
+            'control_median_m': float(np.median([control[v['base']][key] for v in vs if v['base'] in control]))})
+    out['time_compression'] = by_size('time_compression', lambda vs, s: {
+        'clips': len(vs), 'expected_ratio': s**3,
+        'median_jerk_ratio': float(np.median([v['jerk_0p1s']/control[v['base']]['jerk_0p1s'] for v in vs if v['base'] in control]))})
+    out['clips'] = per
+    return out
 
 
 def main():
     a = argparse.ArgumentParser()
-    a.add_argument('step', choices=('calibrate', 'margins', 'tool', 'truth', 'score'))
+    a.add_argument('step', choices=('calibrate', 'margins', 'tool', 'truth', 'score', 'kinematic'))
     a.add_argument('--tune', action='store_true', help='score on dev: run the registered margin / tau / depth grid')
     a.add_argument('--split', choices=('dev', 'heldout'), default='dev'); a.add_argument('--workers', type=int, default=6)
     a.add_argument('--limit', type=int); a.add_argument('--only')
@@ -395,6 +454,11 @@ def main():
         return calibrate(args)
     if args.step == 'score':
         return score(args)
+    if args.step == 'kinematic':
+        rows = [r for r in (load_clip({**c, 'split': args.split}) for c in clips(args.split)) if r is not None and r['tool'] is not None]
+        res = kinematic_check(rows)
+        (LOG/f'{args.split}_kinematic.json').write_text(json.dumps(res, indent=1))
+        return print(json.dumps({k: v for k, v in res.items() if k != 'clips'}, indent=1))
     if args.split == 'heldout' and SPEC['version'] == 'v1-dev':
         raise SystemExit('freeze the registration (version v1) before the held-out split')
     items = [{**c, 'split': args.split} for c in clips(args.split) if not args.only or args.only in c['id']][:args.limit]

@@ -115,6 +115,29 @@
     "effort": "sum over muscles of activation^2 per SO frame; clip effort = mean over scored frames",
     "reserves": "biomech.static_optimization (lower-limb reserves 1 N m, pelvis residual actuators 1000)"
   },
+  "kinematic": {
+    "reach_thresholds_m": [
+      0.02,
+      0.05,
+      0.1
+    ],
+    "reach_bone_stretch_max": 0.1,
+    "reach_note": "Success = rigid refit wrist error <= threshold; any arm bone at the target frame over its clip median by more than 10% fails (约定，未经推演). Applied to every method; earlier reports re-labelled as post-hoc corrected.",
+    "skate_end_seconds": 0.1,
+    "skate_min_span_seconds": 0.3,
+    "skate_slip_m": null,
+    "skate_note": "Slip = horizontal distance of the foot joint (heel: ankle, toe: foot) between the first and last 0.1 s medians of each residual-dimension contact span >= 0.3 s inside the scored window (约定，未经推演). skate_slip_m stays null (descriptive only) unless the synthetic slide validation separates slide from control clips; otherwise the metric is reported as a description only.",
+    "floor_note": "Hover / penetration depth = lowest sole-landmark elevation of the residual dimension (input floor, calibrated reference), scored window.",
+    "jerk_note": "jerk_0p1s: third difference on a 0.1 s common step (component RMS, all joints); jerk_native: per-frame third difference.",
+    "validation_dev": {
+      "time": "2026-11-07 13:42 UTC+8",
+      "source": "python/scripts/evalkit_validate.py kinematic --split dev -> develop_logs/test_runs/20261107_evalkit/validation/dev_kinematic.json",
+      "skating": "constructed controls and slide 0.1/0.3/0.6 m/s: tool minus truth slip median <= 4 mm (truth = truth contact on clean joints); demo-walk controls (truth itself slides ~0.10 m on the right heel): tool +0.05 m median, +0.11 m max, from contact-span boundaries in gait; no slide injection on locomotion. Not clean -> skate_slip_m stays null, slip reported as a description only.",
+      "bone_stretch": "right-arm stretch 0.1/0.3/0.6 estimated 0.115/0.313/0.614 (median); control per-frame arm stretch p99 0.029, max 0.043, so the 10% reach rule never fires on dev controls; whole-skeleton bone_stretch_max on controls reaches 0.153 (short-bone jitter) and is descriptive.",
+      "floor": "penetrate_whole 0.02/0.05/0.1 m: p95 depth 0.030/0.063/0.104 (controls 0.009); float_whole: median hover 0.017/0.047/0.095 m.",
+      "jerk": "time compression 1.25/1.5/2: jerk_0p1s ratio 1.46/2.06/3.30 against the factor**3 1.95/3.38/8 of an ideal differentiator; monotone, attenuated by the 0.1 s step and the jitter floor, so jerk compares methods but is not scale-faithful."
+    }
+  },
   "validation": {
     "data": "config/evalkit_synth_20261107.json; development split subject seeds 101, 102; held-out 201, 202",
     "frame_matching": "truth frames matched to tool frames by nearest time",
