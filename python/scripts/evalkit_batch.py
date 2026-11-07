@@ -198,7 +198,22 @@ def manifest_shift(args):
     print(f'{len(rows)} rows -> {args.out}')
 
 
+DEPTH_BAND_M = (-.005, .005)
+
+
+def positive_share(f, sel, depth):
+    """Residual-positive share of the scored frames at the registered tau and the given penetration depth."""
+    from evalkit.spec import SPEC
+    tau = SPEC['residual']['tau_bw']; st = f['state']
+    bound = np.select([st == 'event', st == 'contact'], [tau['event'], tau['contact']], tau['flight'])
+    return float(((f['residual_bw'] > bound) | (f['lowest_elevation_m'] < -depth) | f['unmeasurable'])[sel].mean())
+
+
 def rows_summary(rows_dir, rows):
+    """Per-row sanity values; residual_positive_share_depth_{-,+}5mm: descriptive band at the registered penetration
+    depth -+ 0.5 cm (generated feet often sit near it, so the binary share can flip there)."""
+    from evalkit.spec import SPEC
+    depth = SPEC['residual']['penetration_depth_m']
     out = {}
     for r in rows:
         d = Path(rows_dir)/r['id']
@@ -211,6 +226,8 @@ def rows_summary(rows_dir, rows):
             'method': r['method'], 'seconds': float(f['times'][sel][-1]-f['times'][sel][0]),
             'residual_rms_bw': float(np.sqrt(np.mean(rf**2))), 'residual_p95_bw': float(np.percentile(rf, 95)),
             'residual_positive_share': e['residual']['positive_share'], 'penetration_share': e['residual']['penetration_share'],
+            **{f'residual_positive_share_depth_{b*1000:+.0f}mm': positive_share(f, sel, depth+b) for b in DEPTH_BAND_M},
+            'floor_correction_m': e['receipt']['floor_eval_m']-e['receipt']['floor_m'] if 'floor_eval_m' in e['receipt'] else None,
             'no_contact_share': e['residual']['no_contact_share'], 'lowest_elevation_median_m': e['residual']['lowest_elevation_m']['median'],
             'unmeasurable_share': float(um.mean()),
             'unmeasurable_by_third': [float(np.mean((pos >= a) & (pos < b))) if len(pos) else 0. for a, b in ((0, 1/3), (1/3, 2/3), (2/3, 1.01))],
