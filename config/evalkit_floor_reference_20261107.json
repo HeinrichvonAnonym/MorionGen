@@ -1,5 +1,6 @@
 {
- "created": "2026-11-07 11:57",
+ "created": "2026-11-07 14:12",
+ "fit_prepare": "evalkit-upright-flatfoot-torso95-3",
  "definition": "reference_m[side][landmark]: median height of the landmark (heel = calcn origin, toe = toes origin) over the scored frames of a 3 s hold of the method's flat-foot standing pose (the e_v2 poses, that side's foot on the method's floor), through evalkit.fit (upright calibration, feet levelled on the floor); world_floor_m as in e_v2",
  "scripts": [
   "python/scripts/e_v2_floor_poses.py",
@@ -36,12 +37,12 @@
    "confidence": "medium: convention from the training data floor; raw toe base in its lowest 10% of frames 0.013-0.018 m vs 0.0152 m bind",
    "reference_m": {
     "l": {
-     "heel": 0.014836262308579429,
-     "toe": 0.012124966292852687
+     "heel": 0.014836262308579318,
+     "toe": 0.012124966292852911
     },
     "r": {
      "heel": 0.014851908335704947,
-     "toe": 0.012127746371058524
+     "toe": 0.012127746371058304
     }
    },
    "fit": {
@@ -125,11 +126,11 @@
    "reference_m": {
     "l": {
      "heel": 0.005272816422704489,
-     "toe": 0.0025700480759648587
+     "toe": 0.0025700480759648595
     },
     "r": {
      "heel": 0.005268927524893274,
-     "toe": 0.002589463688172047
+     "toe": 0.002589463688172158
     }
    },
    "fit": {
@@ -819,11 +820,11 @@
      "gender": "male",
      "reference_m": {
       "l": {
-       "heel": 0.04510840381061708,
-       "toe": 0.03647757814470905
+       "heel": 0.045108403810617134,
+       "toe": 0.03647757814470903
       },
       "r": {
-       "heel": 0.04312584378909151,
+       "heel": 0.043125843789091456,
        "toe": 0.035498576436428994
       }
      },
@@ -1080,11 +1081,11 @@
      "gender": "male",
      "reference_m": {
       "l": {
-       "heel": 0.04510840381061708,
-       "toe": 0.03647757814470905
+       "heel": 0.045108403810617134,
+       "toe": 0.03647757814470903
       },
       "r": {
-       "heel": 0.04312584378909151,
+       "heel": 0.043125843789091456,
        "toe": 0.035498576436428994
       }
      },
@@ -1167,11 +1168,11 @@
      "gender": "male",
      "reference_m": {
       "l": {
-       "heel": 0.04510840381061708,
-       "toe": 0.03647757814470905
+       "heel": 0.045108403810617134,
+       "toe": 0.03647757814470903
       },
       "r": {
-       "heel": 0.04312584378909151,
+       "heel": 0.043125843789091456,
        "toe": 0.035498576436428994
       }
      },
@@ -1254,11 +1255,11 @@
      "gender": "male",
      "reference_m": {
       "l": {
-       "heel": 0.04510840381061708,
-       "toe": 0.03647757814470905
+       "heel": 0.045108403810617134,
+       "toe": 0.03647757814470903
       },
       "r": {
-       "heel": 0.04312584378909151,
+       "heel": 0.043125843789091456,
        "toe": 0.035498576436428994
       }
      },
@@ -1341,12 +1342,12 @@
      "gender": "male",
      "reference_m": {
       "l": {
-       "heel": 0.045823971265646087,
-       "toe": 0.03650831131785255
+       "heel": 0.04582397126564612,
+       "toe": 0.036508311317852565
       },
       "r": {
        "heel": 0.0432452163069712,
-       "toe": 0.035739183733911786
+       "toe": 0.0357391837339118
       }
      },
      "fit": {
@@ -1428,12 +1429,12 @@
      "gender": "male",
      "reference_m": {
       "l": {
-       "heel": 0.045823971265646087,
-       "toe": 0.03650831131785255
+       "heel": 0.04582397126564612,
+       "toe": 0.036508311317852565
       },
       "r": {
        "heel": 0.0432452163069712,
-       "toe": 0.035739183733911786
+       "toe": 0.0357391837339118
       }
      },
      "fit": {

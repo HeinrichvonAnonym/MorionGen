@@ -44,7 +44,9 @@ def measure(pose):
 
 
 def main():
+    from evalkit.fit import PREPARE
     old = json.loads(OLD.read_text())
+    previous = json.loads(NEW.read_text()) if NEW.exists() else None
     poses = sorted(p.stem for p in POSES.glob('*@*.npz'))
     with ProcessPoolExecutor(6, mp_context=mp.get_context('spawn'), max_tasks_per_child=1) as p:
         got = dict(p.map(measure, poses))
@@ -60,7 +62,7 @@ def main():
         else:
             methods[variant] = {**{k: v for k, v in rec.items() if k not in ('reference_m', 'ik_marker_error')},
                                 'reference_m': side(variant), 'fit': detail(variant), 'e_v2_reference_m': rec['reference_m']}
-    out = {'created': time.strftime('%Y-%m-%d %H:%M'),
+    out = {'created': time.strftime('%Y-%m-%d %H:%M'), 'fit_prepare': PREPARE,
            'definition': ('reference_m[side][landmark]: median height of the landmark (heel = calcn origin, toe = toes origin) over the scored '
                           'frames of a 3 s hold of the method\'s flat-foot standing pose (the e_v2 poses, that side\'s foot on the method\'s '
                           'floor), through evalkit.fit (upright calibration, feet levelled on the floor); world_floor_m as in e_v2'),
@@ -71,6 +73,12 @@ def main():
         for tag, r in ([(f'chois_w{w}', x) for w, x in rec['windows'].items()] if variant == 'chois' else [(variant, rec)]):
             d = {f'{s}_{k}': round(r['reference_m'][s][k]-r['e_v2_reference_m'][s][k], 4) for s in 'lr' for k in LANDMARK_BODY}
             print(f'{tag:22s} new-e_v2 (m) {d}')
+    if previous:
+        flat = lambda f: {(v, w): r['reference_m'] for v, rec in f['methods'].items()
+                          for w, r in (rec['windows'].items() if v == 'chois' else [('', rec)])}
+        a, b = flat(previous), flat(out)
+        diff = [abs(b[t][s][k]-a[t][s][k]) for t in a if t in b for s in 'lr' for k in LANDMARK_BODY]
+        print(json.dumps({'previous_fit_prepare': previous.get('fit_prepare'), 'max_abs_change_vs_previous_m': max(diff)}))
 
 
 if __name__ == '__main__':

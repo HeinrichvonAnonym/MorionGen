@@ -28,9 +28,19 @@ def _stats(x):
     return {k: float(np.percentile(x, q)) for k, q in (('p5', 5), ('median', 50), ('p95', 95))} if len(x) else None
 
 
+def canonical_joints(run):
+    """Canonical Z-up joints, names and fps of a run directory or file (Kimodo posed_joints: Y-up SOMA77, 30 fps)."""
+    from motion import SOMA77_NAMES, Y_TO_Z
+    from biomech_sources import KIMODO_FPS
+    with np.load(Path(run)/'motion.npz' if Path(run).is_dir() else run, allow_pickle=False) as z:
+        if 'posed_joints' in z.files:
+            j = np.asarray(z['posed_joints'], float)
+            return (j[0] if j.ndim == 4 else j) @ Y_TO_Z.T, list(SOMA77_NAMES), KIMODO_FPS
+        return np.asarray(z['joints'], float), [str(n) for n in z['joint_names']], float(z['fps'])
+
+
 def kinematic_summary(run, frames, reach_task=None):
-    z = np.load(Path(run)/'motion.npz' if Path(run).is_dir() else run, allow_pickle=True)
-    k = kinematic.evaluate(z['joints'], z['joint_names'], float(z['fps']), frames, reach_task)
+    k = kinematic.evaluate(*canonical_joints(run), frames, reach_task)
     k['skating'] = {n: v for n, v in k['skating'].items() if n != 'per_span'}
     return k
 
