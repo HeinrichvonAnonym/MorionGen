@@ -1,0 +1,776 @@
+{
+ "version": "inference-registration-draft-1",
+ "created": "2026-11-09 02:57",
+ "status": "draft; frozen together with config/motion_output_contract_20261108.json, config/evalkit_batch_protocol_20261108.json and config/analysis_plan_20261108.json after user review (design section 14, plan item 5); no batch generation before the freeze",
+ "builds_on": [
+  "develop_logs/notes/20261108_batch_design_decisions.md sections 2, 3, 5, 14",
+  "config/inference_tasks_20261109.json"
+ ],
+ "files": {
+  "tasks": {
+   "path": "config/inference_tasks_20261109.json",
+   "sha256": "175a0b9853361df13af39217bdd9805a2cb0e8279fa16791c58cc7aa174db8a4",
+   "generator": {
+    "script": "python/scripts/build_inference_tasks.py",
+    "sha256": "50bcc358353fa9f5853c13a4ef1243c6371ff408ab0fefe96e4af3efab35bdaa"
+   }
+  },
+  "registration_generator": {
+   "path": "python/scripts/build_inference_registration.py",
+   "sha256": "35fa31cfc55ac14dd2b30fcfc92ca8fea8072441c413784609c862e89af88ffe"
+  }
+ },
+ "user_decisions": {
+  "2026-11-08 23:00 design section 14": "sections 2, 3, 5 agreed; development / held-out split over target position, paraphrase and seed; baseline held-out results viewed once; only three premise checks, none about method success",
+  "2026-11-09 01:13-01:28 split": "nested Latin square for the paraphrases (config/evalkit_batch_protocol_20261108.json user_decisions)",
+  "2026-11-09 overhead height": "option A with two changes: the overhead limit is also computed for the HumanML3D reference skeleton (the preprocessing target skeleton, no method output) by the same standard (feet flat, no step, 0.8 x arm length horizontally); overhead height = min of the four limits (Rajagopal and HumanML3D x front and side90) - 5 cm (约定), one height for both directions; both bodies recorded; nominal upper-arm elevation at that height checked to stay above 90 degrees (result: reach_geometry.elevation_check)",
+  "2026-11-09 CLoSD entry": "patch closd_native.py with outputs only (rotations_xyzw, dof_positions in native_physics.npz); before / after runs per execution context with the same seed must give bit-identical joints, also against the 10-24 archive; rotations by the bone-vector method; committed separately (ccb50a3; verified, contract method_capability.closd.smoke)"
+ },
+ "tasks": {
+  "per_method": {
+   "motionlcm": {
+    "family": "reach (wrist position target at 2.5 s of a 5 s clip)",
+    "tasks": 24,
+    "conditions": [
+     {
+      "control_residual": 0
+     },
+     {
+      "control_residual": 1
+     }
+    ],
+    "held_out_positions": [
+     12,
+     17,
+     19,
+     20
+    ]
+   },
+   "omnicontrol": {
+    "family": "reach, same 24 tasks as motionlcm",
+    "tasks": 24,
+    "conditions": [
+     {
+      "realism": 0,
+      "spatial": 0
+     },
+     {
+      "realism": 0,
+      "spatial": 1
+     },
+     {
+      "realism": 1,
+      "spatial": 0
+     },
+     {
+      "realism": 1,
+      "spatial": 1
+     }
+    ],
+    "held_out_positions": [
+     12,
+     17,
+     19,
+     20
+    ]
+   },
+   "closd": {
+    "family": "native root-goal change (REACH task: ground goal, second goal at 5 s of 20 s); does not cover risk-zone reaching (design section 2 lists CLoSD among the reach methods; to be confirmed by the user)",
+    "tasks": 24,
+    "conditions": [
+     {
+      "execution_context": 0
+     },
+     {
+      "execution_context": 1
+     }
+    ],
+    "held_out_positions": [
+     12,
+     17,
+     19,
+     22
+    ]
+   },
+   "dart": {
+    "family": "native goal reaching (reach_location policy), second goal at 5 s of 20 s",
+    "tasks": 24,
+    "conditions": [
+     {
+      "goal_update": 0
+     },
+     {
+      "goal_update": 1
+     }
+    ],
+    "held_out_positions": [
+     12,
+     17,
+     19,
+     22
+    ]
+   },
+   "ardy": {
+    "family": "streaming root path: 8 directions x 3 speed profiles, text switch at 5 s",
+    "tasks": 24,
+    "conditions": [
+     {
+      "history_frames": 32,
+      "correction": 0
+     },
+     {
+      "history_frames": 32,
+      "correction": 1
+     },
+     {
+      "history_frames": 160,
+      "correction": 0
+     },
+     {
+      "history_frames": 160,
+      "correction": 1
+     }
+    ],
+    "held_out_positions": [],
+    "no_held_out_position": "all 8 root-path directions were run and inspected in the 10-31 M0 experiments (seeds 20-24); held out only through seed 24"
+   },
+   "primal": {
+    "family": "unconditioned continuation from 24 initial states; one run writes all 8 geometric switch combinations",
+    "tasks": 24,
+    "conditions": [
+     {
+      "ground_snap": 0,
+      "reprojection": 0,
+      "inertialization": 0
+     },
+     {
+      "ground_snap": 0,
+      "reprojection": 0,
+      "inertialization": 1
+     },
+     {
+      "ground_snap": 0,
+      "reprojection": 1,
+      "inertialization": 0
+     },
+     {
+      "ground_snap": 0,
+      "reprojection": 1,
+      "inertialization": 1
+     },
+     {
+      "ground_snap": 1,
+      "reprojection": 0,
+      "inertialization": 0
+     },
+     {
+      "ground_snap": 1,
+      "reprojection": 0,
+      "inertialization": 1
+     },
+     {
+      "ground_snap": 1,
+      "reprojection": 1,
+      "inertialization": 0
+     },
+     {
+      "ground_snap": 1,
+      "reprojection": 1,
+      "inertialization": 1
+     }
+    ],
+    "held_out_positions": [
+     15,
+     17,
+     19,
+     21
+    ]
+   },
+   "chois": {
+    "family": "official OMOMO test windows (first two eligible windows per object, native order; V2 tasks 0-23)",
+    "tasks": 24,
+    "conditions": [
+     {
+      "guidance": 0
+     },
+     {
+      "guidance": 1
+     }
+    ],
+    "held_out_positions": [],
+    "no_held_out_position": "the 12 added windows were run and inspected in V2 (seeds 20-22); held out only through seed 24, which tests generalisation across seeds only (to be confirmed by the user)"
+   }
+  },
+  "kimodo": {
+   "tasks": "reuse of the 416 deck pairs (E4), not extended",
+   "split": "deck_recheck",
+   "source": "config/e4_cross_method_20261103.json",
+   "l4_state_of_old_runs": {
+    "legacy": 416
+   }
+  },
+  "native_matrix": "tasks 0-11 of every method are the native matrix tasks (reproduction subset, design section 2)",
+  "clock": "paused only (约定，未经推演): the native matrix also ran DART, CLoSD and ARDY with a realtime clock; the batch does not",
+  "closd": "CLoSD runs its native REACH state, a root-goal task: the goal is a ground point and the text is the state-machine constant \"A person is walking.\" (baselines/CLoSD closd/env/tasks/closd_task.py lines 34-37); it gets 8 directions x 3 distances like DART and no risk-zone hand targets. Its only hand-target state is STRIKE_PUNCH (wrist target 1-1.5 m away, text \"A person is punching with the * hand.\", same file lines 42-45); hand targets through it would be a later extension, not this batch"
+ },
+ "reach_geometry": {
+  "frame": "position_m: report frame, Z up, metres; the body faces -Y and its right side is -X at frame 0 (utils/motiogen/task_geometry.py); origin: the method's initial pelvis joint projected on the floor. target_body_m: [forward, right, up] in the same frame. The nominal Rajagopal body stands for the pelvis joint with its hip-centre midpoint (convention, not derived; its pelvis origin is 5.6 cm ahead of that midpoint); in HumanML3D standing frames the pelvis joint is 1.2 cm ahead of the hip midpoint, so a method receives each target 1.2 cm further forward relative to its hips than the nominal check assumed (sensitivity: reachability_origin_shift_+0.012.json)",
+  "risk_zone_heights_m": {
+   "floor": 0.15,
+   "knee": 0.5,
+   "overhead": 1.683
+  },
+  "horizontal_reach": "0.8 x arm length from the shoulder (约定), nominal Rajagopal body; front = straight ahead at the shoulder, side90 = lateral",
+  "overhead": {
+   "rule": "min over the flat limits (rajagopal and humanml, front and side90, both hands) - 0.05 m (convention, not derived), floored to mm",
+   "height_m": 1.683,
+   "argmin": "humanml/flat/left/side90",
+   "design_value_m": 1.95,
+   "design_value_note": "1.95 m (design section 2, 约定) is above every flat-foot limit and was replaced",
+   "bodies": {
+    "rajagopal": {
+     "shoulder_height_m": {
+      "right": 1.393,
+      "left": 1.393
+     },
+     "arm_length_m": {
+      "right": 0.536,
+      "left": 0.536
+     },
+     "flat_limits_m": {
+      "right/front": 1.87,
+      "right/side90": 1.7487,
+      "left/front": 1.87,
+      "left/side90": 1.7487
+     },
+     "heel_rise_limits_m": {
+      "right/front": 1.8964,
+      "right/side90": 1.7887,
+      "left/front": 1.8964,
+      "left/side90": 1.7887
+     }
+    },
+    "humanml": {
+     "shoulder_height_m": {
+      "right": 1.3859,
+      "left": 1.3859
+     },
+     "arm_length_m": {
+      "right": 0.5298,
+      "left": 0.5197
+     },
+     "flat_limits_m": {
+      "right/front": 1.8727,
+      "right/side90": 1.7399,
+      "left/front": 1.8647,
+      "left/side90": 1.7338
+     },
+     "heel_rise_limits_m": {
+      "right/front": 1.9003,
+      "right/side90": 1.7918,
+      "left/front": 1.8916,
+      "left/side90": 1.7848
+     },
+     "dataset_standing_median": {
+      "shoulder_height_m": {
+       "left": 1.3834,
+       "right": 1.3884
+      },
+      "bone_lengths_m": {
+       "thigh_l": 0.3936,
+       "shank_l": 0.4324,
+       "upper_arm_l": 0.2568,
+       "forearm_l": 0.266,
+       "thigh_r": 0.3902,
+       "shank_r": 0.4257,
+       "upper_arm_r": 0.2631,
+       "forearm_r": 0.2699
+      },
+      "frames": 1982,
+      "clips": 132,
+      "note": "shoulder_height_m / arm_length_m above are of the scaled Rajagopal model (torso scaled symmetrically); these are the HumanML3D joints themselves"
+     }
+    }
+   },
+   "humanml_body": "HumanML3D test-set reference skeleton (4648 clips; standing-frame selection thresholds 约定) fitted by segment-wise scaling of the Rajagopal model, Rajagopal joint ranges kept (约定): develop_logs/test_runs/20261109_task_reachability/humanml_reference_body.json"
+  },
+  "elevation_check": {
+   "at_height_m": 1.683,
+   "rajagopal": {
+    "right/front": {
+     "residual_m": 0.0,
+     "min_world_elevation_deg": 91.2,
+     "min_humerothoracic_elevation_deg": 67.8
+    },
+    "right/side90": {
+     "residual_m": 0.0,
+     "min_world_elevation_deg": 105.3,
+     "min_humerothoracic_elevation_deg": 102.7
+    },
+    "left/front": {
+     "residual_m": 0.0,
+     "min_world_elevation_deg": 91.2,
+     "min_humerothoracic_elevation_deg": 76.1
+    },
+    "left/side90": {
+     "residual_m": 0.0,
+     "min_world_elevation_deg": 105.3,
+     "min_humerothoracic_elevation_deg": 102.7
+    }
+   },
+   "reading": "minimum over all reaching poses found (multi-start SLSQP, local): upper arm against the vertical >= 91.2 deg in front and 105.3 deg at the side, i.e. above 90; relative to the thorax (the RULA reading) the side stays above 90 (102.7) but in front a backward trunk lean reaches the target with 67.8 (right) / 76.1 (left) deg; the left-right asymmetry of a symmetric model shows the minimum is local, so the true thoracic minimum in front is at most 67.8 deg"
+  },
+  "reachability": {
+   "source": "develop_logs/test_runs/20261109_task_reachability/reachability.json",
+   "flat_unreachable": [],
+   "flat_max_residual_m": 0.0
+  },
+  "origin_sensitivity": {
+   "source": "develop_logs/test_runs/20261109_task_reachability/reachability_origin_shift_+0.012.json",
+   "shift_m": {
+    "forward": 0.012,
+    "meaning": "targets moved forward by this amount relative to the nominal origin (sensitivity check; flat only)"
+   },
+   "flat_unreachable": []
+  }
+ },
+ "text": {
+  "reach_methods": {
+   "templates_convention_not_derived": [
+    "A person reaches {z} with the {side} hand.",
+    "A person extends the {side} hand {z}.",
+    "Someone reaches {z} using the {side} hand.",
+    "A person stretches the {side} arm {z}.",
+    "The person moves the {side} hand {z}."
+   ],
+   "levels": "neutral (\"forward\", the native matrix sentence) and consistent (the zone phrase) for MotionLCM and OmniControl",
+   "rotation": "nested Latin square (user 2026-11-09): within each hand the 12 tasks are indexed i = 0..11 (native matrix tasks first, then the risk-zone tasks); seed s in 20-23 uses paraphrase (i + s - 20) mod 4, seed 24 uses paraphrase 4; the same paraphrase index applies to the neutral and the consistent text",
+   "consistent_phrases": {
+    "0": "behind and to the left at chest height",
+    "1": "behind and to the left at hip height",
+    "2": "behind and to the left at shoulder height",
+    "3": "behind and to the left at chest height",
+    "4": "behind and to the left at hip height",
+    "5": "behind and to the left at shoulder height",
+    "6": "behind and to the right at chest height",
+    "7": "behind and to the right at hip height",
+    "8": "behind and to the right at shoulder height",
+    "9": "behind and to the right at chest height",
+    "10": "behind and to the right at hip height",
+    "11": "behind and to the right at shoulder height",
+    "12": "down to the floor in front",
+    "13": "down to the floor on the right side",
+    "14": "forward at knee height",
+    "15": "out to the right side at knee height",
+    "16": "up high in front",
+    "17": "up high on the right side",
+    "18": "down to the floor in front",
+    "19": "down to the floor on the left side",
+    "20": "forward at knee height",
+    "21": "out to the left side at knee height",
+    "22": "up high in front",
+    "23": "up high on the left side"
+   }
+  },
+  "other_methods": {
+   "closd": "state-machine constant, no text factor (tasks.closd)",
+   "dart": "fixed \"walk\" (native matrix)",
+   "ardy": "\"A person walks forward.\" -> \"A person walks backward.\" at 5 s (native matrix)",
+   "primal": "no text input",
+   "chois": "the OMOMO annotation of the window (native)"
+  }
+ },
+ "split": {
+  "dimensions": "target position, paraphrase, seed (design section 14 item 1)",
+  "rule": "a row is held out if any of its dimensions is held out, except that a row whose input is identical to an already-run input (method, task input, seed, condition) is always development",
+  "held_out_seed": 24,
+  "held_out_paraphrase": 4,
+  "held_out_positions": "per method: 4 of the 12 added tasks, interleaved so that both sets cover every zone / direction / distance / speed / family level (methods.<m>.held_out_positions); ARDY and CHOIS have none (methods.<m>.no_held_out_position)",
+  "paraphrase_rotation": "nested Latin square (user 2026-11-09): within each hand the 12 tasks are indexed i = 0..11 (native matrix tasks first, then the risk-zone tasks); seed s in 20-23 uses paraphrase (i + s - 20) mod 4, seed 24 uses paraphrase 4; the same paraphrase index applies to the neutral and the consistent text",
+  "primal": "held out by resampling group (effective seed = initial_seed + initial_history): groups 9009 (tasks 15, 19) and 9011 (tasks 17, 21), both history lengths twice; no held-out initial state shares a history prefix with a development one (tasks 12, 13 share theirs with matrix tasks 10, 11)",
+  "enforcement": "config/analysis_plan_20261108.json split_use: analysis scripts select development rows by this split and refuse held-out rows unless the final-comparison flag is given; the opening is recorded in the notes with time and commit",
+  "fallback": "pending user (analysis plan pending_user.held_out_fallback)"
+ },
+ "seeds_and_sizes": {
+  "seeds": [
+   20,
+   21,
+   22,
+   23,
+   24
+  ],
+  "per_cell": "every task x condition x text level with all 5 seeds; one run per row",
+  "rows": {
+   "motionlcm": {
+    "rows": 480,
+    "development": 320,
+    "held_out": 160
+   },
+   "omnicontrol": {
+    "rows": 960,
+    "development": 640,
+    "held_out": 320
+   },
+   "closd": {
+    "rows": 240,
+    "development": 184,
+    "held_out": 56
+   },
+   "dart": {
+    "rows": 240,
+    "development": 184,
+    "held_out": 56
+   },
+   "ardy": {
+    "rows": 480,
+    "development": 432,
+    "held_out": 48
+   },
+   "primal": {
+    "rows": 120,
+    "development": 92,
+    "held_out": 28
+   },
+   "chois": {
+    "rows": 240,
+    "development": 216,
+    "held_out": 24
+   }
+  },
+  "primal": "PRIMAL rows are runs; each run writes the 8 switch combinations (x 8 evaluation rows)"
+ },
+ "reuse": {
+  "rule": "an already-run row is reused only if its input is identical (method, task input, seed, condition, text) and its run meets contract layer 4 (scan state ok or legacy); otherwise it is generated again; identical-but-not-reusable rows (CLoSD: no rotations_xyzw; DART: no smplx_params) are regenerated and the old run is kept for reproduction",
+  "counts": {
+   "motionlcm": {
+    "identical_seen": 24,
+    "reuse_candidates": 24,
+    "to_generate": 456
+   },
+   "omnicontrol": {
+    "identical_seen": 48,
+    "reuse_candidates": 48,
+    "to_generate": 912
+   },
+   "closd": {
+    "identical_seen": 120,
+    "reuse_candidates": 0,
+    "to_generate": 240
+   },
+   "dart": {
+    "identical_seen": 120,
+    "reuse_candidates": 0,
+    "to_generate": 240
+   },
+   "ardy": {
+    "identical_seen": 236,
+    "reuse_candidates": 236,
+    "to_generate": 244
+   },
+   "primal": {
+    "identical_seen": 60,
+    "reuse_candidates": 60,
+    "to_generate": 60
+   },
+   "chois": {
+    "identical_seen": 154,
+    "reuse_candidates": 154,
+    "to_generate": 86
+   }
+  },
+  "kimodo": {
+   "tasks": "reuse of the 416 deck pairs (E4), not extended",
+   "split": "deck_recheck",
+   "source": "config/e4_cross_method_20261103.json",
+   "l4_state_of_old_runs": {
+    "legacy": 416
+   }
+  }
+ },
+ "official_evaluation_batch": {
+  "protocols": {
+   "motionlcm": "HumanML3D test texts, spatial hints from the matching real motion",
+   "omnicontrol": "same as MotionLCM",
+   "chois": "OMOMO",
+   "dart": "BABEL",
+   "kimodo": "its own evaluator",
+   "closd": "HumanML3D"
+  },
+  "per_switch_group": "at least 512 windows per switch group; FID on all samples",
+  "evalkit_subsample": "200 per group, stratified (约定，未经推演)",
+  "scale": "pending user, after the timing below (design section 5); OmniControl may run 2 groups only (design section 12)"
+ },
+ "premise_checks": {
+  "1_task_valid_for_a_human": "reach_geometry.reachability / overhead / origin_sensitivity: nominal body only, computed once",
+  "2_input_reaches_the_model": {
+   "hint_normalisation": {
+    "formula": "utils/motiogen/adapters.py: (native_positions(p, Y-up) - Mean_raw[j]) / Std_raw[j], no clipping",
+    "max_abs_z": {
+     "motionlcm": {
+      "legacy (already run)": 1.71,
+      "risk": 2.77
+     },
+     "omnicontrol": {
+      "legacy (already run)": 1.71,
+      "risk": 2.77
+     }
+    },
+    "note": "no clipping in the adapters; the largest |z| is the floor height (0.15 m against a dataset wrist mean of 0.98 m, sd 0.30 m)",
+    "source": "develop_logs/test_runs/20261109_inference_premises/hint_zscores.json"
+   },
+   "smoke_receipts": "scenario equals job input and intervention_checks pass (smoke below)"
+  },
+  "3_engineering": {
+   "gpu_lock": "per card: utils/motiogen/runtime.py gpu_lock locks run_root/.gpu-<device>.lock; utils/motiogen/experiment_queue.py sets gpu_index and CUDA_VISIBLE_DEVICES per lane (lines 61, 70); both cards ran in parallel in the smoke",
+   "ram_budget": "the RAM budget of the resource review (utils/motiogen/runtime.py budgets: min(ram_max, available - reserve)) is machine-wide and not coordinated by the per-card lock; CHOIS (reviewed bound 10 GiB, reserve 6 GiB) was refused by the gate at 15.7 GiB available",
+   "smoke": {
+    "motionlcm": [
+     {
+      "round": 1,
+      "job": "smoke_motionlcm_task16_seed20",
+      "status": "success",
+      "device": 0,
+      "worker_seconds": 67.5,
+      "input_matches_job": {
+       "prompt": true,
+       "constraints": true
+      },
+      "intervention_checks_passed": true
+     },
+     {
+      "round": 2,
+      "job": "smoke_motionlcm_task21_seed21",
+      "status": "success",
+      "device": 1,
+      "worker_seconds": 25.7,
+      "input_matches_job": {
+       "prompt": true,
+       "constraints": true
+      },
+      "intervention_checks_passed": true
+     }
+    ],
+    "omnicontrol": [
+     {
+      "round": 1,
+      "job": "smoke_omnicontrol_task13_seed20",
+      "status": "success",
+      "device": 1,
+      "worker_seconds": 173.5,
+      "input_matches_job": {
+       "prompt": true,
+       "constraints": true
+      },
+      "intervention_checks_passed": true
+     },
+     {
+      "round": 2,
+      "job": "smoke_omnicontrol_task14_seed21",
+      "status": "success",
+      "device": 0,
+      "worker_seconds": 129.5,
+      "input_matches_job": {
+       "prompt": true,
+       "constraints": true
+      },
+      "intervention_checks_passed": true
+     }
+    ],
+    "dart": [
+     {
+      "round": 1,
+      "job": "smoke_dart_task13_seed20",
+      "status": "success",
+      "device": 0,
+      "worker_seconds": 70.7,
+      "input_matches_job": {
+       "goal_start": true,
+       "goal_next": true
+      },
+      "intervention_checks_passed": true
+     },
+     {
+      "round": 2,
+      "job": "smoke_dart_task14_seed21",
+      "status": "success",
+      "device": 1,
+      "worker_seconds": 21.6,
+      "input_matches_job": {
+       "goal_start": true,
+       "goal_next": true
+      },
+      "intervention_checks_passed": true
+     }
+    ],
+    "closd": [
+     {
+      "round": 1,
+      "job": "smoke_closd_task13_seed20",
+      "status": "success",
+      "device": 0,
+      "worker_seconds": 62.5,
+      "input_matches_job": {
+       "goal_start": true,
+       "goal_next": true
+      },
+      "intervention_checks_passed": true
+     },
+     {
+      "round": 2,
+      "job": "smoke_closd_task14_seed21",
+      "status": "success",
+      "device": 1,
+      "worker_seconds": 78.3,
+      "input_matches_job": {
+       "goal_start": true,
+       "goal_next": true
+      },
+      "intervention_checks_passed": true
+     }
+    ],
+    "ardy": [
+     {
+      "round": 1,
+      "job": "smoke_ardy_task13_seed20",
+      "status": "success",
+      "device": 1,
+      "worker_seconds": 56.2,
+      "input_matches_job": {
+       "prompt": true,
+       "updates": true,
+       "native_root_path": true
+      },
+      "intervention_checks_passed": true
+     },
+     {
+      "round": 2,
+      "job": "smoke_ardy_task14_seed21",
+      "status": "success",
+      "device": 1,
+      "worker_seconds": 63.5,
+      "input_matches_job": {
+       "prompt": true,
+       "updates": true,
+       "native_root_path": true
+      },
+      "intervention_checks_passed": true
+     }
+    ],
+    "primal": [
+     {
+      "round": 1,
+      "job": "smoke_primal_task12_seed20",
+      "status": "success",
+      "device": 0,
+      "worker_seconds": 124.4,
+      "input_matches_job": true,
+      "intervention_checks_passed": true
+     },
+     {
+      "round": 2,
+      "job": "smoke_primal_task18_seed21",
+      "status": "success",
+      "device": 0,
+      "worker_seconds": 126.5,
+      "input_matches_job": true,
+      "intervention_checks_passed": true
+     }
+    ],
+    "chois": [
+     {
+      "round": 1,
+      "job": "smoke_chois_task13_seed23",
+      "status": "resource_gate",
+      "device": 1,
+      "worker_seconds": 17.0,
+      "input_matches_job": null,
+      "intervention_checks_passed": null
+     },
+     {
+      "round": 2,
+      "job": "smoke_chois_task14_seed23",
+      "status": "resource_gate",
+      "device": 1,
+      "worker_seconds": 6.0,
+      "input_matches_job": null,
+      "intervention_checks_passed": null
+     }
+    ]
+   },
+   "smoke_source": "develop_logs/test_runs/20261109_inference_smoke (build_inference_smoke.py, check_inference_smoke.py)"
+  },
+  "not_done": "no check of whether a method reaches a target, falls, or stretches bones; no task was filtered (design section 14 item 2)"
+ },
+ "compute_estimate": {
+  "basis": "slower of the two smoke runs per method (worker seconds incl. process start, both cards busy); 约定, a planning figure only; CHOIS has no smoke timing (resource gate) and is not in the total (native matrix median 18.9 s x 86 runs is about 0.5 h)",
+  "native_matrix_worker_median_s": {
+   "closd": 42.7,
+   "dart": 27.9,
+   "chois": 18.9,
+   "primal": 166.6,
+   "motionlcm": 10.1,
+   "omnicontrol": 91.4,
+   "ardy": 26.7
+  },
+  "native_matrix_source": "develop_logs/test_runs/20261024_*/**/state.json, successful jobs, elapsed_seconds",
+  "per_method": {
+   "motionlcm": {
+    "runs_to_generate": 456,
+    "seconds_per_run_basis": 67.5,
+    "gpu_hours": 8.6
+   },
+   "omnicontrol": {
+    "runs_to_generate": 912,
+    "seconds_per_run_basis": 173.5,
+    "gpu_hours": 44.0
+   },
+   "closd": {
+    "runs_to_generate": 240,
+    "seconds_per_run_basis": 78.3,
+    "gpu_hours": 5.2
+   },
+   "dart": {
+    "runs_to_generate": 240,
+    "seconds_per_run_basis": 70.7,
+    "gpu_hours": 4.7
+   },
+   "ardy": {
+    "runs_to_generate": 244,
+    "seconds_per_run_basis": 63.5,
+    "gpu_hours": 4.3
+   },
+   "primal": {
+    "runs_to_generate": 60,
+    "seconds_per_run_basis": 126.5,
+    "gpu_hours": 2.1
+   },
+   "chois": {
+    "runs_to_generate": 86,
+    "seconds_per_run_basis": null,
+    "gpu_hours": null
+   }
+  },
+  "total_gpu_hours": 68.9,
+  "two_cards_wall_hours": 34.5
+ },
+ "conventions_not_derived": [
+  "risk heights 0.15 / 0.5 m and the 5 cm overhead margin",
+  "0.8 x arm length",
+  "task origin: hip-centre midpoint of the nominal body for the pelvis joint",
+  "paraphrase templates and zone phrases",
+  "held-out positions (interleaved choice)",
+  "paused clock only",
+  "HumanML3D standing-frame thresholds and scaling choices",
+  "200-row evalkit subsample",
+  "compute estimate"
+ ],
+ "pending_user": [
+  "CHOIS smoke and timing: refused twice by the RAM gate (needs 16 GiB available, 15.7 GiB free with no generation running)",
+  "CLoSD runs root-goal tasks (8 directions x 3 distances), not risk-zone reaching, although design section 2 lists it among the reach methods (tasks.closd)",
+  "CHOIS and ARDY have no held-out position (their added windows / all 8 directions were already run in V2 / M0) and are held out only through seed 24",
+  "overhead front: relative to the thorax the upper arm can stay below 90 deg (reach_geometry.elevation_check)",
+  "paused clock only",
+  "official evaluation batch scale",
+  "held_out_fallback (analysis plan)"
+ ]
+}

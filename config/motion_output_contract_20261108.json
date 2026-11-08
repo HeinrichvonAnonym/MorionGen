@@ -4,7 +4,8 @@
  "revised": "2026-11-09 01:06",
  "status": "draft: frozen together with config/analysis_plan_20261108.json, config/evalkit_batch_protocol_20261108.json and the inference registration after the user review (develop_logs/notes/20261108_batch_design_decisions.md section 14); generation of the large batch does not start before the freeze",
  "user_decisions": {
-  "2026-11-09 00:58 contract (design section 14 item 3)": "CLoSD: the new batch has rotations_xyzw, confirmed by a smoke run; every method's world conventions carry their source, unfound ones are marked 约定; PRIMAL legacy data has SMPL-X; MotionLCM features_263 optional; CHOIS mass: check the dataset first, and if absent the main analysis does not model the hand-held object (lower bound) with per-category lookup masses as a sensitivity check (约定)"
+  "2026-11-09 00:58 contract (design section 14 item 3)": "CLoSD: the new batch has rotations_xyzw, confirmed by a smoke run; every method's world conventions carry their source, unfound ones are marked 约定; PRIMAL legacy data has SMPL-X; MotionLCM features_263 optional; CHOIS mass: check the dataset first, and if absent the main analysis does not model the hand-held object (lower bound) with per-category lookup masses as a sensitivity check (约定)",
+  "2026-11-09 02:37 correction (design section 14 item 4)": "the 00:58 statement \"the new batch has rotations_xyzw\" held only for the runtime-reveal entry; the native-matrix entry (closd_native.py, the one with the execution-context switch) saved no rotations; user-authorized output-only patch, commit ccb50a3, verified bit-identical joints before/after and against the 10-24 archive (closd.smoke)"
  },
  "scope": "every generated motion of the large batch and of the official-evaluation batch, one run directory per motion; the generation system itself is not changed by this file (it belongs to another session); python/scripts/motion_contract_check.py validates run directories against it",
  "layers": {
@@ -192,13 +193,13 @@
   "closd": {
    "skeleton": "SMPL 24 simulated bodies",
    "joints": "native (simulation)",
-   "global_rotations_with_twist": "native in the new batch (native_physics.npz rotations_xyzw: world orientation of the 24 simulated rigid bodies, quaternion x, y, z, w; written by utils/motiogen/closd_runtime.py, code committed 2026-10-31, present in every CLoSD run from 2026-10-29 on); absent in the 2026-10-24 (240 runs) and 2026-10-25 (32 runs) legacy data",
+   "global_rotations_with_twist": "native in the new batch (native_physics.npz rotations_xyzw: world orientation of the 24 simulated rigid bodies, quaternion x, y, z, w; written by both entry points: utils/motiogen/closd_runtime.py (runtime-reveal entry, code committed 2026-10-31, present in its runs from 2026-10-29 on) and, since commit ccb50a3 of 2026-11-09 (outputs only, together with dof_positions), utils/motiogen/closd_native.py (native-matrix entry with the execution-context switch; before that commit its runs had joints and contact_forces only)); absent in the 2026-10-24 (240 runs) and 2026-10-25 (32 runs) legacy data",
    "head_orientation": "native in the new batch (Head rigid-body orientation in rotations_xyzw); absent in the legacy data",
    "hands": "absent",
    "body_shape": "absent",
    "objects": "absent",
    "physics": "native contact forces (native_physics.npz)",
-   "contact_forces_reproducibility": "measured 2026-11-09 (develop_logs/test_runs/20261109_closd_rotation_smoke, same seed and event, two runs on one card plus the 10-29 run on another card): joints, rotations_xyzw and dof_positions are bit-identical, contact_forces are not; per frame the summed vertical force differs by up to 854 N (p95 215-291 N), 0.5 s window means by up to 127 N, the whole-run mean by under 1.1 N, foot contact (Fz > 20 N) agrees on 94-96% of frames. No registered metric uses them; any use needs a user decision (the earlier E4 and native-matrix analyses used per-frame values)",
+   "contact_forces_reproducibility": "measured 2026-11-09 (develop_logs/test_runs/20261109_closd_rotation_smoke, same seed and event, two runs on one card plus the 10-29 run on another card): joints, rotations_xyzw and dof_positions are bit-identical, contact_forces are not; per frame the summed vertical force differs by up to 854 N (p95 215-291 N), 0.5 s window means by up to 127 N, the whole-run mean by under 1.1 N, foot contact (Fz > 20 N) agrees on 94-96% of frames. No registered metric uses them; any use needs a user decision (the earlier E4 and native-matrix analyses used per-frame values). Effect on those analyses (develop_logs/test_runs/20261109_closd_contact_audit/audit.json, python/scripts/audit_closd_contact_reproducibility.py; 9 identical-input pairs, both entry points; native entry: the 10-24 matrix rows task 0 seed 21 paused, both execution contexts, re-run with the code before and after commit ccb50a3: joints bit-identical in all pairs, per-frame vertical total differs by up to 1007 N): rerun-vs-rerun Pearson r of the vertical total 0.89-0.92 (6 Hz low-pass 0.74-0.81); with independent run noise a noise-free estimate would reach about sqrt of that against one run (0.94-0.96; low-pass 0.86-0.90), so the E4 contact validation (observed median r 0.42 against threshold 0.8; low-pass post hoc 0.65) is not explained by the simulator's non-determinism; the 5 N native-matrix force metrics differ between reruns by at most 0.010 (contact fraction), 0.006 (foot-body motion), 0.010 (nonfoot contact), against execution-context contrasts of +0.016 [-0.007, 0.040], -0.012 [-0.037, 0.012], -0.026 [-0.057, 0.006] (paused; realtime alike)",
    "native_required": [
     "rotations_xyzw",
     "contact_forces"
@@ -207,7 +208,7 @@
     "rotations_xyzw": "native_physics.npz",
     "contact_forces": "native_physics.npz"
    },
-   "smoke": "develop_logs/test_runs/20261109_closd_rotation_smoke (python/scripts/closd_rotation_smoke.py): one run with the current code; rotations_xyzw shape, quaternion norms, bone vectors R_parent^T (p_child - p_parent) constant over frames",
+   "smoke": "develop_logs/test_runs/20261109_closd_rotation_smoke (python/scripts/closd_rotation_smoke.py): runtime entry, one run with the current code; rotations_xyzw shape, quaternion norms, bone vectors R_parent^T (p_child - p_parent) constant over frames. Native entry after commit ccb50a3: develop_logs/test_runs/20261109_closd_native_rotation/check.json, task 0 seed 21 paused, both contexts: bone vectors constant to < 0.0004 mm over 600 frames, quaternion norms 1 +- 2.4e-7; joints and all motion.npz keys bit-identical to the runs before the change and to the 10-24 archive",
    "shoulder_girdle": "absent"
   },
   "dart": {

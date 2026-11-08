@@ -19,7 +19,8 @@
   "2026-11-08 23:00 section 14 item 5": "the post-hoc correction group is a comparator, not a tool correction (later_comparators.post_hoc_correction)",
   "2026-11-08 23:00 section 14 item 6": "re-time lumbar on an idle CPU, then choose 1 or 2 seeds per stratum (lumbar_subsample.timing, .proposal)",
   "2026-11-09 00:58 lumbar": "held-out and reused Kimodo lumbar deferred to before the final comparison (--lumbar-defer-split deck_recheck,held_out), critical path development set only; Latin-square coverage: approximately even (12 tasks per hand, each paraphrase on 2-3 tasks)",
-  "2026-11-09 00:33-00:42 lumbar": "1 seed per stratum; the development / held-out split enters the stratum (one from each); Latin-square paraphrase rotation (task i, seed j: paraphrase (i + j) mod 5) goes into the inference registration; wall-clock plan 33 h; the reused Kimodo rows' lumbar runs last (superseded at 00:58: deferred to before the final comparison)"
+  "2026-11-09 00:33-00:42 lumbar": "1 seed per stratum; the development / held-out split enters the stratum (one from each); Latin-square paraphrase rotation (task i, seed j: paraphrase (i + j) mod 5) goes into the inference registration; wall-clock plan 33 h; the reused Kimodo rows' lumbar runs last (superseded at 00:58: deferred to before the final comparison)",
+  "2026-11-09 01:13-01:28 split": "nested Latin square (supersedes the mod 5 rotation): seeds 20-23 rotate paraphrases 0-3 by (task i + seed j) mod 4, seed 24 always uses paraphrase 4 (held out); lumbar coverage: the smallest development seed covers each paraphrase on 3 of the 12 tasks per hand"
  },
  "rows": {
   "manifest_fields": {
@@ -125,7 +126,7 @@
  },
  "lumbar_subsample": {
   "stratum": "method x condition x task x text_condition x split (development / held-out; user 2026-11-09, answer received between 00:33 and 00:42: one row from each split)",
-  "within_stratum": "the first --lumbar-per-cell seeds in ascending seed order (deterministic; seeds are generator seeds, unrelated to the outcome); with the Latin-square paraphrase rotation of the inference registration (task i, seed j: paraphrase (i + j) mod 5, user 2026-11-09, answer received between 00:33 and 00:42) the smallest seed covers the 5 paraphrases approximately evenly (12 tasks per hand: each paraphrase on 2-3 tasks; user 2026-11-09 00:58)",
+  "within_stratum": "the first --lumbar-per-cell seeds in ascending seed order (deterministic; seeds are generator seeds, unrelated to the outcome); with the nested Latin-square paraphrase rotation of the inference registration (seeds 20-23: paraphrase (task i + seed j) mod 4; seed 24: paraphrase 4, held out; user 2026-11-09, answer received between 01:13 and 01:28) the smallest development seed covers each of paraphrases 0-3 on 3 of the 12 tasks per hand",
   "default_per_cell": 1,
   "per_cell_note": "约定，未经推演 (user: 1-2 seeds); user 2026-11-09, answer received between 00:33 and 00:42 after the idle-CPU timing: 1 seed per stratum",
   "deferred": "rows of the splits deck_recheck (reused Kimodo pairs, analysis plan split_use.kimodo_reuse) and held_out are evaluated without lumbar (upper_lumbar_status deferred); the critical path computes lumbar on the development set only; before the final comparison the same command with --lumbar-defer-split '' adds their lumbar, no refit (run_evalkit_batch.sh --lumbar-defer-split, default deck_recheck,held_out; user 2026-11-09 00:58)",
