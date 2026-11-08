@@ -11,7 +11,8 @@
  "user_decisions": {
   "2026-11-08 15:16": "the large run is configurable; it may run only the repaired (self) floor first, with the method-floor loads and the remaining lumbar rows filled in later; nothing else is dropped",
   "2026-11-08 15:16 lumbar": "lumbar first on a stratified subsample (1-2 seeds per method x task x text condition), filled in later by input hash; the large batch is not run now",
-  "2026-11-08 15:16 muscles": "neck and shoulder stay reserved; the generation side stores the native rotations they need (contract L4)"
+  "2026-11-08 15:16 muscles": "neck and shoulder stay reserved; the generation side stores the native rotations they need (contract L4)",
+  "2026-11-08 after 20:59 neck reading": "RULA stays on the joint-line neck reading (primary); for methods whose output carries neck and head rotations the batch also reports RULA with the rotation reading as a sensitivity (neck supplement, config/evalkit_neck_supp_20261108.json: CHOIS / Kimodo median B - A -12 deg, RULA class changed on 17% / 25% of frames; ARDY / PRIMAL 4% / 8%)"
  },
  "rows": {
   "manifest_fields": {
@@ -78,7 +79,7 @@
    "result": "method_floor_* loads only; check.json load_arm says so"
   },
   "fill_in": "self then both: pass 1 rows gain ergo and muscle from their cached fit (evalkit.run.add_dims, no refit; verified bit-identical to a full evaluation on smoke rows), pass 2 rows are skipped",
-  "command": "scripts/run_evalkit_batch.sh --manifest M --out DIR --dims residual,ergo,muscle,kinematic[,upper] --arms self|both|method [--lumbar-per-cell N] [--offset-reference FROZEN.json] [--no-distribution]",
+  "command": "scripts/run_evalkit_batch.sh --manifest M --out DIR --dims residual,ergo,muscle,kinematic[,upper] --arms self|both|method [--lumbar-per-cell N] [--offset-reference FROZEN.json] [--no-distribution] [--no-neck-rotation]",
   "planned_order": "self first (primary results), both as the supplement; 约定，未经推演 (cost driven, user 15:16)"
  },
  "dimensions": {
@@ -125,10 +126,11 @@
  },
  "outputs": {
   "per_row": {
-   "evalkit.json": "receipt (floors, offsets, dims, spec, commits), batch (skip key), row (manifest row), residual, ergo, muscle, kinematic, upper",
+   "evalkit.json": "receipt (floors, offsets, dims, spec, commits), batch (skip key), row (manifest row), residual, ergo, muscle, kinematic, upper, neck_rotation (status, gates, rotation-reading RULA shares, key)",
    "frames.npz": "per-frame arrays: times, scored, unmeasurable, residual_*, contact_* / elevation_*, ergo_*, muscle_*, net_moment_*",
    "error.json": "failure of the last attempt (kept; never deleted by a later success of another dimension)",
-   "upper/lumbar": "FBLS files, lumbar.json"
+   "upper/lumbar": "FBLS files, lumbar.json",
+   "neck_rotation.npz": "rotation-reading neck arrays per scored ergo frame: times, a, b (zero-corrected [flexion, side bend]), a_class, b_class, a_neck_input, b_neck_input"
   },
   "per_run": {
    "floor_offsets.json": "per-method offset reference (median foot offset)",
@@ -178,6 +180,13 @@
     "max_slip_m",
     "jerk_0p1s",
     "bone_cv_max"
+   ],
+   "neck_reading_sensitivity": [
+    "rula_neck_rotation_status",
+    "rula_neck_rotation_<class>_share fields (unmeasurable, certain_risk, indeterminate, certain_acceptable)",
+    "rula_neck_rotation_class_changed_share",
+    "rula_neck_rotation_band_changed_share",
+    "rula_neck_rotation_b_minus_a_flexion_median_deg"
    ]
   }
  },
@@ -200,7 +209,16 @@
    "not_sampled": "outside the lumbar subsample",
    "reserved": "neck, shoulder"
   },
-  "measurability": "per method x evaluator from the output contract (measurable / with_caveat / to_verify / not_measurable)"
+  "measurability": "per method x evaluator from the output contract (measurable / with_caveat / to_verify / not_measurable)",
+  "rula_neck_rotation_status": {
+   "ok": "rotation-reading RULA reported",
+   "not_applicable": "no neck / head rotations in the output, or ergo not evaluated",
+   "failed_convention": "rest-vector rebuild inconsistent (> 0.5 deg)",
+   "failed_frame_match": "native and evalkit source readings differ (> 0.05 deg) or frame counts differ",
+   "failed_reproduction": "recomputed joint-line classes differ from the stored ones",
+   "failed": "exception (error and trace in evalkit.json neck_rotation)",
+   "skip_key": "recomputed when the row's batch key, commit or added_commit changes (a re-evaluation drops the field)"
+  }
  },
  "skip_key": {
   "method_floor_row": [
@@ -241,13 +259,24 @@
   "floor": "method_floor vs self_floor: implemented (arms)",
   "threshold_pm_0p5cm": "descriptive band in check (residual_positive_share_depth_-+5mm, rescore only): implemented",
   "contact_tolerance_2_3cm": "not implemented (design section 8); needs a re-evaluation arm, to be registered before the batch",
-  "post_hoc_correction_group": "not implemented; scope decided by the user after the precheck (design section 8)"
+  "post_hoc_correction_group": "not implemented; scope decided by the user after the precheck (design section 8)",
+  "neck_reading": {
+   "primary": "joint line (ergo.neck_angles, revision 3 per-skeleton zero): the evalkit rula_* fields",
+   "sensitivity": "rotation reading: head point = neck + R_head_global (head_rest - neck_rest), same zero (A = B in the rest pose); RULA rescored with only neck_flexion_deg and neck_side_bent replaced (evalkit.neck_rotation, from the row's cached fit and contact masks, no new solve)",
+   "methods": "ARDY, CHOIS, Kimodo, PRIMAL; other methods not_applicable (CLoSD and legacy DART exports carry no rotations; MotionLCM / OmniControl neck excluded in revision 3)",
+   "gates": "per row: rest-vector rebuild consistent within 0.5 deg, native A equals the evalkit source reading within 0.05 deg, recomputed joint-line classes equal the stored ergo_rula_class (约定，未经推演 thresholds, as registered in the neck supplement)",
+   "arms": "run on every arm with ergo (pass 1 and pass 2); the rula_neck_rotation_* fields are load fields, so the merged view takes them from the self-floor row like the other rula_* fields",
+   "reading": "descriptive; neither reading has a truth on generated motion (neck supplement); a method whose RULA conclusion differs between the readings is reported with both",
+   "command": "scripts/run_evalkit_batch.sh runs it by default (--no-neck-rotation to skip); alone: evalkit_batch.py neck-rotation --manifest M --rows DIR",
+   "implemented": true
+  }
  },
  "conventions_not_derived": [
   "planned_order self then both",
   "default_per_cell 1",
   "per-dimension costs",
   "stratum definition (method x condition x task x text_condition)",
-  "offset reference set (paused clock, lowest seed per condition x task, distinct inputs)"
+  "offset reference set (paused clock, lowest seed per condition x task, distinct inputs)",
+  "neck-rotation gates 0.5 deg / 0.05 deg"
  ]
 }

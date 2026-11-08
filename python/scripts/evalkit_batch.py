@@ -13,6 +13,8 @@
                                                              with the self-floor arm the v1.2 merged view (residual from
                                                              DIR, loads from DIR3, method_floor_* alongside)
   evalkit_batch.py refresh --manifest M.json --rows DIR      v1.2 forced metrics on existing rows (no new solve)
+  evalkit_batch.py neck-rotation --manifest M.json --rows DIR   RULA with the rotation neck reading on rows with ergo
+                                                             (sensitivity; ARDY / CHOIS / Kimodo / PRIMAL, cached fit)
 
 Manifest rows: {id, method, source, condition?, mass_kg?, floor_m?, reference?, object_free?, reach_task?}; floor, reference and
 object-free default to evalkit.sources. run has two stages: every row is fitted and its foot offset written
@@ -433,6 +435,51 @@ def refresh(args):
             print(json.dumps({'id': rid, 'status': status, **counts}), flush=True)
 
 
+def neck_rotation_job(task):
+    """Rotation-reading RULA of one evaluated row (evalkit.neck_rotation); skipped while its key matches the row."""
+    row, out_root = task
+    out = Path(out_root)/row['id']
+    try:
+        os.nice(19)
+        import opensim as osim
+        osim.Logger.setLevelString('error')
+        from evalkit import neck_rotation
+        rec = json.loads((out/'evalkit.json').read_text())
+        if rec.get('neck_rotation', {}).get('key') == neck_rotation.key(rec):
+            return row['id'], 'skip'
+        return row['id'], neck_rotation.evaluate(resolve(row)[0], out, rec['receipt']['method'] or row['method'])['status']
+    except Exception as e:
+        from evalkit import neck_rotation
+        rec = json.loads((out/'evalkit.json').read_text())
+        rec['neck_rotation'] = {'status': 'failed', 'error': f'{type(e).__name__}: {e}', 'trace': traceback.format_exc()[-3000:],
+                                'key': neck_rotation.key(rec)}
+        (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
+        return row['id'], 'failed'
+
+
+def neck_rotation(args):
+    rows = [r for r in json.loads(Path(args.manifest).read_text())['rows'] if (Path(args.rows)/r['id']/'evalkit.json').exists()]
+    counts = {}
+    with ProcessPoolExecutor(args.workers, mp_context=mp.get_context('spawn'), max_tasks_per_child=1) as p:
+        for rid, status in p.map(neck_rotation_job, [(r, args.rows) for r in rows]):
+            counts[status] = counts.get(status, 0)+1
+    print(json.dumps({'rows': len(rows), **counts}), flush=True)
+
+
+def neck_rotation_fields(e):
+    """check fields of the rotation-reading RULA (sensitivity; the evalkit rula_* stay the joint-line reading)."""
+    n = e.get('neck_rotation')
+    if n is None:
+        return {}
+    out = {'rula_neck_rotation_status': n['status']}
+    if n['status'] == 'ok':
+        out.update({f'rula_neck_rotation_{c}': n['rula'][f'{c}_share'] for c in ('unmeasurable', 'certain_risk', 'indeterminate', 'certain_acceptable')},
+                   rula_neck_rotation_class_changed_share=n['class_changed_share'],
+                   rula_neck_rotation_band_changed_share=n['neck_band_changed_share'],
+                   rula_neck_rotation_b_minus_a_flexion_median_deg=n['b_minus_a_flexion_median_deg'])
+    return out
+
+
 def rows_summary(rows_dir, rows):
     """Per-row sanity values; residual_positive_share_depth_{-,+}5mm: descriptive band at the registered penetration
     depth -+ 0.5 cm (generated feet often sit near it, so the binary share can flip there)."""
@@ -462,6 +509,7 @@ def rows_summary(rows_dir, rows):
             'unmeasurable_ik_error_median_m': float(np.median(f['ik_max_error_m'][sel][um])) if um.any() else None,
             **{f'{m}_{c}': e['ergo'][m][f'{c}_share'] for m in ('reba', 'rula') if 'ergo' in e
                for c in ('unmeasurable', 'certain_risk', 'indeterminate', 'certain_acceptable')},
+            **neck_rotation_fields(e),
             **({f'muscle_{k}': e['muscle'][k] for k in MUSCLE_KEYS if k in e['muscle']} if 'muscle' in e else {}),
             **(net_moments(d, e) if 'muscle' in e else {}),
             **(upper(e) if 'upper' in e else {'upper_lumbar_status': 'failed'} if (d/'error.json').exists()
@@ -518,7 +566,7 @@ def check(args):
     raw = per = rows_summary(args.rows, rows)
     selffloor = bool(args.self_manifest and args.self_rows)
     per = merge_self_floor(per, json.loads(Path(args.self_manifest).read_text())['rows'] if selffloor else [], args.self_rows)
-    status = lambda k: 'upper_' in k and k.endswith('_status')
+    status = lambda k: k.endswith('_status') and k != 'row_status'
     keys = sorted({k for v in per.values() for k in v if k not in ('method', 'unmeasurable_by_third', 'input_sha256', 'prompt', 'row_status')
                    and not status(k)})
     medians = lambda vs: {k: float(np.median([v[k] for v in vs if v.get(k) is not None])) for k in keys if any(v.get(k) is not None for v in vs)}
@@ -534,7 +582,9 @@ def check(args):
                     for k in sorted({k for v in vs for k in v if status(k)})}
         methods[m] = {'rows': len(allv), 'unique_inputs': len(vs),
                       'row_status': {s: sum(v['row_status'] == s for v in allv) for s in ('ok', 'partial_failed')},
-                      'not_evaluated': sum(r['method'] == m and r['id'] not in per for r in rows), **medians(vs), **({'upper_status': statuses} if statuses else {}),
+                      'not_evaluated': sum(r['method'] == m and r['id'] not in per for r in rows), **medians(vs),
+                      **{name: part for name, part in (('upper_status', {k: v for k, v in statuses.items() if 'upper_' in k}),
+                                                       ('neck_rotation_status', {k: v for k, v in statuses.items() if 'neck_rotation' in k})) if part},
                       'unmeasurable_by_third': np.mean([v['unmeasurable_by_third'] for v in vs], 0).tolist(),
                       **({'by_prompt': {p: {'unique_inputs': sum(v['prompt'] == p for v in vs), **medians([v for v in vs if v['prompt'] == p])}
                                         for p in prompts}} if 1 < len(prompts) < len(vs) else {})}
@@ -592,9 +642,11 @@ def main():
     ls.add_argument('--manifest', required=True); ls.add_argument('--out', required=True)
     ls.add_argument('--per-cell', type=int, default=1, help='seeds per stratum; 0: every row')
     u = sub.add_parser('manifest-unique-c0'); u.add_argument('--out', required=True)
+    n = sub.add_parser('neck-rotation', help='RULA with the rotation neck reading on evaluated rows (sensitivity)')
+    n.add_argument('--manifest', required=True); n.add_argument('--rows', required=True); n.add_argument('--workers', type=int, default=6)
     args = a.parse_args()
     {'manifest-e4': manifest_e4, 'manifest-shift': manifest_shift, 'manifest-self-floor': manifest_self_floor, 'check': check,
-     'run': run_batch, 'manifest-unique-c0': manifest_unique_c0, 'refresh': refresh,
+     'run': run_batch, 'manifest-unique-c0': manifest_unique_c0, 'refresh': refresh, 'neck-rotation': neck_rotation,
      'manifest-lumbar-sample': manifest_lumbar_sample, 'offset-reference': offset_reference,
      'manifest-offset-reference': manifest_offset_reference}[args.step](args)
 
