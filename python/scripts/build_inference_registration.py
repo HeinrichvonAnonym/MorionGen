@@ -186,6 +186,11 @@ def main():
                                       'parallel batch and breaks the pairing), the event points under the paused clock; native-matrix '
                                       'realtime results are a reproduction-subset reference only; realtime latency is a later separately '
                                       'registered experiment; PRIMAL added to the list of methods the matrix ran with a realtime clock',
+            '2026-11-09 held-out fallback (answer received between 03:58 and 04:03)': 'before external publication of baseline '
+                'conclusions a written decision: open as a baseline held-out re-check, or state the set reserved for the user\'s method '
+                'and unopened, said truthfully in the publication; reading: consistent = same sign and held-out 95% interval covers the '
+                'development point estimate, inconsistent = opposite sign and not covering, otherwise underpowered; all primary '
+                'contrasts reported (analysis plan split_use)',
             '2026-11-09 official batch (answer received between 03:36 and 03:57)': 'registered separately; the scale rule (official_evaluation_batch.scale_rule) and the FID '
                                                'interval are frozen now, the separate registration fills in only measured timings and '
                                                'what follows from them; same N for all methods and groups (within-method contrasts; '
@@ -277,7 +282,9 @@ def main():
                               'its held-out rows (history 160, seed 24) paired only with development rows (table.primary_contrast_pairs)',
                   'enforcement': 'config/analysis_plan_20261108.json split_use: analysis scripts select development rows by this split and refuse '
                                  'held-out rows unless the final-comparison flag is given; the opening is recorded in the notes with time and commit',
-                  'fallback': 'pending user (analysis plan pending_user.held_out_fallback)'},
+                  'fallback': 'config/analysis_plan_20261108.json split_use.fallback / fallback_reading / fallback_consequence (user '
+                              '2026-11-09, answer received between 03:58 and 04:03): a written decision before any external publication of '
+                              'baseline conclusions, open as a baseline held-out re-check or state it reserved and unopened'},
         'seeds_and_sizes': {'seeds': tasks['seeds'], 'per_cell': 'every task x condition x text level with all 5 seeds; one run per row',
                             'rows': {m: {k: v[k] for k in ('rows', 'development', 'held_out')} for m, v in counts.items()},
                             'primal': counts['primal'].get('note')},
@@ -386,7 +393,7 @@ def main():
                                     '(interleaved choice)', 'HumanML3D standing-frame thresholds and scaling choices',
                                     '200-row evalkit subsample', 'compute estimate', 'official batch budget 75 GPU h, window draw seed 20261109, '
                                     'paired FID resampling of the reference'],
-        'pending_user': ['held_out_fallback (analysis plan)'],
+        'pending_user': [],
     }
     OUT.write_text(json.dumps(reg, indent=1, ensure_ascii=False)+'\n')
     print(json.dumps({k: reg[k] for k in ('compute_estimate',)}, indent=1)[:3000])
