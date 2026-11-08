@@ -3,7 +3,15 @@
  "version": "contract-2",
  "revised": "2026-11-09 01:06",
  "status": "frozen 2026-11-09 04:11 (manifest config/freeze_20261109.json, git tag freeze-20261109; user approval 2026-11-09 04:08); later changes only as timestamped revision records appended to revisions_after_freeze, and only before any batch result is seen",
- "revisions_after_freeze": [],
+ "revisions_after_freeze": [
+  {
+   "time": "2026-11-09 04:45",
+   "before_any_batch_result": true,
+   "change": "who writes which layer in the large batch. L2: the batch plan builder python/scripts/build_batch_plan.py (commit a093ba3) writes the new-batch scene fields (kind, prompt, constraints, task_id, paraphrase_id, text_condition, target_zone) into job.scene, which utils/motiogen/runtime.py writes verbatim as scenario.json; L1 and L3 are written by the frozen generation code. L4-L6 are written after generation by python/scripts/complete_run_contract.py complete (commit 30956c8): native.npz copied from the native files of each run (native_sources records key -> file:array; DART smplx_params.npz packed as one (T, D) float32 array plus smplx_params_layout), world.json (method_world, method_world_sha256, floor_variant; CHOIS object_id from the native sequence, object_mass_kg null, object_mass_source as method_capability.chois.object_mass), integrity.json last (sha256 of every L2-L5 file and of the native source files); a failed run gets failure.json and is never replaced; a run whose integrity.json verifies is skipped and a non-verifying one is never overwritten. complete_run_contract.py scan is the contract gate of the batch (all six layers ok for generated runs, no gap for linked runs).",
+   "deviation": "PRIMAL generated runs stay in the legacy layout in L1, L3 and L4 (factorial/<switch>_canonical.npz, factorial/<switch>.npz with factorial/initial_history.npz betas, as method_capability.primal.native_legacy): one PRIMAL run holds the 8 switch outputs and the generation code is frozen, so no single native.npz / motion.npz exists. The scan accepts legacy only for PRIMAL and only in L1, L3, L4; PRIMAL L2, L5 and L6 must be ok. This departs from the plan wording 'new runs: all six layers ok' and is reported as such.",
+   "tested": "complete and scan on copies of the 14 smoke runs (12 success completed, 2 failed recorded with failure.json; a second pass skipped all); the scan flagged only L2 of the smoke scenes, which predate the new scene fields"
+  }
+ ],
  "user_decisions": {
   "2026-11-09 00:58 contract (design section 14 item 3)": "CLoSD: the new batch has rotations_xyzw, confirmed by a smoke run; every method's world conventions carry their source, unfound ones are marked 约定; PRIMAL legacy data has SMPL-X; MotionLCM features_263 optional; CHOIS mass: check the dataset first, and if absent the main analysis does not model the hand-held object (lower bound) with per-category lookup masses as a sensitivity check (约定)",
   "2026-11-09 02:37 correction (design section 14 item 4)": "the 00:58 statement \"the new batch has rotations_xyzw\" held only for the runtime-reveal entry; the native-matrix entry (closd_native.py, the one with the execution-context switch) saved no rotations; user-authorized output-only patch, commit ccb50a3, verified bit-identical joints before/after and against the 10-24 archive (closd.smoke)"

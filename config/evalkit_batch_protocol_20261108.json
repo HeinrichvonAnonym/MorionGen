@@ -3,7 +3,21 @@
  "created": "2026-11-08 15:41",
  "revised": "2026-11-09 00:33 design section 14 items 4-6: contact tolerance out of the main batch, post-hoc correction as a later comparator, lumbar re-timed on an idle CPU",
  "status": "frozen 2026-11-09 04:11 (manifest config/freeze_20261109.json, git tag freeze-20261109; user approval 2026-11-09 04:08); later changes only as timestamped revision records appended to revisions_after_freeze, and only before any batch result is seen",
- "revisions_after_freeze": [],
+ "revisions_after_freeze": [
+  {
+   "time": "2026-11-09 04:46",
+   "before_any_batch_result": true,
+   "change": "batch manifests built by python/scripts/build_evalkit_manifest.py (commit 30956c8) from the batch plans, the reuse links and the successful queue attempts: rows carry rows.manifest_fields (id, method, source, condition; task_id, seed, paraphrase_id, text_condition, target_zone; reach_task for MotionLCM / OmniControl) plus split, world (config/motion_world/<method>.json path and sha256), input_sha256, origin (generated / linked) and run; PRIMAL gives one row per switch combination (factorial/<switch>_canonical.npz); the 416 Kimodo pairs (develop_logs/test_runs/20261024_kimodo_pair_audit/audit.json, both correction arms) have split deck_recheck, cluster = source motion, and no task_id (each case its own lumbar stratum); jobs without a successful attempt are listed under missing and never replaced",
+   "split_separation": "development rows (with the Kimodo deck_recheck rows) and held-out rows go to separate manifests and separate output directories; evalkit_batch.py check and the run median diagnostic summarise every row of their manifest, so the held-out manifest is evaluated per row only, with no check and no analysis, until the final comparison",
+   "chois_added_window_floor": "12 CHOIS windows of the frozen task table (1, 31, 81, 121, 173, 214, 254, 275, 308, 345, 387, 432) are not in config/evalkit_floor_reference_20261107.json. Their floor references were computed with the registered procedure (window selection as export_chois_posture_calibration.py, zero-pose rule mesh by e_v2_floor_poses.smplx_body, unmodified evalkit_floor_refs.measure) by python/scripts/chois_added_window_floor_refs.py into config/evalkit_floor_reference_chois_added_20261109.json. Positive control: windows 0 and 30 measured again by the same run reproduce the frozen reference_m with max |difference| 0.0 m. Source check: lowest foot-joint z of the processed source windows 0.0214-0.0286 m (registered windows) vs 0.0224-0.0295 m (added). The added values equal the frozen values of the same subject (sub16, sub17), as expected for a zero-pose body. The rows carry them as reference and floor_m, which evalkit_batch.resolve already reads; no frozen code or config changed",
+   "added_configs": {
+    "config/evalkit_floor_reference_chois_added_20261109.json": "827bb18c4f2146f928fdc29816dd9a53dd43277a8b6b085e5bb649f4cd0257ad"
+   },
+   "offset_reference": "the method-floor pass uses --offset-reference config/evalkit_offset_reference_20261108.json (frozen)",
+   "freeze_check": "python/scripts/build_freeze_manifest.py --check accepts a config referenced after the freeze only when a revision record lists it under added_configs and its sha256 is unchanged",
+   "tested": "on the full plans of the self check with no queue state: 644 linked inference rows (PRIMAL expanded to 480 switch rows) and 832 Kimodo rows, 2116 jobs listed as missing, no row without a required field, no Kimodo row with task_id, 36 linked CHOIS rows on added windows carry the added reference"
+  }
+ ],
  "builds_on": {
   "design": "develop_logs/notes/20261108_batch_design_decisions.md sections 4, 8, 9, 11, 14 (section 14 overrides conflicting parts of sections 8 and 13)",
   "analysis_plan": "config/analysis_plan_20261108.json (contrasts, settings, intervals)",

@@ -124,8 +124,17 @@ def check():
         revisions[p] = n
         if reason:
             bad.append(reason)
-    now = referenced()
-    bad += [f'{p}: newly referenced, not in the manifest' for p in now if p not in m['referenced_configs']]
+    added = {}
+    for p in [*m['frozen_files'], *m['referenced_configs']]:
+        for record in json.loads((ROOT/p).read_text()).get('revisions_after_freeze', []):
+            added.update(record.get('added_configs', {}))
+    for p in referenced():
+        if p in m['referenced_configs']:
+            continue
+        if p not in added:
+            bad.append(f'{p}: newly referenced, not in the manifest or in a revision record added_configs')
+        elif sha(p) != added[p]:
+            bad.append(f'{p}: sha256 differs from its revision record added_configs')
     for name, area in m['code']['areas'].items():
         changed = git('diff', '--name-only', m['code']['commit'], '--', *area['paths'])
         dirty = git('status', '--porcelain', '--', *area['paths'])
