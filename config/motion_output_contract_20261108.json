@@ -1,0 +1,377 @@
+{
+ "created": "2026-11-08 15:33",
+ "version": "contract-draft-1",
+ "status": "draft: frozen only after the user review (develop_logs/notes/20261108_batch_design_decisions.md section 13 step 5); generation of the large batch does not start before the freeze",
+ "scope": "every generated motion of the large batch and of the official-evaluation batch, one run directory per motion; the generation system itself is not changed by this file (it belongs to another session); python/scripts/motion_contract_check.py validates run directories against it",
+ "layers": {
+  "L1_identity": {
+   "purpose": "who produced the motion and under which switch",
+   "required": {
+    "manifest.json": [
+     "baseline",
+     "seed",
+     "status",
+     "command"
+    ],
+    "weight_binding.json": "weight identity (checkpoint path and sha256)",
+    "environment.json|implementation.json": "environment and code identity",
+    "intervention.json": "the switch condition of the run"
+   }
+  },
+  "L2_task": {
+   "purpose": "one task format for every method; legacy runs use three formats (joint-position scenario, root goal change of CLoSD / DART, unconditioned continuation of PRIMAL) plus the Kimodo case files",
+   "required": {
+    "scenario.json": [
+     "name",
+     "kind",
+     "duration_seconds",
+     "prompt",
+     "constraints"
+    ]
+   },
+   "constraint_item": [
+    "time_seconds",
+    "joint",
+    "position_m"
+   ],
+   "required_new_batch": {
+    "scenario.json": [
+     "task_id",
+     "paraphrase_id",
+     "text_condition",
+     "target_zone"
+    ]
+   },
+   "values": {
+    "text_condition": [
+     "neutral",
+     "consistent"
+    ],
+    "target_zone": [
+     "ppt_original",
+     "floor",
+     "knee",
+     "overhead",
+     "path",
+     "initial_state",
+     "official_window",
+     "none"
+    ]
+   },
+   "legacy": "runs before the freeze lack required_new_batch and may use a legacy format; the check records the format, the evaluation maps them from the batch manifest and records the mapping",
+   "kinds": {
+    "joint_position": "constraints: joint targets {time_seconds, joint, position_m}",
+    "root_goal_change": "constraints: root goals as {time_seconds, joint: pelvis, position_m (z null)} (legacy goal_start / goal_next / update_seconds)",
+    "continuation": "constraints: []; initial_state {history, family, seed} (legacy PRIMAL initial_history / family / initial_seed)",
+    "object_interaction": "constraints: object waypoints; object block in L5 (CHOIS)"
+   },
+   "nullable": [
+    "prompt"
+   ]
+  },
+  "L3_motion": {
+   "purpose": "the unified motion every evaluator reads",
+   "required": {
+    "motion.npz": {
+     "joints": "(T, J, 3) float, finite, metres, right-handed Z-up world",
+     "joint_names": "(J,) str",
+     "fps": "scalar > 0",
+     "metadata_json": "units m, axes right-handed Z-up, native_axes, skeleton, native_joint_names"
+    }
+   },
+   "legacy_adapters": {
+    "kimodo": "case directory motion.npz with posed_joints (native Y-up SOMA77, 30 fps; biomech_sources.load)",
+    "primal": "factorial/<switch>_canonical.npz"
+   }
+  },
+  "L4_native": {
+   "purpose": "the full native representation, so that later evaluators (neck, shoulder, native-rotation distribution) can be added without re-generation",
+   "file": "native.npz (new batch); legacy locations are listed per method in method_capability.native_legacy",
+   "required": "method_capability.<method>.native_required"
+  },
+  "L5_world": {
+   "purpose": "the method's own conventions and physical quantities",
+   "file": "world.json",
+   "required": {
+    "floor_height_m": "the floor the method declares, canonical Z (paper / code basis in floor_basis)",
+    "floor_basis": "citation of the paper or code line",
+    "up_axis": "native up axis",
+    "forward_axis": "native forward axis"
+   },
+   "objects": {
+    "required_if_object": [
+     "object_id",
+     "object_mass_kg",
+     "object_mass_source"
+    ],
+    "arrays_in_motion_npz": [
+     "object_positions",
+     "object_rotations"
+    ]
+   },
+   "physics": {
+    "required_if_simulated": [
+     "contact_forces (T, B, 3) with body_names, native_physics.npz"
+    ]
+   },
+   "legacy": "the method floors of the legacy runs come from config/evalkit_floor_reference_20261107.json"
+  },
+  "L6_integrity": {
+   "purpose": "completeness and no silent replacement",
+   "file": "integrity.json",
+   "required": {
+    "sha256": "per file of L2-L5",
+    "done": "written last, after every file",
+    "failure": "status != success keeps the run directory with failure.json; a failed item is never replaced by another seed"
+   },
+   "legacy": "manifest.json status and the analysis-level motion_sha256 stand in for integrity.json"
+  }
+ },
+ "method_capability": {
+  "_values": "native: in the method output; derived: computed from other outputs (not independent information); absent; to_verify: claimed, not yet checked",
+  "ardy": {
+   "skeleton": "SOMA 27 (named)",
+   "joints": "native",
+   "global_rotations_with_twist": "native (motion.npz global_rotations)",
+   "head_orientation": "native (rotations)",
+   "hands": "absent",
+   "body_shape": "absent",
+   "objects": "absent",
+   "physics": "absent",
+   "native_required": [
+    "global_rotations"
+   ],
+   "native_legacy": {
+    "global_rotations": "motion.npz"
+   },
+   "shoulder_girdle": "to_verify (SOMA 27 clavicle rotations; no scapula)"
+  },
+  "chois": {
+   "skeleton": "SMPL-X body 22 + hand points",
+   "joints": "native",
+   "global_rotations_with_twist": "native (raw/native_prediction.npz global_rotations, 22 joints)",
+   "head_orientation": "native (rotations)",
+   "hands": "absent (hand points only)",
+   "body_shape": "to_verify",
+   "objects": "native positions / rotations; mass absent",
+   "physics": "absent",
+   "native_required": [
+    "global_rotations",
+    "object_positions",
+    "object_rotations",
+    "object_mass_kg"
+   ],
+   "native_legacy": {
+    "global_rotations": "raw/native_prediction.npz",
+    "object_positions": "motion.npz",
+    "object_rotations": "motion.npz"
+   },
+   "shoulder_girdle": "to_verify (SMPL-X collar rotations; no scapula)"
+  },
+  "closd": {
+   "skeleton": "SMPL 24 simulated bodies",
+   "joints": "native (simulation)",
+   "global_rotations_with_twist": "absent (body orientations of the simulation not saved)",
+   "head_orientation": "absent",
+   "hands": "absent",
+   "body_shape": "absent",
+   "objects": "absent",
+   "physics": "native contact forces (native_physics.npz)",
+   "native_required": [
+    "body_rotations",
+    "contact_forces"
+   ],
+   "native_legacy": {
+    "contact_forces": "native_physics.npz"
+   },
+   "shoulder_girdle": "absent"
+  },
+  "dart": {
+   "skeleton": "SMPL-X 22",
+   "joints": "native (network joints; differ from the rotation forward kinematics by 7 mm mean)",
+   "global_rotations_with_twist": "native in the new export (smplx_params.npz, utils/motiogen/dart_native.py); absent in the legacy runs",
+   "head_orientation": "native in the new export",
+   "hands": "to_verify",
+   "body_shape": "native in the new export (betas)",
+   "objects": "absent",
+   "physics": "absent",
+   "native_required": [
+    "smplx_params"
+   ],
+   "native_legacy": {},
+   "shoulder_girdle": "to_verify (SMPL-X collar rotations in the new export; no scapula)"
+  },
+  "kimodo": {
+   "skeleton": "SOMA 77",
+   "joints": "native (posed_joints)",
+   "global_rotations_with_twist": "native (global_rot_mats)",
+   "head_orientation": "native",
+   "hands": "native (SOMA77 fingers)",
+   "body_shape": "absent",
+   "objects": "absent",
+   "physics": "absent (foot_contacts predicted)",
+   "native_required": [
+    "global_rot_mats"
+   ],
+   "native_legacy": {
+    "global_rot_mats": "motion.npz"
+   },
+   "shoulder_girdle": "to_verify (SOMA77 clavicle rotations; no scapula)"
+  },
+  "motionlcm": {
+   "skeleton": "HumanML3D 22",
+   "joints": "native",
+   "global_rotations_with_twist": "to_verify (263-d features not saved; their rotation part may come from inverse kinematics of positions, which carries no twist)",
+   "head_orientation": "to_verify",
+   "hands": "absent",
+   "body_shape": "absent",
+   "objects": "absent",
+   "physics": "absent",
+   "native_required": [
+    "features_263"
+   ],
+   "native_legacy": {},
+   "shoulder_girdle": "to_verify"
+  },
+  "omnicontrol": {
+   "skeleton": "HumanML3D 22",
+   "joints": "native",
+   "global_rotations_with_twist": "to_verify (raw/features.npy 263-d; same question as MotionLCM)",
+   "head_orientation": "to_verify",
+   "hands": "absent",
+   "body_shape": "absent",
+   "objects": "absent",
+   "physics": "absent",
+   "native_required": [
+    "features_263"
+   ],
+   "native_legacy": {
+    "features_263": "raw/features.npy"
+   },
+   "shoulder_girdle": "to_verify"
+  },
+  "primal": {
+   "skeleton": "SMPL-X 22",
+   "joints": "native",
+   "global_rotations_with_twist": "to_verify (factorial/<switch>.npz pose (1, T, 69); the 2026-11-08 batch note says SMPL-X parameters are not saved: layout of the 69 values unverified)",
+   "head_orientation": "to_verify",
+   "hands": "absent",
+   "body_shape": "to_verify",
+   "objects": "absent",
+   "physics": "absent",
+   "native_required": [
+    "smplx_params"
+   ],
+   "native_legacy": {
+    "pose_69": "factorial/<switch>.npz"
+   },
+   "shoulder_girdle": "to_verify"
+  },
+  "_keys": [
+   "joints",
+   "global_rotations_with_twist",
+   "head_orientation",
+   "hands",
+   "body_shape",
+   "shoulder_girdle",
+   "objects",
+   "physics"
+  ]
+ },
+ "evaluator_requirements": {
+  "_values": "needs: capability keys that must be native; conditional: {capability: what else is needed when the method has it}; L2 / L5 items are contract layers every new-batch run must carry",
+  "source_diagnostics": {
+   "needs": [
+    "joints"
+   ],
+   "layers": [
+    "L5 floor_height_m"
+   ],
+   "status": "active",
+   "note": "bone length, foot height against the method floor, penetration / hover depth, sliding; on the raw output"
+  },
+  "native_metrics": {
+   "needs": [
+    "joints"
+   ],
+   "layers": [
+    "L2 constraints"
+   ],
+   "status": "active"
+  },
+  "evalkit_residual_kinematic": {
+   "needs": [
+    "joints"
+   ],
+   "layers": [
+    "L5 floor_height_m"
+   ],
+   "status": "active",
+   "note": "heel / toe or ankle / foot named; mass 75 kg unless the task declares one (recorded)"
+  },
+  "evalkit_ergo": {
+   "needs": [
+    "joints"
+   ],
+   "layers": [
+    "L2 prompt"
+   ],
+   "status": "active",
+   "note": "neck / shoulder source posture from named joints; skeletons without them score the source inputs as unknown (recorded)"
+  },
+  "evalkit_leg_muscle": {
+   "needs": [
+    "joints"
+   ],
+   "status": "active"
+  },
+  "evalkit_lumbar": {
+   "needs": [
+    "joints"
+   ],
+   "conditional": {
+    "objects": "object_mass_kg (absent: lumbar reported with the held load not modelled)"
+   },
+   "status": "active"
+  },
+  "neck": {
+   "needs": [
+    "global_rotations_with_twist",
+    "head_orientation"
+   ],
+   "status": "reserved (user 2026-11-08 15:16: other muscles kept as reserve); data stored now, evaluator added later; neck muscle model (HYOID) not integrated"
+  },
+  "shoulder": {
+   "needs": [
+    "global_rotations_with_twist",
+    "shoulder_girdle"
+   ],
+   "status": "reserved; shoulder muscle model not downloaded"
+  },
+  "distribution_t2m": {
+   "needs": [
+    "joints"
+   ],
+   "status": "active",
+   "note": "HumanML3D 22 joint mapping"
+  },
+  "distribution_tmr_soma": {
+   "needs": [
+    "joints"
+   ],
+   "status": "active",
+   "note": "SOMA77 conversion from joints"
+  },
+  "distribution_native_rotation": {
+   "needs": [
+    "global_rotations_with_twist"
+   ],
+   "status": "active for DART (flowmdm_babel native path)"
+  }
+ },
+ "measurability_rule": "an evaluator is measurable for a method if every needed capability is native (or derived where the requirement allows); to_verify counts as not measurable until verified; the matrix is written by motion_contract_check.py matrix and frozen with this file",
+ "conventions_not_derived": [
+  "target_zone labels",
+  "75 kg default mass"
+ ]
+}
