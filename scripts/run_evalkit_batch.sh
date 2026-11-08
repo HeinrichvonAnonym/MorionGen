@@ -11,8 +11,10 @@
 #   self    pass 1 only residual and kinematic (the self floor needs its frames), pass 2 every dimension: the primary
 #           loads first; rerunning later with both adds the method-floor loads to the pass-1 rows without refitting
 #   method  pass 1 every dimension, no pass 2 (method-floor loads only, descriptive)
-# --lumbar-per-cell N: upper (lumbar) only on the first N seeds of every method x condition x task x text condition;
-#   rerunning with a larger N (0: every row) adds it to the newly sampled rows only.
+# --lumbar-per-cell N: upper (lumbar) only on the first N seeds of every method x condition x task x text condition x
+#   split; rerunning with a larger N (0: every row) adds it to the newly sampled rows only.
+# --lumbar-defer-split S: sampled rows whose split is in S (comma list; default deck_recheck, the reused Kimodo pairs)
+#   get their lumbar last: both passes run without it, then a second round adds only their upper (no refit).
 # --offset-reference: the frozen per-method offset reference (evalkit_batch.py offset-reference); without it the
 #   reference is the manifest median, which moves when rows are streamed in and re-evaluates the method's rows.
 # --no-distribution: skip the distribution smoke (fill-in reruns; per-task batches, see the protocol)
@@ -21,7 +23,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OSIM_PY="${OSIM_PY:-$HOME/.local/share/opensim-api/bin/python}"
 TORCH_PY="${TORCH_PY:-$("$OSIM_PY" -c "import sys; sys.path.insert(0, '$ROOT/utils'); from motiogen.config import data_root, load_config; print(data_root(load_config())/'envs/motiogen-motionlcm/bin/python')")}"
-MANIFEST="" OUT="" WORKERS=6 DIMS=residual,ergo,muscle,kinematic ARMS=both LUMBAR="" DISTRIBUTION=1 OFFREF=() NECK=1
+MANIFEST="" OUT="" WORKERS=6 DIMS=residual,ergo,muscle,kinematic ARMS=both LUMBAR="" LUMBAR_DEFER=deck_recheck DISTRIBUTION=1 OFFREF=() NECK=1
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --manifest) MANIFEST="$2"; shift 2 ;;
@@ -30,6 +32,7 @@ while [[ $# -gt 0 ]]; do
     --dims) DIMS="$2"; shift 2 ;;
     --arms) ARMS="$2"; shift 2 ;;
     --lumbar-per-cell) LUMBAR="$2"; shift 2 ;;
+    --lumbar-defer-split) LUMBAR_DEFER="$2"; shift 2 ;;
     --no-distribution) DISTRIBUTION=0; shift ;;
     --offset-reference) OFFREF=(--offset-reference "$2"); shift 2 ;;
     --no-neck-rotation) NECK=0; shift ;;
@@ -46,18 +49,28 @@ fi
 mkdir -p "$OUT/distribution"
 cd "$ROOT"
 B=(nice -n "${NICE:-19}" "$OSIM_PY" python/scripts/evalkit_batch.py)
+passes() {
+  "${B[@]}" run --manifest "$1" --out "$OUT/rows" --workers "$WORKERS" --dims "$PASS1" "${OFFREF[@]}"
+  [[ "$NECK" == 1 && ",$PASS1," == *,ergo,* ]] && "${B[@]}" neck-rotation --manifest "$1" --rows "$OUT/rows" --workers "$WORKERS"
+  [[ "$ARMS" == method ]] && return 0
+  "${B[@]}" manifest-self-floor --manifest "$1" --rows "$OUT/rows" --out "$OUT/manifest_selffloor.json"
+  "${B[@]}" run --manifest "$OUT/manifest_selffloor.json" --out "$OUT/rows_selffloor" --workers "$WORKERS" --dims "$DIMS"
+  [[ "$NECK" == 1 && ",$DIMS," == *,ergo,* ]] && "${B[@]}" neck-rotation --manifest "$OUT/manifest_selffloor.json" --rows "$OUT/rows_selffloor" --workers "$WORKERS"
+  return 0
+}
 if [[ -n "$LUMBAR" ]]; then
+  "${B[@]}" manifest-lumbar-sample --manifest "$MANIFEST" --per-cell "$LUMBAR" --defer-split "$LUMBAR_DEFER" --out "$OUT/manifest_lumbar_first.json"
+  passes "$OUT/manifest_lumbar_first.json"
   "${B[@]}" manifest-lumbar-sample --manifest "$MANIFEST" --per-cell "$LUMBAR" --out "$OUT/manifest_lumbar.json"
   MANIFEST="$OUT/manifest_lumbar.json"
+  DEFERRED="$("$OSIM_PY" -c "import json, sys; print(json.load(open(sys.argv[1]))['lumbar_subsample']['deferred'])" "$OUT/manifest_lumbar_first.json")"
+  [[ "$DEFERRED" == 0 ]] || passes "$MANIFEST"
+else
+  passes "$MANIFEST"
 fi
-"${B[@]}" run --manifest "$MANIFEST" --out "$OUT/rows" --workers "$WORKERS" --dims "$PASS1" "${OFFREF[@]}"
-[[ "$NECK" == 1 && ",$PASS1," == *,ergo,* ]] && "${B[@]}" neck-rotation --manifest "$MANIFEST" --rows "$OUT/rows" --workers "$WORKERS"
 if [[ "$ARMS" == method ]]; then
   "${B[@]}" check --manifest "$MANIFEST" --rows "$OUT/rows" --out "$OUT/check.json"
 else
-  "${B[@]}" manifest-self-floor --manifest "$MANIFEST" --rows "$OUT/rows" --out "$OUT/manifest_selffloor.json"
-  "${B[@]}" run --manifest "$OUT/manifest_selffloor.json" --out "$OUT/rows_selffloor" --workers "$WORKERS" --dims "$DIMS"
-  [[ "$NECK" == 1 && ",$DIMS," == *,ergo,* ]] && "${B[@]}" neck-rotation --manifest "$OUT/manifest_selffloor.json" --rows "$OUT/rows_selffloor" --workers "$WORKERS"
   "${B[@]}" check --manifest "$MANIFEST" --rows "$OUT/rows" --self-manifest "$OUT/manifest_selffloor.json" --self-rows "$OUT/rows_selffloor" \
     --out "$OUT/check.json"
 fi

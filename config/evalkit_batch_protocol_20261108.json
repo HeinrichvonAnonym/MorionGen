@@ -17,7 +17,8 @@
   "2026-11-08 after 20:59 neck reading": "RULA stays on the joint-line neck reading (primary); for methods whose output carries neck and head rotations the batch also reports RULA with the rotation reading as a sensitivity (neck supplement, config/evalkit_neck_supp_20261108.json: CHOIS / Kimodo median B - A -12 deg, RULA class changed on 17% / 25% of frames; ARDY / PRIMAL 4% / 8%)",
   "2026-11-08 23:00 section 14 item 4": "contact tolerance 2 / 3 cm out of the main batch; at most a descriptive check on a small subsample (settings_sensitivity.contact_tolerance_2_3cm)",
   "2026-11-08 23:00 section 14 item 5": "the post-hoc correction group is a comparator, not a tool correction (later_comparators.post_hoc_correction)",
-  "2026-11-08 23:00 section 14 item 6": "re-time lumbar on an idle CPU, then choose 1 or 2 seeds per stratum (lumbar_subsample.timing, .proposal)"
+  "2026-11-08 23:00 section 14 item 6": "re-time lumbar on an idle CPU, then choose 1 or 2 seeds per stratum (lumbar_subsample.timing, .proposal)",
+  "2026-11-09 00:33-00:42 lumbar": "1 seed per stratum; the development / held-out split enters the stratum (one from each); Latin-square paraphrase rotation (task i, seed j: paraphrase (i + j) mod 5) goes into the inference registration; wall-clock plan 33 h; the reused Kimodo rows' lumbar runs last"
  },
  "rows": {
   "manifest_fields": {
@@ -84,7 +85,7 @@
    "result": "method_floor_* loads only; check.json load_arm says so"
   },
   "fill_in": "self then both: pass 1 rows gain ergo and muscle from their cached fit (evalkit.run.add_dims, no refit; verified bit-identical to a full evaluation on smoke rows), pass 2 rows are skipped",
-  "command": "scripts/run_evalkit_batch.sh --manifest M --out DIR --dims residual,ergo,muscle,kinematic[,upper] --arms self|both|method [--lumbar-per-cell N] [--offset-reference FROZEN.json] [--no-distribution] [--no-neck-rotation]",
+  "command": "scripts/run_evalkit_batch.sh --manifest M --out DIR --dims residual,ergo,muscle,kinematic[,upper] --arms self|both|method [--lumbar-per-cell N] [--lumbar-defer-split S] [--offset-reference FROZEN.json] [--no-distribution] [--no-neck-rotation]",
   "planned_order": "self first (primary results), both as the supplement; 约定，未经推演 (cost driven, user 15:16)"
  },
  "dimensions": {
@@ -122,10 +123,13 @@
   "cost_note": "约定，未经推演: per-motion-second costs are smoke estimates under contention (SECONDS_PER_MOTION_SECOND in evalkit_batch.py)"
  },
  "lumbar_subsample": {
-  "stratum": "method x condition x task x text_condition",
-  "within_stratum": "the first --lumbar-per-cell seeds in ascending seed order (deterministic; seeds are generator seeds, unrelated to the outcome)",
+  "stratum": "method x condition x task x text_condition x split (development / held-out; user 2026-11-09, answer received between 00:33 and 00:42: one row from each split)",
+  "within_stratum": "the first --lumbar-per-cell seeds in ascending seed order (deterministic; seeds are generator seeds, unrelated to the outcome); with the Latin-square paraphrase rotation of the inference registration (task i, seed j: paraphrase (i + j) mod 5, user 2026-11-09, answer received between 00:33 and 00:42) the smallest seed covers the 5 paraphrases evenly across tasks",
   "default_per_cell": 1,
-  "per_cell_note": "约定，未经推演 (user: 1-2 seeds); choice pending the user after the idle-CPU timing (proposal below)",
+  "per_cell_note": "约定，未经推演 (user: 1-2 seeds); user 2026-11-09, answer received between 00:33 and 00:42 after the idle-CPU timing: 1 seed per stratum",
+  "deferred": "the reused Kimodo pairs (split value deck_recheck, analysis plan split_use.kimodo_reuse) get their lumbar last: both passes run without it, then a second round adds only their upper, no refit (run_evalkit_batch.sh --lumbar-defer-split, default deck_recheck; user 2026-11-09, answer received between 00:33 and 00:42)",
+  "wall_clock_plan": "33 h (user 2026-11-09, answer received between 00:33 and 00:42: the contended-cost figure of 1 seed per stratum without the split)",
+  "split_row_count": "the split enters the stratum, so the row count depends on the split design: 1552 rows if no (method, condition, task, text_condition) cell holds both development and held-out rows (e.g. held-out by whole tasks); 2272 rows if every cell holds both (e.g. held-out by paraphrase or seed under the Latin square), i.e. 19.5 h idle / 59.1 h at the smoke contention cost, above the 33 h plan; to be reconciled with the user when the split is registered",
   "timing": {
    "when": "2026-11-09 00:08-00:31, CPU about 88% idle (load average 2.1-2.8 on 20 cores), no other compute job",
    "how": "python/scripts/lumbar_timing.py: smoke8x5 rows copied without their upper outputs, run.add_upper in one process, one row at a time, nice 19; lumbar metrics equal the stored ones (25 of 25 per row)",

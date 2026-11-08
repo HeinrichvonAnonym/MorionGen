@@ -323,29 +323,34 @@ def positive_share(f, sel, depth):
 
 def lumbar_cell(row):
     """Stratum of the lumbar subsample (config/evalkit_batch_protocol_20261108.json, lumbar_subsample): method x condition
-    x task x text condition; the seed orders rows inside it. task / seed from the row fields (output contract L2) or
-    the row id (_t<task>_s<seed>); a row with neither (Kimodo cases: one sample per case) is its own stratum."""
+    x task x text condition x split (development / held-out); the seed orders rows inside it. task / seed from the row
+    fields (output contract L2) or the row id (_t<task>_s<seed>); a row with neither (Kimodo cases: one sample per case)
+    is its own stratum."""
     m = TASK_SEED.search(row['id'])
     task = row.get('task_id', int(m.group(1)) if m else row['id'])
     seed = row.get('seed', m and int(m.group(2)))
-    return (row['method'], json.dumps(row.get('condition'), sort_keys=True), task, row.get('text_condition')), seed
+    return (row['method'], json.dumps(row.get('condition'), sort_keys=True), task, row.get('text_condition'), row.get('split')), seed
 
 
 def manifest_lumbar_sample(args):
     """Same rows, row['upper'] True on the first --per-cell seeds of every stratum and False elsewhere (0: every row).
-    Raising --per-cell later and rerunning adds upper to the newly sampled rows only (batch key, ADDABLE)."""
+    Raising --per-cell later and rerunning adds upper to the newly sampled rows only (batch key, ADDABLE).
+    --defer-split: sampled rows of these splits get upper False here; a later run without it adds their upper last."""
     src = json.loads(Path(args.manifest).read_text())
     cells = {}
     for r in src['rows']:
         c, seed = lumbar_cell(r)
         cells.setdefault(c, []).append((seed is None, seed, r['id']))
     chosen = {i for v in cells.values() for _, _, i in sorted(v)[:args.per_cell or None]}
-    rows = [{**r, 'upper': r['id'] in chosen} for r in src['rows']]
+    defer = set(filter(None, args.defer_split.split(',')))
+    deferred = {r['id'] for r in src['rows'] if r['id'] in chosen and r.get('split') in defer}
+    rows = [{**r, 'upper': r['id'] in chosen and r['id'] not in deferred} for r in src['rows']]
     Path(args.out).write_text(json.dumps({**{k: v for k, v in src.items() if k != 'rows'}, 'from': str(args.manifest),
                                           'lumbar_subsample': {'per_cell': args.per_cell, 'cells': len(cells), 'rows': len(chosen),
+                                                               'deferred': len(deferred), 'defer_split': sorted(defer),
                                                                'created': time.strftime('%Y-%m-%d %H:%M')},
                                           'rows': rows}, indent=1))
-    print(f'{len(chosen)}/{len(rows)} rows sampled over {len(cells)} cells -> {args.out}')
+    print(f'{len(chosen)-len(deferred)}/{len(rows)} rows sampled over {len(cells)} cells, {len(deferred)} deferred -> {args.out}')
 
 
 def manifest_self_floor(args):
@@ -641,6 +646,7 @@ def main():
     ls = sub.add_parser('manifest-lumbar-sample', help='mark the lumbar (upper) subsample per method x condition x task x text')
     ls.add_argument('--manifest', required=True); ls.add_argument('--out', required=True)
     ls.add_argument('--per-cell', type=int, default=1, help='seeds per stratum; 0: every row')
+    ls.add_argument('--defer-split', default='', help='comma-separated split values whose sampled rows get upper in a final fill-in')
     u = sub.add_parser('manifest-unique-c0'); u.add_argument('--out', required=True)
     n = sub.add_parser('neck-rotation', help='RULA with the rotation neck reading on evaluated rows (sensitivity)')
     n.add_argument('--manifest', required=True); n.add_argument('--rows', required=True); n.add_argument('--workers', type=int, default=6)
