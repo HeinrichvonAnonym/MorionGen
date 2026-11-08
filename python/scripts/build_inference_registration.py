@@ -181,12 +181,17 @@ def main():
                                             'covers no risk-zone reaching and has no text factor; STRIKE_PUNCH (never run in the native '
                                             'matrix) is a later extension that needs a new entry point, a smoke test and the input-reaches-'
                                             'the-model check; design section 2 revised by the user accordingly',
-            '2026-11-09 03:26 clock': 'paused clock only; registered: 953 / 960 identical paused-realtime pairs, the 7 CLoSD pairs whose '
+            '2026-11-09 clock (answer received between 03:21 and 03:35)': 'paused clock only; registered: 953 / 960 identical paused-realtime pairs, the 7 CLoSD pairs whose '
                                       'goal frame varied with machine speed, the reason (realtime input drifts with CPU contention in a '
                                       'parallel batch and breaks the pairing), the event points under the paused clock; native-matrix '
                                       'realtime results are a reproduction-subset reference only; realtime latency is a later separately '
                                       'registered experiment; PRIMAL added to the list of methods the matrix ran with a realtime clock',
-            '2026-11-09 03:21 overhead front': 'option A: the overhead zone is defined by world height (1.683 m) and upper-arm elevation '
+            '2026-11-09 official batch (answer received between 03:36 and 03:57)': 'registered separately; the scale rule (official_evaluation_batch.scale_rule) and the FID '
+                                               'interval are frozen now, the separate registration fills in only measured timings and '
+                                               'what follows from them; same N for all methods and groups (within-method contrasts; '
+                                               'later comparison with the user\'s method at the same N; simple rule), a method with fewer '
+                                               'windows uses all of them, the others are not reduced; budget about 75 GPU h (约定)',
+            '2026-11-09 overhead front (answer received between 03:17 and 03:21)': 'option A: the overhead zone is defined by world height (1.683 m) and upper-arm elevation '
                                                'against the vertical (>= 91.2 deg); in front the elevation relative to the thorax is not '
                                                'guaranteed above 90 deg and can be as low as 67.8 deg with the largest backward lean; the '
                                                'analysis plan Q3 per-zone results add, for the overhead zone, the distributions of the '
@@ -198,7 +203,7 @@ def main():
                            for m, v in tasks['methods'].items()},
             'kimodo': tasks['kimodo'],
             'native_matrix': 'tasks 0-11 of every method are the native matrix tasks (reproduction subset, design section 2)',
-            'clock': {'rule': 'paused clock only (user 2026-11-09 03:26); the native matrix also ran DART, CLoSD, ARDY and PRIMAL with a '
+            'clock': {'rule': 'paused clock only (user 2026-11-09, answer received between 03:21 and 03:35); the native matrix also ran DART, CLoSD, ARDY and PRIMAL with a '
                               'realtime clock, the batch does not',
                       'evidence': 'native matrix clock_pairs (20261024_native_matrix_analysis/analysis.json): paused and realtime runs of the '
                                   'same method, task, seed and condition have identical coordinates in 953 of 960 pairs (ARDY 240/240, '
@@ -233,7 +238,7 @@ def main():
             'overhead': {'definition': 'the overhead zone is defined by world height (the height below) and by upper-arm elevation against '
                                        'the vertical (>= 91.2 deg in front, >= 105.3 deg at the side, elevation_check); in front it does not '
                                        'guarantee an elevation above 90 deg relative to the thorax: with the largest backward trunk lean it '
-                                       'can be as low as 67.8 deg (user 2026-11-09 03:21); the strategy actually used is reported in the '
+                                       'can be as low as 67.8 deg (user 2026-11-09, answer received between 03:17 and 03:21); the strategy actually used is reported in the '
                                        'analysis plan (Q3_ergonomics.overhead_strategy)',
                          'rule': overhead['overhead_height']['rule'], 'height_m': overhead['overhead_height']['height_m'],
                          'argmin': overhead['overhead_height']['argmin'], 'design_value_m': 1.95,
@@ -282,11 +287,66 @@ def main():
                   'counts': {m: {k: v[k] for k in ('identical_seen', 'reuse_candidates', 'to_generate')} for m, v in counts.items()},
                   'kimodo': tasks['kimodo']},
         'official_evaluation_batch': {
+            'registration': 'split (user 2026-11-09, answer received between 03:36 and 03:57): this freeze holds the protocols, evaluators, scale rule and FID interval; '
+                            'a separate registration, after the generation entry points are built and pass a smoke test and the '
+                            'input-reaches-the-model check, and before any official-batch result is seen, fills in only the measured '
+                            'timings, the available window counts and the numbers computed from them by the rule below. The batch uses '
+                            'official test-set inputs and shares no row with the 24-task batch, whose freeze and generation do not wait for it',
+            'entry_points': 'none yet: the method entry points take one scene; official-protocol batch generation (HumanML3D test texts '
+                            'with hints from the matching motion, OMOMO windows, BABEL texts, CLoSD text-to-motion) is still to be built',
             'protocols': {'motionlcm': 'HumanML3D test texts, spatial hints from the matching real motion', 'omnicontrol': 'same as MotionLCM',
-                          'chois': 'OMOMO', 'dart': 'BABEL', 'kimodo': 'its own evaluator', 'closd': 'HumanML3D'},
-            'per_switch_group': 'at least 512 windows per switch group; FID on all samples',
-            'evalkit_subsample': '200 per group, stratified (约定，未经推演)',
-            'scale': 'pending user, after the timing below (design section 5); OmniControl may run 2 groups only (design section 12)'},
+                          'chois': 'OMOMO', 'dart': 'BABEL', 'kimodo': 'its own evaluator', 'closd': 'HumanML3D (text-to-motion; its native '
+                          'REACH state used in the main batch has a fixed text, so this is a different path of the same release)'},
+            'evaluators': {
+                'motionlcm': 'HumanML3D text-motion-matching evaluator (Guo et al. 2022), the checkpoint shipped with MotionLCM '
+                             '(assets motionlcm/t2m/t2m/text_mot_match/model/finest.tar, sha256 881e45bea6fb84b1...); evalkit T2M',
+                'omnicontrol': 'the same evaluator and checkpoint as MotionLCM; OmniControl\'s own release copy is not among the assets, '
+                               'the identity of its weights with this copy is checked when the entry point is built',
+                'closd': 'the same evaluator, CLoSD\'s release copy (assets closd-official/evaluators/t2m/text_mot_match/model/finest.tar, '
+                         'sha256 43e43d198f07b7e0...; a different file from MotionLCM\'s copy, weights not compared)',
+                'chois': 'CHOIS-T2M-official: the OMOMO-trained text-motion evaluator of the CHOIS release (chois_release/t2m_eval, '
+                         'final_evaluations.py); evalkit OMOMO',
+                'dart': 'FlowMDM BABEL text-motion evaluator vendored by DART (assets dart-official/flowmdm), ground truth BABEL_SingleEval '
+                        'val; evalkit self-check: FID rises monotonically with frame shuffling but saturates under joint noise (21.7 at '
+                        '2 cm, 24.4 at 5 cm, 23.5 at 10 cm), so the noise-monotone check failed '
+                        '(develop_logs/test_runs/20261107_evalkit/distribution/flowmdm_babel/selfcheck.json)',
+                'kimodo': 'TMR-SOMA-RP-v1 (kimodo/metrics/tmr.py); evalkit TMR-SOMA',
+                'source': 'utils/motiogen/evalkit/distribution.py REGISTRY / T2M_CHECKPOINTS, config/evaluation.json'},
+            'not_included': {'ardy': 'no published offline distribution benchmark (config/evaluation.json ardy.reason)',
+                             'primal': 'not in design section 5: its native task is an unconditioned continuation without text, so a '
+                                       'text-motion evaluator has no matching input; no entry in config/evaluation.json'},
+            'open_for_the_separate_registration': 'Kimodo has no switch arm in this study (the main batch reuses E4): whether a Kimodo '
+                                                  'official run enters, and with which groups, is decided there',
+            'scale_rule': {
+                'rule': 'one N for every method and every switch group of a method: the largest N with sum over groups g of '
+                        't_g x min(A_m, N) <= B, where t_g is the measured GPU seconds per window of group g (batch sampling as the '
+                        'official script does it), A_m the number of official test windows available to method m and B the budget; '
+                        'lower bound 512: if N < 512, OmniControl is reduced to 2 groups (realism 1, spatial 0 / 1: the primary '
+                        'contrast) and N recomputed; if still N < 512, N = 512 and the excess over B is reported to the user before '
+                        'generation. A method with A_m < N uses all its windows and says so; the other methods are not reduced',
+                'budget': 'B = 75 GPU h (约定; the user may change it before the separate registration)',
+                'windows': 'every group of a method uses the same windows and the same number; when A_m > N they are drawn without '
+                           'replacement from the official test-set list in its fixed order with seed 20261109 (约定); otherwise all',
+                'reason': 'the registered contrasts are within a method, so the groups of a method need the same windows and the same N; '
+                          'one N for all methods so that a later comparison with the user\'s method uses the same N, and the rule stays '
+                          'simple (user 2026-11-09)',
+                'known_now': 'OMOMO has 480 test windows (evalkit self-check ground truth) < 512, so CHOIS uses all 480; its embeddings '
+                             'are 512-dimensional and the official FID is undefined (singular covariance) on subsets of 256 or fewer',
+                'reference_counts_from_self_checks': {'HumanML3D T2M': 4648, 'OMOMO': 480, 'BABEL FlowMDM': 7862, 'TMR-SOMA': 990,
+                                                      'note': 'ground-truth embeddings of the evalkit self-checks; A_m is read from '
+                                                              'each official test loader in the separate registration'}},
+            'fid_interval': {
+                'effect': 'per method and registered contrast: FID(arm 1) - FID(arm 0), each against the ground truth of the same windows',
+                'interval': '95% percentile bootstrap, 10000 resamples, seed 20261108 (as the analysis plan; 约定): each resample draws '
+                            'window indices with replacement once and applies them to both arms and to the ground-truth reference '
+                            '(windows are paired with their ground truth in every protocol here)',
+                'evidence': 'develop_logs/test_runs/20261109_inference_premises/fid_bootstrap_check.json (python/scripts/'
+                            'fid_bootstrap_check.py; self-check embeddings, 2 cm noise standing in for a generated set, 200 resamples): '
+                            'no resample failed; on OMOMO (N 480 < 512 dimensions) the paired resample keeps the median at 0.483 '
+                            '(0.473 without resampling, 95% 0.41-0.56) while a fixed reference gives 0.689 (0.37-1.26) and an '
+                            'independently resampled one 0.858 (0.38-1.70); on T2M (N 2324) the variants agree (30.08 vs 30.05)'},
+            'per_switch_group': 'at least 512 windows per switch group (lower bound of the rule; CHOIS: all 480); FID on all samples',
+            'evalkit_subsample': '200 per group, stratified (约定，未经推演)'},
         'premise_checks': {
             '1_task_valid_for_a_human': 'reach_geometry.reachability / overhead / origin_sensitivity: nominal body only, computed once',
             '2_input_reaches_the_model': {
@@ -324,8 +384,9 @@ def main():
         'conventions_not_derived': ['risk heights 0.15 / 0.5 m and the 5 cm overhead margin', '0.8 x arm length', 'task origin: hip-centre midpoint '
                                     'of the nominal body for the pelvis joint', 'paraphrase templates and zone phrases', 'held-out positions '
                                     '(interleaved choice)', 'HumanML3D standing-frame thresholds and scaling choices',
-                                    '200-row evalkit subsample', 'compute estimate'],
-        'pending_user': ['official evaluation batch scale', 'held_out_fallback (analysis plan)'],
+                                    '200-row evalkit subsample', 'compute estimate', 'official batch budget 75 GPU h, window draw seed 20261109, '
+                                    'paired FID resampling of the reference'],
+        'pending_user': ['held_out_fallback (analysis plan)'],
     }
     OUT.write_text(json.dumps(reg, indent=1, ensure_ascii=False)+'\n')
     print(json.dumps({k: reg[k] for k in ('compute_estimate',)}, indent=1)[:3000])
