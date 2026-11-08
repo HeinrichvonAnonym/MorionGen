@@ -101,7 +101,11 @@ def main():
             '2026-11-09 CLoSD entry': 'patch closd_native.py with outputs only (rotations_xyzw, dof_positions in native_physics.npz); before / '
                                       'after runs per execution context with the same seed must give bit-identical joints, also against the '
                                       '10-24 archive; rotations by the bone-vector method; committed separately (ccb50a3; verified, contract '
-                                      'method_capability.closd.smoke)'},
+                                      'method_capability.closd.smoke)',
+            '2026-11-09 03:07 CLoSD tasks': 'CLoSD native REACH is a root-goal task with fixed text: it keeps the 8 directions x 3 distances, '
+                                            'covers no risk-zone reaching and has no text factor; STRIKE_PUNCH (never run in the native '
+                                            'matrix) is a later extension that needs a new entry point, a smoke test and the input-reaches-'
+                                            'the-model check; design section 2 revised by the user accordingly'},
         'tasks': {
             'per_method': {m: {'family': v['family'], 'tasks': len(v['tasks']), 'conditions': v['conditions'],
                                'held_out_positions': v['held_out_positions'], **({'no_held_out_position': v['no_held_out_position']} if 'no_held_out_position' in v else {})}
@@ -112,7 +116,8 @@ def main():
             'closd': 'CLoSD runs its native REACH state, a root-goal task: the goal is a ground point and the text is the state-machine constant '
                      '"A person is walking." (baselines/CLoSD closd/env/tasks/closd_task.py lines 34-37); it gets 8 directions x 3 distances like '
                      'DART and no risk-zone hand targets. Its only hand-target state is STRIKE_PUNCH (wrist target 1-1.5 m away, text "A person is '
-                     'punching with the * hand.", same file lines 42-45); hand targets through it would be a later extension, not this batch',
+                     'punching with the * hand.", same file lines 42-45), never run in the native matrix: a later extension with a new entry '
+                     'point, a smoke test and the input-reaches-the-model check, not this batch (user 2026-11-09 03:07)',
         },
         'reach_geometry': {
             'frame': tasks['frames']['reach'],
@@ -190,9 +195,7 @@ def main():
                                     'of the nominal body for the pelvis joint', 'paraphrase templates and zone phrases', 'held-out positions '
                                     '(interleaved choice)', 'paused clock only', 'HumanML3D standing-frame thresholds and scaling choices',
                                     '200-row evalkit subsample', 'compute estimate'],
-        'pending_user': [                         'CLoSD runs root-goal tasks (8 directions x 3 distances), not risk-zone reaching, although design section 2 lists it '
-                         'among the reach methods (tasks.closd)',
-                         'CHOIS and ARDY have no held-out position (their added windows / all 8 directions were already run in V2 / M0) and '
+        'pending_user': ['CHOIS and ARDY have no held-out position (their added windows / all 8 directions were already run in V2 / M0) and '
                          'are held out only through seed 24',
                          'overhead front: relative to the thorax the upper arm can stay below 90 deg (reach_geometry.elevation_check)',
                          'paused clock only', 'official evaluation batch scale', 'held_out_fallback (analysis plan)'],

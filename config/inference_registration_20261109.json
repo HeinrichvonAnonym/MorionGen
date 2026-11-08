@@ -1,6 +1,6 @@
 {
  "version": "inference-registration-draft-1",
- "created": "2026-11-09 03:07",
+ "created": "2026-11-09 03:08",
  "status": "draft; frozen together with config/motion_output_contract_20261108.json, config/evalkit_batch_protocol_20261108.json and config/analysis_plan_20261108.json after user review (design section 14, plan item 5); no batch generation before the freeze",
  "builds_on": [
   "develop_logs/notes/20261108_batch_design_decisions.md sections 2, 3, 5, 14",
@@ -17,14 +17,15 @@
   },
   "registration_generator": {
    "path": "python/scripts/build_inference_registration.py",
-   "sha256": "357c11b050c196acd167715048ba6612da85c654eb5847b322c18499ac811e9f"
+   "sha256": "c10882d7645ad6684786b8c4d9c8b58b00df9ddfa77548990e843403374c0451"
   }
  },
  "user_decisions": {
   "2026-11-08 23:00 design section 14": "sections 2, 3, 5 agreed; development / held-out split over target position, paraphrase and seed; baseline held-out results viewed once; only three premise checks, none about method success",
   "2026-11-09 01:13-01:28 split": "nested Latin square for the paraphrases (config/evalkit_batch_protocol_20261108.json user_decisions)",
   "2026-11-09 overhead height": "option A with two changes: the overhead limit is also computed for the HumanML3D reference skeleton (the preprocessing target skeleton, no method output) by the same standard (feet flat, no step, 0.8 x arm length horizontally); overhead height = min of the four limits (Rajagopal and HumanML3D x front and side90) - 5 cm (约定), one height for both directions; both bodies recorded; nominal upper-arm elevation at that height checked to stay above 90 degrees (result: reach_geometry.elevation_check)",
-  "2026-11-09 CLoSD entry": "patch closd_native.py with outputs only (rotations_xyzw, dof_positions in native_physics.npz); before / after runs per execution context with the same seed must give bit-identical joints, also against the 10-24 archive; rotations by the bone-vector method; committed separately (ccb50a3; verified, contract method_capability.closd.smoke)"
+  "2026-11-09 CLoSD entry": "patch closd_native.py with outputs only (rotations_xyzw, dof_positions in native_physics.npz); before / after runs per execution context with the same seed must give bit-identical joints, also against the 10-24 archive; rotations by the bone-vector method; committed separately (ccb50a3; verified, contract method_capability.closd.smoke)",
+  "2026-11-09 03:07 CLoSD tasks": "CLoSD native REACH is a root-goal task with fixed text: it keeps the 8 directions x 3 distances, covers no risk-zone reaching and has no text factor; STRIKE_PUNCH (never run in the native matrix) is a later extension that needs a new entry point, a smoke test and the input-reaches-the-model check; design section 2 revised by the user accordingly"
  },
  "tasks": {
   "per_method": {
@@ -211,7 +212,7 @@
   },
   "native_matrix": "tasks 0-11 of every method are the native matrix tasks (reproduction subset, design section 2)",
   "clock": "paused only (约定，未经推演): the native matrix also ran DART, CLoSD and ARDY with a realtime clock; the batch does not",
-  "closd": "CLoSD runs its native REACH state, a root-goal task: the goal is a ground point and the text is the state-machine constant \"A person is walking.\" (baselines/CLoSD closd/env/tasks/closd_task.py lines 34-37); it gets 8 directions x 3 distances like DART and no risk-zone hand targets. Its only hand-target state is STRIKE_PUNCH (wrist target 1-1.5 m away, text \"A person is punching with the * hand.\", same file lines 42-45); hand targets through it would be a later extension, not this batch"
+  "closd": "CLoSD runs its native REACH state, a root-goal task: the goal is a ground point and the text is the state-machine constant \"A person is walking.\" (baselines/CLoSD closd/env/tasks/closd_task.py lines 34-37); it gets 8 directions x 3 distances like DART and no risk-zone hand targets. Its only hand-target state is STRIKE_PUNCH (wrist target 1-1.5 m away, text \"A person is punching with the * hand.\", same file lines 42-45), never run in the native matrix: a later extension with a new entry point, a smoke test and the input-reaches-the-model check, not this batch (user 2026-11-09 03:07)"
  },
  "reach_geometry": {
   "frame": "position_m: report frame, Z up, metres; the body faces -Y and its right side is -X at frame 0 (utils/motiogen/task_geometry.py); origin: the method's initial pelvis joint projected on the floor. target_body_m: [forward, right, up] in the same frame. The nominal Rajagopal body stands for the pelvis joint with its hip-centre midpoint (convention, not derived; its pelvis origin is 5.6 cm ahead of that midpoint); in HumanML3D standing frames the pelvis joint is 1.2 cm ahead of the hip midpoint, so a method receives each target 1.2 cm further forward relative to its hips than the nominal check assumed (sensitivity: reachability_origin_shift_+0.012.json)",
@@ -792,7 +793,6 @@
   "compute estimate"
  ],
  "pending_user": [
-  "CLoSD runs root-goal tasks (8 directions x 3 distances), not risk-zone reaching, although design section 2 lists it among the reach methods (tasks.closd)",
   "CHOIS and ARDY have no held-out position (their added windows / all 8 directions were already run in V2 / M0) and are held out only through seed 24",
   "overhead front: relative to the thorax the upper arm can stay below 90 deg (reach_geometry.elevation_check)",
   "paused clock only",
