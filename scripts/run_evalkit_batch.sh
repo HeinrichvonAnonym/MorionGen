@@ -13,8 +13,9 @@
 #   method  pass 1 every dimension, no pass 2 (method-floor loads only, descriptive)
 # --lumbar-per-cell N: upper (lumbar) only on the first N seeds of every method x condition x task x text condition x
 #   split; rerunning with a larger N (0: every row) adds it to the newly sampled rows only.
-# --lumbar-defer-split S: sampled rows whose split is in S (comma list; default deck_recheck, the reused Kimodo pairs)
-#   get their lumbar last: both passes run without it, then a second round adds only their upper (no refit).
+# --lumbar-defer-split S: sampled rows whose split is in S (comma list; default deck_recheck,held_out: the reused Kimodo
+#   pairs and the held-out set) are evaluated without lumbar (upper_lumbar_status deferred); before the final comparison
+#   the same command with --lumbar-defer-split '' adds only their upper, no refit, every other row skipped.
 # --offset-reference: the frozen per-method offset reference (evalkit_batch.py offset-reference); without it the
 #   reference is the manifest median, which moves when rows are streamed in and re-evaluates the method's rows.
 # --no-distribution: skip the distribution smoke (fill-in reruns; per-task batches, see the protocol)
@@ -23,7 +24,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OSIM_PY="${OSIM_PY:-$HOME/.local/share/opensim-api/bin/python}"
 TORCH_PY="${TORCH_PY:-$("$OSIM_PY" -c "import sys; sys.path.insert(0, '$ROOT/utils'); from motiogen.config import data_root, load_config; print(data_root(load_config())/'envs/motiogen-motionlcm/bin/python')")}"
-MANIFEST="" OUT="" WORKERS=6 DIMS=residual,ergo,muscle,kinematic ARMS=both LUMBAR="" LUMBAR_DEFER=deck_recheck DISTRIBUTION=1 OFFREF=() NECK=1
+MANIFEST="" OUT="" WORKERS=6 DIMS=residual,ergo,muscle,kinematic ARMS=both LUMBAR="" LUMBAR_DEFER=deck_recheck,held_out DISTRIBUTION=1 OFFREF=() NECK=1
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --manifest) MANIFEST="$2"; shift 2 ;;
@@ -59,15 +60,10 @@ passes() {
   return 0
 }
 if [[ -n "$LUMBAR" ]]; then
-  "${B[@]}" manifest-lumbar-sample --manifest "$MANIFEST" --per-cell "$LUMBAR" --defer-split "$LUMBAR_DEFER" --out "$OUT/manifest_lumbar_first.json"
-  passes "$OUT/manifest_lumbar_first.json"
-  "${B[@]}" manifest-lumbar-sample --manifest "$MANIFEST" --per-cell "$LUMBAR" --out "$OUT/manifest_lumbar.json"
+  "${B[@]}" manifest-lumbar-sample --manifest "$MANIFEST" --per-cell "$LUMBAR" --defer-split "$LUMBAR_DEFER" --out "$OUT/manifest_lumbar.json"
   MANIFEST="$OUT/manifest_lumbar.json"
-  DEFERRED="$("$OSIM_PY" -c "import json, sys; print(json.load(open(sys.argv[1]))['lumbar_subsample']['deferred'])" "$OUT/manifest_lumbar_first.json")"
-  [[ "$DEFERRED" == 0 ]] || passes "$MANIFEST"
-else
-  passes "$MANIFEST"
 fi
+passes "$MANIFEST"
 if [[ "$ARMS" == method ]]; then
   "${B[@]}" check --manifest "$MANIFEST" --rows "$OUT/rows" --out "$OUT/check.json"
 else

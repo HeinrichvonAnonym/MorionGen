@@ -335,7 +335,8 @@ def lumbar_cell(row):
 def manifest_lumbar_sample(args):
     """Same rows, row['upper'] True on the first --per-cell seeds of every stratum and False elsewhere (0: every row).
     Raising --per-cell later and rerunning adds upper to the newly sampled rows only (batch key, ADDABLE).
-    --defer-split: sampled rows of these splits get upper False here; a later run without it adds their upper last."""
+    --defer-split: sampled rows of these splits get upper False and lumbar_deferred True here; a later run without it
+    adds their upper without refitting."""
     src = json.loads(Path(args.manifest).read_text())
     cells = {}
     for r in src['rows']:
@@ -344,7 +345,8 @@ def manifest_lumbar_sample(args):
     chosen = {i for v in cells.values() for _, _, i in sorted(v)[:args.per_cell or None]}
     defer = set(filter(None, args.defer_split.split(',')))
     deferred = {r['id'] for r in src['rows'] if r['id'] in chosen and r.get('split') in defer}
-    rows = [{**r, 'upper': r['id'] in chosen and r['id'] not in deferred} for r in src['rows']]
+    rows = [{**r, 'upper': r['id'] in chosen and r['id'] not in deferred, **({'lumbar_deferred': True} if r['id'] in deferred else {})}
+            for r in src['rows']]
     Path(args.out).write_text(json.dumps({**{k: v for k, v in src.items() if k != 'rows'}, 'from': str(args.manifest),
                                           'lumbar_subsample': {'per_cell': args.per_cell, 'cells': len(cells), 'rows': len(chosen),
                                                                'deferred': len(deferred), 'defer_split': sorted(defer),
@@ -518,6 +520,7 @@ def rows_summary(rows_dir, rows):
             **({f'muscle_{k}': e['muscle'][k] for k in MUSCLE_KEYS if k in e['muscle']} if 'muscle' in e else {}),
             **(net_moments(d, e) if 'muscle' in e else {}),
             **(upper(e) if 'upper' in e else {'upper_lumbar_status': 'failed'} if (d/'error.json').exists()
+               else {'upper_lumbar_status': 'deferred'} if r.get('lumbar_deferred')
                else {'upper_lumbar_status': 'not_sampled'} if r.get('upper') is False else {}),
             **({'penetration_depth_p95_m': e['kinematic']['floor']['penetration_depth_p95_m'],
                 'hover_height_p95_m': e['kinematic']['floor']['hover_height_p95_m'],
@@ -646,7 +649,7 @@ def main():
     ls = sub.add_parser('manifest-lumbar-sample', help='mark the lumbar (upper) subsample per method x condition x task x text')
     ls.add_argument('--manifest', required=True); ls.add_argument('--out', required=True)
     ls.add_argument('--per-cell', type=int, default=1, help='seeds per stratum; 0: every row')
-    ls.add_argument('--defer-split', default='', help='comma-separated split values whose sampled rows get upper in a final fill-in')
+    ls.add_argument('--defer-split', default='', help='comma-separated split values whose sampled rows get upper in a later fill-in')
     u = sub.add_parser('manifest-unique-c0'); u.add_argument('--out', required=True)
     n = sub.add_parser('neck-rotation', help='RULA with the rotation neck reading on evaluated rows (sensitivity)')
     n.add_argument('--manifest', required=True); n.add_argument('--rows', required=True); n.add_argument('--workers', type=int, default=6)
