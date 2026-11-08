@@ -1,0 +1,36 @@
+{
+ "created": "2026-11-08 15:40",
+ "version": "rula-supp-1",
+ "registered_before_results": "this file and its implementing code are committed before the heldout4 split is built; no field changes after the run",
+ "why": "RULA false-kill sits at the 5% line: heldout2 4.9% (pass), heldout3 5.01% method floor / 5.09% self floor on the v1.1 clip set (fail); the v1.2 registered pass (4.39%) came from adding float_whole clips, which are near-copies of the controls for the floor-independent RULA (develop_logs/notes/20261107_evalkit_heldout_distribution_batch.md, v1.2 section). User decision 2026-11-08 15:16: accept RULA as borderline, but add the experiment: more subjects with a per-subject distribution, plus a false-kill source decomposition.",
+ "question": "Across synthetic subjects, how far from the 5% line is the RULA false-kill rate of evalkit, and which RULA inputs produce the false kills?",
+ "split": "heldout4, subject seeds 501-506 (6 subjects; 约定，未经推演), config/evalkit_synth_20261107.json splits.heldout4; same generator, bases, defects and sizes as heldout2 / heldout3; built once, run once",
+ "runs": {
+  "truth": "evalkit_validate.py truth --split heldout4",
+  "method_floor": "evalkit_validate.py tool --split heldout4 (v1.1 pipeline) and score --split heldout4 (v1.1 replication, every dimension, descriptive except RULA / REBA below)",
+  "self_floor": "evalkit_validate.py selffloor --split heldout4 --dims residual,ergo (v1.2 floor for the load dimensions; leg and lumbar muscle are not part of this supplement)"
+ },
+ "clips": "the v1.1 ergo pass clips (every defect except bone_stretch, slide_m_s and float_whole_m), each against its own truth; not the v1.2 ergo clip set",
+ "primary": {
+  "metric": "RULA false-kill on the self-floor run (truth certain_acceptable frames that the tool classes certain_risk or unmeasurable), pooled over heldout4",
+  "line": "v1.1 line: false-kill and missed-kill <= 5% with the one-sided 95% Clopper-Pearson bound <= 10%",
+  "reading": "the user accepted RULA as borderline (2026-11-08 15:16); this run reports the line and the subject distribution, and the borderline reading stays unless the user decides otherwise"
+ },
+ "subject_level": {
+  "per_subject": "RULA and REBA false-kill and missed-kill per subject (both floors)",
+  "interval": "subject-cluster bootstrap 95% interval of the pooled false-kill (resample the 6 subjects; 4000 resamples, seed 0; 约定，未经推演)",
+  "count": "number of subjects with RULA false-kill > 5%"
+ },
+ "floor_check": "RULA class counts on the self-floor and method-floor runs of the same clips (heldout3: identical); reported, not a gate",
+ "pooled_descriptive": "RULA false-kill per subject over heldout2 + heldout3 + heldout4 (10 subjects) on the method-floor runs (heldout2 has no self-floor run; RULA is floor-independent if floor_check holds)",
+ "decomposition": {
+  "data": "method-floor runs of heldout2 + heldout3 + heldout4, v1.1 ergo pass clips",
+  "reproduction": "RULA scores of tool and truth recomputed from the saved coordinates, contact and source; the recomputed classes must equal the stored ones on every frame, otherwise the mismatch share is reported and the decomposition is marked unreliable",
+  "false_kill_kinds": "unmeasurable (tool frame gated) vs scored risk",
+  "attribution": "for every scored-risk false kill, swap one input group at a time from truth into the tool inputs and rescore: upper_arm (upper_arm_flexion_deg, arm_abducted_or_rotated), elbow (elbow_flexion_deg), trunk (trunk_flexion_deg, trunk_side_bent, trunk_twisted), neck (neck_flexion_deg, neck_side_bent), shoulder_raised, legs (leg_support_score, legs_score, knee_flexion_deg), unstable (rapid_change_or_unstable); a group explains the frame if its swap alone removes the risk class; frames no single swap fixes are 'combined'",
+  "reported": "share of false kills per group (frames can count for more than one group), per base task, and the median tool - truth input difference of each group on false-kill frames vs correctly classed frames",
+  "status": "descriptive; no threshold or model is changed from it"
+ },
+ "on_failure": "a failed line is reported as failed; RULA stays 'borderline' until the user decides",
+ "conventions_not_derived": ["6 subjects", "4000 bootstrap resamples", "input groups of the attribution"]
+}

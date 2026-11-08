@@ -200,7 +200,7 @@ def selffloor_job(clip):
     try:
         f = np.load(base/'frames.npz', allow_pickle=True); rec = json.loads((base/'evalkit.json').read_text())['receipt']
         m = meta(clip); shift = self_floor_shift(f); base_floor = rec.get('floor_eval_m', rec['floor_m']); floor = base_floor+shift
-        dims = ('residual', 'ergo', 'muscle', 'upper') if m['defect'] in LOAD_CLIPS else ('residual', 'ergo')
+        dims = tuple(clip['dims']) if clip.get('dims') else ('residual', 'ergo', 'muscle', 'upper') if m['defect'] in LOAD_CLIPS else ('residual', 'ergo')
         info = {'base_floor_eval_m': base_floor, 'shift_m': shift, 'floor_m': floor, 'true_floor_m': true_floor(m),
                 'dims': list(dims), 'fit_prepare': PREPARE, 'spec_version': SPEC['version'], 'registration': str(V12_PATH.relative_to(ROOT))}
         if (out/'selffloor.json').exists() and (out/'evalkit.json').exists() and json.loads((out/'selffloor.json').read_text()) == info:
@@ -695,8 +695,9 @@ def main():
     a = argparse.ArgumentParser()
     a.add_argument('step', choices=('calibrate', 'margins', 'tool', 'truth', 'score', 'kinematic', 'videos', 'selffloor', 'selfscore'))
     a.add_argument('--tune', action='store_true', help='score on dev: run the registered margin / tau / depth grid')
-    a.add_argument('--split', choices=('dev', 'heldout', 'heldout2', 'heldout3'), default='dev'); a.add_argument('--workers', type=int, default=6)
+    a.add_argument('--split', choices=('dev', 'heldout', 'heldout2', 'heldout3', 'heldout4'), default='dev'); a.add_argument('--workers', type=int, default=6)
     a.add_argument('--limit', type=int); a.add_argument('--only')
+    a.add_argument('--dims', help='selffloor: dimensions of every clip instead of the v1.2 default (config/evalkit_rula_supp_20261108.json: residual,ergo)')
     args = a.parse_args()
     if args.step == 'calibrate':
         return calibrate(args)
@@ -715,7 +716,8 @@ def main():
         raise SystemExit(f"freeze the registration ({SPEC['version']}) before a held-out split")
     if args.split == 'heldout' and SPEC['version'] != 'v1':
         raise SystemExit('the held-out split of v1 is spent; later versions validate on their own split')
-    items = [{**c, 'split': args.split} for c in clips(args.split) if not args.only or args.only in c['id']][:args.limit]
+    items = [{**c, 'split': args.split, **({'dims': args.dims.split(',')} if args.dims else {})} for c in clips(args.split)
+             if not args.only or args.only in c['id']][:args.limit]
     if args.step == 'tool':
         print(json.dumps(pool(offset_job, items, args.workers)))
         ref = offset_reference(items)
