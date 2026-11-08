@@ -176,7 +176,13 @@ def main():
             '2026-11-09 03:07 CLoSD tasks': 'CLoSD native REACH is a root-goal task with fixed text: it keeps the 8 directions x 3 distances, '
                                             'covers no risk-zone reaching and has no text factor; STRIKE_PUNCH (never run in the native '
                                             'matrix) is a later extension that needs a new entry point, a smoke test and the input-reaches-'
-                                            'the-model check; design section 2 revised by the user accordingly'},
+                                            'the-model check; design section 2 revised by the user accordingly',
+            '2026-11-09 03:21 overhead front': 'option A: the overhead zone is defined by world height (1.683 m) and upper-arm elevation '
+                                               'against the vertical (>= 91.2 deg); in front the elevation relative to the thorax is not '
+                                               'guaranteed above 90 deg and can be as low as 67.8 deg with the largest backward lean; the '
+                                               'analysis plan Q3 per-zone results add, for the overhead zone, the distributions of the '
+                                               'thoracic upper-arm elevation and the trunk extension (descriptive), to separate raising '
+                                               'the arm from leaning back'},
         'tasks': {
             'per_method': {m: {'family': v['family'], 'tasks': len(v['tasks']), 'conditions': v['conditions'],
                                'held_out_positions': v['held_out_positions'], **({'no_held_out_position': v['no_held_out_position']} if 'no_held_out_position' in v else {})}
@@ -194,7 +200,12 @@ def main():
             'frame': tasks['frames']['reach'],
             'risk_zone_heights_m': tasks['risk_zone_heights_m'],
             'horizontal_reach': '0.8 x arm length from the shoulder (约定), nominal Rajagopal body; front = straight ahead at the shoulder, side90 = lateral',
-            'overhead': {'rule': overhead['overhead_height']['rule'], 'height_m': overhead['overhead_height']['height_m'],
+            'overhead': {'definition': 'the overhead zone is defined by world height (the height below) and by upper-arm elevation against '
+                                       'the vertical (>= 91.2 deg in front, >= 105.3 deg at the side, elevation_check); in front it does not '
+                                       'guarantee an elevation above 90 deg relative to the thorax: with the largest backward trunk lean it '
+                                       'can be as low as 67.8 deg (user 2026-11-09 03:21); the strategy actually used is reported in the '
+                                       'analysis plan (Q3_ergonomics.overhead_strategy)',
+                         'rule': overhead['overhead_height']['rule'], 'height_m': overhead['overhead_height']['height_m'],
                          'argmin': overhead['overhead_height']['argmin'], 'design_value_m': 1.95,
                          'design_value_note': '1.95 m (design section 2, 约定) is above every flat-foot limit and was replaced', 'bodies': bodies,
                          'humanml_body': 'HumanML3D test-set reference skeleton (4648 clips; standing-frame selection thresholds 约定) fitted by '
@@ -276,8 +287,7 @@ def main():
                                     'of the nominal body for the pelvis joint', 'paraphrase templates and zone phrases', 'held-out positions '
                                     '(interleaved choice)', 'paused clock only', 'HumanML3D standing-frame thresholds and scaling choices',
                                     '200-row evalkit subsample', 'compute estimate'],
-        'pending_user': ['overhead front: relative to the thorax the upper arm can stay below 90 deg (reach_geometry.elevation_check)',
-                         'paused clock only', 'official evaluation batch scale', 'held_out_fallback (analysis plan)'],
+        'pending_user': ['paused clock only', 'official evaluation batch scale', 'held_out_fallback (analysis plan)'],
     }
     OUT.write_text(json.dumps(reg, indent=1, ensure_ascii=False)+'\n')
     print(json.dumps({k: reg[k] for k in ('compute_estimate',)}, indent=1)[:3000])

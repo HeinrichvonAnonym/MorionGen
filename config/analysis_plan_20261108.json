@@ -1,7 +1,7 @@
 {
  "version": "analysis-plan-draft-2",
  "created": "2026-11-08 23:15",
- "revised": "2026-11-09 00:06 user review: crossed text x task design and intervals, bone length / foot height classes, gate pass rates as results, Kimodo reuse label, Holm scope, pending_user",
+ "revised": "2026-11-09 00:06 user review: crossed text x task design and intervals, bone length / foot height classes, gate pass rates as results, Kimodo reuse label, Holm scope, pending_user; 2026-11-09 03:21 user: overhead strategy descriptives (Q3_ergonomics.overhead_strategy)",
  "status": "draft; frozen together with config/motion_output_contract_20261108.json, config/evalkit_batch_protocol_20261108.json and the inference registration after user review (develop_logs/notes/20261108_batch_design_decisions.md section 14 item 7), before any batch result",
  "builds_on": {
   "design": "develop_logs/notes/20261108_batch_design_decisions.md sections 0, 2-5, 8, 14 (section 14 overrides conflicting parts of section 13)",
@@ -83,7 +83,8 @@
    "primary_metrics": ["RULA certain_risk share", "REBA certain_risk share", "leg muscle effort"],
    "secondary_metrics": ["L5/S1 compression on the lumbar subsample", "net joint moments (descriptive)"],
    "floor": "loads and ergonomics primary on the self floor (v1.2); the method-floor values are the setting check below",
-   "risk_zone": "the risk-zone tasks are where RULA / REBA can register risk at all (design section 1: the deck's targets sit in the comfort zone); per-zone results are reported"
+   "risk_zone": "the risk-zone tasks are where RULA / REBA can register risk at all (design section 1: the deck's targets sit in the comfort zone); per-zone results are reported",
+   "overhead_strategy": "user 2026-11-09 03:21: in the per-zone results the overhead zone (MotionLCM and OmniControl tasks 16, 17, 22, 23) also reports, descriptively, the distribution of (a) the target-side upper-arm elevation relative to the thorax and (b) the trunk extension, per method x condition and per direction (front, side90), to separate the two ways of reaching an overhead target: raising the arm or leaning back (inference registration reach_geometry.overhead.definition: the zone is defined by world height and elevation against the vertical; in front a backward lean reaches it with a thoracic elevation of at most 67.8 deg). Definitions: (a) angle between the humerus long axis (humerus origin to ulna origin) and the torso body's downward axis on the evalkit-fitted Rajagopal model, the quantity of python/scripts/task_reachability.py elevation(); (b) evalkit ergo trunk_angles sagittal component (hip-joint midpoint to neck_c against the ground vertical in the pelvis sagittal plane), negative = extension, reported signed. Both at the IK frame nearest the task target time (2.5 s), computed from the cached IK fit of each evaluation (work/, no refit). Not implemented yet: before use, the implementation must agree with the angles() of python/scripts/task_reachability.py elevation() within 0.1 deg (约定) on every IK frame of existing evaluations of both methods (the reachability poses were not saved)"
   }
  },
 
@@ -116,6 +117,7 @@
  },
 
  "descriptive_only": [
+  "overhead-zone upper-arm thoracic elevation and trunk extension at the target time (Q3_ergonomics.overhead_strategy)",
   "every comparison between methods, including levels (medians per condition) and the subset FID",
   "CHOIS loads (lumbar, leg muscle): hand-held object load not modelled until the mass source is decided (contract)",
   "the contact-tolerance check",
@@ -170,5 +172,5 @@
   }
  },
 
- "conventions_not_derived": ["10000 resamples, seed 20261108", "text x task crossed bootstrap with product weights", "Holm per question and primary metric, primary setting only", "measurement-consistency limits 5 pp / 0.5 cm"]
+ "conventions_not_derived": ["10000 resamples, seed 20261108", "text x task crossed bootstrap with product weights", "Holm per question and primary metric, primary setting only", "measurement-consistency limits 5 pp / 0.5 cm", "overhead strategy read at the IK frame nearest the target time (2.5 s)"]
 }
