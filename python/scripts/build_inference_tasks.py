@@ -48,9 +48,12 @@ HELD_OUT_TASKS = {'motionlcm': [12, 17, 19, 20], 'omnicontrol': [12, 17, 19, 20]
 PRIMAL_HELD_OUT_RULE = ('held out by resampling group (effective seed = initial_seed + initial_history): groups 9009 (tasks 15, 19) '
                         'and 9011 (tasks 17, 21), both history lengths twice; no held-out initial state shares a history prefix with '
                         'a development one (tasks 12, 13 share theirs with matrix tasks 10, 11)')
-NO_HELD_OUT_POSITION = {'ardy': 'all 8 root-path directions were run and inspected in the 10-31 M0 experiments (seeds 20-24); held out only through '
-                                'seed 24, which tests generalisation across seeds only; seed-24 rows whose input equals an M0a run (history_frames 32) '
-                                'are development, so only history_frames 160 is held out (user 2026-11-09)',
+ARDY_NO_HELD_OUT = ('ARDY has no held-out set; all its rows are development (user 2026-11-09 04:08): all 8 root-path directions were '
+                    'run and inspected in the 10-31 M0 experiments (seeds 20-24), the seed-24 rows at history_frames 32 equal M0a runs, so '
+                    'a seed-24 held-out set would keep only the 24 history_frames 160 rows, which give no held-out pair for either primary '
+                    'contrast (Q1 correction 1-0 at history_long 0: 0; Q2 history_long 1-0 within correction 1: 0 held-out and 12 pairs '
+                    'split across the sets, usable by neither)')
+NO_HELD_OUT_POSITION = {'ardy': ARDY_NO_HELD_OUT,
                         'chois': 'the 12 added windows were run and inspected in V2 (seeds 20-22); held out only through seed 24, which tests '
                                  'generalisation across seeds only (user 2026-11-09)'}
 # text table (conventions, not derived; for user review)
@@ -345,6 +348,8 @@ def main():
                             same_run = m0_identical.get(ardy_key(t['prompt'], t['updates'], t['native_root_path'], seed, cond))
                         if same_run:
                             split, reason = 'development', 'identical input already run'
+                        elif m == 'ardy':
+                            split, reason = 'development', 'ARDY has no held-out set'
                         elif t['split_position'] == 'held_out':
                             split, reason = 'held_out', 'held-out target position'
                         elif seed == HELD_OUT_SEED:
@@ -379,7 +384,7 @@ def main():
                                        'target_mode path; the M0a key text only labels the prompt, which is compared itself) and whose '
                                        'path switch_seconds is the default 5 s; successful runs only',
             'held_out_seed': HELD_OUT_SEED, 'held_out_paraphrase': HELD_OUT_PARAPHRASE,
-            'held_out_positions': 'per method: 4 of the 12 added tasks, interleaved so that both sets cover every zone / direction / distance / speed / family level (methods.<m>.held_out_positions); ARDY and CHOIS have none (methods.<m>.no_held_out_position)',
+            'held_out_positions': 'per method: 4 of the 12 added tasks, interleaved so that both sets cover every zone / direction / distance / speed / family level (methods.<m>.held_out_positions); ARDY and CHOIS have none (methods.<m>.no_held_out_position); ARDY has no held-out set at all',
             'paraphrase_rotation': 'nested Latin square (user 2026-11-09): within each hand the 12 tasks are indexed i = 0..11 (native matrix tasks first, then the risk-zone tasks); seed s in 20-23 uses paraphrase (i + s - 20) mod 4, seed 24 uses paraphrase 4; the same paraphrase index applies to the neutral and the consistent text'},
         'text_table': {'templates_convention_not_derived': TEMPLATES, 'neutral_phrase': NEUTRAL,
                        'paraphrase_0_neutral': 'reproduces the native matrix sentence exactly ("A person reaches forward with the <side> hand.")',

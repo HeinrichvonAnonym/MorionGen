@@ -172,7 +172,7 @@
    "body_shape": "to_verify",
    "objects": "native positions / rotations; mass absent (not in the CHOIS outputs and not in the OMOMO data; checked 2026-11-09, see object_mass)",
    "object_mass": {
-    "decision": "user 2026-11-09 00:58: the dataset gives no mass, so the main analysis does not model the hand-held object (loads are lower bounds); per-category lookup masses are a sensitivity check (约定，未经推演)",
+    "decision": "user 2026-11-09 00:58: the dataset gives no mass, so the main analysis does not model the hand-held object (loads are lower bounds); per-category lookup masses (约定，未经推演) were proposed as a sensitivity check; 2026-11-09 04:08 user: the lookup is not used in this batch; reviewed by the user after evalkit supports hand loads and before any sensitivity result is seen (user 2026-11-09 04:08)",
     "checked": "outputs/assets/chois/processed_data/rest_object_geo/*.json (centre of mass and rest pose only); OMOMO sequence fields (pose, scale, centre of mass only); the OMOMO paper and the CHOIS code (no mass, density or inertia)",
     "lookup": "config/chois_object_mass_lookup_20261109.json",
     "evaluator_support": "not implemented: the lumbar and leg dimensions take no hand load yet; to be implemented and registered before any CHOIS load result is seen"
@@ -360,7 +360,7 @@
     "joints"
    ],
    "conditional": {
-    "objects": "object_mass_kg (CHOIS: null, main analysis without the held load = lower bound; lookup masses of config/chois_object_mass_lookup_20261109.json as a sensitivity check once hand loads are implemented)"
+    "objects": "object_mass_kg (CHOIS: null, main analysis without the held load = lower bound; lookup masses of config/chois_object_mass_lookup_20261109.json: not used in this batch; reviewed by the user after evalkit supports hand loads and before any sensitivity result is seen (user 2026-11-09 04:08))"
    },
    "status": "active"
   },

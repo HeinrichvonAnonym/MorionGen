@@ -1,10 +1,10 @@
 {
  "version": "inference-tasks-draft-1",
- "created": "2026-11-09 03:17",
+ "created": "2026-11-09 04:09",
  "status": "draft; frozen with config/inference_registration_20261109.json and the other three section-14 files after user review",
  "generator": {
   "script": "python/scripts/build_inference_tasks.py",
-  "sha256": "5ed7010e356410c36ab013eebf109ce41f3a62a61b0435a449c2a0d9845ab8ac"
+  "sha256": "b5f388c7ef0a15d0494bb072ba01a2a4165ff3b36bc10ba09ae0f6b573693d34"
  },
  "inputs_sha256": {
   "develop_logs/test_runs/20261109_task_reachability/reachability.json": "ff3b3e0eb693079e444beee1bac783c23ee1ec8eaa3d439a79ef7a944aa903e6",
@@ -47,7 +47,7 @@
   "identical_input_sources": "native matrix rows (paused clock); V2 CHOIS runs with condition exactly guidance 0; M0 / M0a ARDY runs whose extra condition keys are all at the ardy_native.py defaults (waypoints sparse, target_mode path; the M0a key text only labels the prompt, which is compared itself) and whose path switch_seconds is the default 5 s; successful runs only",
   "held_out_seed": 24,
   "held_out_paraphrase": 4,
-  "held_out_positions": "per method: 4 of the 12 added tasks, interleaved so that both sets cover every zone / direction / distance / speed / family level (methods.<m>.held_out_positions); ARDY and CHOIS have none (methods.<m>.no_held_out_position)",
+  "held_out_positions": "per method: 4 of the 12 added tasks, interleaved so that both sets cover every zone / direction / distance / speed / family level (methods.<m>.held_out_positions); ARDY and CHOIS have none (methods.<m>.no_held_out_position); ARDY has no held-out set at all",
   "paraphrase_rotation": "nested Latin square (user 2026-11-09): within each hand the 12 tasks are indexed i = 0..11 (native matrix tasks first, then the risk-zone tasks); seed s in 20-23 uses paraphrase (i + s - 20) mod 4, seed 24 uses paraphrase 4; the same paraphrase index applies to the neutral and the consistent text"
  },
  "text_table": {
@@ -3077,7 +3077,7 @@
     "legacy": 480
    },
    "held_out_positions": [],
-   "no_held_out_position": "all 8 root-path directions were run and inspected in the 10-31 M0 experiments (seeds 20-24); held out only through seed 24, which tests generalisation across seeds only; seed-24 rows whose input equals an M0a run (history_frames 32) are development, so only history_frames 160 is held out (user 2026-11-09)"
+   "no_held_out_position": "ARDY has no held-out set; all its rows are development (user 2026-11-09 04:08): all 8 root-path directions were run and inspected in the 10-31 M0 experiments (seeds 20-24), the seed-24 rows at history_frames 32 equal M0a runs, so a seed-24 held-out set would keep only the 24 history_frames 160 rows, which give no held-out pair for either primary contrast (Q1 correction 1-0 at history_long 0: 0; Q2 history_long 1-0 within correction 1: 0 held-out and 12 pairs split across the sets, usable by neither)"
   },
   "primal": {
    "family": "unconditioned continuation from 24 initial states; one run writes all 8 geometric switch combinations",
@@ -3752,8 +3752,8 @@
   },
   "ardy": {
    "rows": 480,
-   "development": 456,
-   "held_out": 24,
+   "development": 480,
+   "held_out": 0,
    "identical_seen": 358,
    "reuse_candidates": 358,
    "to_generate": 122
@@ -28787,7 +28787,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -28800,7 +28800,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -31907,7 +31907,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -31920,7 +31920,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -31959,7 +31959,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -31972,7 +31972,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32011,7 +32011,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32024,7 +32024,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32063,7 +32063,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32076,7 +32076,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32114,8 +32114,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32127,8 +32127,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32167,7 +32167,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32180,7 +32180,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32219,7 +32219,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32232,7 +32232,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32271,7 +32271,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32284,7 +32284,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32323,7 +32323,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32336,7 +32336,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32374,8 +32374,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32387,8 +32387,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32427,7 +32427,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32440,7 +32440,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32479,7 +32479,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32492,7 +32492,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32531,7 +32531,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32544,7 +32544,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32583,7 +32583,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32596,7 +32596,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32634,8 +32634,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32647,8 +32647,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32687,7 +32687,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32700,7 +32700,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32739,7 +32739,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32752,7 +32752,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32791,7 +32791,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32804,7 +32804,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32843,7 +32843,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32856,7 +32856,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32894,8 +32894,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32907,8 +32907,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32947,7 +32947,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32960,7 +32960,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -32999,7 +32999,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33012,7 +33012,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33051,7 +33051,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33064,7 +33064,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33103,7 +33103,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33116,7 +33116,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33154,8 +33154,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33167,8 +33167,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33207,7 +33207,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33220,7 +33220,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33259,7 +33259,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33272,7 +33272,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33311,7 +33311,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33324,7 +33324,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33363,7 +33363,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33376,7 +33376,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33414,8 +33414,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33427,8 +33427,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33467,7 +33467,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33480,7 +33480,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33519,7 +33519,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33532,7 +33532,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33571,7 +33571,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33584,7 +33584,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33623,7 +33623,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33636,7 +33636,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33674,8 +33674,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33687,8 +33687,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33727,7 +33727,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33740,7 +33740,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33779,7 +33779,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33792,7 +33792,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33831,7 +33831,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33844,7 +33844,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33883,7 +33883,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33896,7 +33896,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33934,8 +33934,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33947,8 +33947,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -33987,7 +33987,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34000,7 +34000,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34039,7 +34039,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34052,7 +34052,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34091,7 +34091,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34104,7 +34104,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34143,7 +34143,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34156,7 +34156,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34194,8 +34194,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34207,8 +34207,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34247,7 +34247,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34260,7 +34260,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34299,7 +34299,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34312,7 +34312,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34351,7 +34351,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34364,7 +34364,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34403,7 +34403,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34416,7 +34416,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34454,8 +34454,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34467,8 +34467,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34507,7 +34507,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34520,7 +34520,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34559,7 +34559,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34572,7 +34572,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34611,7 +34611,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34624,7 +34624,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34663,7 +34663,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34676,7 +34676,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34714,8 +34714,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34727,8 +34727,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34767,7 +34767,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34780,7 +34780,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34819,7 +34819,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34832,7 +34832,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34871,7 +34871,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34884,7 +34884,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34923,7 +34923,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34936,7 +34936,7 @@
     null,
     null,
     "development",
-    "development position and seed",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34974,8 +34974,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],
@@ -34987,8 +34987,8 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
+    "development",
+    "ARDY has no held-out set",
     null,
     false
    ],

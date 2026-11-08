@@ -1,6 +1,6 @@
 {
  "created": "2026-11-09 01:06",
- "status": "draft: values for user review before the freeze",
+ "status": "not used in this batch; reviewed by the user after evalkit supports hand loads and before any sensitivity result is seen (user 2026-11-09 04:08)",
  "use": "sensitivity check only (user 2026-11-09 00:58). Main analysis: hand-held object not modelled, CHOIS loads are lower bounds. Sensitivity: the object's mass as an external load split evenly between the hands in contact",
  "source_check": "the OMOMO / CHOIS data give no mass (checked 2026-11-09): outputs/assets/chois/processed_data/rest_object_geo/*.json hold rest_pose_ori_obj_rot, rest_pose_ori_com_pos, obj_trans_to_com_pos only; the test sequences hold seq_name, betas, gender, trans2joint, rest_offsets, trans, root_orient, pose_body, obj_scale, obj_trans, obj_rot, obj_com_pos only; no mass, density or inertia in the CHOIS code or the OMOMO paper",
  "basis": "约定，未经推演: typical mass of a common product of the category, not measured on the OMOMO objects; the range is the plausible span for the category and is reported with the point value",

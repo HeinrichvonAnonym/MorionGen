@@ -174,6 +174,11 @@ def main():
                                       'after runs per execution context with the same seed must give bit-identical joints, also against the '
                                       '10-24 archive; rotations by the bone-vector method; committed separately (ccb50a3; verified, contract '
                                       'method_capability.closd.smoke)',
+            '2026-11-09 04:08 ARDY no held-out set': 'ARDY has no held-out set, all 480 rows development; the registration says so and '
+                                                     'why (split.ardy_no_held_out); replaces the seed-24 ARDY held-out of the earlier '
+                                                     'CHOIS / ARDY decision',
+            '2026-11-09 04:08 execution order': 'generation first, evaluation starts after generation has finished, so that memory '
+                                                'contention does not make the resource gate refuse CHOIS again and again (execution_order)',
             '2026-11-09 CHOIS / ARDY held out': 'only through seed 24, generalisation across seeds only (added parts seen in V2 / M0a); '
                                                 'per-condition and per-primary-contrast counts in split.table; a future held-out set per '
                                                 'task family before the user\'s method is developed on it',
@@ -271,15 +276,19 @@ def main():
                               'chois': 'the OMOMO annotation of the window (native)'},
         },
         'split': {**tasks['split'], 'primal': tasks['methods']['primal'].get('held_out_rule'),
-                  'chois_ardy': 'CHOIS and ARDY are held out only through seed 24 and test generalisation across seeds only: their added '
-                                'parts were already seen (CHOIS windows in V2, ARDY directions in M0a) (user 2026-11-09). If the user\'s '
-                                'own method is developed on carrying or path walking, a new held-out set for that task family is '
-                                'registered before that development (CHOIS: unused official windows; ARDY: speed levels not yet run)',
+                  'chois_ardy': 'CHOIS is held out only through seed 24 and tests generalisation across seeds only: its added windows '
+                                'were already seen in V2 (user 2026-11-09). ARDY has no held-out set: all its rows are development (user '
+                                '2026-11-09 04:08; reason in ardy_no_held_out). If the user\'s own method is developed on carrying or path '
+                                'walking, a new held-out set for that task family is registered before that development (CHOIS: unused '
+                                'official windows; ARDY: speed levels not yet run)',
                   'table': split_table(tasks),
-                  'ardy_m0a': 'ARDY rows whose input equals a successful M0a run (history_frames 32, both corrections, the native matrix '
-                              'text pair, every added direction and speed, seeds 20-24) are development; so the Q1 contrast correction '
-                              '1-0 at history_long 0 has no held-out pair, and the Q2 contrast history_long 1-0 within correction 1 has '
-                              'its held-out rows (history 160, seed 24) paired only with development rows (table.primary_contrast_pairs)',
+                  'ardy_no_held_out': 'ARDY has no held-out set (user 2026-11-09 04:08). Reason: its 8 directions were all seen in the '
+                                      '10-31 M0 experiments, and its seed-24 rows at history_frames 32 equal successful M0a runs (both '
+                                      'corrections, the native matrix text pair, every added direction and speed), so a seed-24 held-out '
+                                      'set kept only the 24 history_frames 160 rows: 0 held-out pairs for Q1 (correction 1-0 at '
+                                      'history_long 0) and for Q2 (history_long 1-0 within correction 1), whose 12 pairs were split across '
+                                      'the sets and usable by neither. ARDY conclusions rest on the development set only and get no '
+                                      'held-out re-check (analysis plan split_use)',
                   'enforcement': 'config/analysis_plan_20261108.json split_use: analysis scripts select development rows by this split and refuse '
                                  'held-out rows unless the final-comparison flag is given; the opening is recorded in the notes with time and commit',
                   'fallback': 'config/analysis_plan_20261108.json split_use.fallback / fallback_reading / fallback_consequence (user '
@@ -380,6 +389,12 @@ def main():
                 'smoke': smoke, 'smoke_source': 'develop_logs/test_runs/20261109_inference_smoke (build_inference_smoke.py, check_inference_smoke.py)'},
             '4_held_out_unseen': held_out_scan(),
             'not_done': 'no check of whether a method reaches a target, falls, or stretches bones; no task was filtered (design section 14 item 2)'},
+        'execution_order': {'rule': 'the whole generation batch runs first; evalkit evaluation starts only after generation has finished '
+                                    '(user 2026-11-09 04:08); this replaces the GPU-generation / CPU-evaluation pipelining of design '
+                                    'section 6',
+                            'reason': 'the RAM budget is machine-wide and checked once at job start (premise_checks.3_engineering.ram_budget): '
+                                      'CHOIS (bound 10 GiB, reserve 6 GiB) was refused in both smoke rounds at 15.7 GiB available and ran '
+                                      'only after memory was freed (21.0 GiB); ten evalkit processes beside generation would keep it refused'},
         'compute_estimate': {'basis': 'slower of the valid smoke runs per method (paused clock, inputs and event points as registered; '
                                       'worker seconds incl. process start, both cards busy); 约定, a planning figure only; CHOIS timed on '
                                       'one card with the other idle; ARDY from the paused rerun (its first two smoke runs took a realtime '
