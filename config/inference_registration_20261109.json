@@ -2,7 +2,17 @@
  "version": "inference-registration-1",
  "created": "2026-11-09 04:12",
  "status": "frozen 2026-11-09 04:11 (manifest config/freeze_20261109.json, git tag freeze-20261109; user approval 2026-11-09 04:08); later changes only as timestamped revision records appended to revisions_after_freeze, and only before any batch result is seen",
- "revisions_after_freeze": [],
+ "revisions_after_freeze": [
+  {
+   "time": "2026-11-09 04:34",
+   "before_any_batch_result": true,
+   "change": "batch plan builder python/scripts/build_batch_plan.py, commit a093ba3 (the item code.not_yet_written of config/freeze_20261109.json): every frozen row becomes one queue job, or with reuse_candidate a link to its identical earlier run; plan_main.json (every method but CHOIS, devices 0 and 1), plan_chois.json (device 0, the other card idle, as CHOIS was timed), admission-gate (resource_gate) refusals rerun after the generation with the same job and seed, never another seed",
+   "self_check": "develop_logs/test_runs/20261109_batch_plan_check/self_check.json: 2116 jobs (644 of them held-out rows) and 644 links, per method equal to counts.<method> of the task table (jobs = rows - reuse_candidates); 0 differences in inference_row, method, condition, task, paraphrase, seed, text, target and clock read back from scene / command / config; every link: run exists, manifest status success, input identity (scan_seen_inputs.py identity()) equal. Negative controls: a changed seed, condition (DART / CLoSD command flag, others config._intervention), PRIMAL initial seed or paraphrase is caught for each of the 7 methods; a link to another identical-looking run is refused",
+   "scene_fields": "the scene (written verbatim as scenario.json by utils/motiogen/runtime.py) gets the contract L2 new-batch fields task_id, paraphrase_id, text_condition, target_zone (reach: the task zone for risk-tier tasks, ppt_original otherwise; DART / CLoSD / ARDY path; PRIMAL initial_state; CHOIS official_window); DART and CLoSD also kind root_goal_change with pelvis goal constraints in native goal coordinates, PRIMAL kind continuation with initial_state; their entry scripts read the command line only, the baseline-worker methods read only kind, duration_seconds, prompt, updates and constraints, which are unchanged",
+   "correction": "config/freeze_20261109.json code.not_yet_written says the builder holds development rows only before the held-out decision; that was wrong: the analysis plan split_use.enforcement says the batch writes held-out rows like any other row, and the plan does so; the analysis refuses held-out rows. The manifest is tagged and is not edited; this record is the correction",
+   "freeze_check": "python/scripts/build_freeze_manifest.py --check compares a changed frozen file with its tagged version apart from records appended to revisions_after_freeze (append-only, each with a time and before_any_batch_result true); python/scripts/append_revision.py appends them"
+  }
+ ],
  "builds_on": [
   "develop_logs/notes/20261108_batch_design_decisions.md sections 2, 3, 5, 14",
   "config/inference_tasks_20261109.json"
