@@ -112,9 +112,43 @@
   "effects flagged 'measurement state differs'"
  ],
 
- "pending_user_decisions": {
-  "split_use": "which set the baseline conclusions use (development, held-out or both) and at which step the held-out results are opened once (section 14 item 1)",
-  "deck_recheck": "whether the two-level (text -> task) re-check of the deck's MotionLCM trunk-tilt and OmniControl realism-jerk intervals on the existing data (section 1, section 13 step 1) is still done"
+ "split_use": {
+  "decision": "user 2026-11-08 23:22",
+  "baseline_conclusions": "development set only (the split dimensions and rules: inference registration)",
+  "held_out": "the baselines' held-out results are opened once, together with the user's own method, at its final comparison; until then no held-out evalkit summary, native metric or figure of any baseline is computed for viewing",
+  "enforcement": "the batch writes held-out rows like any other row; the analysis scripts select the development set by the registered split and refuse held-out rows unless the final-comparison flag is given; opening the held-out set is recorded in the notes with its time and commit"
+ },
+ "deck_recheck": {
+  "decision": "user 2026-11-08 23:25 (approx., answer received between 23:22 and 23:26): done now, before the freeze, from the existing native metrics only (no new evaluation); the affected conclusions are listed to the user before anything is written here",
+  "result": {
+   "completed": "2026-11-08 23:30; written 23:55 after the user reviewed the list (both answers received between 23:30 and 23:55: option B with three changes; ARDY single_text_scope)",
+   "source": "develop_logs/test_runs/20261108_deck_recheck/recheck.json from python/scripts/deck_recheck_two_level.py (commit b39e2ab); inputs: paused-clock rows of 20261024_native_matrix_analysis/analysis.json and jerk_common_0p1s of 20261030_next_round/v5/per_run.json; no new generation or evaluation",
+   "method": "two-level bootstrap: texts with replacement, then tasks within each drawn text with replacement, equal task weight, 10000 resamples, seed 20261108 (约定); compared with the deck's task-cluster bootstrap",
+   "reproduction_gate": "the task-cluster bootstrap re-run reproduces all 72 deck-source effects (point estimate and interval) of analysis.json exactly",
+   "structure": "MotionLCM and OmniControl: 12 tasks share 2 texts (left / right hand, 6 tasks each); control-off motions depend on text and seed only, i.e. 10 distinct control-off motions per method",
+   "limitation": "with 2 texts the text layer has 2 units, so the two-level interval is not a reliable inferential interval; it is read as whether the effect holds in both texts. A text-level conclusion needs the registered 5 paraphrases per hand",
+   "unchanged": "deck main-text conclusions hold under the two-level bootstrap: p.18 MotionLCM wrist error; p.19 OmniControl spatial wrist error, jerk (0.1 s and per-frame), RTF; p.20 realism jerk at spatial 0 / 1 and the realism x spatial jerk interaction; p.30 judgement 2; p.56 realism wrist error and per-frame jerk",
+   "conclusion_changes": [
+    {"page": "p.52 (text and right panel: \"control residual 同时降低腕误差、jerk 和躯干倾角\")", "method": "motionlcm", "effect": "control_residual", "metric": "trunk_inclination", "mean": -0.165, "task_cluster_ci95": [-0.29, -0.038], "two_level_ci95": [-0.39, 0.068], "per_text_mean": {"left": -0.344, "right": 0.014}, "texts_same_sign": false},
+    {"page": "p.19 effect family (spatial averaged over realism); metric not written or plotted", "method": "omnicontrol", "effect": "spatial", "metric": "right_upper_arm_elevation", "mean": 0.909, "task_cluster_ci95": [0.001, 1.882], "two_level_ci95": [-0.18, 2.586], "per_text_mean": {"left": -0.047, "right": 1.865}, "texts_same_sign": false},
+    {"page": "p.56 effect family (realism averaged over spatial); the p.56 paired figure plots wrist error and per-frame jerk only, both unchanged; this metric is not written or plotted", "method": "omnicontrol", "effect": "realism", "metric": "jerk_common_0p1s", "mean": -0.778, "task_cluster_ci95": [-1.617, -0.024], "two_level_ci95": [-1.858, 0.118], "per_text_mean": {"left": -0.261, "right": -1.296}, "texts_same_sign": true},
+    {"page": "p.56 effect family (realism averaged over spatial); the p.56 paired figure plots wrist error and per-frame jerk only, both unchanged; this metric is not written or plotted", "method": "omnicontrol", "effect": "realism", "metric": "trunk_inclination", "mean": -3.676, "task_cluster_ci95": [-6.732, -0.584], "two_level_ci95": [-9.65, 2.35], "per_text_mean": {"left": -9.571, "right": 2.219}, "texts_same_sign": false},
+    {"page": "p.56 effect family (realism averaged over spatial); the p.56 paired figure plots wrist error and per-frame jerk only, both unchanged; this metric is not written or plotted", "method": "omnicontrol", "effect": "realism", "metric": "left_upper_arm_elevation", "mean": -2.511, "task_cluster_ci95": [-4.304, -0.562], "two_level_ci95": [-5.137, 0.953], "per_text_mean": {"left": -0.23, "right": -4.791}, "texts_same_sign": true},
+    {"page": "p.20 effect family (simple effects / interaction); p.20 figure plots jerk RMS only; metric not written or plotted", "method": "omnicontrol", "effect": "spatial at realism=0", "metric": "right_upper_arm_elevation", "mean": 1.776, "task_cluster_ci95": [0.191, 3.623], "two_level_ci95": [-0.062, 4.908], "per_text_mean": {"left": -0.042, "right": 3.595}, "texts_same_sign": false},
+    {"page": "p.20 effect family (simple effects / interaction); p.20 figure plots jerk RMS only; metric not written or plotted", "method": "omnicontrol", "effect": "spatial at realism=1", "metric": "left_upper_arm_elevation", "mean": -1.655, "task_cluster_ci95": [-3.197, -0.279], "two_level_ci95": [-4.396, 0.436], "per_text_mean": {"left": -3.469, "right": 0.159}, "texts_same_sign": false},
+    {"page": "p.20 effect family (simple effects / interaction); p.20 figure plots jerk RMS only; metric not written or plotted", "method": "omnicontrol", "effect": "realism at spatial=0", "metric": "trunk_inclination", "mean": -4.028, "task_cluster_ci95": [-7.183, -0.83], "two_level_ci95": [-10.213, 2.24], "per_text_mean": {"left": -10.167, "right": 2.111}, "texts_same_sign": false},
+    {"page": "p.20 effect family (simple effects / interaction); p.20 figure plots jerk RMS only; metric not written or plotted", "method": "omnicontrol", "effect": "realism at spatial=1", "metric": "trunk_inclination", "mean": -3.324, "task_cluster_ci95": [-6.326, -0.3], "two_level_ci95": [-9.137, 2.475], "per_text_mean": {"left": -8.975, "right": 2.327}, "texts_same_sign": false},
+    {"page": "p.20 effect family (simple effects / interaction); p.20 figure plots jerk RMS only; metric not written or plotted", "method": "omnicontrol", "effect": "realismxspatial", "metric": "right_upper_arm_elevation", "mean": -1.736, "task_cluster_ci95": [-3.564, -0.089], "two_level_ci95": [-4.739, 0.271], "per_text_mean": {"left": -0.01, "right": -3.461}, "texts_same_sign": true},
+    {"page": "p.20 effect family (simple effects / interaction); p.20 figure plots jerk RMS only; metric not written or plotted", "method": "omnicontrol", "effect": "realismxspatial", "metric": "left_upper_arm_elevation", "mean": -2.001, "task_cluster_ci95": [-3.544, -0.534], "two_level_ci95": [-4.928, 0.444], "per_text_mean": {"left": -4.235, "right": 0.234}, "texts_same_sign": false}
+   ],
+   "deck_p52_wording": "躯干倾角 −0.16°，两层 CI 跨 0，两句文本方向相反，撤回该结论 (user 2026-11-08; not 'holds for the left-hand text only')",
+   "single_text_scope": {
+    "chois": "12 tasks share one text ('Lift and carry the box.'); between-text variation cannot be estimated; CHOIS conclusions are scoped to this text",
+    "ardy": "12 tasks (4 walking directions x 3 speeds) share one text pair inside every run ('A person walks forward.' then 'A person walks backward.' at 5 s); the text layer has 1 unit, so a text -> task re-check equals the task-cluster interval; ARDY conclusions (incl. judgement 3 trunk inclination) are scoped to this text pair (user 2026-11-08: single_text_scope, no recomputation)",
+    "no_text": "DART, CLoSD, PRIMAL tasks carry no text prompt"
+   },
+   "deck_file": "not edited"
+  }
  },
 
  "conventions_not_derived": ["10000 resamples, seed 20261108", "Holm per question and primary metric", "measurement-consistency limits 5 pp / 0.5 cm"]
