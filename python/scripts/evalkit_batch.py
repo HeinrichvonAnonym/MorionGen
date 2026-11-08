@@ -94,6 +94,36 @@ def manifest_unique_c0(args):
     print(json.dumps({m: sum(r['method'] == m for r in out) for m in TEXT_ONLY_C0}), f'-> {args.out}')
 
 
+def manifest_offset_reference(args):
+    """Registered set of the frozen offset reference (config/evalkit_batch_protocol_20261108.json, offset_reference;
+    user 2026-11-08 18:38): native matrix, paused clock, per method x condition x task the lowest seed, one row per
+    distinct input (control-off MotionLCM / OmniControl repeat inputs across tasks); Kimodo (not in the native matrix)
+    from E4, one case per text x constraint type x correction."""
+    rows = json.loads(NATIVE_MATRIX.read_text())['rows']
+    cells = {}
+    for r in rows:
+        if r['clock'] == 'paused':
+            cells.setdefault((r['method'], json.dumps(r['condition'], sort_keys=True), r['task']), []).append(r)
+    out, seen = [], set()
+    for (method, cond, task), rs in sorted(cells.items()):
+        r = min(rs, key=lambda r: r['seed'])
+        run = ROOT/r['run'] if not Path(r['run']).is_absolute() else Path(r['run'])
+        source = run/'factorial'/f"{r['variant']}_canonical.npz" if method == 'primal' else run
+        h = sha256(input_file(source))
+        if h in seen:
+            continue
+        seen.add(h)
+        c = json.loads(cond)
+        out.append({'id': f"{method}_{'_'.join(f'{k}{v}' for k, v in sorted(c.items()))}_t{task}_s{r['seed']}", 'method': method,
+                    'source': str(source), 'condition': c, 'input_sha256': h})
+    out += [{'id': j['id'], 'method': 'kimodo', 'source': j['source'], 'condition': j['condition']}
+            for j in sorted(json.loads(E4_PLAN.read_text())['jobs'], key=lambda j: j['id']) if j['method'] == 'kimodo']
+    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+    Path(args.out).write_text(json.dumps({'created': time.strftime('%Y-%m-%d %H:%M'), 'arm': 'offset reference set',
+                                          'from': [str(NATIVE_MATRIX.relative_to(ROOT)), str(E4_PLAN.relative_to(ROOT))], 'rows': out}, indent=1))
+    print(json.dumps({m: sum(r['method'] == m for r in out) for m in sorted({r['method'] for r in out})}), f'-> {args.out}')
+
+
 def input_file(source):
     p = Path(source)
     return p if p.is_file() else p/'motion.npz'
@@ -551,6 +581,8 @@ def main():
     r.add_argument('--workers', type=int, default=6)
     r.add_argument('--dry-run', action='store_true')
     r.add_argument('--offset-reference', help='frozen per-method offset reference (offset-reference); default: the manifest median')
+    mo = sub.add_parser('manifest-offset-reference', help='the registered rows of the frozen offset reference')
+    mo.add_argument('--out', required=True)
     o = sub.add_parser('offset-reference', help='freeze the per-method offset reference from registered rows')
     o.add_argument('--manifest', required=True); o.add_argument('--rows', required=True); o.add_argument('--out', required=True)
     o.add_argument('--workers', type=int, default=6)
@@ -563,7 +595,8 @@ def main():
     args = a.parse_args()
     {'manifest-e4': manifest_e4, 'manifest-shift': manifest_shift, 'manifest-self-floor': manifest_self_floor, 'check': check,
      'run': run_batch, 'manifest-unique-c0': manifest_unique_c0, 'refresh': refresh,
-     'manifest-lumbar-sample': manifest_lumbar_sample, 'offset-reference': offset_reference}[args.step](args)
+     'manifest-lumbar-sample': manifest_lumbar_sample, 'offset-reference': offset_reference,
+     'manifest-offset-reference': manifest_offset_reference}[args.step](args)
 
 
 if __name__ == '__main__':

@@ -222,9 +222,10 @@
   "offset_reference": {
    "decision": "user 2026-11-08 17:10: freeze the per-method offset reference from a registered set before the batch (the manifest median would move as rows stream in and re-evaluate every row of the method)",
    "how": "evalkit_batch.py offset-reference --manifest REGISTERED --rows DIR --out FROZEN.json, once; batches pass --offset-reference FROZEN.json; a method missing from it stops the batch",
-   "set": "to be registered before the batch; proposal: existing native-matrix runs, one seed per condition x task per method (约定，未经推演)",
+   "set": "registered 2026-11-08 18:39 (user 18:38): evalkit_batch.py manifest-offset-reference: native matrix, paused clock, per method x condition x task the lowest seed, one row per distinct input; Kimodo from E4 (one case per text x constraint type x correction); 344 rows (ardy 48, chois 24, closd 24, dart 24, kimodo 52, motionlcm 14, omnicontrol 38, primal 96). Clock paused only, rows weighted equally per distinct input: 约定，未经推演",
    "assumption": "the reference reflects the method's foot-joint convention, not the task",
-   "drift": "every batch also writes its own manifest median (floor_offsets.json _batch_median) next to the frozen value; reported descriptively, never used to recompute"
+   "drift": "every batch also writes its own manifest median (floor_offsets.json _batch_median) next to the frozen value; reported descriptively, never used to recompute",
+   "frozen_file": "config/evalkit_offset_reference_20261108.json (written once by offset-reference; failed rows listed, not retried)"
   },
   "method_floor_row_note": "offset_reference_m is the frozen value, so streamed rows leave earlier keys unchanged"
  },
@@ -247,6 +248,6 @@
   "default_per_cell 1",
   "per-dimension costs",
   "stratum definition (method x condition x task x text_condition)",
-  "offset reference set (proposal: one native-matrix seed per condition x task per method)"
+  "offset reference set (paused clock, lowest seed per condition x task, distinct inputs)"
  ]
 }
