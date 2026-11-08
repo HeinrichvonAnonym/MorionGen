@@ -395,6 +395,8 @@ def main():
         'kimodo': {'tasks': 'reuse of the 416 deck pairs (E4), not extended', 'split': 'deck_recheck', 'source': 'config/e4_cross_method_20261103.json', 'l4_state_of_old_runs': l4.get('kimodo')},
         'counts': count,
         'rows': {'header': header, 'conditions': 'condition = index into methods.<m>.conditions (PRIMAL: null, all 8 in one run)', 'data': rows}}
+    if OUT.exists() and json.loads(OUT.read_text()).get('status', '').startswith('frozen'):
+        raise SystemExit(f'{OUT.relative_to(ROOT)} is frozen: changes only as records appended to its revisions_after_freeze')
     OUT.write_text(json.dumps(out, indent=1, ensure_ascii=False))
     print(json.dumps(count, indent=1))
 

@@ -411,6 +411,8 @@ def main():
                                     'paired FID resampling of the reference'],
         'pending_user': [],
     }
+    if OUT.exists() and json.loads(OUT.read_text()).get('status', '').startswith('frozen'):
+        raise SystemExit(f'{OUT.relative_to(ROOT)} is frozen: changes only as records appended to its revisions_after_freeze')
     OUT.write_text(json.dumps(reg, indent=1, ensure_ascii=False)+'\n')
     print(json.dumps({k: reg[k] for k in ('compute_estimate',)}, indent=1)[:3000])
 

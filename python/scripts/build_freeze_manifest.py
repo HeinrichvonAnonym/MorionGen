@@ -96,10 +96,34 @@ def build():
     }
 
 
+def revised(path, frozen_sha):
+    """None if the file equals its frozen version apart from records appended to revisions_after_freeze, each with a
+    time and before_any_batch_result true; otherwise the reason. Returns (reason, number of records)."""
+    tagged = subprocess.check_output(['git', 'show', f'{TAG}:{path}'], cwd=ROOT)
+    if hashlib.sha256(tagged).hexdigest() != frozen_sha:
+        return f'{path}: the tagged version differs from the manifest', 0
+    old, new = json.loads(tagged), json.loads((ROOT/path).read_text())
+    if 'revisions_after_freeze' not in old:
+        return f'{path}: sha256 differs (no revisions_after_freeze in the frozen version)', 0
+    before, after = old.pop('revisions_after_freeze'), new.pop('revisions_after_freeze', None)
+    if not isinstance(after, list) or after[:len(before)] != before:
+        return f'{path}: revisions_after_freeze is not append-only', 0
+    if new != old:
+        return f'{path}: differs beyond revisions_after_freeze', len(after)
+    malformed = [i for i, r in enumerate(after) if not (isinstance(r, dict) and r.get('time') and r.get('before_any_batch_result') is True)]
+    return (f'{path}: revision records {malformed} lack a time or before_any_batch_result' if malformed else None), len(after)
+
+
 def check():
     m = json.loads(OUT.read_text())
-    bad = [f'{p}: sha256 differs' for p, h in m['frozen_files'].items() if sha(p) != h]
-    bad += [f'{p}: sha256 differs' for p, r in m['referenced_configs'].items() if sha(p) != r['sha256']]
+    bad, revisions = [], {}
+    for p, h in [*m['frozen_files'].items(), *((p, r['sha256']) for p, r in m['referenced_configs'].items())]:
+        if sha(p) == h:
+            continue
+        reason, n = revised(p, h)
+        revisions[p] = n
+        if reason:
+            bad.append(reason)
     now = referenced()
     bad += [f'{p}: newly referenced, not in the manifest' for p in now if p not in m['referenced_configs']]
     for name, area in m['code']['areas'].items():
@@ -110,7 +134,7 @@ def check():
     for repo, r in upstream().items():
         if repo not in m['upstream_repositories'] or r != m['upstream_repositories'][repo]:
             bad.append(f'{repo}: {r} != {m["upstream_repositories"].get(repo)}')
-    print(json.dumps({'manifest': str(OUT.relative_to(ROOT)), 'differences': bad}, indent=1))
+    print(json.dumps({'manifest': str(OUT.relative_to(ROOT)), 'revision_records': revisions, 'differences': bad}, indent=1))
     return 1 if bad else 0
 
 
