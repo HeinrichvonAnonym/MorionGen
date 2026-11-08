@@ -198,6 +198,10 @@
         302
       ],
       "added": "2026-11-07 18:48, for the single held-out run of evalkit v1.1 (the v1 held-out split is spent); same generator, defects and sizes"
+    },
+    "heldout3": {
+      "subject_seeds": [401, 402],
+      "added": "2026-11-08 12:01, for the single held-out run of evalkit v1.2 (config/evalkit_v12_20261108.json: loads on the self floor); same generator, defects and sizes; built only after v1.2 and its implementing code are committed"
     }
   },
   "muscle_subset": "controls of every base and subject (truth and tool static optimization)"

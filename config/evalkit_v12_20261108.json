@@ -1,0 +1,47 @@
+{
+  "created": "2026-11-08 12:01 UTC+8, after the lumbar smoke under the method floor (config/evalkit_upper_muscle_20261108.json) and before the heldout3 split, any self-floor validation run or any lumbar run on self-floor rows",
+  "plan": "先修地面再算负载 (evalkit v1.2), user decisions 2026-11-08 11:39-11:56",
+  "version": "v1.2",
+  "previous_version": "config/evalkit_v11_20261107.json (frozen b2f507a). Every tool parameter of v1.1 (fit, IK gate, contact margin, residual tau and depth, ergo, muscle static optimization) stays; utils/motiogen/evalkit keeps reading v1.1 (spec.SPEC). v1.2 changes which floor each dimension's primary result uses, adds forced metrics and validates that on heldout3.",
+  "why": "User framework (2026-11-08 11:39): repair the floor first, then analyse the whole-body load. Under v1.1 every dimension used the method floor, so the load dimensions of motions that do not keep their own floor (CHOIS, OmniControl hovering; ARDY, MotionLCM sinking) measured the floor defect a second time (the lumbar dimension of CHOIS was unmeasurable on every frame for want of foot contact). The change follows the mismatch with the framework, not the numbers: the method-floor results stay and are reported as a descriptive arm.",
+  "framework": {
+    "order": "1) residual dimension on the method floor (does the method keep its own floor); 2) floor repair: per row a single vertical shift of the floor (self floor) and a refit on it; 3) every load dimension on the repaired floor",
+    "residual": {"primary": "method floor (v1.1 floor_eval: method floor plus the per-clip correction)", "self_floor_arm": "reported descriptively"},
+    "loads": {
+      "dimensions": ["ergo (REBA, RULA)", "muscle (Rajagopal legs)", "upper (lumbar FBLS, config/evalkit_upper_muscle_20261108.json)"],
+      "primary": "self floor",
+      "method_floor": "computed as well, descriptive (user decision 2026-11-08 11:51-11:56: all loads under both floors)"
+    }
+  },
+  "floor_repair": {
+    "kind": "per-clip constant shift of the floor, motion unchanged (user decision: clip shift, no per-frame repair)",
+    "estimator": "utils/motiogen/evalkit/floor.py self_floor_shift (moved unchanged from python/scripts/evalkit_batch.py): median over the scored frames of the lowest sole-landmark elevation (heel / toe, both sides) among the landmarks whose vertical speed is below 0.05 m/s; fallback when no landmark is still: median lowest elevation",
+    "applied_to": "the floor the method-floor row was evaluated on (floor_eval_m); the shifted row is refitted on floor_eval_m + shift with no per-clip correction",
+    "known_bias": "checked on known-floor data before use (scratch/self_floor_estimators.py): synthetic walk -0.6 cm, other synthetic -0.3 cm, CLoSD -0.2 cm, PRIMAL +0.1 cm"
+  },
+  "forced": {
+    "definition": "forced metrics (强测算, user decision 2026-11-08 11:56) also count the frames whose only failure is an unbalanced external force (the floor repair did not remove the residual); reported in separate forced_* fields with the residual size, never mixed into the primary metrics",
+    "lumbar": "primary: reachable frames (E3 type 2 excluded). forced: finite frames that are neither type-2 internal (|lumbar reserve| > 1 N m) nor type-2 kinematic (within 0.5 deg of a lumbar coordinate limit), i.e. reachable plus type-2-external-only frames; forced_residual_bw_p95 over the forced external frames; type-1 rows (IK median RMS > 3 cm, pelvis coordinate at its limit, joint reactions invalid) get no forced metric",
+    "leg_muscle": "primary: muscle effort mean over the scored static-optimization frames whose nearest residual frame is residual-negative (residual.judge); forced: over every scored frame (the v1.1 definition, key muscle_effort_sum_a2_mean kept, also written as forced_muscle_effort_sum_a2_mean) with the residual-positive share of those frames",
+    "ergo": "no forced variant: REBA / RULA do not use the ground reactions (the legs-support term uses contact), so they have no residual-only failure",
+    "excluded_from_forced": "type-1 rows, type-2 internal and kinematic frames (user decision: forced covers only the unbalanced external force); rows whose solver failed stay failed (no retry)"
+  },
+  "validation": {
+    "split": "heldout3, subject seeds 401 and 402 (config/evalkit_synth_20261107.json splits.heldout3), same generator, bases, defects and sizes as heldout2; built only after this file and the implementing code are committed; run once; no field of this file changes after the run",
+    "runs": "1) truth; 2) tool on the method floor (v1.1 pipeline, the per-clip correction with the split's own offset reference); 3) self-floor tool per clip from the frames of 2), dims residual + ergo on every clip, + muscle + upper (lumbar) on the control, float_whole_m and penetrate_whole_m clips; 4) lumbar with the truth ground reactions (truth mode) on every control clip",
+    "targets": "whole-clip floor defects (float_whole_m, penetrate_whole_m) only move the pelvis of the control motion of the same base and subject, so after the repair they are scored against that control's truth (ergo classes, muscle effort, truth-GRF lumbar); every other clip against its own truth",
+    "ergo": {"clips": "the v1.1 ergo pass clips (every clip except bone_stretch, slide and, under the method floor, float_whole) plus float_whole_m against its control's truth", "pass": "v1.1 line: false-kill and missed-kill <= 5% with the one-sided 95% Clopper-Pearson bound <= 10%, REBA and RULA separately"},
+    "muscle": {"clips": "control, float_whole_m, penetrate_whole_m", "criterion": "descriptive (v1.1 muscle.criterion, user decision 2026-11-07 16:25): median relative and absolute error, Spearman, primary and forced each against the control truth effort over the same frames"},
+    "lumbar": {"clips": "control, float_whole_m, penetrate_whole_m whose self-floor run and the control's truth-GRF run are both measured", "metric": "L5_S1_compression_p95_bw (primary, reachable frames) against the control's truth-GRF value", "pass": "Spearman >= 0.8 and median |relative error| <= 0.15 (the V2 line of config/evalkit_upper_muscle_20261108.json; 约定，未经推演)", "reported": "mean metric, forced metrics, reachable-frame counts; if the line fails the lumbar dimension on the self floor is reported as ground-reaction sensitive, descriptive only"},
+    "floor_estimate": "descriptive: repaired floor minus true floor per defect and size (true floor of a whole-clip defect = input floor + signed size)",
+    "replication": "the v1.1 score of the method-floor run on heldout3 is reported as a replication; v1.1 stays validated on heldout2",
+    "on_failure": "a failed line is reported as failed; the dimension on the self floor is then not validated and is reported descriptively until the user decides"
+  },
+  "smoke": {
+    "rows": "v11 smoke8x5 (40) and unique_c0 (20): method-floor rows and their existing self-floor rows (refitted on the self floor); lumbar added to the self-floor rows, forced metrics added to every row from the saved files (no new solve)",
+    "check": "merged view per row: residual from the method-floor row, loads from the self-floor row (primary) with the method-floor loads (method_floor_*) and the forced metrics alongside"
+  },
+  "batch": "scripts/run_evalkit_batch.sh runs both passes: pass 1 every dimension on the method floor, manifest-self-floor, pass 2 every dimension on the self floor, then the merged check",
+  "superseded": "the lumbar smoke results of 2026-11-08 00:55-02:20 (method floor) become the descriptive method-floor arm; V1 (E3 equivalence) and V2 (estimated vs truth ground reactions on the known floor) of config/evalkit_upper_muscle_20261108.json stand; V3 / V4 stay descriptive",
+  "conventions_not_derived": ["still-landmark speed 0.05 m/s of the floor estimator", "lumbar pass line Spearman 0.8 / 15%", "residual-negative frames as the leg-muscle primary frame set", "subject seeds 401, 402"]
+}
