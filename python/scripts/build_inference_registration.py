@@ -60,6 +60,74 @@ def smoke_timing():
     return out
 
 
+# primary contrasts of config/analysis_plan_20261108.json (Q1, Q2): (name, method, switch, fixed levels)
+PRIMARY = [('Q1 motionlcm control_residual 1-0', 'motionlcm', 'control_residual', {}),
+           ('Q1 omnicontrol spatial 1-0 at realism 1', 'omnicontrol', 'spatial', {'realism': 1}),
+           ('Q1 chois guidance 1-0', 'chois', 'guidance', {}),
+           ('Q1 ardy correction 1-0 at history_long 0', 'ardy', 'correction', {'history_frames': 32}),
+           ('Q1 dart goal_update 1-0', 'dart', 'goal_update', {}),
+           ('Q2 primal inertialization 1-0 (all 8 combinations come from one run)', 'primal', None, {}),
+           ('Q2 ardy history_long 1-0 within correction 1', 'ardy', 'history_frames', {'correction': 1}),
+           ('Q2 closd execution_context 1-0', 'closd', 'execution_context', {})]
+
+
+def held_out_scan():
+    scan = json.loads((ROOT/'develop_logs/test_runs/20261109_inference_premises/seen_inputs.json').read_text())
+    return {'method': 'every earlier run under develop_logs/test_runs (manifest scenario, seed, status, command; config _intervention), '
+                      'the section-14 smoke excluded; inputs compared, no outcome read',
+            'scanned_runs': scan['scanned_runs'],
+            'per_method': {m: {'held_out_rows': v['held_out_rows'],
+                               'held_out_positions': len(v['held_out_positions_seen_earlier']),
+                               'held_out_rows_identical_to_earlier_runs': len(v['held_out_rows_identical_to_earlier_runs']),
+                               'held_out_positions_seen_earlier': sum(p['earlier_runs'] > 0 for p in v['held_out_positions_seen_earlier']),
+                               'positive_control_development_rows': [v['positive_control']['development_rows_identical_to_earlier_runs'],
+                                                                     v['positive_control']['generator_identical_seen']]}
+                           for m, v in scan['methods'].items()},
+            'positive_control_note': 'development rows found identical by the scan vs by the task generator; DART and CLoSD differ by the '
+                                     'two 10-25 task-0 seed-20 pilots, run with the entry-point defaults (no goal or clock arguments), whose '
+                                     'trace.json records the task-0 goals and the paused clock, so the generator is right and the scan, which '
+                                     'compares command arguments, is stricter; CHOIS differs by one development row (task 0, seed 20, guidance '
+                                     '0) equal to a 11-01 run the generator does not count; it is regenerated, not reused',
+            'source': 'python/scripts/scan_seen_inputs.py -> develop_logs/test_runs/20261109_inference_premises/seen_inputs.json'}
+
+
+def split_table(tasks):
+    header = tasks['rows']['header']
+    rows = [dict(zip(header, r)) for r in tasks['rows']['data']]
+    per_condition = {}
+    for m, spec in tasks['methods'].items():
+        for i, cond in enumerate(spec['conditions'] if m != 'primal' else [{'all 8 combinations': 'one run'}]):
+            sel = [r for r in rows if r['method'] == m and (m == 'primal' or r['condition'] == i)]
+            per_condition.setdefault(m, []).append({'condition': cond, 'development': sum(r['split'] == 'development' for r in sel),
+                                                    'held_out': sum(r['split'] == 'held_out' for r in sel)})
+    pairs = {}
+    for name, m, switch, fixed in PRIMARY:
+        if switch is None:
+            sel = [r for r in rows if r['method'] == m]
+            pairs[name] = {'development': sum(r['split'] == 'development' for r in sel), 'held_out': sum(r['split'] == 'held_out' for r in sel),
+                           'across_split': 0}
+            continue
+        conds = tasks['methods'][m]['conditions']
+        by_key = {}
+        for r in rows:
+            if r['method'] != m:
+                continue
+            c = conds[r['condition']]
+            if any(c[k] != v for k, v in fixed.items()):
+                continue
+            by_key.setdefault((r['task'], r['seed'], r['text_level'], r['paraphrase']), {})[c[switch]] = r['split']
+        count = {'development': 0, 'held_out': 0, 'across_split': 0}
+        for levels in by_key.values():
+            if len(levels) != 2:
+                raise SystemExit(f'{name}: unpaired row')
+            a, b = levels.values()
+            count[a if a == b else 'across_split'] += 1
+        pairs[name] = count
+    return {'rows_per_condition': per_condition, 'primary_contrast_pairs': pairs,
+            'pair': 'same method, task, seed, text level and paraphrase, differing only in the switch; a pair is held out when both rows '
+                    'are; across_split counts pairs with one row in each set, which serve neither set'}
+
+
 def main():
     tasks = load(TASKS); overhead = load(REACH/'overhead_limit.json'); reach = load(REACH/'reachability.json')
     shift = load(REACH/'reachability_origin_shift_+0.012.json'); hints = load(RUNS/'20261109_inference_premises/hint_zscores.json')
@@ -102,6 +170,9 @@ def main():
                                       'after runs per execution context with the same seed must give bit-identical joints, also against the '
                                       '10-24 archive; rotations by the bone-vector method; committed separately (ccb50a3; verified, contract '
                                       'method_capability.closd.smoke)',
+            '2026-11-09 CHOIS / ARDY held out': 'only through seed 24, generalisation across seeds only (added parts seen in V2 / M0a); '
+                                                'per-condition and per-primary-contrast counts in split.table; a future held-out set per '
+                                                'task family before the user\'s method is developed on it',
             '2026-11-09 03:07 CLoSD tasks': 'CLoSD native REACH is a root-goal task with fixed text: it keeps the 8 directions x 3 distances, '
                                             'covers no risk-zone reaching and has no text factor; STRIKE_PUNCH (never run in the native '
                                             'matrix) is a later extension that needs a new entry point, a smoke test and the input-reaches-'
@@ -149,6 +220,15 @@ def main():
                               'chois': 'the OMOMO annotation of the window (native)'},
         },
         'split': {**tasks['split'], 'primal': tasks['methods']['primal'].get('held_out_rule'),
+                  'chois_ardy': 'CHOIS and ARDY are held out only through seed 24 and test generalisation across seeds only: their added '
+                                'parts were already seen (CHOIS windows in V2, ARDY directions in M0a) (user 2026-11-09). If the user\'s '
+                                'own method is developed on carrying or path walking, a new held-out set for that task family is '
+                                'registered before that development (CHOIS: unused official windows; ARDY: speed levels not yet run)',
+                  'table': split_table(tasks),
+                  'ardy_m0a': 'ARDY rows whose input equals a successful M0a run (history_frames 32, both corrections, the native matrix '
+                              'text pair, every added direction and speed, seeds 20-24) are development; so the Q1 contrast correction '
+                              '1-0 at history_long 0 has no held-out pair, and the Q2 contrast history_long 1-0 within correction 1 has '
+                              'its held-out rows (history 160, seed 24) paired only with development rows (table.primary_contrast_pairs)',
                   'enforcement': 'config/analysis_plan_20261108.json split_use: analysis scripts select development rows by this split and refuse '
                                  'held-out rows unless the final-comparison flag is given; the opening is recorded in the notes with time and commit',
                   'fallback': 'pending user (analysis plan pending_user.held_out_fallback)'},
@@ -185,6 +265,7 @@ def main():
                                       'the queue until admitted and is not a generation failure; generation failures stay recorded and are '
                                       'never replaced (contract layer 6) (约定)',
                 'smoke': smoke, 'smoke_source': 'develop_logs/test_runs/20261109_inference_smoke (build_inference_smoke.py, check_inference_smoke.py)'},
+            '4_held_out_unseen': held_out_scan(),
             'not_done': 'no check of whether a method reaches a target, falls, or stretches bones; no task was filtered (design section 14 item 2)'},
         'compute_estimate': {'basis': 'slower of the two smoke runs per method (worker seconds incl. process start, both cards busy); 约定, a '
                                       'planning figure only; CHOIS timed on one card with the other idle',
@@ -195,9 +276,7 @@ def main():
                                     'of the nominal body for the pelvis joint', 'paraphrase templates and zone phrases', 'held-out positions '
                                     '(interleaved choice)', 'paused clock only', 'HumanML3D standing-frame thresholds and scaling choices',
                                     '200-row evalkit subsample', 'compute estimate'],
-        'pending_user': ['CHOIS and ARDY have no held-out position (their added windows / all 8 directions were already run in V2 / M0) and '
-                         'are held out only through seed 24',
-                         'overhead front: relative to the thorax the upper arm can stay below 90 deg (reach_geometry.elevation_check)',
+        'pending_user': ['overhead front: relative to the thorax the upper arm can stay below 90 deg (reach_geometry.elevation_check)',
                          'paused clock only', 'official evaluation batch scale', 'held_out_fallback (analysis plan)'],
     }
     OUT.write_text(json.dumps(reg, indent=1, ensure_ascii=False)+'\n')

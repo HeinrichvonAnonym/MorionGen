@@ -1,10 +1,10 @@
 {
  "version": "inference-tasks-draft-1",
- "created": "2026-11-09 03:07",
+ "created": "2026-11-09 03:17",
  "status": "draft; frozen with config/inference_registration_20261109.json and the other three section-14 files after user review",
  "generator": {
   "script": "python/scripts/build_inference_tasks.py",
-  "sha256": "89ff270632ead2cf694b8bf9fce9b2c2ce71f984620e5d89dbeaf45cedf083a2"
+  "sha256": "5ed7010e356410c36ab013eebf109ce41f3a62a61b0435a449c2a0d9845ab8ac"
  },
  "inputs_sha256": {
   "develop_logs/test_runs/20261109_task_reachability/reachability.json": "ff3b3e0eb693079e444beee1bac783c23ee1ec8eaa3d439a79ef7a944aa903e6",
@@ -44,6 +44,7 @@
  "split": {
   "dimensions": "target position, paraphrase, seed (design section 14 item 1)",
   "rule": "a row is held out if any of its dimensions is held out, except that a row whose input is identical to an already-run input (method, task input, seed, condition) is always development",
+  "identical_input_sources": "native matrix rows (paused clock); V2 CHOIS runs with condition exactly guidance 0; M0 / M0a ARDY runs whose extra condition keys are all at the ardy_native.py defaults (waypoints sparse, target_mode path; the M0a key text only labels the prompt, which is compared itself) and whose path switch_seconds is the default 5 s; successful runs only",
   "held_out_seed": 24,
   "held_out_paraphrase": 4,
   "held_out_positions": "per method: 4 of the 12 added tasks, interleaved so that both sets cover every zone / direction / distance / speed / family level (methods.<m>.held_out_positions); ARDY and CHOIS have none (methods.<m>.no_held_out_position)",
@@ -3076,7 +3077,7 @@
     "legacy": 480
    },
    "held_out_positions": [],
-   "no_held_out_position": "all 8 root-path directions were run and inspected in the 10-31 M0 experiments (seeds 20-24); held out only through seed 24"
+   "no_held_out_position": "all 8 root-path directions were run and inspected in the 10-31 M0 experiments (seeds 20-24); held out only through seed 24, which tests generalisation across seeds only; seed-24 rows whose input equals an M0a run (history_frames 32) are development, so only history_frames 160 is held out (user 2026-11-09)"
   },
   "primal": {
    "family": "unconditioned continuation from 24 initial states; one run writes all 8 geometric switch combinations",
@@ -3705,7 +3706,7 @@
     "legacy": 120
    },
    "held_out_positions": [],
-   "no_held_out_position": "the 12 added windows were run and inspected in V2 (seeds 20-22); held out only through seed 24, which tests generalisation across seeds only (to be confirmed by the user)"
+   "no_held_out_position": "the 12 added windows were run and inspected in V2 (seeds 20-22); held out only through seed 24, which tests generalisation across seeds only (user 2026-11-09)"
   }
  },
  "kimodo": {
@@ -3751,11 +3752,11 @@
   },
   "ardy": {
    "rows": 480,
-   "development": 432,
-   "held_out": 48,
-   "identical_seen": 236,
-   "reuse_candidates": 236,
-   "to_generate": 244
+   "development": 456,
+   "held_out": 24,
+   "identical_seen": 358,
+   "reuse_candidates": 358,
+   "to_generate": 122
   },
   "primal": {
    "rows": 120,
@@ -28760,9 +28761,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_020312_ardy_demo_209cb1b6",
+    true
    ],
    [
     "ardy",
@@ -28773,9 +28774,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_020418_ardy_demo_029c3161",
+    true
    ],
    [
     "ardy",
@@ -31880,9 +31881,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_040944_ardy_demo_26fc6d61",
+    true
    ],
    [
     "ardy",
@@ -31893,66 +31894,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_040813_ardy_demo_0d811208",
+    true
    ],
    [
     "ardy",
     12,
     20,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    12,
-    20,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    12,
-    21,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    12,
-    21,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    12,
-    21,
     2,
     null,
     null,
@@ -31965,6 +31914,58 @@
    [
     "ardy",
     12,
+    20,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    12,
+    21,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_041140_ardy_demo_f7a36d8d",
+    true
+   ],
+   [
+    "ardy",
+    12,
+    21,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_041028_ardy_demo_7dd9ce90",
+    true
+   ],
+   [
+    "ardy",
+    12,
+    21,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    12,
     21,
     3,
     null,
@@ -31984,9 +31985,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_041556_ardy_demo_46a7ec72",
+    true
    ],
    [
     "ardy",
@@ -31997,66 +31998,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_041442_ardy_demo_facdb6f8",
+    true
    ],
    [
     "ardy",
     12,
     22,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    12,
-    22,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    12,
-    23,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    12,
-    23,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    12,
-    23,
     2,
     null,
     null,
@@ -32069,6 +32018,58 @@
    [
     "ardy",
     12,
+    22,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    12,
+    23,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_041745_ardy_demo_18d0b21c",
+    true
+   ],
+   [
+    "ardy",
+    12,
+    23,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_041606_ardy_demo_bd0e8f47",
+    true
+   ],
+   [
+    "ardy",
+    12,
+    23,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    12,
     23,
     3,
     null,
@@ -32087,10 +32088,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_042048_ardy_demo_aa8c9ac1",
+    true
    ],
    [
     "ardy",
@@ -32100,10 +32101,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_042214_ardy_demo_01f25c11",
+    true
    ],
    [
     "ardy",
@@ -32140,9 +32141,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_033247_ardy_demo_b5b0c566",
+    true
    ],
    [
     "ardy",
@@ -32153,66 +32154,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_033136_ardy_demo_5fce3274",
+    true
    ],
    [
     "ardy",
     13,
     20,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    13,
-    20,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    13,
-    21,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    13,
-    21,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    13,
-    21,
     2,
     null,
     null,
@@ -32225,6 +32174,58 @@
    [
     "ardy",
     13,
+    20,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    13,
+    21,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_033618_ardy_demo_0997640c",
+    true
+   ],
+   [
+    "ardy",
+    13,
+    21,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_033507_ardy_demo_7c7a278b",
+    true
+   ],
+   [
+    "ardy",
+    13,
+    21,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    13,
     21,
     3,
     null,
@@ -32244,9 +32245,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_034025_ardy_demo_7123a4d4",
+    true
    ],
    [
     "ardy",
@@ -32257,66 +32258,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_034133_ardy_demo_15b31090",
+    true
    ],
    [
     "ardy",
     13,
     22,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    13,
-    22,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    13,
-    23,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    13,
-    23,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    13,
-    23,
     2,
     null,
     null,
@@ -32329,6 +32278,58 @@
    [
     "ardy",
     13,
+    22,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    13,
+    23,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_034158_ardy_demo_18171c7f",
+    true
+   ],
+   [
+    "ardy",
+    13,
+    23,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_034248_ardy_demo_e1da274c",
+    true
+   ],
+   [
+    "ardy",
+    13,
+    23,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    13,
     23,
     3,
     null,
@@ -32347,10 +32348,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_034637_ardy_demo_6f1dad66",
+    true
    ],
    [
     "ardy",
@@ -32360,10 +32361,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_034524_ardy_demo_0eab473e",
+    true
    ],
    [
     "ardy",
@@ -32400,9 +32401,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_025902_ardy_demo_957cc5c5",
+    true
    ],
    [
     "ardy",
@@ -32413,66 +32414,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_025749_ardy_demo_e1e0fe89",
+    true
    ],
    [
     "ardy",
     14,
     20,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    14,
-    20,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    14,
-    21,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    14,
-    21,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    14,
-    21,
     2,
     null,
     null,
@@ -32485,6 +32434,58 @@
    [
     "ardy",
     14,
+    20,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    14,
+    21,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_030328_ardy_demo_2ef858d2",
+    true
+   ],
+   [
+    "ardy",
+    14,
+    21,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_030240_ardy_demo_4c7d1a78",
+    true
+   ],
+   [
+    "ardy",
+    14,
+    21,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    14,
     21,
     3,
     null,
@@ -32504,9 +32505,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_030440_ardy_demo_788d4958",
+    true
    ],
    [
     "ardy",
@@ -32517,66 +32518,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_030726_ardy_demo_fa3a9651",
+    true
    ],
    [
     "ardy",
     14,
     22,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    14,
-    22,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    14,
-    23,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    14,
-    23,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    14,
-    23,
     2,
     null,
     null,
@@ -32589,6 +32538,58 @@
    [
     "ardy",
     14,
+    22,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    14,
+    23,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_030944_ardy_demo_b70f1f3c",
+    true
+   ],
+   [
+    "ardy",
+    14,
+    23,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_030814_ardy_demo_6f3fd251",
+    true
+   ],
+   [
+    "ardy",
+    14,
+    23,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    14,
     23,
     3,
     null,
@@ -32607,10 +32608,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_031407_ardy_demo_749a1f8b",
+    true
    ],
    [
     "ardy",
@@ -32620,10 +32621,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_031408_ardy_demo_a7d3ce00",
+    true
    ],
    [
     "ardy",
@@ -32660,9 +32661,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_022934_ardy_demo_9788c5cf",
+    true
    ],
    [
     "ardy",
@@ -32673,66 +32674,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_022846_ardy_demo_ba73499f",
+    true
    ],
    [
     "ardy",
     15,
     20,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    15,
-    20,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    15,
-    21,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    15,
-    21,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    15,
-    21,
     2,
     null,
     null,
@@ -32745,6 +32694,58 @@
    [
     "ardy",
     15,
+    20,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    15,
+    21,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_023045_ardy_demo_5a66e667",
+    true
+   ],
+   [
+    "ardy",
+    15,
+    21,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_023215_ardy_demo_5b3f45cd",
+    true
+   ],
+   [
+    "ardy",
+    15,
+    21,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    15,
     21,
     3,
     null,
@@ -32764,9 +32765,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_023501_ardy_demo_b75ae040",
+    true
    ],
    [
     "ardy",
@@ -32777,66 +32778,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_023637_ardy_demo_f1a87c35",
+    true
    ],
    [
     "ardy",
     15,
     22,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    15,
-    22,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    15,
-    23,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    15,
-    23,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    15,
-    23,
     2,
     null,
     null,
@@ -32849,6 +32798,58 @@
    [
     "ardy",
     15,
+    22,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    15,
+    23,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_023800_ardy_demo_fc7fd6d3",
+    true
+   ],
+   [
+    "ardy",
+    15,
+    23,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_023702_ardy_demo_3002ae0b",
+    true
+   ],
+   [
+    "ardy",
+    15,
+    23,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    15,
     23,
     3,
     null,
@@ -32867,10 +32868,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_024330_ardy_demo_d74d0c91",
+    true
    ],
    [
     "ardy",
@@ -32880,10 +32881,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_024146_ardy_demo_d46a8866",
+    true
    ],
    [
     "ardy",
@@ -32920,9 +32921,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_062454_ardy_demo_66a4afe3",
+    true
    ],
    [
     "ardy",
@@ -32933,66 +32934,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_062548_ardy_demo_fefba8e7",
+    true
    ],
    [
     "ardy",
     16,
     20,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    16,
-    20,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    16,
-    21,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    16,
-    21,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    16,
-    21,
     2,
     null,
     null,
@@ -33005,6 +32954,58 @@
    [
     "ardy",
     16,
+    20,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    16,
+    21,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_062729_ardy_demo_891692fc",
+    true
+   ],
+   [
+    "ardy",
+    16,
+    21,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_063004_ardy_demo_1f07c807",
+    true
+   ],
+   [
+    "ardy",
+    16,
+    21,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    16,
     21,
     3,
     null,
@@ -33024,9 +33025,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_063230_ardy_demo_0dd025aa",
+    true
    ],
    [
     "ardy",
@@ -33037,66 +33038,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_063116_ardy_demo_52ff4a44",
+    true
    ],
    [
     "ardy",
     16,
     22,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    16,
-    22,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    16,
-    23,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    16,
-    23,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    16,
-    23,
     2,
     null,
     null,
@@ -33109,6 +33058,58 @@
    [
     "ardy",
     16,
+    22,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    16,
+    23,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_063555_ardy_demo_13f0dce5",
+    true
+   ],
+   [
+    "ardy",
+    16,
+    23,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_063604_ardy_demo_88d1c1d5",
+    true
+   ],
+   [
+    "ardy",
+    16,
+    23,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    16,
     23,
     3,
     null,
@@ -33127,10 +33128,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_063903_ardy_demo_269cc858",
+    true
    ],
    [
     "ardy",
@@ -33140,10 +33141,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_063707_ardy_demo_bc4de9f5",
+    true
    ],
    [
     "ardy",
@@ -33180,9 +33181,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_054849_ardy_demo_1faf7bc9",
+    true
    ],
    [
     "ardy",
@@ -33193,66 +33194,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_055001_ardy_demo_564ca2fd",
+    true
    ],
    [
     "ardy",
     17,
     20,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    17,
-    20,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    17,
-    21,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    17,
-    21,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    17,
-    21,
     2,
     null,
     null,
@@ -33265,6 +33214,58 @@
    [
     "ardy",
     17,
+    20,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    17,
+    21,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_055305_ardy_demo_d7c6b1f4",
+    true
+   ],
+   [
+    "ardy",
+    17,
+    21,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_055416_ardy_demo_d50eda79",
+    true
+   ],
+   [
+    "ardy",
+    17,
+    21,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    17,
     21,
     3,
     null,
@@ -33284,9 +33285,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_055653_ardy_demo_0ac585f3",
+    true
    ],
    [
     "ardy",
@@ -33297,66 +33298,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_055829_ardy_demo_c4445510",
+    true
    ],
    [
     "ardy",
     17,
     22,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    17,
-    22,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    17,
-    23,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    17,
-    23,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    17,
-    23,
     2,
     null,
     null,
@@ -33369,6 +33318,58 @@
    [
     "ardy",
     17,
+    22,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    17,
+    23,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_060251_ardy_demo_772cafd5",
+    true
+   ],
+   [
+    "ardy",
+    17,
+    23,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_060103_ardy_demo_6b4a926a",
+    true
+   ],
+   [
+    "ardy",
+    17,
+    23,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    17,
     23,
     3,
     null,
@@ -33387,10 +33388,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_060338_ardy_demo_96d07290",
+    true
    ],
    [
     "ardy",
@@ -33400,10 +33401,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_060449_ardy_demo_4d5f0d05",
+    true
    ],
    [
     "ardy",
@@ -33440,9 +33441,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_051703_ardy_demo_6d1190e0",
+    true
    ],
    [
     "ardy",
@@ -33453,66 +33454,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_051530_ardy_demo_5b94449e",
+    true
    ],
    [
     "ardy",
     18,
     20,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    18,
-    20,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    18,
-    21,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    18,
-    21,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    18,
-    21,
     2,
     null,
     null,
@@ -33525,6 +33474,58 @@
    [
     "ardy",
     18,
+    20,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    18,
+    21,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_051830_ardy_demo_8bf141b2",
+    true
+   ],
+   [
+    "ardy",
+    18,
+    21,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_052052_ardy_demo_00c12b90",
+    true
+   ],
+   [
+    "ardy",
+    18,
+    21,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    18,
     21,
     3,
     null,
@@ -33544,9 +33545,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_052350_ardy_demo_8ec9ffb0",
+    true
    ],
    [
     "ardy",
@@ -33557,66 +33558,14 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_052502_ardy_demo_dc108b1e",
+    true
    ],
    [
     "ardy",
     18,
     22,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    18,
-    22,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    18,
-    23,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    18,
-    23,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    18,
-    23,
     2,
     null,
     null,
@@ -33629,6 +33578,58 @@
    [
     "ardy",
     18,
+    22,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    18,
+    23,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_052638_ardy_demo_29f02e01",
+    true
+   ],
+   [
+    "ardy",
+    18,
+    23,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_052754_ardy_demo_c9ba1fae",
+    true
+   ],
+   [
+    "ardy",
+    18,
+    23,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    18,
     23,
     3,
     null,
@@ -33647,10 +33648,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_052905_ardy_demo_8952d345",
+    true
    ],
    [
     "ardy",
@@ -33660,10 +33661,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_053105_ardy_demo_87c45efe",
+    true
    ],
    [
     "ardy",
@@ -33700,9 +33701,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_044223_ardy_demo_7d1413d1",
+    true
    ],
    [
     "ardy",
@@ -33713,9 +33714,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_044107_ardy_demo_8f1a520e",
+    true
    ],
    [
     "ardy",
@@ -33752,9 +33753,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_044757_ardy_demo_ab8194b8",
+    true
    ],
    [
     "ardy",
@@ -33765,9 +33766,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_044639_ardy_demo_a159b7a5",
+    true
    ],
    [
     "ardy",
@@ -33804,9 +33805,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_044932_ardy_demo_7ddc3ddd",
+    true
    ],
    [
     "ardy",
@@ -33817,9 +33818,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_045007_ardy_demo_625f7784",
+    true
    ],
    [
     "ardy",
@@ -33856,9 +33857,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_045320_ardy_demo_b1b47ac5",
+    true
    ],
    [
     "ardy",
@@ -33869,9 +33870,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_045120_ardy_demo_51ddda65",
+    true
    ],
    [
     "ardy",
@@ -33907,10 +33908,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_045752_ardy_demo_e5aa9aa5",
+    true
    ],
    [
     "ardy",
@@ -33920,274 +33921,14 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_045639_ardy_demo_e2b10104",
+    true
    ],
    [
     "ardy",
     19,
-    24,
-    2,
-    null,
-    null,
-    null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    19,
-    24,
-    3,
-    null,
-    null,
-    null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    20,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    20,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    20,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    20,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    21,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    21,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    21,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    21,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    22,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    22,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    22,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    22,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    23,
-    0,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    23,
-    1,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    23,
-    2,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    23,
-    3,
-    null,
-    null,
-    null,
-    "development",
-    "development position and seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    24,
-    0,
-    null,
-    null,
-    null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
-    24,
-    1,
-    null,
-    null,
-    null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
-   ],
-   [
-    "ardy",
-    20,
     24,
     2,
     null,
@@ -34200,6 +33941,266 @@
    ],
    [
     "ardy",
+    19,
+    24,
+    3,
+    null,
+    null,
+    null,
+    "held_out",
+    "held-out seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    20,
+    20,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_084327_ardy_demo_9af56c9b",
+    true
+   ],
+   [
+    "ardy",
+    20,
+    20,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_084015_ardy_demo_6d2b6819",
+    true
+   ],
+   [
+    "ardy",
+    20,
+    20,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    20,
+    20,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    20,
+    21,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_084514_ardy_demo_736bc828",
+    true
+   ],
+   [
+    "ardy",
+    20,
+    21,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_084626_ardy_demo_833c9209",
+    true
+   ],
+   [
+    "ardy",
+    20,
+    21,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    20,
+    21,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    20,
+    22,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_084855_ardy_demo_1cb99b3b",
+    true
+   ],
+   [
+    "ardy",
+    20,
+    22,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_084837_ardy_demo_a65407cd",
+    true
+   ],
+   [
+    "ardy",
+    20,
+    22,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    20,
+    22,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    20,
+    23,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_085357_ardy_demo_c4f4474a",
+    true
+   ],
+   [
+    "ardy",
+    20,
+    23,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_085138_ardy_demo_6a89d492",
+    true
+   ],
+   [
+    "ardy",
+    20,
+    23,
+    2,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    20,
+    23,
+    3,
+    null,
+    null,
+    null,
+    "development",
+    "development position and seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
+    20,
+    24,
+    0,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_085516_ardy_demo_fe7ca6de",
+    true
+   ],
+   [
+    "ardy",
+    20,
+    24,
+    1,
+    null,
+    null,
+    null,
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_085724_ardy_demo_692cec65",
+    true
+   ],
+   [
+    "ardy",
+    20,
+    24,
+    2,
+    null,
+    null,
+    null,
+    "held_out",
+    "held-out seed",
+    null,
+    false
+   ],
+   [
+    "ardy",
     20,
     24,
     3,
@@ -34220,9 +34221,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_080927_ardy_demo_40af76c1",
+    true
    ],
    [
     "ardy",
@@ -34233,9 +34234,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_080605_ardy_demo_a5def303",
+    true
    ],
    [
     "ardy",
@@ -34272,9 +34273,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_081127_ardy_demo_06b3bff6",
+    true
    ],
    [
     "ardy",
@@ -34285,9 +34286,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_081056_ardy_demo_01dd2ea1",
+    true
    ],
    [
     "ardy",
@@ -34324,9 +34325,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_081342_ardy_demo_4e5476fb",
+    true
    ],
    [
     "ardy",
@@ -34337,9 +34338,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_081555_ardy_demo_2547bdda",
+    true
    ],
    [
     "ardy",
@@ -34376,9 +34377,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_081839_ardy_demo_28a32a86",
+    true
    ],
    [
     "ardy",
@@ -34389,9 +34390,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_081728_ardy_demo_47400aea",
+    true
    ],
    [
     "ardy",
@@ -34427,10 +34428,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_082217_ardy_demo_878777c0",
+    true
    ],
    [
     "ardy",
@@ -34440,10 +34441,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_082036_ardy_demo_b3c7c885",
+    true
    ],
    [
     "ardy",
@@ -34480,9 +34481,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_073440_ardy_demo_9df91d19",
+    true
    ],
    [
     "ardy",
@@ -34493,9 +34494,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_073550_ardy_demo_5a8ef8f5",
+    true
    ],
    [
     "ardy",
@@ -34532,9 +34533,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_073730_ardy_demo_e1e51f26",
+    true
    ],
    [
     "ardy",
@@ -34545,9 +34546,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_073613_ardy_demo_a342a6ae",
+    true
    ],
    [
     "ardy",
@@ -34584,9 +34585,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_074119_ardy_demo_c4f97af2",
+    true
    ],
    [
     "ardy",
@@ -34597,9 +34598,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_074055_ardy_demo_ad4c3a10",
+    true
    ],
    [
     "ardy",
@@ -34636,9 +34637,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_074150_ardy_demo_0ea1cc0f",
+    true
    ],
    [
     "ardy",
@@ -34649,9 +34650,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_074529_ardy_demo_1bcc830f",
+    true
    ],
    [
     "ardy",
@@ -34687,10 +34688,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_074708_ardy_demo_e3671298",
+    true
    ],
    [
     "ardy",
@@ -34700,10 +34701,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_074704_ardy_demo_9d36295a",
+    true
    ],
    [
     "ardy",
@@ -34740,9 +34741,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_070008_ardy_demo_cf557a9e",
+    true
    ],
    [
     "ardy",
@@ -34753,9 +34754,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_065944_ardy_demo_b2f2ce87",
+    true
    ],
    [
     "ardy",
@@ -34792,9 +34793,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_070230_ardy_demo_e4e5101f",
+    true
    ],
    [
     "ardy",
@@ -34805,9 +34806,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_070031_ardy_demo_10f0b737",
+    true
    ],
    [
     "ardy",
@@ -34844,9 +34845,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_070526_ardy_demo_dc3e1e91",
+    true
    ],
    [
     "ardy",
@@ -34857,9 +34858,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_070546_ardy_demo_ebf18c55",
+    true
    ],
    [
     "ardy",
@@ -34896,9 +34897,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_070959_ardy_demo_8696cd0d",
+    true
    ],
    [
     "ardy",
@@ -34909,9 +34910,9 @@
     null,
     null,
     "development",
-    "development position and seed",
-    null,
-    false
+    "identical input already run",
+    "develop_logs/test_runs/20261031_070936_ardy_demo_6cfae50c",
+    true
    ],
    [
     "ardy",
@@ -34947,10 +34948,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_071114_ardy_demo_dd0b049b",
+    true
    ],
    [
     "ardy",
@@ -34960,10 +34961,10 @@
     null,
     null,
     null,
-    "held_out",
-    "held-out seed",
-    null,
-    false
+    "development",
+    "identical input already run",
+    "develop_logs/test_runs/20261031_071305_ardy_demo_7a0113ed",
+    true
    ],
    [
     "ardy",

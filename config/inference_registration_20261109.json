@@ -1,6 +1,6 @@
 {
  "version": "inference-registration-draft-1",
- "created": "2026-11-09 03:08",
+ "created": "2026-11-09 03:17",
  "status": "draft; frozen together with config/motion_output_contract_20261108.json, config/evalkit_batch_protocol_20261108.json and config/analysis_plan_20261108.json after user review (design section 14, plan item 5); no batch generation before the freeze",
  "builds_on": [
   "develop_logs/notes/20261108_batch_design_decisions.md sections 2, 3, 5, 14",
@@ -9,15 +9,15 @@
  "files": {
   "tasks": {
    "path": "config/inference_tasks_20261109.json",
-   "sha256": "8eedd70a2fbfeeed28f05a10e7ac4afc6b76189612cff6743a5a7205c9246917",
+   "sha256": "655e3f9c2484d781b09aece15e0c8a1d35b3175ae6bb0a590360d2ca6d49a62a",
    "generator": {
     "script": "python/scripts/build_inference_tasks.py",
-    "sha256": "89ff270632ead2cf694b8bf9fce9b2c2ce71f984620e5d89dbeaf45cedf083a2"
+    "sha256": "5ed7010e356410c36ab013eebf109ce41f3a62a61b0435a449c2a0d9845ab8ac"
    }
   },
   "registration_generator": {
    "path": "python/scripts/build_inference_registration.py",
-   "sha256": "c10882d7645ad6684786b8c4d9c8b58b00df9ddfa77548990e843403374c0451"
+   "sha256": "9df4a45c6ad22f680c92325b72aa9ce21bd491b9dd98293853c8069de669d8ce"
   }
  },
  "user_decisions": {
@@ -25,6 +25,7 @@
   "2026-11-09 01:13-01:28 split": "nested Latin square for the paraphrases (config/evalkit_batch_protocol_20261108.json user_decisions)",
   "2026-11-09 overhead height": "option A with two changes: the overhead limit is also computed for the HumanML3D reference skeleton (the preprocessing target skeleton, no method output) by the same standard (feet flat, no step, 0.8 x arm length horizontally); overhead height = min of the four limits (Rajagopal and HumanML3D x front and side90) - 5 cm (约定), one height for both directions; both bodies recorded; nominal upper-arm elevation at that height checked to stay above 90 degrees (result: reach_geometry.elevation_check)",
   "2026-11-09 CLoSD entry": "patch closd_native.py with outputs only (rotations_xyzw, dof_positions in native_physics.npz); before / after runs per execution context with the same seed must give bit-identical joints, also against the 10-24 archive; rotations by the bone-vector method; committed separately (ccb50a3; verified, contract method_capability.closd.smoke)",
+  "2026-11-09 CHOIS / ARDY held out": "only through seed 24, generalisation across seeds only (added parts seen in V2 / M0a); per-condition and per-primary-contrast counts in split.table; a future held-out set per task family before the user's method is developed on it",
   "2026-11-09 03:07 CLoSD tasks": "CLoSD native REACH is a root-goal task with fixed text: it keeps the 8 directions x 3 distances, covers no risk-zone reaching and has no text factor; STRIKE_PUNCH (never run in the native matrix) is a later extension that needs a new entry point, a smoke test and the input-reaches-the-model check; design section 2 revised by the user accordingly"
  },
  "tasks": {
@@ -133,7 +134,7 @@
      }
     ],
     "held_out_positions": [],
-    "no_held_out_position": "all 8 root-path directions were run and inspected in the 10-31 M0 experiments (seeds 20-24); held out only through seed 24"
+    "no_held_out_position": "all 8 root-path directions were run and inspected in the 10-31 M0 experiments (seeds 20-24); held out only through seed 24, which tests generalisation across seeds only; seed-24 rows whose input equals an M0a run (history_frames 32) are development, so only history_frames 160 is held out (user 2026-11-09)"
    },
    "primal": {
     "family": "unconditioned continuation from 24 initial states; one run writes all 8 geometric switch combinations",
@@ -199,7 +200,7 @@
      }
     ],
     "held_out_positions": [],
-    "no_held_out_position": "the 12 added windows were run and inspected in V2 (seeds 20-22); held out only through seed 24, which tests generalisation across seeds only (to be confirmed by the user)"
+    "no_held_out_position": "the 12 added windows were run and inspected in V2 (seeds 20-22); held out only through seed 24, which tests generalisation across seeds only (user 2026-11-09)"
    }
   },
   "kimodo": {
@@ -384,11 +385,202 @@
  "split": {
   "dimensions": "target position, paraphrase, seed (design section 14 item 1)",
   "rule": "a row is held out if any of its dimensions is held out, except that a row whose input is identical to an already-run input (method, task input, seed, condition) is always development",
+  "identical_input_sources": "native matrix rows (paused clock); V2 CHOIS runs with condition exactly guidance 0; M0 / M0a ARDY runs whose extra condition keys are all at the ardy_native.py defaults (waypoints sparse, target_mode path; the M0a key text only labels the prompt, which is compared itself) and whose path switch_seconds is the default 5 s; successful runs only",
   "held_out_seed": 24,
   "held_out_paraphrase": 4,
   "held_out_positions": "per method: 4 of the 12 added tasks, interleaved so that both sets cover every zone / direction / distance / speed / family level (methods.<m>.held_out_positions); ARDY and CHOIS have none (methods.<m>.no_held_out_position)",
   "paraphrase_rotation": "nested Latin square (user 2026-11-09): within each hand the 12 tasks are indexed i = 0..11 (native matrix tasks first, then the risk-zone tasks); seed s in 20-23 uses paraphrase (i + s - 20) mod 4, seed 24 uses paraphrase 4; the same paraphrase index applies to the neutral and the consistent text",
   "primal": "held out by resampling group (effective seed = initial_seed + initial_history): groups 9009 (tasks 15, 19) and 9011 (tasks 17, 21), both history lengths twice; no held-out initial state shares a history prefix with a development one (tasks 12, 13 share theirs with matrix tasks 10, 11)",
+  "chois_ardy": "CHOIS and ARDY are held out only through seed 24 and test generalisation across seeds only: their added parts were already seen (CHOIS windows in V2, ARDY directions in M0a) (user 2026-11-09). If the user's own method is developed on carrying or path walking, a new held-out set for that task family is registered before that development (CHOIS: unused official windows; ARDY: speed levels not yet run)",
+  "table": {
+   "rows_per_condition": {
+    "motionlcm": [
+     {
+      "condition": {
+       "control_residual": 0
+      },
+      "development": 160,
+      "held_out": 80
+     },
+     {
+      "condition": {
+       "control_residual": 1
+      },
+      "development": 160,
+      "held_out": 80
+     }
+    ],
+    "omnicontrol": [
+     {
+      "condition": {
+       "realism": 0,
+       "spatial": 0
+      },
+      "development": 160,
+      "held_out": 80
+     },
+     {
+      "condition": {
+       "realism": 0,
+       "spatial": 1
+      },
+      "development": 160,
+      "held_out": 80
+     },
+     {
+      "condition": {
+       "realism": 1,
+       "spatial": 0
+      },
+      "development": 160,
+      "held_out": 80
+     },
+     {
+      "condition": {
+       "realism": 1,
+       "spatial": 1
+      },
+      "development": 160,
+      "held_out": 80
+     }
+    ],
+    "closd": [
+     {
+      "condition": {
+       "execution_context": 0
+      },
+      "development": 92,
+      "held_out": 28
+     },
+     {
+      "condition": {
+       "execution_context": 1
+      },
+      "development": 92,
+      "held_out": 28
+     }
+    ],
+    "dart": [
+     {
+      "condition": {
+       "goal_update": 0
+      },
+      "development": 92,
+      "held_out": 28
+     },
+     {
+      "condition": {
+       "goal_update": 1
+      },
+      "development": 92,
+      "held_out": 28
+     }
+    ],
+    "ardy": [
+     {
+      "condition": {
+       "history_frames": 32,
+       "correction": 0
+      },
+      "development": 120,
+      "held_out": 0
+     },
+     {
+      "condition": {
+       "history_frames": 32,
+       "correction": 1
+      },
+      "development": 120,
+      "held_out": 0
+     },
+     {
+      "condition": {
+       "history_frames": 160,
+       "correction": 0
+      },
+      "development": 108,
+      "held_out": 12
+     },
+     {
+      "condition": {
+       "history_frames": 160,
+       "correction": 1
+      },
+      "development": 108,
+      "held_out": 12
+     }
+    ],
+    "primal": [
+     {
+      "condition": {
+       "all 8 combinations": "one run"
+      },
+      "development": 92,
+      "held_out": 28
+     }
+    ],
+    "chois": [
+     {
+      "condition": {
+       "guidance": 0
+      },
+      "development": 108,
+      "held_out": 12
+     },
+     {
+      "condition": {
+       "guidance": 1
+      },
+      "development": 108,
+      "held_out": 12
+     }
+    ]
+   },
+   "primary_contrast_pairs": {
+    "Q1 motionlcm control_residual 1-0": {
+     "development": 160,
+     "held_out": 80,
+     "across_split": 0
+    },
+    "Q1 omnicontrol spatial 1-0 at realism 1": {
+     "development": 160,
+     "held_out": 80,
+     "across_split": 0
+    },
+    "Q1 chois guidance 1-0": {
+     "development": 108,
+     "held_out": 12,
+     "across_split": 0
+    },
+    "Q1 ardy correction 1-0 at history_long 0": {
+     "development": 120,
+     "held_out": 0,
+     "across_split": 0
+    },
+    "Q1 dart goal_update 1-0": {
+     "development": 92,
+     "held_out": 28,
+     "across_split": 0
+    },
+    "Q2 primal inertialization 1-0 (all 8 combinations come from one run)": {
+     "development": 92,
+     "held_out": 28,
+     "across_split": 0
+    },
+    "Q2 ardy history_long 1-0 within correction 1": {
+     "development": 108,
+     "held_out": 0,
+     "across_split": 12
+    },
+    "Q2 closd execution_context 1-0": {
+     "development": 92,
+     "held_out": 28,
+     "across_split": 0
+    }
+   },
+   "pair": "same method, task, seed, text level and paraphrase, differing only in the switch; a pair is held out when both rows are; across_split counts pairs with one row in each set, which serve neither set"
+  },
+  "ardy_m0a": "ARDY rows whose input equals a successful M0a run (history_frames 32, both corrections, the native matrix text pair, every added direction and speed, seeds 20-24) are development; so the Q1 contrast correction 1-0 at history_long 0 has no held-out pair, and the Q2 contrast history_long 1-0 within correction 1 has its held-out rows (history 160, seed 24) paired only with development rows (table.primary_contrast_pairs)",
   "enforcement": "config/analysis_plan_20261108.json split_use: analysis scripts select development rows by this split and refuse held-out rows unless the final-comparison flag is given; the opening is recorded in the notes with time and commit",
   "fallback": "pending user (analysis plan pending_user.held_out_fallback)"
  },
@@ -424,8 +616,8 @@
    },
    "ardy": {
     "rows": 480,
-    "development": 432,
-    "held_out": 48
+    "development": 456,
+    "held_out": 24
    },
    "primal": {
     "rows": 120,
@@ -464,9 +656,9 @@
     "to_generate": 240
    },
    "ardy": {
-    "identical_seen": 236,
-    "reuse_candidates": 236,
-    "to_generate": 244
+    "identical_seen": 358,
+    "reuse_candidates": 358,
+    "to_generate": 122
    },
    "primal": {
     "identical_seen": 60,
@@ -727,6 +919,84 @@
    },
    "smoke_source": "develop_logs/test_runs/20261109_inference_smoke (build_inference_smoke.py, check_inference_smoke.py)"
   },
+  "4_held_out_unseen": {
+   "method": "every earlier run under develop_logs/test_runs (manifest scenario, seed, status, command; config _intervention), the section-14 smoke excluded; inputs compared, no outcome read",
+   "scanned_runs": 14750,
+   "per_method": {
+    "motionlcm": {
+     "held_out_rows": 160,
+     "held_out_positions": 4,
+     "held_out_rows_identical_to_earlier_runs": 0,
+     "held_out_positions_seen_earlier": 0,
+     "positive_control_development_rows": [
+      24,
+      24
+     ]
+    },
+    "omnicontrol": {
+     "held_out_rows": 320,
+     "held_out_positions": 4,
+     "held_out_rows_identical_to_earlier_runs": 0,
+     "held_out_positions_seen_earlier": 0,
+     "positive_control_development_rows": [
+      48,
+      48
+     ]
+    },
+    "closd": {
+     "held_out_rows": 56,
+     "held_out_positions": 4,
+     "held_out_rows_identical_to_earlier_runs": 0,
+     "held_out_positions_seen_earlier": 0,
+     "positive_control_development_rows": [
+      118,
+      120
+     ]
+    },
+    "dart": {
+     "held_out_rows": 56,
+     "held_out_positions": 4,
+     "held_out_rows_identical_to_earlier_runs": 0,
+     "held_out_positions_seen_earlier": 0,
+     "positive_control_development_rows": [
+      118,
+      120
+     ]
+    },
+    "ardy": {
+     "held_out_rows": 24,
+     "held_out_positions": 0,
+     "held_out_rows_identical_to_earlier_runs": 0,
+     "held_out_positions_seen_earlier": 0,
+     "positive_control_development_rows": [
+      358,
+      358
+     ]
+    },
+    "primal": {
+     "held_out_rows": 28,
+     "held_out_positions": 4,
+     "held_out_rows_identical_to_earlier_runs": 0,
+     "held_out_positions_seen_earlier": 0,
+     "positive_control_development_rows": [
+      60,
+      60
+     ]
+    },
+    "chois": {
+     "held_out_rows": 24,
+     "held_out_positions": 0,
+     "held_out_rows_identical_to_earlier_runs": 0,
+     "held_out_positions_seen_earlier": 0,
+     "positive_control_development_rows": [
+      155,
+      154
+     ]
+    }
+   },
+   "positive_control_note": "development rows found identical by the scan vs by the task generator; DART and CLoSD differ by the two 10-25 task-0 seed-20 pilots, run with the entry-point defaults (no goal or clock arguments), whose trace.json records the task-0 goals and the paused clock, so the generator is right and the scan, which compares command arguments, is stricter; CHOIS differs by one development row (task 0, seed 20, guidance 0) equal to a 11-01 run the generator does not count; it is regenerated, not reused",
+   "source": "python/scripts/scan_seen_inputs.py -> develop_logs/test_runs/20261109_inference_premises/seen_inputs.json"
+  },
   "not_done": "no check of whether a method reaches a target, falls, or stretches bones; no task was filtered (design section 14 item 2)"
  },
  "compute_estimate": {
@@ -763,9 +1033,9 @@
     "gpu_hours": 4.7
    },
    "ardy": {
-    "runs_to_generate": 244,
+    "runs_to_generate": 122,
     "seconds_per_run_basis": 63.5,
-    "gpu_hours": 4.3
+    "gpu_hours": 2.2
    },
    "primal": {
     "runs_to_generate": 60,
@@ -778,8 +1048,8 @@
     "gpu_hours": 0.9
    }
   },
-  "total_gpu_hours": 69.8,
-  "two_cards_wall_hours": 34.9
+  "total_gpu_hours": 67.7,
+  "two_cards_wall_hours": 33.9
  },
  "conventions_not_derived": [
   "risk heights 0.15 / 0.5 m and the 5 cm overhead margin",
@@ -793,7 +1063,6 @@
   "compute estimate"
  ],
  "pending_user": [
-  "CHOIS and ARDY have no held-out position (their added windows / all 8 directions were already run in V2 / M0) and are held out only through seed 24",
   "overhead front: relative to the thorax the upper arm can stay below 90 deg (reach_geometry.elevation_check)",
   "paused clock only",
   "official evaluation batch scale",

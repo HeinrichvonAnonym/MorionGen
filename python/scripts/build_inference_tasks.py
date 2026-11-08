@@ -48,8 +48,11 @@ HELD_OUT_TASKS = {'motionlcm': [12, 17, 19, 20], 'omnicontrol': [12, 17, 19, 20]
 PRIMAL_HELD_OUT_RULE = ('held out by resampling group (effective seed = initial_seed + initial_history): groups 9009 (tasks 15, 19) '
                         'and 9011 (tasks 17, 21), both history lengths twice; no held-out initial state shares a history prefix with '
                         'a development one (tasks 12, 13 share theirs with matrix tasks 10, 11)')
-NO_HELD_OUT_POSITION = {'ardy': 'all 8 root-path directions were run and inspected in the 10-31 M0 experiments (seeds 20-24); held out only through seed 24',
-                        'chois': 'the 12 added windows were run and inspected in V2 (seeds 20-22); held out only through seed 24, which tests generalisation across seeds only (to be confirmed by the user)'}
+NO_HELD_OUT_POSITION = {'ardy': 'all 8 root-path directions were run and inspected in the 10-31 M0 experiments (seeds 20-24); held out only through '
+                                'seed 24, which tests generalisation across seeds only; seed-24 rows whose input equals an M0a run (history_frames 32) '
+                                'are development, so only history_frames 160 is held out (user 2026-11-09)',
+                        'chois': 'the 12 added windows were run and inspected in V2 (seeds 20-22); held out only through seed 24, which tests '
+                                 'generalisation across seeds only (user 2026-11-09)'}
 # text table (conventions, not derived; for user review)
 TEMPLATES = ['A person reaches {z} with the {side} hand.', 'A person extends the {side} hand {z}.',
              'Someone reaches {z} using the {side} hand.', 'A person stretches the {side} arm {z}.',
@@ -227,6 +230,40 @@ def m0_seen():
     return directions
 
 
+# ardy_native.py: absent keys keep the 20261024 behaviour; M0a labels its prompt choice with 'text' (the prompt itself is in the scene)
+ARDY_DEFAULTS = {'waypoints': 'sparse', 'target_mode': 'path', 'offset_m': 0., 'root_margin_m': .04, 'constraint_cfg': 2.,
+                 'boundary': 'none', 'boundary_writeback': True, 'renoise_fraction': 0.}
+ARDY_SCENE = ('duration_seconds', 'horizon_seconds', 'commit_seconds', 'overlap_seconds')
+
+
+def ardy_key(prompt, updates, path, seed, condition):
+    path = {k: v for k, v in path.items() if not (k == 'switch_seconds' and v == 5.)}
+    path['direction_xz'] = [round(v, 6)+0. for v in path['direction_xz']]
+    updates = [{'time_seconds': float(u['time_seconds']), 'prompt': u['prompt']} for u in updates]
+    condition = {'history_long': int(condition['history_frames'] == 160), 'correction': int(condition['correction'])}
+    return json.dumps(['ardy', [prompt, updates, path], seed, condition], sort_keys=True)
+
+
+def m0_runs(base_scene):
+    """M0 / M0a ARDY runs whose model input equals a batch row: every extra condition key at its default, same scene fields."""
+    runs = {}
+    for plan in M0:
+        queue = plan.parent/plan.name.replace('_plan.json', '_queue')/'state.json'
+        state = json.loads(queue.read_text())['jobs'] if queue.exists() else {}
+        for j in json.loads(plan.read_text())['jobs']:
+            c, sc = j['config']['_intervention'], j['scene']
+            st = state.get(j['id'], {})
+            if j['method'] != 'ardy' or st.get('status') != 'success' or sc.get('clock', 'paused') != 'paused':
+                continue
+            if any(k not in ('history_frames', 'correction', 'text') and ARDY_DEFAULTS.get(k, object()) != v for k, v in c.items()):
+                continue
+            if any(sc.get(k) != base_scene.get(k) for k in ARDY_SCENE):
+                continue
+            key = ardy_key(sc['prompt'], sc['updates'], sc['native_root_path'], j['seed'], c)
+            runs.setdefault(key, str(Path(st['run_dir']).relative_to(ROOT)))
+    return runs
+
+
 def main():
     reach, limit = json.loads((REACH/'reachability.json').read_text()), json.loads((REACH/'overhead_limit.json').read_text())
     matrix_all = json.loads(MATRIX.read_text())['rows']
@@ -241,6 +278,8 @@ def main():
         seen.setdefault(matrix_key(r), r)
     v2_runs, v2_windows = v2_seen()
     m0_dirs = m0_seen()
+    ardy_scene = next(r['task_spec'] for r in matrix if r['method'] == 'ardy' and r['task'] == 1)
+    m0_identical = m0_runs(ardy_scene)
     l4 = {m: s['L4_native']['states'] for m, s in json.loads(SCAN.read_text())['summary'].items()}
     reach_t = reach_tasks(matrix, reach)
     methods = {
@@ -302,6 +341,8 @@ def main():
                             same_run = v2_runs.get(input_key(m, t, seed, cond))
                         else:
                             h = seen.get(input_key(m, t, seed, cond, prompt)); same_run = h['run'] if h else None
+                        if m == 'ardy' and not same_run:
+                            same_run = m0_identical.get(ardy_key(t['prompt'], t['updates'], t['native_root_path'], seed, cond))
                         if same_run:
                             split, reason = 'development', 'identical input already run'
                         elif t['split_position'] == 'held_out':
@@ -333,6 +374,10 @@ def main():
         'split': {
             'dimensions': 'target position, paraphrase, seed (design section 14 item 1)',
             'rule': 'a row is held out if any of its dimensions is held out, except that a row whose input is identical to an already-run input (method, task input, seed, condition) is always development',
+            'identical_input_sources': 'native matrix rows (paused clock); V2 CHOIS runs with condition exactly guidance 0; M0 / M0a ARDY '
+                                       'runs whose extra condition keys are all at the ardy_native.py defaults (waypoints sparse, '
+                                       'target_mode path; the M0a key text only labels the prompt, which is compared itself) and whose '
+                                       'path switch_seconds is the default 5 s; successful runs only',
             'held_out_seed': HELD_OUT_SEED, 'held_out_paraphrase': HELD_OUT_PARAPHRASE,
             'held_out_positions': 'per method: 4 of the 12 added tasks, interleaved so that both sets cover every zone / direction / distance / speed / family level (methods.<m>.held_out_positions); ARDY and CHOIS have none (methods.<m>.no_held_out_position)',
             'paraphrase_rotation': 'nested Latin square (user 2026-11-09): within each hand the 12 tasks are indexed i = 0..11 (native matrix tasks first, then the risk-zone tasks); seed s in 20-23 uses paraphrase (i + s - 20) mod 4, seed 24 uses paraphrase 4; the same paraphrase index applies to the neutral and the consistent text'},
