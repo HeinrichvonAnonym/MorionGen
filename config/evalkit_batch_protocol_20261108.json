@@ -253,7 +253,7 @@
   "evalkit": "per arm above",
   "distribution": "official evaluation batches only (design section 5); not the per-task rows",
   "neck": "reserved: needs head / neck / thorax global orientation (contract L4)",
-  "shoulder": "reserved: model not downloaded"
+  "shoulder": "reserved: models downloaded and load in OpenSim 4.6 (assets/shoulder); intended model MoBL-ARMS (user 2026-11-08 23:06), integration with the FBLS torso not started"
  },
  "settings_sensitivity": {
   "floor": "method_floor vs self_floor: implemented (arms)",
