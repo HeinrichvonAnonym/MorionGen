@@ -1,0 +1,228 @@
+{
+ "version": "freeze-1",
+ "created": "2026-11-09 04:14",
+ "git_tag": "freeze-20261109",
+ "user_approval": "2026-11-09 04:08: item 4 approved, three pre-freeze changes, then the freeze (design section 14, item 5)",
+ "rule": "the four files and every config listed here are frozen; later changes only as timestamped revision records appended to the revisions_after_freeze list of the file concerned, and only before any batch result is seen; check with python3 python/scripts/build_freeze_manifest.py --check before generation and before evaluation",
+ "frozen_files": {
+  "config/motion_output_contract_20261108.json": "ebd6563ea60654cef9df75f6e970ea72a076dce940d02eb6eb2ff51cb7680dfc",
+  "config/evalkit_batch_protocol_20261108.json": "5e8cafe5f10ea7773d24d81f0a4baf69beaefde176f8450935b382c4b1c606c3",
+  "config/analysis_plan_20261108.json": "afa640dacf531aa5ee3c580ec4cdadf52f797eebda7bb1fafe13b9ecfde4887b",
+  "config/inference_registration_20261109.json": "35f3204efb0cf06a1d16bee1ee41a5fcff3379e474f35d49defc86650ee27afb"
+ },
+ "referenced_configs": {
+  "config/baselines.json": {
+   "sha256": "678123757c9646edd97877e45de2ca409f99d75000fed3d7dee6a49ed11989b3",
+   "referenced_by": "config/motion_world/ardy.json"
+  },
+  "config/chois_object_mass_lookup_20261109.json": {
+   "sha256": "9dd6d667894f15b91d64a8d52b24cacb1c1f01dbed9a088871fc7f08004d1e71",
+   "referenced_by": "user list"
+  },
+  "config/e1_biomech_20261101.json": {
+   "sha256": "ef46b4df737abc1da9707ead4714bcaf9f669eda31b82868e981220ac3fe8fbd",
+   "referenced_by": "config/freeze_20261109.json"
+  },
+  "config/e2_biomech_20261102.json": {
+   "sha256": "27423c53f1b34609c00d477068a9cdc6f851b46c5dde86e3f86d4db0d1798b02",
+   "referenced_by": "config/freeze_20261109.json"
+  },
+  "config/e3_upper_body_20261103.json": {
+   "sha256": "2b2c24ab551dcd552893c70f5cfa307761f6c2ad488126c36fcaacf55194cf65",
+   "referenced_by": "config/evalkit_upper_muscle_20261108.json"
+  },
+  "config/e4_cross_method_20261103.json": {
+   "sha256": "3e7ba2148229a9913c1de6b261fe9718e3ee084dd6dd7cfd9d15ee67cb568c1a",
+   "referenced_by": "config/inference_registration_20261109.json"
+  },
+  "config/ergo_neutral_offsets_20261105.json": {
+   "sha256": "a90473056d7dc1d2d658172bb7594fc27fe6e734507e20919f955964a2ec8279",
+   "referenced_by": "config/evalkit_neck_supp_20261108.json"
+  },
+  "config/ergo_rula_reba_20261105.json": {
+   "sha256": "c807553bc3a867af5fe3557c790f6b3acbbc75f53cc893b35e06c94f18c60cbd",
+   "referenced_by": "config/freeze_20261109.json"
+  },
+  "config/evalkit_floor_reference_20261107.json": {
+   "sha256": "088d437808f10d5df39e70373e3cabb0ceee5a239c6645d49277cf7192c873ba",
+   "referenced_by": "config/motion_output_contract_20261108.json"
+  },
+  "config/evalkit_neck_supp_20261108.json": {
+   "sha256": "378b7b4077d2956791eb2d3c82dace92e92b3bda1fa3de52fe2a5ef534a635d8",
+   "referenced_by": "user list"
+  },
+  "config/evalkit_offset_reference_20261108.json": {
+   "sha256": "e0cd8bd0a2963c3ec0dea68c068e4fd927b12403a394b1753a332c72a23a41f5",
+   "referenced_by": "user list"
+  },
+  "config/evalkit_rula_supp_20261108.json": {
+   "sha256": "bc7e2731fbede465d1eb7e7c5d6e759f271908ac5795e608b71de64039463f02",
+   "referenced_by": "user list"
+  },
+  "config/evalkit_synth_20261107.json": {
+   "sha256": "bc7d027f472b56ae6410e91707718b34aa44cf42c195b4fb9092d4dd1ec1ce6b",
+   "referenced_by": "config/evalkit_v12_20261108.json"
+  },
+  "config/evalkit_upper_body_20261107.json": {
+   "sha256": "b1e6c297f3dbc58f38b9978ed33b68d9ba09b11bb8dd5edbdda989a9c7564bfa",
+   "referenced_by": "config/evalkit_upper_muscle_20261108.json"
+  },
+  "config/evalkit_upper_muscle_20261108.json": {
+   "sha256": "cd1452b07eaf4e9fc5b32678d34fa57d3f27fac4c53cd7126123a5cf48fcff84",
+   "referenced_by": "user list"
+  },
+  "config/evalkit_v11_20261107.json": {
+   "sha256": "a69224d513ade5a3ca7309c294d33149aafc80b6b8bdc0437546cbf91b875536",
+   "referenced_by": "config/evalkit_v12_20261108.json"
+  },
+  "config/evalkit_v12_20261108.json": {
+   "sha256": "75e7c559892e3dfcb4c9da9feb23887c0193f3790d97f963fb11737962492877",
+   "referenced_by": "user list"
+  },
+  "config/evalkit_v1_20261107.json": {
+   "sha256": "4eb05b1576e6e82aa07c8385798248df5b123d1e28a6c3bb9c6eb4eabbd7b354",
+   "referenced_by": "config/freeze_20261109.json"
+  },
+  "config/evaluation.json": {
+   "sha256": "801c108b88362aeeb8ce05e320ed5a7580525df38b5aae931f4ed0cd550c7ab4",
+   "referenced_by": "config/inference_registration_20261109.json"
+  },
+  "config/inference_tasks_20261109.json": {
+   "sha256": "97b7ae71d318504cf89b3f79e09ceae77d345a7fb2ff4cc23bab79b57423ee4f",
+   "referenced_by": "user list"
+  },
+  "config/m1_20261031.json": {
+   "sha256": "d17945c43c22813079df82270667047c90098156d7ef5125b69911e437206eb0",
+   "referenced_by": "config/freeze_20261109.json"
+  },
+  "config/m2_20261101.json": {
+   "sha256": "2b6ef49c1205aa8ba0661fd130add9c3ee7ab4486ac844eada804e6a6a12c844",
+   "referenced_by": "config/freeze_20261109.json"
+  },
+  "config/motion_world/ardy.json": {
+   "sha256": "6469bbe78d62dbf6af82cd8a84a60a2acad303284da35e5a2874e47a6452607b",
+   "referenced_by": "user list"
+  },
+  "config/motion_world/chois.json": {
+   "sha256": "fa7b21fbe971e6612fa3565b932626c2793ec870c718bd18f59c22014058c4b3",
+   "referenced_by": "user list"
+  },
+  "config/motion_world/closd.json": {
+   "sha256": "05fab520ad100e318224a02e71a013f48cc302b9b89bbe605b89b42595552ddd",
+   "referenced_by": "user list"
+  },
+  "config/motion_world/dart.json": {
+   "sha256": "d3f6536d9d82e29d8fb35c16f16e37d4b8002eff8b7924e25b995cb4bfea6c18",
+   "referenced_by": "user list"
+  },
+  "config/motion_world/kimodo.json": {
+   "sha256": "d43517ae179ca0b4ec3cc6be1f32b1755decbfad5f08a4ecd27eedf8edf1d0e5",
+   "referenced_by": "user list"
+  },
+  "config/motion_world/motionlcm.json": {
+   "sha256": "5031f47e518518266d2127d21e75009654c25d01eb7d361356b9c1753c294721",
+   "referenced_by": "user list"
+  },
+  "config/motion_world/omnicontrol.json": {
+   "sha256": "16ef80166c93ba01df863fe2bda822ecb987bdff7acc30ff711a4d681b25e1ed",
+   "referenced_by": "user list"
+  },
+  "config/motion_world/primal.json": {
+   "sha256": "61dc1f7f51a89ac031d01c33cc12abdcc25577c758294f3b13f9eec9a14a20f1",
+   "referenced_by": "user list"
+  },
+  "config/next_round_20261030.json": {
+   "sha256": "3a628c2a3ba70cee0969e4a530c019a170a5dea97f87d88b503162f0b530d7f7",
+   "referenced_by": "config/freeze_20261109.json"
+  },
+  "config/p0_20261102.json": {
+   "sha256": "25a52f4e5ad262c6c28b5d1acf23b581bdd2915a0eb508fa6c7a4fcbf84eae1e",
+   "referenced_by": "config/freeze_20261109.json"
+  },
+  "config/v4_20261101.json": {
+   "sha256": "f692b8004a406d703789fb5926d1051b5aa71de1bc9fccad79939117ca2fb93e",
+   "referenced_by": "config/freeze_20261109.json"
+  }
+ },
+ "code": {
+  "commit": "e9c64a594a985573f1473b4f54e576b204a588a9",
+  "areas": {
+   "generation": {
+    "paths": [
+     "utils/motiogen",
+     ":(exclude)utils/motiogen/evalkit",
+     "python/scripts/experiments.py",
+     "python/scripts/baseline_worker.py",
+     "python/scripts/closd_native.py",
+     "python/scripts/dart_feedback_smoke.py",
+     "python/scripts/primal_feedback_smoke.py",
+     "python/scripts/build_inference_smoke.py",
+     "config/baselines.json",
+     "config/scenarios"
+    ],
+    "last_commit": "60f68a5ae3a2861ee687cab1486dcfcfd74f6141"
+   },
+   "evaluation": {
+    "paths": [
+     "utils/motiogen/evalkit",
+     "python/scripts/evalkit_batch.py",
+     "python/scripts/evalkit_distribution.py",
+     "scripts/run_evalkit_batch.sh"
+    ],
+    "last_commit": "a79575f2ced85a26f7e314146ccecb8999addbc1"
+   }
+  },
+  "not_yet_written": "the batch plan builder (inference_tasks rows to queue plans; development rows only before the held-out decision): its commit is appended as a revision record of the inference registration, with a check that every job reproduces its frozen task row (method, condition, task, paraphrase, seed, text, target), before generation starts"
+ },
+ "upstream_repositories": {
+  "baselines/CLoSD": {
+   "head": "d8950bdb78312fcd2844f336b3fc079e7368c87f",
+   "tracked_changes": 0
+  },
+  "baselines/DART": {
+   "head": "bb67ae1ed6ce051080468bf15bc6e54a6c3f8417",
+   "tracked_changes": 0
+  },
+  "baselines/MotionGPT": {
+   "head": "001aaca8d0ee218fc17f8265d11ac124044fe42f",
+   "tracked_changes": 0
+  },
+  "baselines/MotionLCM": {
+   "head": "81c06368c17b056713deef2e9f6483f3172eea42",
+   "tracked_changes": 0
+  },
+  "baselines/OmniControl": {
+   "head": "76336a6e78f074f3ba7059643414b91a1eced9f2",
+   "tracked_changes": 0
+  },
+  "baselines/PHC_MJX": {
+   "head": "81e29439c8ecec2cb2b8f123ba898dc427602e3f",
+   "tracked_changes": 0
+  },
+  "baselines/PRIMAL": {
+   "head": "4aa889d3bbe20a6c1ba181425c58e4aadf636128",
+   "tracked_changes": 0
+  },
+  "baselines/SMPLSim": {
+   "head": "b5c08720503ad5fff64050c4d289c42d947fcf8d",
+   "tracked_changes": 0
+  },
+  "baselines/UHC": {
+   "head": "2419deef54958b47b0a0cbf0aee50c82426e7950",
+   "tracked_changes": 0
+  },
+  "baselines/ardy": {
+   "head": "693f74d13b3d04a0a22ce127ee79c929dd89756b",
+   "tracked_changes": 0
+  },
+  "baselines/chois_release": {
+   "head": "8ec585aa0200fd2a890ffb12897bcf69ae719463",
+   "tracked_changes": 0
+  },
+  "baselines/kimodo": {
+   "head": "58e781898b3d7e328a676a75d3e338c45dce3ad9",
+   "tracked_changes": 0
+  }
+ },
+ "execution_order": "generation first; evaluation starts after the whole generation batch has finished (inference registration execution_order, user 2026-11-09 04:08)"
+}

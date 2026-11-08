@@ -1,8 +1,9 @@
 {
- "version": "batch-protocol-draft-2",
+ "version": "batch-protocol-2",
  "created": "2026-11-08 15:41",
  "revised": "2026-11-09 00:33 design section 14 items 4-6: contact tolerance out of the main batch, post-hoc correction as a later comparator, lumbar re-timed on an idle CPU",
- "status": "draft; frozen together with config/motion_output_contract_20261108.json, config/analysis_plan_20261108.json and the inference registration after user review (develop_logs/notes/20261108_batch_design_decisions.md section 14 item 7), before any batch result",
+ "status": "frozen 2026-11-09 04:11 (manifest config/freeze_20261109.json, git tag freeze-20261109; user approval 2026-11-09 04:08); later changes only as timestamped revision records appended to revisions_after_freeze, and only before any batch result is seen",
+ "revisions_after_freeze": [],
  "builds_on": {
   "design": "develop_logs/notes/20261108_batch_design_decisions.md sections 4, 8, 9, 11, 14 (section 14 overrides conflicting parts of sections 8 and 13)",
   "analysis_plan": "config/analysis_plan_20261108.json (contrasts, settings, intervals)",

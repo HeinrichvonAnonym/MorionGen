@@ -18,6 +18,8 @@ REACH = RUNS/'20261109_task_reachability'
 SMOKE = RUNS/'20261109_inference_smoke'
 TASKS = ROOT/'config/inference_tasks_20261109.json'
 OUT = ROOT/'config/inference_registration_20261109.json'
+FROZEN = ('frozen 2026-11-09 04:11 (manifest config/freeze_20261109.json, git tag freeze-20261109; user approval 2026-11-09 04:08); '
+          'later changes only as timestamped revision records appended to revisions_after_freeze, and only before any batch result is seen')
 MATRIX_WORKER_MEDIAN_S = 'develop_logs/test_runs/20261024_*/**/state.json, successful jobs, elapsed_seconds'
 
 
@@ -154,10 +156,9 @@ def main():
                     'gpu_hours': round(counts[m]['to_generate']*warm[m]/3600, 1) if warm.get(m) else None}
                 for m in counts}
     reg = {
-        'version': 'inference-registration-draft-1',
+        'version': 'inference-registration-1',
         'created': time.strftime('%Y-%m-%d %H:%M'),
-        'status': 'draft; frozen together with config/motion_output_contract_20261108.json, config/evalkit_batch_protocol_20261108.json and '
-                  'config/analysis_plan_20261108.json after user review (design section 14, plan item 5); no batch generation before the freeze',
+        'status': FROZEN, 'revisions_after_freeze': [],
         'builds_on': ['develop_logs/notes/20261108_batch_design_decisions.md sections 2, 3, 5, 14', 'config/inference_tasks_20261109.json'],
         'files': {'tasks': {'path': rel(TASKS), 'sha256': sha(TASKS), 'generator': tasks['generator']},
                   'registration_generator': {'path': rel(Path(__file__)), 'sha256': sha(Path(__file__))}},

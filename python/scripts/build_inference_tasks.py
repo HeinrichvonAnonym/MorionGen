@@ -28,6 +28,8 @@ M0 = [RUNS/'20261030_next_round/m0/pilot_plan.json', RUNS/'20261030_next_round/m
       RUNS/'20261030_next_round/m0_amend2/batch_plan.json', RUNS/'20261030_next_round/m0_amend2/continuation_plan.json']
 SCAN = RUNS/'20261108_contract/scan.json'
 OUT = ROOT/'config/inference_tasks_20261109.json'
+FROZEN = ('frozen 2026-11-09 04:11 (manifest config/freeze_20261109.json, git tag freeze-20261109; user approval 2026-11-09 04:08); '
+          'later changes only as timestamped revision records appended to revisions_after_freeze, and only before any batch result is seen')
 
 SEEDS = [20, 21, 22, 23, 24]
 HELD_OUT_SEED, HELD_OUT_PARAPHRASE = 24, 4
@@ -364,8 +366,8 @@ def main():
         c['rows'] += 1; c[r[7]] += 1; c['identical_seen'] += bool(r[9]); c['reuse_candidates'] += r[10]; c['to_generate'] += not r[10]
     count['primal']['note'] = 'PRIMAL rows are runs; each run writes the 8 switch combinations (x 8 evaluation rows)'
     out = {
-        'version': 'inference-tasks-draft-1', 'created': time.strftime('%Y-%m-%d %H:%M'),
-        'status': 'draft; frozen with config/inference_registration_20261109.json and the other three section-14 files after user review',
+        'version': 'inference-tasks-1', 'created': time.strftime('%Y-%m-%d %H:%M'),
+        'status': 'frozen with config/inference_registration_20261109.json and the other three section-14 files: '+FROZEN, 'revisions_after_freeze': [],
         'generator': {'script': 'python/scripts/build_inference_tasks.py', 'sha256': sha(__file__)},
         'inputs_sha256': {str(p.relative_to(ROOT)): sha(p) for p in [REACH/'reachability.json', REACH/'overhead_limit.json', MATRIX, V2/'batch_plan.json', SCAN, *M0]},
         'frames': {

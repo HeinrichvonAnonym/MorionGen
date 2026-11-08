@@ -1,10 +1,11 @@
 {
- "version": "inference-tasks-draft-1",
- "created": "2026-11-09 04:09",
- "status": "draft; frozen with config/inference_registration_20261109.json and the other three section-14 files after user review",
+ "version": "inference-tasks-1",
+ "created": "2026-11-09 04:12",
+ "status": "frozen with config/inference_registration_20261109.json and the other three section-14 files: frozen 2026-11-09 04:11 (manifest config/freeze_20261109.json, git tag freeze-20261109; user approval 2026-11-09 04:08); later changes only as timestamped revision records appended to revisions_after_freeze, and only before any batch result is seen",
+ "revisions_after_freeze": [],
  "generator": {
   "script": "python/scripts/build_inference_tasks.py",
-  "sha256": "b5f388c7ef0a15d0494bb072ba01a2a4165ff3b36bc10ba09ae0f6b573693d34"
+  "sha256": "37ea8ee382393f3fea5eeb1a2ab2f7808e18ece81038467fefd9e3723a94700d"
  },
  "inputs_sha256": {
   "develop_logs/test_runs/20261109_task_reachability/reachability.json": "ff3b3e0eb693079e444beee1bac783c23ee1ec8eaa3d439a79ef7a944aa903e6",

@@ -1,8 +1,9 @@
 {
- "version": "analysis-plan-draft-2",
+ "version": "analysis-plan-2",
  "created": "2026-11-08 23:15",
  "revised": "2026-11-09 00:06 user review: crossed text x task design and intervals, bone length / foot height classes, gate pass rates as results, Kimodo reuse label, Holm scope, pending_user; 2026-11-09 03:21 user (answer received between 03:17 and 03:21): overhead strategy descriptives (Q3_ergonomics.overhead_strategy); 2026-11-09 03:57: statistics.fid_interval pointer (user, answer received between 03:36 and 03:57), cross_paraphrase no longer lists CLoSD (no text factor, user 03:07); 2026-11-09 04:03 user: held-out fallback and its reading (split_use); 2026-11-09 04:08 user: ARDY has no held-out set, DART FID descriptive only, CHOIS mass lookup not used in this batch",
- "status": "draft; frozen together with config/motion_output_contract_20261108.json, config/evalkit_batch_protocol_20261108.json and the inference registration after user review (develop_logs/notes/20261108_batch_design_decisions.md section 14 item 7), before any batch result",
+ "status": "frozen 2026-11-09 04:11 (manifest config/freeze_20261109.json, git tag freeze-20261109; user approval 2026-11-09 04:08); later changes only as timestamped revision records appended to revisions_after_freeze, and only before any batch result is seen",
+ "revisions_after_freeze": [],
  "builds_on": {
   "design": "develop_logs/notes/20261108_batch_design_decisions.md sections 0, 2-5, 8, 14 (section 14 overrides conflicting parts of section 13)",
   "deck": "develop_logs/notes/decks/MotionGeneration_科研汇报_v5.2.pptx: questions (p.4), metrics (p.5), E criterion (p.6), three layers (p.7), windows (p.8), switches (p.9), judgements 1-4 (p.16)",

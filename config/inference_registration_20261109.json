@@ -1,7 +1,8 @@
 {
- "version": "inference-registration-draft-1",
- "created": "2026-11-09 04:10",
- "status": "draft; frozen together with config/motion_output_contract_20261108.json, config/evalkit_batch_protocol_20261108.json and config/analysis_plan_20261108.json after user review (design section 14, plan item 5); no batch generation before the freeze",
+ "version": "inference-registration-1",
+ "created": "2026-11-09 04:12",
+ "status": "frozen 2026-11-09 04:11 (manifest config/freeze_20261109.json, git tag freeze-20261109; user approval 2026-11-09 04:08); later changes only as timestamped revision records appended to revisions_after_freeze, and only before any batch result is seen",
+ "revisions_after_freeze": [],
  "builds_on": [
   "develop_logs/notes/20261108_batch_design_decisions.md sections 2, 3, 5, 14",
   "config/inference_tasks_20261109.json"
@@ -9,15 +10,15 @@
  "files": {
   "tasks": {
    "path": "config/inference_tasks_20261109.json",
-   "sha256": "d7ada1ccfbb9e5c2281ef50ff23d57d34d8458cd466b3234abd88a84f3b5f019",
+   "sha256": "97b7ae71d318504cf89b3f79e09ceae77d345a7fb2ff4cc23bab79b57423ee4f",
    "generator": {
     "script": "python/scripts/build_inference_tasks.py",
-    "sha256": "b5f388c7ef0a15d0494bb072ba01a2a4165ff3b36bc10ba09ae0f6b573693d34"
+    "sha256": "37ea8ee382393f3fea5eeb1a2ab2f7808e18ece81038467fefd9e3723a94700d"
    }
   },
   "registration_generator": {
    "path": "python/scripts/build_inference_registration.py",
-   "sha256": "6cba6a6188c6135109cc9b7f15a0246bd1914cd82f344315e7865c44e91b9f96"
+   "sha256": "14e2e1e249fb13ce5edf2f47a491ff603953fb1fc43a036a2317fccbd1d67278"
   }
  },
  "user_decisions": {

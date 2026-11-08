@@ -1,8 +1,9 @@
 {
  "created": "2026-11-08 15:33",
- "version": "contract-draft-2",
+ "version": "contract-2",
  "revised": "2026-11-09 01:06",
- "status": "draft: frozen together with config/analysis_plan_20261108.json, config/evalkit_batch_protocol_20261108.json and the inference registration after the user review (develop_logs/notes/20261108_batch_design_decisions.md section 14); generation of the large batch does not start before the freeze",
+ "status": "frozen 2026-11-09 04:11 (manifest config/freeze_20261109.json, git tag freeze-20261109; user approval 2026-11-09 04:08); later changes only as timestamped revision records appended to revisions_after_freeze, and only before any batch result is seen",
+ "revisions_after_freeze": [],
  "user_decisions": {
   "2026-11-09 00:58 contract (design section 14 item 3)": "CLoSD: the new batch has rotations_xyzw, confirmed by a smoke run; every method's world conventions carry their source, unfound ones are marked 约定; PRIMAL legacy data has SMPL-X; MotionLCM features_263 optional; CHOIS mass: check the dataset first, and if absent the main analysis does not model the hand-held object (lower bound) with per-category lookup masses as a sensitivity check (约定)",
   "2026-11-09 02:37 correction (design section 14 item 4)": "the 00:58 statement \"the new batch has rotations_xyzw\" held only for the runtime-reveal entry; the native-matrix entry (closd_native.py, the one with the execution-context switch) saved no rotations; user-authorized output-only patch, commit ccb50a3, verified bit-identical joints before/after and against the 10-24 archive (closd.smoke)"
