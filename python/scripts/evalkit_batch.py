@@ -368,7 +368,7 @@ def rows_summary(rows_dir, rows):
                for c in ('unmeasurable', 'certain_risk', 'indeterminate', 'certain_acceptable')},
             **({f'muscle_{k}': e['muscle'][k] for k in MUSCLE_KEYS if k in e['muscle']} if 'muscle' in e else {}),
             **(net_moments(d, e) if 'muscle' in e else {}),
-            **(upper(e) if 'upper' in e else {}),
+            **(upper(e) if 'upper' in e else {'upper_lumbar_status': 'failed'} if (d/'error.json').exists() else {}),
             **({'penetration_depth_p95_m': e['kinematic']['floor']['penetration_depth_p95_m'],
                 'hover_height_p95_m': e['kinematic']['floor']['hover_height_p95_m'],
                 'max_slip_m': e['kinematic']['skating']['max_slip_m'], 'jerk_0p1s': e['kinematic']['jerk_0p1s'],

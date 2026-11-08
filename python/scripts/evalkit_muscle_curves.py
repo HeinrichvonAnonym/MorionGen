@@ -8,7 +8,10 @@ pelvis residual actuators carry the body weight and the leg effort is not a load
 --quantity upper: lumbar and shoulder net joint moment / body mass instead (config/evalkit_upper_body_20261107.json;
 inverse-dynamics moments of the torque-driven Rajagopal trunk and arms, no trunk or shoulder muscles: not a load).
 --quantity lumbar: L5/S1 compression along the spine tangent / body weight of the upper-body muscle dimension (FBLS,
-config/evalkit_upper_muscle_20261108.json; DIR/<id>/upper/lumbar/frames.npz), its type-2 (unreachable) frames shaded grey.
+config/evalkit_upper_muscle_20261108.json; DIR/<id>/upper/lumbar/frames.npz), its type-2 (unreachable) frames shaded grey
+and the forced frames (config/evalkit_v12_20261108.json forced: unreachable only by the external residual) shaded gold.
+v1.2 view: --manifest manifest_selffloor.json --rows rows_selffloor --compare-rows rows --compare-strip __selffloor
+(self floor primary, method floor dashed).
 """
 import argparse
 import json
@@ -51,7 +54,9 @@ def load(d, quantity='leg'):
         u = np.load(d/'upper/lumbar/frames.npz'); rec = json.loads((d/'upper/lumbar/lumbar.json').read_text())
         bw = json.loads((d/'evalkit.json').read_text())['receipt']['mass_kg']*9.80665
         out['t'], out['effort'], out['unreachable'] = u['times']-t0, u['L5_S1_compression_n']/bw, ~u['reachable']
+        out['forced_only'] = u['forced'] & ~u['reachable'] if 'forced' in u else np.zeros_like(out['unreachable'])
         out['status'] = rec['status']; out['type2'] = rec['metrics']['type2_fraction']
+        out['forced_p95'] = rec.get('forced_metrics', {}).get('forced_L5_S1_compression_p95_bw')
         out['mean'] = rec['metrics'].get('L5_S1_compression_p95_bw', float('nan'))
     return out
 
@@ -60,6 +65,7 @@ def main():
     a = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     a.add_argument('--manifest', required=True); a.add_argument('--rows', required=True); a.add_argument('--out', required=True)
     a.add_argument('--label', default='main arm'); a.add_argument('--compare-rows'); a.add_argument('--compare-suffix', default='')
+    a.add_argument('--compare-strip', default='', help='suffix removed from the row id before --compare-suffix is added')
     a.add_argument('--compare-label', default='compare'); a.add_argument('--title', default='')
     a.add_argument('--quantity', choices=('leg', 'upper', 'lumbar'), default='leg')
     args = a.parse_args()
@@ -77,7 +83,7 @@ def main():
             if j >= len(per[m]):
                 ax.axis('off'); continue
             r = per[m][j]; x = load(Path(args.rows)/r['id'], args.quantity)
-            y = load(Path(args.compare_rows)/f"{r['id']}{args.compare_suffix}", args.quantity) if args.compare_rows else None
+            y = load(Path(args.compare_rows)/f"{r['id'].removesuffix(args.compare_strip)}{args.compare_suffix}", args.quantity) if args.compare_rows else None
             if x is None:
                 ax.text(.5, .5, 'no muscle output', ha='center', transform=ax.transAxes); continue
             for k in np.flatnonzero(np.diff(np.r_[0, x['no_contact'].astype(int), 0]) == 1):
@@ -87,6 +93,9 @@ def main():
                 for k in np.flatnonzero(np.diff(np.r_[0, x['unreachable'].astype(int), 0]) == 1):
                     end = k+np.argmax(~np.r_[x['unreachable'][k:], False])
                     ax.axvspan(x['t'][k], x['t'][min(end, len(x['t'])-1)], color='0.5', alpha=.3, lw=0)
+                for k in np.flatnonzero(np.diff(np.r_[0, x['forced_only'].astype(int), 0]) == 1):
+                    end = k+np.argmax(~np.r_[x['forced_only'][k:], False])
+                    ax.axvspan(x['t'][k], x['t'][min(end, len(x['t'])-1)], color='gold', alpha=.45, lw=0)
             ax.plot(x['t'], x['effort'], color='tab:blue', lw=1.4, label=args.label)
             if upper:
                 ax.plot(x['t'], x['shoulder'], color='tab:green', lw=1., ls=':')
@@ -97,7 +106,8 @@ def main():
             if j == ncol-1:
                 ax2.set_ylabel('residual (BW)', fontsize=7, color='0.4')
             name = r['id'][len(m)+1:] if r['id'].startswith(m+'_') else r['id']
-            stat = (f"p95 {x['mean']:.2f} BW  type2 {x['type2']:.0%}  {x['status']}" if lumbar else
+            fp = '' if not lumbar or x['forced_p95'] is None else f"  forced {x['forced_p95']:.2f}"
+            stat = (f"p95 {x['mean']:.2f}" + (f" / {y['mean']:.2f}" if y else '') + f" BW{fp}  type2 {x['type2']:.0%}  {x['status']}" if lumbar else
                     f"mean {x['mean']:.2f}" + (f" / {y['mean']:.2f}" if y else ''))
             ax.set_title(f"{name[:40]}\n{stat}  no contact {x['no_contact'].mean():.0%}", fontsize=7)
             ax.tick_params(labelsize=6)
@@ -114,6 +124,7 @@ def main():
         handles.insert(1, plt.Line2D([], [], color='tab:green', lw=1., ls=':', label=f'shoulder net moment (N m/kg, max side), {args.label}'))
     if lumbar:
         handles.append(matplotlib.patches.Patch(color='0.5', alpha=.3, label='type-2 frames (unreachable: residual, lumbar reserve, range limit)'))
+        handles.append(matplotlib.patches.Patch(color='gold', alpha=.45, label='forced frames (unreachable by the external residual only)'))
     if args.compare_rows:
         handles.insert(1, plt.Line2D([], [], color='tab:orange', lw=1.2, ls='--', label=f'{what}, {args.compare_label}'))
     fig.suptitle(args.title, y=.998, fontsize=12)
