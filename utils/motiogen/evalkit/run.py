@@ -120,6 +120,62 @@ def add_forced(out):
     return rec
 
 
+def ergo_dim(run, work, f, masks, sel, src, method, prompt, object_free, frames):
+    """RULA / REBA classes of one fit (f: fit_mod.fit result); adds the ergo_* arrays to frames, returns the summary."""
+    e = ergo.score(work/'model.osim', f['times'], f['labels'], f['coords'], masks, sel, src, ergo.neutral(method, run),
+                   ergo.object_free(prompt) if object_free is None else object_free, f['unmeasurable'])
+    frames.update({f'ergo_{k}': v for k, v in e.items() if k != 'source_mode'})
+    summary = {'source_mode': e['source_mode'], 'frames': int(len(e['index']))}
+    for m in ergo.RISK:
+        c = e[f'{m.lower()}_class']
+        summary[m.lower()] = {**{f'{n}_share': float(np.mean(c == i)) for i, n in enumerate(ergo.CLASSES)},
+                              'lower_median': float(np.median(e[f'{m.lower()}_bounds'][:, 0])),
+                              'upper_median': float(np.median(e[f'{m.lower()}_bounds'][:, 1]))}
+    return summary
+
+
+def muscle_dim(work, times, sel, frames):
+    """Leg-muscle static optimization on work (grf.xml of the residual step); adds the muscle arrays to frames."""
+    mu = muscle.evaluate(work, float(times[sel][0]), float(times[sel][-1]))
+    frames.update(muscle_times=mu['times'], muscle_effort=mu['effort'], muscle_reserve_abs_sum_nm=mu['reserve_abs_sum_nm'])
+    summary = mu['summary']
+    up = muscle.upper_body(work/'so', work/'model_so.osim')
+    frames.update(net_moment_lumbar_nm_kg=up['lumbar'], net_moment_shoulder_nm_kg=up['shoulder'])
+    summary.update(net_moments(up))
+    summary.update(muscle_split(frames))
+    return summary
+
+
+def add_dims(run, out, dims, object_free=None, source=None):
+    """ergo and / or muscle on an existing evaluation from its cached fit (work), contact masks and grf (the residual
+    step at floor_eval), without refitting: the same inputs evaluate would use, so the same result.
+    object_free: as in evaluate (the receipt holds it only when ergo was evaluated)."""
+    import opensim as osim
+    import biomech_sources
+    osim.Logger.setLevelString('error')
+    out = Path(out).resolve(); work = out/'work'; rec = json.loads((out/'evalkit.json').read_text()); r = rec['receipt']
+    frames = dict(np.load(out/'frames.npz', allow_pickle=True))
+    sel = frames['scored']
+    if 'ergo' in dims:
+        f = fit_mod.fit(run, work, r['mass_kg'], r['floor_m'])
+        if not np.array_equal(f['times'], frames['times']):
+            raise ValueError('cached fit does not match frames.npz')
+        masks = {s: {k: frames[f'contact_{s}_{k}'] for k in LANDMARKS} for s in SIDES}
+        variant = r['reference'] if isinstance(r['reference'], str) else None
+        method = r['method'] or (variant.split('__')[0] if variant else None)
+        rec['ergo'] = ergo_dim(run, work, f, masks, sel, source or biomech_sources.load(run), method, r['prompt'],
+                               object_free, frames)
+        r['method'] = method
+        r['object_free'] = bool(ergo.object_free(r['prompt']) if object_free is None else object_free)
+    if 'muscle' in dims:
+        rec['muscle'] = muscle_dim(work, frames['times'], sel, frames)
+    np.savez_compressed(out/'frames.npz', **frames)
+    r['dims'] = sorted(set(r['dims']) | set(dims), key=ALL_DIMS.index)
+    r['added_commit'] = _commit()
+    (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
+    return rec
+
+
 def foot_offset(run, work, mass, floor, source=None):
     """Fit (cached in work) and fit.foot_offset of one run: the per-clip input of the floor correction."""
     import opensim as osim
@@ -151,7 +207,7 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
     delta = 0. if offset_reference is None else offset['mean']-offset_reference
     floor_eval = floor+delta
     ref = absolute_reference(offsets, floor_eval)
-    times, labels, coords = f['times'], f['labels'], f['coords']
+    times = f['times']
     sel = fit_mod.scored(times)
     res = residual.evaluate(kin, times, mass, floor_eval, ref)
     biomech.write_loads(times, res['grf'], floor_eval, work/'grf.mot', work/'grf.xml')
@@ -174,24 +230,9 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
                                'state_share': {k: float(np.mean(res['state'][sel] == k)) for k in ('event', 'contact', 'flight')}}
     if 'ergo' in dims:
         method = method or (variant.split('__')[0] if variant else None)
-        e = ergo.score(work/'model.osim', times, labels, coords, res['masks'], sel, src, ergo.neutral(method, run),
-                       ergo.object_free(prompt) if object_free is None else object_free, f['unmeasurable'])
-        frames.update({f'ergo_{k}': v for k, v in e.items() if k != 'source_mode'})
-        summary['ergo'] = {'source_mode': e['source_mode'], 'frames': int(len(e['index']))}
-        for m in ergo.RISK:
-            c = e[f'{m.lower()}_class']
-            summary['ergo'][m.lower()] = {**{f'{n}_share': float(np.mean(c == i)) for i, n in enumerate(ergo.CLASSES)},
-                                          'lower_median': float(np.median(e[f'{m.lower()}_bounds'][:, 0])),
-                                          'upper_median': float(np.median(e[f'{m.lower()}_bounds'][:, 1]))}
+        summary['ergo'] = ergo_dim(run, work, f, res['masks'], sel, src, method, prompt, object_free, frames)
     if 'muscle' in dims:
-        t0, t1 = float(times[sel][0]), float(times[sel][-1])
-        mu = muscle.evaluate(work, t0, t1)
-        frames.update(muscle_times=mu['times'], muscle_effort=mu['effort'], muscle_reserve_abs_sum_nm=mu['reserve_abs_sum_nm'])
-        summary['muscle'] = mu['summary']
-        up = muscle.upper_body(work/'so', work/'model_so.osim')
-        frames.update(net_moment_lumbar_nm_kg=up['lumbar'], net_moment_shoulder_nm_kg=up['shoulder'])
-        summary['muscle'].update(net_moments(up))
-        summary['muscle'].update(muscle_split(frames))
+        summary['muscle'] = muscle_dim(work, times, sel, frames)
     if 'kinematic' in dims:
         summary['kinematic'] = kinematic_summary(run, frames, reach_task)
     if 'upper' in dims:

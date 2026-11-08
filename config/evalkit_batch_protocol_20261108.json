@@ -1,0 +1,117 @@
+{
+ "version": "batch-protocol-draft-1",
+ "created": "2026-11-08 15:41",
+ "status": "draft; frozen together with config/motion_output_contract_20261108.json after user review (develop_logs/notes/20261108_batch_design_decisions.md section 13 step 4-5), before any batch result",
+ "builds_on": {
+  "design": "develop_logs/notes/20261108_batch_design_decisions.md sections 4, 8, 9, 11",
+  "output_contract": "config/motion_output_contract_20261108.json (what the generation side writes; the per-pair measurability is fixed there)",
+  "evalkit": "config/evalkit_v12_20261108.json (repair the floor first, then the loads)",
+  "lumbar": "config/evalkit_upper_muscle_20261108.json"
+ },
+ "user_decisions": {
+  "2026-11-08 15:16": "the large run is configurable; it may run only the repaired (self) floor first, with the method-floor loads and the remaining lumbar rows filled in later; nothing else is dropped",
+  "2026-11-08 15:16 lumbar": "lumbar first on a stratified subsample (1-2 seeds per method x task x text condition), filled in later by input hash; the large batch is not run now",
+  "2026-11-08 15:16 muscles": "neck and shoulder stay reserved; the generation side stores the native rotations they need (contract L4)"
+ },
+ "rows": {
+  "manifest_fields": {
+   "required": ["id", "method", "source", "condition"],
+   "from_contract_L2": ["task_id", "seed", "paraphrase_id", "text_condition", "target_zone"],
+   "evaluation_side": {"upper": "lumbar subsample flag (absent: every row)", "mass_kg": "default 75", "reach_task": "kinematic wrist target"},
+   "legacy": "rows without the L2 fields: task and seed parsed from the id (_t<task>_s<seed>); text_condition null"
+  },
+  "dedup": "rows with byte-identical inputs (input_sha256) enter medians once; rows and unique_inputs both reported",
+  "clusters": "text -> task (two levels), reported per text condition (design section 4)"
+ },
+ "arms": {
+  "method_floor": {
+   "floor": "the method's declared floor plus the per-clip correction (evalkit v1.2 floor.per_clip_correction)",
+   "primary_for": ["residual", "kinematic"],
+   "descriptive": "load dimensions, reported as method_floor_*"
+  },
+  "self_floor": {
+   "floor": "self_floor_shift of the method-floor frames (still-landmark median), refitted, no per-clip correction",
+   "primary_for": ["ergo", "muscle", "upper"],
+   "requires": "the method-floor row with residual (its frames.npz)",
+   "descriptive": "self_floor_residual_positive_share, self_floor_no_contact_share, self_floor_shift_m"
+  }
+ },
+ "run_modes": {
+  "self": {"pass1_method_floor": ["residual", "kinematic"], "pass2_self_floor": "every --dims", "result": "primary for every dimension; method-floor loads missing (not reported, not imputed)"},
+  "both": {"pass1_method_floor": "every --dims", "pass2_self_floor": "every --dims", "result": "the full v1.2 line"},
+  "method": {"pass1_method_floor": "every --dims", "pass2_self_floor": null, "result": "method_floor_* loads only; check.json load_arm says so"},
+  "fill_in": "self then both: pass 1 rows gain ergo and muscle from their cached fit (evalkit.run.add_dims, no refit; verified bit-identical to a full evaluation on smoke rows), pass 2 rows are skipped",
+  "command": "scripts/run_evalkit_batch.sh --manifest M --out DIR --dims residual,ergo,muscle,kinematic[,upper] --arms self|both|method [--lumbar-per-cell N]",
+  "planned_order": "self first (primary results), both as the supplement; 约定，未经推演 (cost driven, user 15:16)"
+ },
+ "dimensions": {
+  "residual": {"arm": "method_floor primary", "addable": false, "cost_s_per_motion_s": 6.5},
+  "kinematic": {"arm": "method_floor", "addable": true, "cost_s_per_motion_s": 0.0},
+  "ergo": {"arm": "self_floor primary", "addable": true, "cost_s_per_motion_s": 3.9},
+  "muscle": {"arm": "self_floor primary", "addable": "true when the row has residual", "cost_s_per_motion_s": 7.8},
+  "upper": {"arm": "self_floor primary", "addable": true, "regions": {"lumbar": "measured / type1", "neck": "reserved", "shoulder": "reserved"},
+            "cost_s_per_motion_s": 30.0, "cost_note": "smoke8x5 under CPU contention: lumbar median about 1190 s per row, about 80% of CPU; to be re-timed on an idle CPU before the batch"},
+  "cost_note": "约定，未经推演: per-motion-second costs are smoke estimates under contention (SECONDS_PER_MOTION_SECOND in evalkit_batch.py)"
+ },
+ "lumbar_subsample": {
+  "stratum": "method x condition x task x text_condition",
+  "within_stratum": "the first --lumbar-per-cell seeds in ascending seed order (deterministic; seeds are generator seeds, unrelated to the outcome)",
+  "default_per_cell": 1,
+  "per_cell_note": "约定，未经推演 (user: 1-2 seeds)",
+  "fill_in": "rerun with a larger --lumbar-per-cell (0: every row): rows already measured are skipped by their batch key, newly sampled rows gain upper without refitting",
+  "reporting": "lumbar statistics state the subsample (rows, strata); not-sampled rows have upper_lumbar_status not_sampled and enter no lumbar statistic"
+ },
+ "outputs": {
+  "per_row": {
+   "evalkit.json": "receipt (floors, offsets, dims, spec, commits), batch (skip key), row (manifest row), residual, ergo, muscle, kinematic, upper",
+   "frames.npz": "per-frame arrays: times, scored, unmeasurable, residual_*, contact_* / elevation_*, ergo_*, muscle_*, net_moment_*",
+   "error.json": "failure of the last attempt (kept; never deleted by a later success of another dimension)",
+   "upper/lumbar": "FBLS files, lumbar.json"
+  },
+  "per_run": {
+   "floor_offsets.json": "per-method offset reference (median foot offset)",
+   "manifest_selffloor.json": "the self-floor rows (self_floor.shift_m, main_floor_eval_m)",
+   "manifest_lumbar.json": "the lumbar subsample (when --lumbar-per-cell is given)",
+   "batch.json": "counts, dims, finished",
+   "check.json": "load_arm, per-method medians and statuses, references, per_row"
+  },
+  "check_per_row_fields": {
+   "identity": ["method", "input_sha256", "prompt", "row_status"],
+   "residual_and_floor": ["residual_rms_bw", "residual_p95_bw", "residual_positive_share", "residual_positive_share_depth_-5mm", "residual_positive_share_depth_+5mm", "penetration_share", "floor_correction_m", "no_contact_share", "lowest_elevation_median_m"],
+   "measurability": ["unmeasurable_share", "unmeasurable_by_third", "unmeasurable_ik_error_median_m"],
+   "loads_primary_self_floor": ["reba_* / rula_* class shares", "muscle_*", "net_moment_* (net joint moments, not loads)", "upper_lumbar_*"],
+   "loads_descriptive_method_floor": ["method_floor_<same keys>"],
+   "self_floor": ["self_floor_shift_m", "self_floor_residual_positive_share", "self_floor_no_contact_share"],
+   "kinematic": ["max_slip_m", "jerk_0p1s", "bone_cv_max"]
+  }
+ },
+ "statuses": {
+  "batch_step": {"ok": "evaluated", "ok_added_<dims>": "dimensions added without refit", "skip": "same batch key", "failed": "error.json written"},
+  "row_status": {"ok": "no error.json", "partial_failed": "evalkit.json and error.json both present: a later attempt failed (an added dimension, or a re-evaluation whose stale result remains); inspected per row, never pooled silently"},
+  "not_evaluated": "manifest rows without evalkit.json (counted per method in check.json)",
+  "upper_lumbar_status": {"measured": "metrics reported", "type1": "flagged, metrics not reported", "failed": "row error", "not_sampled": "outside the lumbar subsample", "reserved": "neck, shoulder"},
+  "measurability": "per method x evaluator from the output contract (measurable / with_caveat / to_verify / not_measurable)"
+ },
+ "skip_key": {
+  "method_floor_row": ["input_sha256", "dims", "spec_version", "fit_prepare", "contact_margin_m", "offset_reference_m"],
+  "foot_offset": ["input_sha256", "fit_prepare", "floor_m", "mass_kg"],
+  "self_floor_row": "the same key on the __selffloor row (floor_m from the method-floor frames)",
+  "rule": "same key: skip; same key except dims, old dims a subset and the added dims addable: add without refit; anything else: full re-evaluation",
+  "offset_reference_open": "OPEN, user decision before freezing: the per-method offset reference is the median foot offset over the manifest rows of the method, so streaming new rows in (design section 9) changes it and re-evaluates every row of that method. Options: freeze it per method from a registered set before the batch, or evaluate a method only once its generation is complete"
+ },
+ "evaluators": {
+  "source_diagnostics": "every row (design section 8)",
+  "native_metrics": "every row",
+  "evalkit": "per arm above",
+  "distribution": "official evaluation batches only (design section 5); not the per-task rows",
+  "neck": "reserved: needs head / neck / thorax global orientation (contract L4)",
+  "shoulder": "reserved: model not downloaded"
+ },
+ "settings_sensitivity": {
+  "floor": "method_floor vs self_floor: implemented (arms)",
+  "threshold_pm_0p5cm": "descriptive band in check (residual_positive_share_depth_-+5mm, rescore only): implemented",
+  "contact_tolerance_2_3cm": "not implemented (design section 8); needs a re-evaluation arm, to be registered before the batch",
+  "post_hoc_correction_group": "not implemented; scope decided by the user after the precheck (design section 8)"
+ },
+ "conventions_not_derived": ["planned_order self then both", "default_per_cell 1", "per-dimension costs", "stratum definition (method x condition x task x text_condition)"]
+}

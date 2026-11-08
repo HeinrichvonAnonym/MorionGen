@@ -5,29 +5,56 @@
 #   merged per-method check (residual from pass 1, loads from pass 2, method-floor loads alongside), then the distribution
 #   smoke of every registered evaluator that has rows (torch python; tmr_soma re-executes itself in the Kimodo environment).
 #   scripts/run_evalkit_batch.sh --manifest M.json --out DIR [--workers 6] [--dims residual,ergo,muscle,kinematic[,upper]]
+#     [--arms both|self|method] [--lumbar-per-cell N] [--no-distribution]
+# Arms (config/evalkit_batch_protocol_20261108.json):
+#   both    pass 1 every dimension, pass 2 every dimension (the full line above)
+#   self    pass 1 only residual and kinematic (the self floor needs its frames), pass 2 every dimension: the primary
+#           loads first; rerunning later with both adds the method-floor loads to the pass-1 rows without refitting
+#   method  pass 1 every dimension, no pass 2 (method-floor loads only, descriptive)
+# --lumbar-per-cell N: upper (lumbar) only on the first N seeds of every method x condition x task x text condition;
+#   rerunning with a larger N (0: every row) adds it to the newly sampled rows only.
+# --no-distribution: skip the distribution smoke (fill-in reruns; per-task batches, see the protocol)
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OSIM_PY="${OSIM_PY:-$HOME/.local/share/opensim-api/bin/python}"
 TORCH_PY="${TORCH_PY:-$("$OSIM_PY" -c "import sys; sys.path.insert(0, '$ROOT/utils'); from motiogen.config import data_root, load_config; print(data_root(load_config())/'envs/motiogen-motionlcm/bin/python')")}"
-MANIFEST="" OUT="" WORKERS=6 DIMS=residual,ergo,muscle,kinematic
+MANIFEST="" OUT="" WORKERS=6 DIMS=residual,ergo,muscle,kinematic ARMS=both LUMBAR="" DISTRIBUTION=1
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --manifest) MANIFEST="$2"; shift 2 ;;
     --out) OUT="$2"; shift 2 ;;
     --workers) WORKERS="$2"; shift 2 ;;
     --dims) DIMS="$2"; shift 2 ;;
+    --arms) ARMS="$2"; shift 2 ;;
+    --lumbar-per-cell) LUMBAR="$2"; shift 2 ;;
+    --no-distribution) DISTRIBUTION=0; shift ;;
     *) echo "unknown argument $1" >&2; exit 2 ;;
   esac
 done
-[[ -n "$MANIFEST" && -n "$OUT" ]] || { echo "usage: $0 --manifest M.json --out DIR [--workers N] [--dims D]" >&2; exit 2; }
+[[ -n "$MANIFEST" && -n "$OUT" ]] || { echo "usage: $0 --manifest M.json --out DIR [--workers N] [--dims D] [--arms both|self|method] [--lumbar-per-cell N]" >&2; exit 2; }
+[[ "$ARMS" =~ ^(both|self|method)$ ]] || { echo "--arms: both, self or method" >&2; exit 2; }
+PASS1="$DIMS"
+if [[ "$ARMS" == self ]]; then
+  PASS1="$(tr ',' '\n' <<< "$DIMS" | grep -E '^(residual|kinematic)$' | paste -sd, -)"
+  [[ ",$PASS1," == *,residual,* ]] || { echo "--arms self needs residual in --dims" >&2; exit 2; }
+fi
 mkdir -p "$OUT/distribution"
 cd "$ROOT"
 B=(nice -n "${NICE:-19}" "$OSIM_PY" python/scripts/evalkit_batch.py)
-"${B[@]}" run --manifest "$MANIFEST" --out "$OUT/rows" --workers "$WORKERS" --dims "$DIMS"
-"${B[@]}" manifest-self-floor --manifest "$MANIFEST" --rows "$OUT/rows" --out "$OUT/manifest_selffloor.json"
-"${B[@]}" run --manifest "$OUT/manifest_selffloor.json" --out "$OUT/rows_selffloor" --workers "$WORKERS" --dims "$DIMS"
-"${B[@]}" check --manifest "$MANIFEST" --rows "$OUT/rows" --self-manifest "$OUT/manifest_selffloor.json" --self-rows "$OUT/rows_selffloor" \
-  --out "$OUT/check.json"
+if [[ -n "$LUMBAR" ]]; then
+  "${B[@]}" manifest-lumbar-sample --manifest "$MANIFEST" --per-cell "$LUMBAR" --out "$OUT/manifest_lumbar.json"
+  MANIFEST="$OUT/manifest_lumbar.json"
+fi
+"${B[@]}" run --manifest "$MANIFEST" --out "$OUT/rows" --workers "$WORKERS" --dims "$PASS1"
+if [[ "$ARMS" == method ]]; then
+  "${B[@]}" check --manifest "$MANIFEST" --rows "$OUT/rows" --out "$OUT/check.json"
+else
+  "${B[@]}" manifest-self-floor --manifest "$MANIFEST" --rows "$OUT/rows" --out "$OUT/manifest_selffloor.json"
+  "${B[@]}" run --manifest "$OUT/manifest_selffloor.json" --out "$OUT/rows_selffloor" --workers "$WORKERS" --dims "$DIMS"
+  "${B[@]}" check --manifest "$MANIFEST" --rows "$OUT/rows" --self-manifest "$OUT/manifest_selffloor.json" --self-rows "$OUT/rows_selffloor" \
+    --out "$OUT/check.json"
+fi
+[[ "$DISTRIBUTION" == 1 ]] || exit 0
 for E in t2m omomo flowmdm_babel tmr_soma; do
   nice -n "${NICE:-19}" "$TORCH_PY" python/scripts/evalkit_distribution.py smoke --evaluator "$E" --manifest "$MANIFEST" --out "$OUT/distribution"
 done

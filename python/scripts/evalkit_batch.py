@@ -27,6 +27,7 @@ import hashlib
 import json
 import multiprocessing as mp
 import os
+import re
 import sys
 import time
 import traceback
@@ -158,8 +159,15 @@ def offset_references(rows, out_root):
     return {m: {'offset_reference_m': float(np.median(v)), 'rows': len(v)} for m, v in sorted(by.items())}
 
 
-# dimensions an existing evaluation can gain from its saved fit and frames without refitting
-ADDABLE = {'kinematic', 'upper'}
+# dimensions an existing evaluation can gain from its saved fit and frames without refitting (muscle: only when the
+# row has residual, whose contact decision and grf it uses)
+ADDABLE = {'kinematic', 'upper', 'ergo', 'muscle'}
+TASK_SEED = re.compile(r'_t(\d+)_s(\d+)$')
+
+
+def row_dims(row, dims):
+    """dims of one row: upper only on the lumbar subsample when the manifest marks it (row['upper'] False: not sampled)."""
+    return tuple(d for d in dims if not (d == 'upper' and row.get('upper') is False))
 
 
 def job(task):
@@ -175,7 +183,10 @@ def job(task):
             if old == k:
                 return row['id'], 'skip'
             added = set(k['dims'])-set(old.get('dims', ()))
-            if old and {**old, 'dims': k['dims']} == k and set(old['dims']) <= set(k['dims']) and added <= ADDABLE:
+            if (old and {**old, 'dims': k['dims']} == k and set(old['dims']) <= set(k['dims']) and added <= ADDABLE
+                    and ('muscle' not in added or 'residual' in old['dims'])):
+                if added & {'ergo', 'muscle'}:
+                    run.add_dims(source, out, [d for d in ('ergo', 'muscle') if d in added], object_free=free)
                 if 'kinematic' in added:
                     run.add_kinematic(source, out, row.get('reach_task'))
                 if 'upper' in added:
@@ -201,10 +212,11 @@ def run_batch(args):
     dims = tuple(args.dims.split(','))
     if args.dry_run:
         import biomech_sources
-        per = sum(SECONDS_PER_MOTION_SECOND[d] for d in dims)
         length = [(lambda p: p[0].shape[0]/p[2])(biomech_sources.load(resolve(r)[0])) for r in rows]
-        print(json.dumps({'rows': len(rows), 'dims': dims, 'motion_s_total': round(sum(length), 1),
-                          'estimated_wall_min': round(sum(length)*per/args.workers/60, 1),
+        per = [sum(SECONDS_PER_MOTION_SECOND[d] for d in row_dims(r, dims)) for r in rows]
+        print(json.dumps({'rows': len(rows), 'dims': dims, 'upper_rows': sum('upper' in row_dims(r, dims) for r in rows),
+                          'motion_s_total': round(sum(length), 1),
+                          'estimated_wall_min': round(sum(x*y for x, y in zip(length, per))/args.workers/60, 1),
                           'methods': {m: sum(r['method'] == m for r in rows) for m in sorted({r['method'] for r in rows})}}, indent=1))
         return
     Path(args.out).mkdir(parents=True, exist_ok=True)
@@ -218,7 +230,7 @@ def run_batch(args):
             (Path(args.out)/'floor_offsets.json').write_text(json.dumps(refs, indent=1))
             print(json.dumps({'offset_reference': refs}), flush=True)
         use = lambda r: refs and r['method'] in refs and r.get('per_clip_correction', True)
-        tasks = [(r, args.out, dims, refs[r['method']]['offset_reference_m'] if use(r) else None) for r in rows]
+        tasks = [(r, args.out, row_dims(r, dims), refs[r['method']]['offset_reference_m'] if use(r) else None) for r in rows]
         for rid, status in p.map(job, tasks):
             counts[status] = counts.get(status, 0)+1
             print(json.dumps({'id': rid, 'status': status, **counts}), flush=True)
@@ -249,6 +261,33 @@ def positive_share(f, sel, depth):
     tau = SPEC['residual']['tau_bw']; st = f['state']
     bound = np.select([st == 'event', st == 'contact'], [tau['event'], tau['contact']], tau['flight'])
     return float(((f['residual_bw'] > bound) | (f['lowest_elevation_m'] < -depth) | f['unmeasurable'])[sel].mean())
+
+
+def lumbar_cell(row):
+    """Stratum of the lumbar subsample (config/evalkit_batch_protocol_20261108.json, lumbar_subsample): method x condition
+    x task x text condition; the seed orders rows inside it. task / seed from the row fields (output contract L2) or
+    the row id (_t<task>_s<seed>); a row with neither (Kimodo cases: one sample per case) is its own stratum."""
+    m = TASK_SEED.search(row['id'])
+    task = row.get('task_id', int(m.group(1)) if m else row['id'])
+    seed = row.get('seed', m and int(m.group(2)))
+    return (row['method'], json.dumps(row.get('condition'), sort_keys=True), task, row.get('text_condition')), seed
+
+
+def manifest_lumbar_sample(args):
+    """Same rows, row['upper'] True on the first --per-cell seeds of every stratum and False elsewhere (0: every row).
+    Raising --per-cell later and rerunning adds upper to the newly sampled rows only (batch key, ADDABLE)."""
+    src = json.loads(Path(args.manifest).read_text())
+    cells = {}
+    for r in src['rows']:
+        c, seed = lumbar_cell(r)
+        cells.setdefault(c, []).append((seed is None, seed, r['id']))
+    chosen = {i for v in cells.values() for _, _, i in sorted(v)[:args.per_cell or None]}
+    rows = [{**r, 'upper': r['id'] in chosen} for r in src['rows']]
+    Path(args.out).write_text(json.dumps({**{k: v for k, v in src.items() if k != 'rows'}, 'from': str(args.manifest),
+                                          'lumbar_subsample': {'per_cell': args.per_cell, 'cells': len(cells), 'rows': len(chosen),
+                                                               'created': time.strftime('%Y-%m-%d %H:%M')},
+                                          'rows': rows}, indent=1))
+    print(f'{len(chosen)}/{len(rows)} rows sampled over {len(cells)} cells -> {args.out}')
 
 
 def manifest_self_floor(args):
@@ -354,6 +393,7 @@ def rows_summary(rows_dir, rows):
         rf = f['residual_bw'][sel]
         out[r['id']] = {
             'method': r['method'], 'input_sha256': e.get('batch', {}).get('input_sha256'),
+            'row_status': 'partial_failed' if (d/'error.json').exists() else 'ok',
             'prompt': e['receipt'].get('prompt') or sources.prompt(e['receipt']['run']),
             'seconds': float(f['times'][sel][-1]-f['times'][sel][0]),
             'residual_rms_bw': float(np.sqrt(np.mean(rf**2))), 'residual_p95_bw': float(np.percentile(rf, 95)),
@@ -368,7 +408,8 @@ def rows_summary(rows_dir, rows):
                for c in ('unmeasurable', 'certain_risk', 'indeterminate', 'certain_acceptable')},
             **({f'muscle_{k}': e['muscle'][k] for k in MUSCLE_KEYS if k in e['muscle']} if 'muscle' in e else {}),
             **(net_moments(d, e) if 'muscle' in e else {}),
-            **(upper(e) if 'upper' in e else {'upper_lumbar_status': 'failed'} if (d/'error.json').exists() else {}),
+            **(upper(e) if 'upper' in e else {'upper_lumbar_status': 'failed'} if (d/'error.json').exists()
+               else {'upper_lumbar_status': 'not_sampled'} if r.get('upper') is False else {}),
             **({'penetration_depth_p95_m': e['kinematic']['floor']['penetration_depth_p95_m'],
                 'hover_height_p95_m': e['kinematic']['floor']['hover_height_p95_m'],
                 'max_slip_m': e['kinematic']['skating']['max_slip_m'], 'jerk_0p1s': e['kinematic']['jerk_0p1s'],
@@ -418,11 +459,12 @@ def check(args):
     distinct inputs share a few prompts also get per-prompt medians (by_prompt): outcomes can split by prompt (E4 C0
     OmniControl: left-hand reach floats at the method floor, right-hand reach does not), where one median misleads."""
     rows = json.loads(Path(args.manifest).read_text())['rows']
-    per = rows_summary(args.rows, rows)
-    if args.self_manifest and args.self_rows:
-        per = merge_self_floor(per, json.loads(Path(args.self_manifest).read_text())['rows'], args.self_rows)
+    raw = per = rows_summary(args.rows, rows)
+    selffloor = bool(args.self_manifest and args.self_rows)
+    per = merge_self_floor(per, json.loads(Path(args.self_manifest).read_text())['rows'] if selffloor else [], args.self_rows)
     status = lambda k: 'upper_' in k and k.endswith('_status')
-    keys = sorted({k for v in per.values() for k in v if k not in ('method', 'unmeasurable_by_third', 'input_sha256', 'prompt') and not status(k)})
+    keys = sorted({k for v in per.values() for k in v if k not in ('method', 'unmeasurable_by_third', 'input_sha256', 'prompt', 'row_status')
+                   and not status(k)})
     medians = lambda vs: {k: float(np.median([v[k] for v in vs if v.get(k) is not None])) for k in keys if any(v.get(k) is not None for v in vs)}
     methods = {}
     for m in sorted({v['method'] for v in per.values()}):
@@ -434,12 +476,16 @@ def check(args):
         prompts = sorted({v['prompt'] for v in vs if v['prompt']})
         statuses = {k: {s: sum(v.get(k) == s for v in vs) for s in sorted({v[k] for v in vs if k in v})}
                     for k in sorted({k for v in vs for k in v if status(k)})}
-        methods[m] = {'rows': len(allv), 'unique_inputs': len(vs), **medians(vs), **({'upper_status': statuses} if statuses else {}),
+        methods[m] = {'rows': len(allv), 'unique_inputs': len(vs),
+                      'row_status': {s: sum(v['row_status'] == s for v in allv) for s in ('ok', 'partial_failed')},
+                      'not_evaluated': sum(r['method'] == m and r['id'] not in per for r in rows), **medians(vs), **({'upper_status': statuses} if statuses else {}),
                       'unmeasurable_by_third': np.mean([v['unmeasurable_by_third'] for v in vs], 0).tolist(),
                       **({'by_prompt': {p: {'unique_inputs': sum(v['prompt'] == p for v in vs), **medians([v for v in vs if v['prompt'] == p])}
                                         for p in prompts}} if 1 < len(prompts) < len(vs) else {})}
     addb = json.loads((ROOT/'develop_logs/test_runs/20261105_val_a/analysis.json').read_text())['variants']['kin30']['classes']
-    out = {'rows_dir': str(args.rows), 'rows': len(per), 'methods': methods,
+    out = {'rows_dir': str(args.rows), 'rows': len(per),
+           'load_arm': 'self_floor (primary), method_floor_* descriptive' if selffloor
+           else 'method_floor_* only (descriptive; the primary self-floor loads were not evaluated)', 'methods': methods,
            'references': {'addb_kin30_residual_rms_bw_median': {c: v['V4_residual_rms_bw']['median'] for c, v in addb.items()},
                           'addb_note': 'AddBiomechanics kin30 (val_a 2026-11-05) whole-trial residual RMS per activity class, real people',
                           'synthetic_dev_controls': synthetic_controls()}}
@@ -448,8 +494,8 @@ def check(args):
         sper = rows_summary(args.shift_rows, srows)
         delta = {}
         for r in srows:
-            if r['id'] in sper and r['base_id'] in per:
-                a, b = per[r['base_id']], sper[r['id']]
+            if r['id'] in sper and r['base_id'] in raw:
+                a, b = raw[r['base_id']], sper[r['id']]
                 d = delta.setdefault(r['method'], {}).setdefault(f"{r['floor_shift_m']*100:+.0f}cm", [])
                 d.append({k: b[k]-a[k] for k in ('residual_rms_bw', 'residual_positive_share', 'penetration_share', 'no_contact_share',
                                                   'reba_certain_risk', 'reba_certain_acceptable', 'rula_certain_risk', 'rula_certain_acceptable')
@@ -480,10 +526,14 @@ def main():
     r.add_argument('--dry-run', action='store_true')
     f = sub.add_parser('manifest-self-floor'); f.add_argument('--manifest', required=True); f.add_argument('--rows', required=True)
     f.add_argument('--out', required=True)
+    ls = sub.add_parser('manifest-lumbar-sample', help='mark the lumbar (upper) subsample per method x condition x task x text')
+    ls.add_argument('--manifest', required=True); ls.add_argument('--out', required=True)
+    ls.add_argument('--per-cell', type=int, default=1, help='seeds per stratum; 0: every row')
     u = sub.add_parser('manifest-unique-c0'); u.add_argument('--out', required=True)
     args = a.parse_args()
     {'manifest-e4': manifest_e4, 'manifest-shift': manifest_shift, 'manifest-self-floor': manifest_self_floor, 'check': check,
-     'run': run_batch, 'manifest-unique-c0': manifest_unique_c0, 'refresh': refresh}[args.step](args)
+     'run': run_batch, 'manifest-unique-c0': manifest_unique_c0, 'refresh': refresh,
+     'manifest-lumbar-sample': manifest_lumbar_sample}[args.step](args)
 
 
 if __name__ == '__main__':
