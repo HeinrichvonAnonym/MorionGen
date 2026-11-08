@@ -5,10 +5,14 @@
                                                              intervention off) with numpy default_rng(crc32(--draw-key))
   evalkit_batch.py run --manifest M.json --out DIR [--dims residual,ergo,muscle,kinematic] [--workers 6] [--dry-run]
   evalkit_batch.py manifest-shift --manifest M.json --out M2.json [--shift 0.02]   the rows with the floor moved by +-shift
-  evalkit_batch.py manifest-self-floor --manifest M.json --rows DIR --out M3.json   descriptive self-floor arm (floor at each
+  evalkit_batch.py manifest-self-floor --manifest M.json --rows DIR --out M3.json   self-floor arm, primary for the loads (floor at each
                                                              row's own still-landmark level, self_floor_shift)
   evalkit_batch.py check --manifest M.json --rows DIR --out C.json [--shift-manifest M2.json --shift-rows DIR2]
-                                                             per-method sanity medians, references, floor sensitivity
+                         [--self-manifest M3.json --self-rows DIR3]
+                                                             per-method sanity medians, references, floor sensitivity;
+                                                             with the self-floor arm the v1.2 merged view (residual from
+                                                             DIR, loads from DIR3, method_floor_* alongside)
+  evalkit_batch.py refresh --manifest M.json --rows DIR      v1.2 forced metrics on existing rows (no new solve)
 
 Manifest rows: {id, method, source, condition?, mass_kg?, floor_m?, reference?, object_free?, reach_task?}; floor, reference and
 object-free default to evalkit.sources. run has two stages: every row is fitted and its foot offset written
@@ -247,25 +251,13 @@ def positive_share(f, sel, depth):
     return float(((f['residual_bw'] > bound) | (f['lowest_elevation_m'] < -depth) | f['unmeasurable'])[sel].mean())
 
 
-SELF_FLOOR_STILL_M_S = .05
-
-
-def self_floor_shift(f, still=SELF_FLOOR_STILL_M_S):
-    """Median over the scored frames of the lowest sole-landmark elevation among the landmarks whose vertical speed
-    is below `still` (m/s, convention, not derived). Checked on known-floor data before use
-    (scratch/self_floor_estimators.py): synthetic walk -0.6 cm, other synthetic -0.3 cm, CLoSD -0.2 cm, PRIMAL +0.1 cm;
-    the 10th percentile of the lowest elevation was biased by the rolling foot in walking (-1.8 / -1.3 cm)."""
-    E = np.stack([f[f'elevation_{s}_{k}'] for s in 'rl' for k in ('heel', 'toe')], 1)
-    E = np.where(np.abs(np.gradient(E, f['times'], axis=0)) < still, E, np.inf).min(1)
-    ok = f['scored'] & np.isfinite(E)
-    return float(np.median(E[ok])) if ok.any() else float(np.median(f['lowest_elevation_m'][f['scored']]))
-
-
 def manifest_self_floor(args):
     """Descriptive self-floor arm (user decision 2026-11-07 21:19): every evaluated row again with its floor moved by
     self_floor_shift of its main-arm frames under DIR (relative to the floor that arm used), refitted on that floor,
     no per-clip correction, all dimensions. Separates 'does the method keep its own floor' from the dynamics,
-    ergonomics and muscle load of the motion."""
+    ergonomics and muscle load of the motion; since v1.2 (config/evalkit_v12_20261108.json) the primary arm of the
+    load dimensions."""
+    from evalkit.floor import SELF_FLOOR_STILL_M_S, self_floor_shift
     src = json.loads(Path(args.manifest).read_text())
     rows = []
     for r in src['rows']:
@@ -280,7 +272,7 @@ def manifest_self_floor(args):
                      'per_clip_correction': False,
                      'self_floor': {'estimator': f'still-landmark median, {SELF_FLOOR_STILL_M_S} m/s', 'main_floor_eval_m': base, 'shift_m': shift}})
     Path(args.out).write_text(json.dumps({'created': time.strftime('%Y-%m-%d %H:%M'), 'from': str(args.manifest), 'rows_dir': str(args.rows),
-                                          'arm': 'self_floor (descriptive)', 'rows': rows}, indent=1))
+                                          'arm': 'self_floor (v1.2: primary for the load dimensions)', 'rows': rows}, indent=1))
     print(f'{len(rows)} rows -> {args.out}')
 
 
@@ -305,14 +297,45 @@ UPPER_METRICS = ('L5_S1_compression_p95_bw', 'L5_S1_compression_mean_bw', 'L5_S1
                  'psoas_activation_mean', 'abdominals_activation_mean', 'latissimus_activation_mean')
 
 
+FORCED_UPPER = ('forced_L5_S1_compression_p95_bw', 'forced_L5_S1_compression_mean_bw', 'forced_residual_bw_p95')
+MUSCLE_KEYS = ('muscle_effort_sum_a2_mean', 'muscle_activation_peak', 'reserve_rms_nm', 'reserve_peak_nm',
+               'primary_muscle_effort_sum_a2_mean', 'forced_muscle_effort_sum_a2_mean', 'forced_residual_positive_share')
+
+
 def upper(e):
     """Upper-body muscle dimension (config/evalkit_upper_muscle_20261108.json): region statuses and lumbar metrics;
-    the lumbar metrics of type-1 rows are not reported."""
+    the lumbar metrics of type-1 rows are not reported; forced metrics of v1.2 (config/evalkit_v12_20261108.json)."""
     u = e['upper']; lumbar = u['lumbar']
     out = {f'upper_{r}_status': u[r]['status'] for r in ('lumbar', 'neck', 'shoulder')}
     if lumbar['status'] == 'measured':
         out.update({f'upper_lumbar_{k}': lumbar['metrics'].get(k) for k in UPPER_METRICS})
+        out.update({f'upper_lumbar_{k}': lumbar.get('forced_metrics', {}).get(k) for k in FORCED_UPPER})
+        if 'forced_frames' in lumbar:
+            out['upper_lumbar_forced_external_share'] = lumbar['forced_external_frames']/max(lumbar['frames'], 1)
     return out
+
+
+def refresh_job(task):
+    """v1.2 forced metrics on an existing row from its saved files (run.add_forced, no new solve)."""
+    rid, out = task
+    try:
+        os.nice(19)
+        import opensim as osim
+        osim.Logger.setLevelString('error')
+        from evalkit import run
+        run.add_forced(Path(out)/rid)
+        return rid, 'ok'
+    except Exception as e:
+        return rid, f'failed: {type(e).__name__}: {e}'
+
+
+def refresh(args):
+    rows = [r for r in json.loads(Path(args.manifest).read_text())['rows'] if (Path(args.rows)/r['id']/'evalkit.json').exists()]
+    counts = {}
+    with ProcessPoolExecutor(args.workers, mp_context=mp.get_context('spawn'), max_tasks_per_child=1) as p:
+        for rid, status in p.map(refresh_job, [(r['id'], args.rows) for r in rows]):
+            counts[status.split(':')[0]] = counts.get(status.split(':')[0], 0)+1
+            print(json.dumps({'id': rid, 'status': status, **counts}), flush=True)
 
 
 def rows_summary(rows_dir, rows):
@@ -343,8 +366,7 @@ def rows_summary(rows_dir, rows):
             'unmeasurable_ik_error_median_m': float(np.median(f['ik_max_error_m'][sel][um])) if um.any() else None,
             **{f'{m}_{c}': e['ergo'][m][f'{c}_share'] for m in ('reba', 'rula') if 'ergo' in e
                for c in ('unmeasurable', 'certain_risk', 'indeterminate', 'certain_acceptable')},
-            **({f'muscle_{k}': e['muscle'][k] for k in ('muscle_effort_sum_a2_mean', 'muscle_activation_peak', 'reserve_rms_nm', 'reserve_peak_nm')}
-               if 'muscle' in e else {}),
+            **({f'muscle_{k}': e['muscle'][k] for k in MUSCLE_KEYS if k in e['muscle']} if 'muscle' in e else {}),
             **(net_moments(d, e) if 'muscle' in e else {}),
             **(upper(e) if 'upper' in e else {}),
             **({'penetration_depth_p95_m': e['kinematic']['floor']['penetration_depth_p95_m'],
@@ -367,6 +389,28 @@ def synthetic_controls():
     return {'residual_rms_bw': q(rms), 'reserve_rms_nm': q(res) if res else None}
 
 
+LOAD_PREFIXES = ('reba_', 'rula_', 'muscle_', 'net_moment_', 'upper_')
+
+
+def merge_self_floor(per, srows, srows_dir):
+    """v1.2 merged view (config/evalkit_v12_20261108.json): residual and kinematics from the method-floor row, every load
+    dimension from its self-floor row (primary), the method-floor loads as method_floor_* (descriptive); rows without a
+    self-floor evaluation keep no primary load."""
+    sper = rows_summary(srows_dir, srows)
+    by_base = {r['base_id']: (r, sper.get(r['id'])) for r in srows}
+    out = {}
+    for rid, v in per.items():
+        load = {k: x for k, x in v.items() if k.startswith(LOAD_PREFIXES)}
+        row = {**{k: x for k, x in v.items() if k not in load}, **{f'method_floor_{k}': x for k, x in load.items()}}
+        r, s = by_base.get(rid, (None, None))
+        if s is not None:
+            row.update({k: x for k, x in s.items() if k.startswith(LOAD_PREFIXES)})
+            row.update(self_floor_shift_m=r['self_floor']['shift_m'], self_floor_residual_positive_share=s['residual_positive_share'],
+                       self_floor_no_contact_share=s['no_contact_share'])
+        out[rid] = row
+    return out
+
+
 def check(args):
     """Sanity table of a smoke batch: per method medians, unmeasurable location, references, floor sensitivity.
     Rows with byte-identical inputs (E4 C0 MotionLCM / OmniControl: the 12 tasks share 2 texts, so control-off runs
@@ -375,7 +419,9 @@ def check(args):
     OmniControl: left-hand reach floats at the method floor, right-hand reach does not), where one median misleads."""
     rows = json.loads(Path(args.manifest).read_text())['rows']
     per = rows_summary(args.rows, rows)
-    status = lambda k: k.startswith('upper_') and k.endswith('_status')
+    if args.self_manifest and args.self_rows:
+        per = merge_self_floor(per, json.loads(Path(args.self_manifest).read_text())['rows'], args.self_rows)
+    status = lambda k: 'upper_' in k and k.endswith('_status')
     keys = sorted({k for v in per.values() for k in v if k not in ('method', 'unmeasurable_by_third', 'input_sha256', 'prompt') and not status(k)})
     medians = lambda vs: {k: float(np.median([v[k] for v in vs if v.get(k) is not None])) for k in keys if any(v.get(k) is not None for v in vs)}
     methods = {}
@@ -424,6 +470,10 @@ def main():
     s.add_argument('--shift', type=float, default=.02)
     c = sub.add_parser('check'); c.add_argument('--manifest', required=True); c.add_argument('--rows', required=True)
     c.add_argument('--out', required=True); c.add_argument('--shift-manifest'); c.add_argument('--shift-rows')
+    c.add_argument('--self-manifest', help='v1.2: the self-floor manifest; loads are then taken from --self-rows (primary)')
+    c.add_argument('--self-rows')
+    x = sub.add_parser('refresh', help='v1.2 forced metrics on existing rows from their saved files (no new solve)')
+    x.add_argument('--manifest', required=True); x.add_argument('--rows', required=True); x.add_argument('--workers', type=int, default=6)
     r = sub.add_parser('run'); r.add_argument('--manifest', required=True); r.add_argument('--out', required=True)
     r.add_argument('--dims', default='residual,ergo,muscle,kinematic', help='add upper for the upper-body muscle dimension')
     r.add_argument('--workers', type=int, default=6)
@@ -433,7 +483,7 @@ def main():
     u = sub.add_parser('manifest-unique-c0'); u.add_argument('--out', required=True)
     args = a.parse_args()
     {'manifest-e4': manifest_e4, 'manifest-shift': manifest_shift, 'manifest-self-floor': manifest_self_floor, 'check': check,
-     'run': run_batch, 'manifest-unique-c0': manifest_unique_c0}[args.step](args)
+     'run': run_batch, 'manifest-unique-c0': manifest_unique_c0, 'refresh': refresh}[args.step](args)
 
 
 if __name__ == '__main__':

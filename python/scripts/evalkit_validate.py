@@ -9,7 +9,12 @@
   kinematic --split S  only the kinematic check of score (injected size against the kinematic metrics)
   videos --split S     the registered 10 + 10 acceptance draw (validation.videos), static optimization where the run
                        had none, evalkit_render videos and an index page
-Outputs: per clip on the data disk (evalkit_20261107/{tool,truth_eval}/<split>/<clip>), summaries under
+  selffloor --split S  v1.2 (config/evalkit_v12_20261108.json): every clip again on its self floor (floor.self_floor_shift
+                       of the tool run), refitted; residual + ergo, and muscle + lumbar on the control / whole-clip
+                       floor-defect clips
+  selfscore --split S  v1.2 scoring of the self-floor runs: floor estimate, ergo kill rates, leg muscle (primary and
+                       forced) against the truth; whole-clip floor defects against the control of the same base
+Outputs: per clip on the data disk (evalkit_20261107/{tool,tool_selffloor,truth_eval}/<split>/<clip>), summaries under
 develop_logs/test_runs/20261107_evalkit/validation.
 """
 import argparse
@@ -176,6 +181,41 @@ def tool_job(task):
         return 'failed'
 
 
+V12_PATH = ROOT/'config/evalkit_v12_20261108.json'
+WHOLE_FLOOR = ('float_whole_m', 'penetrate_whole_m')
+LOAD_CLIPS = ('control',)+WHOLE_FLOOR
+
+
+def true_floor(m):
+    """Floor the motion actually stands on: the input floor, moved by the injected size for whole-clip floor defects."""
+    sign = {'float_whole_m': 1., 'penetrate_whole_m': -1.}.get(m['defect'], 0.)
+    return m['floor_height_m']+sign*(m['size'] or 0.)
+
+
+def selffloor_job(clip):
+    """v1.2 self-floor run of one clip: the floor of its tool run moved by floor.self_floor_shift, refitted."""
+    from evalkit.floor import self_floor_shift
+    from evalkit.fit import PREPARE
+    base, out = DATA/'tool'/clip['split']/clip['id'], DATA/'tool_selffloor'/clip['split']/clip['id']
+    try:
+        f = np.load(base/'frames.npz', allow_pickle=True); rec = json.loads((base/'evalkit.json').read_text())['receipt']
+        m = meta(clip); shift = self_floor_shift(f); base_floor = rec.get('floor_eval_m', rec['floor_m']); floor = base_floor+shift
+        dims = ('residual', 'ergo', 'muscle', 'upper') if m['defect'] in LOAD_CLIPS else ('residual', 'ergo')
+        info = {'base_floor_eval_m': base_floor, 'shift_m': shift, 'floor_m': floor, 'true_floor_m': true_floor(m),
+                'dims': list(dims), 'fit_prepare': PREPARE, 'spec_version': SPEC['version'], 'registration': str(V12_PATH.relative_to(ROOT))}
+        if (out/'selffloor.json').exists() and (out/'evalkit.json').exists() and json.loads((out/'selffloor.json').read_text()) == info:
+            return 'skip'
+        _quiet()
+        from evalkit import run
+        run.evaluate(Path(clip['dir'])/'input', out, floor, 'synthetic', m['mass_kg'], method='synthetic', dims=dims)
+        (out/'selffloor.json').write_text(json.dumps(info, indent=1))
+        return 'ok'
+    except Exception as e:
+        out.mkdir(parents=True, exist_ok=True)
+        (out/'error.json').write_text(json.dumps({'error': f'{type(e).__name__}: {e}', 'trace': traceback.format_exc()[-2000:]}))
+        return 'failed'
+
+
 def truth_model(clip, path):
     """The truth model with the neck-base station neck_c (the export's neck station) for the trunk angle."""
     import opensim as osim
@@ -335,11 +375,11 @@ def tune(f):
     return {'tau_bw': best[2], 'penetration_depth_m': best[3], 'dev_false_kill': best[4], 'dev_missed_kill': best[5]}
 
 
-def ergo_frames(rows):
+def ergo_frames(rows, include=ergo_pass):
     from evalkit.validate import match
     out = {m: {'truth': [], 'tool': [], 'clip': []} for m in ('reba', 'rula')}
     for n, r in enumerate(rows):
-        if not ergo_pass(r['meta']) or r['truth_eval'] is None or r['tool'] is None:
+        if not include(r['meta']) or r['truth_eval'] is None or r['tool'] is None:
             continue
         te, tl = r['truth_eval'], r['tool']
         j = match(te['ergo_times'], tl['ergo_times'])
@@ -348,6 +388,24 @@ def ergo_frames(rows):
             out[m]['truth'].append(te[f'ergo_{m}_class'][ok]); out[m]['tool'].append(tl[f'ergo_{m}_class'][j][ok])
             out[m]['clip'].append(np.full(ok.sum(), n))
     return {m: {k: np.concatenate(v) for k, v in d.items()} for m, d in out.items()}
+
+
+def ergo_rates(rows, include=ergo_pass):
+    """Kill rates of the registered ergo line per REBA / RULA (truth certain_risk 1, certain_acceptable 3)."""
+    from evalkit import validate
+    from evalkit.ergo import CLASSES
+    out = {}
+    for m, d in ergo_frames(rows, include).items():
+        t, x = d['truth'], d['tool']
+        r = validate.kill_rates(t == 1, t == 3, (x == 1) | (x == 0), d['clip'])
+        r['missed_kill'] = validate.rate(((x == 3) & (t == 1)).sum(), (t == 1).sum())
+        certain = (t == 1) | (t == 3)
+        r['inconclusive_share'] = float(np.mean(x[certain] == 2)) if certain.any() else None
+        r['confusion'] = {CLASSES[a]: {CLASSES[b]: int(((t == a) & (x == b)).sum()) for b in range(4)} for a in range(4)}
+        r['clips'] = int(len(np.unique(d['clip'])))
+        r['pass'] = validate.passes(r)
+        out[m] = r
+    return out
 
 
 def muscle_summary(mus, high_load=2.):
@@ -380,7 +438,6 @@ def muscle_summary(mus, high_load=2.):
 
 def score(args):
     from evalkit import validate
-    from evalkit.ergo import CLASSES
     items = clips(args.split)
     rows = [r for r in (load_clip({**c, 'split': args.split}) for c in items) if r is not None]
     res = {'split': args.split, 'clips': len(rows), 'spec_version': SPEC['version']}
@@ -405,17 +462,7 @@ def score(args):
         (LOG/f'{args.split}_tune.json').write_text(json.dumps(res, indent=1))
         print(json.dumps(res, indent=1)[:6000])
         return
-    ef = ergo_frames(rows)
-    res['ergo'] = {}
-    for m, d in ef.items():
-        t, x = d['truth'], d['tool']
-        r = validate.kill_rates(t == 1, t == 3, (x == 1) | (x == 0), d['clip'])
-        r['missed_kill'] = validate.rate(((x == 3) & (t == 1)).sum(), (t == 1).sum())
-        certain = (t == 1) | (t == 3)
-        r['inconclusive_share'] = float(np.mean(x[certain] == 2)) if certain.any() else None
-        r['confusion'] = {CLASSES[a]: {CLASSES[b]: int(((t == a) & (x == b)).sum()) for b in range(4)} for a in range(4)}
-        r['pass'] = validate.passes(r)
-        res['ergo'][m] = r
+    res['ergo'] = ergo_rates(rows)
     rows = [r for r in rows if r['tool'] is not None]
     det = {}
     for r in rows:
@@ -495,6 +542,58 @@ def kinematic_check(rows):
         'median_jerk_ratio': float(np.median([v['jerk_0p1s']/control[v['base']]['jerk_0p1s'] for v in vs if v['base'] in control]))})
     out['clips'] = per
     return out
+
+
+# ---------------------------------------------------------------- v1.2 self floor
+
+def selfscore(args):
+    """v1.2 validation of the self-floor runs (config/evalkit_v12_20261108.json, validation); the lumbar line is scored
+    by evalkit_upper_muscle.py report-h3."""
+    from evalkit import run
+    from evalkit.validate import match
+    split = args.split
+    items = [{**c, 'split': split} for c in clips(split)]
+    control = {c['base_dir']: c for c in items if meta(c)['defect'] == 'control'}
+    load = lambda p: dict(np.load(p, allow_pickle=True)) if Path(p).exists() else None
+    res = {'split': split, 'registration': str(V12_PATH.relative_to(ROOT)), 'spec_version': SPEC['version'], 'commit': run._commit()}
+    est, rows, method_rows, mus = {}, [], [], {'primary': [], 'forced': []}
+    for c in items:
+        m = meta(c); sf = DATA/'tool_selffloor'/split/c['id']
+        if not (sf/'selffloor.json').exists():
+            continue
+        s = json.loads((sf/'selffloor.json').read_text())
+        est.setdefault(f"{m['defect']} {m['size']}", []).append(s['floor_m']-s['true_floor_m'])
+        target = control[c['base_dir']] if m['defect'] in WHOLE_FLOOR else c
+        te = load(DATA/'truth_eval'/split/target['id']/'truth_eval.npz')
+        rows.append({'meta': m, 'tool': load(sf/'frames.npz'), 'truth_eval': te})
+        method_rows.append({'meta': m, 'tool': load(DATA/'tool'/split/c['id']/'frames.npz'), 'truth_eval': te})
+        if m['defect'] in LOAD_CLIPS and rows[-1]['tool'] is not None and te is not None and 'muscle_effort' in rows[-1]['tool']:
+            f = rows[-1]['tool']; i, pos = run.muscle_residual(f)
+            tt = te['muscle_times']; j = match(f['muscle_times'], tt)
+            truth_all = float(te['muscle_effort'].mean())
+            mus['forced'].append({'id': c['id'], 'tool': float(f['muscle_effort'].mean()), 'truth': truth_all,
+                                  'signed_error': float(f['muscle_effort'].mean())-truth_all, 'relative_error': abs(float(f['muscle_effort'].mean())-truth_all)/truth_all,
+                                  'residual_positive_share': float(pos.mean())})
+            if (~pos).any():
+                a, b = float(f['muscle_effort'][~pos].mean()), float(te['muscle_effort'][j][~pos].mean())
+                mus['primary'].append({'id': c['id'], 'tool': a, 'truth': b, 'signed_error': a-b, 'relative_error': abs(a-b)/b,
+                                       'frames': int((~pos).sum()), 'of': int(len(pos))})
+    q = lambda x: {'n': len(x), 'median_m': float(np.median(x)), 'p5_m': float(np.percentile(x, 5)), 'p95_m': float(np.percentile(x, 95)),
+                   'max_abs_m': float(np.max(np.abs(x)))}
+    res['floor_estimate'] = {k: q(v) for k, v in sorted(est.items())}
+    include = lambda m: ergo_pass(m) or m['defect'] == 'float_whole_m'
+    res['ergo'] = ergo_rates(rows, include)
+    res['ergo']['pass'] = all(res['ergo'][k]['pass'] for k in ('reba', 'rula'))
+    res['ergo_method_floor_same_clips'] = ergo_rates(method_rows, include)
+    res['muscle'] = {k: muscle_summary(v) for k, v in mus.items()}
+    res['clips'] = {'selffloor_runs': len(rows), 'errors': sorted(p.parent.name for p in (DATA/'tool_selffloor'/split).glob('*/error.json'))}
+    LOG.mkdir(parents=True, exist_ok=True)
+    (LOG/f'{split}_selffloor_score.json').write_text(json.dumps(res, indent=1))
+    print(json.dumps({'floor_estimate': res['floor_estimate'], 'clips': res['clips'],
+                      'ergo': {k: {x: v[x] for x in ('false_kill', 'missed_kill', 'pass', 'clips') if x in v} if isinstance(v, dict) else v
+                               for k, v in res['ergo'].items()},
+                      'ergo_method_floor_same_clips': {k: {x: v[x] for x in ('false_kill', 'missed_kill', 'pass')} for k, v in res['ergo_method_floor_same_clips'].items()},
+                      'muscle': {k: {x: v.get(x) for x in ('median_relative_error', 'spearman', 'all')} for k, v in res['muscle'].items()}}, indent=1))
 
 
 # ---------------------------------------------------------------- acceptance videos
@@ -594,15 +693,17 @@ def videos(args):
 
 def main():
     a = argparse.ArgumentParser()
-    a.add_argument('step', choices=('calibrate', 'margins', 'tool', 'truth', 'score', 'kinematic', 'videos'))
+    a.add_argument('step', choices=('calibrate', 'margins', 'tool', 'truth', 'score', 'kinematic', 'videos', 'selffloor', 'selfscore'))
     a.add_argument('--tune', action='store_true', help='score on dev: run the registered margin / tau / depth grid')
-    a.add_argument('--split', choices=('dev', 'heldout', 'heldout2'), default='dev'); a.add_argument('--workers', type=int, default=6)
+    a.add_argument('--split', choices=('dev', 'heldout', 'heldout2', 'heldout3'), default='dev'); a.add_argument('--workers', type=int, default=6)
     a.add_argument('--limit', type=int); a.add_argument('--only')
     args = a.parse_args()
     if args.step == 'calibrate':
         return calibrate(args)
     if args.step == 'score':
         return score(args)
+    if args.step == 'selfscore':
+        return selfscore(args)
     if args.step == 'videos':
         return videos(args)
     if args.step == 'kinematic':
@@ -620,7 +721,7 @@ def main():
         ref = offset_reference(items)
         print(json.dumps({'offset_reference_m': ref}), flush=True)
         return print(json.dumps(pool(tool_job, [(c, ref) for c in items], args.workers)))
-    print(json.dumps(pool({'truth': truth_job, 'margins': margins_job}[args.step], items, args.workers)))
+    print(json.dumps(pool({'truth': truth_job, 'margins': margins_job, 'selffloor': selffloor_job}[args.step], items, args.workers)))
 
 
 if __name__ == '__main__':

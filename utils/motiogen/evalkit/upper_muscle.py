@@ -29,6 +29,8 @@ PROTOCOL = json.loads(PROTOCOL_PATH.read_text())
 PREPARE = 'fbls-e3-helpers-axial-subset-1'
 MODES = ('evalkit', 'e3', 'truth')
 SO_STEP = 10
+# classification version: forced-1 adds the forced metrics of config/evalkit_v12_20261108.json
+CLASSIFY = 'forced-1'
 IK_RMS_M, REACTION_VALID = .03, .95
 RESIDUAL_BW, RESERVE_NM, LIMIT_DEG = .05, 1., .5
 SHEAR_N = (700., 1000.)
@@ -175,34 +177,69 @@ def classify(work, mass, t0, t1):
         kinematic |= near_limit(np.interp(t, t_q, q[:, l_q.index(c)]), spec)
     type2 = external | internal | kinematic
     reachable = ~type2 & finite
+    forced = finite & ~internal & ~kinematic
     m = {'type2_fraction': float(type2.mean()), 'type2_external_fraction': float(external.mean()),
          'type2_internal_fraction': float(internal.mean()), 'type2_kinematic_fraction': float(kinematic.mean())}
-    series = {'times': t, 'reachable': reachable, 'finite': finite, 'type2_external': external, 'type2_internal': internal,
-              'type2_kinematic': kinematic}
+    series = {'times': t, 'reachable': reachable, 'forced': forced, 'finite': finite, 'type2_external': external,
+              'type2_internal': internal, 'type2_kinematic': kinematic,
+              'residual_bw': np.interp(t, dyn['times'], np.linalg.norm(dyn['residual_force'], axis=1)/bw)}
     for key, (joint, child) in geo['joints']['lumbar'].items():
         comp, ap, ml = project(labels, jr, joint, child, geo['lumbar']['tangents'][key]['axis'])
         series[f'{key}_compression_n'] = comp
         if key == 'L5_S1':
             series['L5_S1_ap_shear_n'], series['L5_S1_ml_shear_n'] = ap, ml
-        if not reachable.any():
-            continue
-        m[f'{key}_compression_p95_bw'] = float(np.percentile(comp[reachable], 95)/bw)
-        m[f'{key}_compression_mean_bw'] = float(comp[reachable].mean()/bw)
-        if key == 'L5_S1':
-            m['L5_S1_over_niosh_fraction'] = float(np.mean(comp[reachable] > geo['niosh_n']))
-            m['L5_S1_ap_shear_p95_n'] = float(np.percentile(np.abs(ap[reachable]), 95))
-            m['L5_S1_ml_shear_p95_n'] = float(np.percentile(np.abs(ml[reachable]), 95))
-            for limit in SHEAR_N:
-                m[f'L5_S1_ap_shear_over_{limit:g}_fraction'] = float(np.mean(np.abs(ap[reachable]) > limit))
     rows = np.array([int(np.argmin(np.abs(t_act-x))) for x in t])
     for name, members in geo['groups']['lumbar'].items():
         cols = [k for k, l in enumerate(l_act) if not l.startswith('reserve_') and any(l.startswith(p) for p in members)]
         if cols:
             series[f'{name}_activation'] = act[np.ix_(rows, cols)].mean(1)
-            if reachable.any():
-                m[f'{name}_activation_mean'] = float(series[f'{name}_activation'][reachable].mean())
     status = 'type1' if any(flags.values()) else 'measured'
-    return {'status': status, 'type1_flags': flags, 'frames': int(len(t)), 'reachable_frames': int(reachable.sum()), 'metrics': m}, series
+    m.update(frame_metrics(series, reachable, bw))
+    region = {'status': status, 'type1_flags': flags, 'frames': int(len(t)), 'reachable_frames': int(reachable.sum()), 'metrics': m,
+              'classify': CLASSIFY}
+    if status == 'measured':
+        region.update(forced_metrics(series, bw))
+    return region, series
+
+
+def frame_metrics(series, sel, bw, prefix=''):
+    """Lumbar metrics over the frames sel (empty when no frame is selected)."""
+    geo = geometry(); m = {}
+    if not sel.any():
+        return m
+    for key in geo['joints']['lumbar']:
+        comp = series[f'{key}_compression_n']
+        m[f'{prefix}{key}_compression_p95_bw'] = float(np.percentile(comp[sel], 95)/bw)
+        m[f'{prefix}{key}_compression_mean_bw'] = float(comp[sel].mean()/bw)
+    comp, ap, ml = series['L5_S1_compression_n'], series['L5_S1_ap_shear_n'], series['L5_S1_ml_shear_n']
+    m[f'{prefix}L5_S1_over_niosh_fraction'] = float(np.mean(comp[sel] > geo['niosh_n']))
+    m[f'{prefix}L5_S1_ap_shear_p95_n'] = float(np.percentile(np.abs(ap[sel]), 95))
+    m[f'{prefix}L5_S1_ml_shear_p95_n'] = float(np.percentile(np.abs(ml[sel]), 95))
+    for limit in SHEAR_N:
+        m[f'{prefix}L5_S1_ap_shear_over_{limit:g}_fraction'] = float(np.mean(np.abs(ap[sel]) > limit))
+    for name in geo['groups']['lumbar']:
+        if f'{name}_activation' in series:
+            m[f'{prefix}{name}_activation_mean'] = float(series[f'{name}_activation'][sel].mean())
+    return m
+
+
+def forced_metrics(series, bw):
+    """Forced metrics (config/evalkit_v12_20261108.json, forced): the reachable frames plus the frames whose only
+    failure is the unbalanced external force; the residual of those frames alongside."""
+    forced, extra = series['forced'], series['forced'] & ~series['reachable']
+    out = {'forced_frames': int(forced.sum()), 'forced_external_frames': int(extra.sum()),
+           'forced_metrics': frame_metrics(series, forced, bw, 'forced_')}
+    out['forced_metrics']['forced_residual_bw_p95'] = float(np.percentile(series['residual_bw'][extra], 95)) if extra.any() else 0.
+    return out
+
+
+def reclassify(work, mass):
+    """Classification of an existing lumbar run from its saved files (no new solve): adds the forced metrics."""
+    work = Path(work); old = json.loads((work/'lumbar.json').read_text())
+    region, series = classify(work, mass, *old['window_s'])
+    np.savez_compressed(work/'frames.npz', **series)
+    old.update(region); (work/'lumbar.json').write_text(json.dumps(old, indent=1))
+    return old
 
 
 def _digest(contact):
@@ -226,7 +263,7 @@ def lumbar_fbls(run, work, mass=75., mode='evalkit', floor=None, contact=None, t
     if (work/'lumbar.json').exists():
         old = json.loads((work/'lumbar.json').read_text())
         if old.get('key') == key and old.get('prepare_key') == json.loads((work/'receipt.json').read_text()).get('key'):
-            return old
+            return old if old.get('classify') == CLASSIFY else reclassify(work, mass)
     receipt = prepare(run, work, mass, mode)
     loads = dynamics(work, mass, mode, floor, contact, truth)
     if mode == 'e3':

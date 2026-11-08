@@ -86,6 +86,40 @@ def add_upper(run, out, mode='evalkit', truth=None):
     return result
 
 
+def muscle_residual(frames):
+    """Index of the nearest residual frame of every static-optimization frame and its residual-positive flag."""
+    t, times = frames['muscle_times'], frames['times']
+    i = np.clip(np.searchsorted(times, t), 1, len(times)-1)
+    i = np.where(np.abs(times[i-1]-t) <= np.abs(times[i]-t), i-1, i)
+    return i, np.asarray(frames['residual_positive'], bool)[i]
+
+
+def muscle_split(frames):
+    """Leg-muscle effort of v1.2 (config/evalkit_v12_20261108.json, forced.leg_muscle): primary over the static-
+    optimization frames whose nearest residual frame is residual-negative, forced over every frame (the v1.1 value)."""
+    if 'residual_positive' not in frames or 'muscle_effort' not in frames:
+        return {}
+    eff = frames['muscle_effort']; i, pos = muscle_residual(frames)
+    return {'primary_muscle_effort_sum_a2_mean': float(eff[~pos].mean()) if (~pos).any() else None,
+            'primary_frames': int((~pos).sum()), 'forced_muscle_effort_sum_a2_mean': float(eff.mean()),
+            'forced_frames': int(len(eff)), 'forced_residual_positive_share': float(pos.mean()),
+            'forced_residual_bw_p95': float(np.percentile(frames['residual_bw'][i][pos], 95)) if pos.any() else 0.}
+
+
+def add_forced(out):
+    """Forced metrics of v1.2 on an existing evaluation from its saved files (no new solve): leg-muscle split and the
+    lumbar reclassification."""
+    out = Path(out); rec = json.loads((out/'evalkit.json').read_text())
+    if 'muscle' in rec:
+        rec['muscle'].update(muscle_split(dict(np.load(out/'frames.npz', allow_pickle=True))))
+    if 'upper' in rec and (out/'upper/lumbar/lumbar.json').exists():
+        from . import upper_muscle
+        rec['upper']['lumbar'] = upper_summary({'lumbar': upper_muscle.reclassify(out/'upper/lumbar', rec['receipt']['mass_kg'])})['lumbar']
+    rec['receipt']['forced_commit'] = _commit()
+    (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
+    return rec
+
+
 def foot_offset(run, work, mass, floor, source=None):
     """Fit (cached in work) and fit.foot_offset of one run: the per-clip input of the floor correction."""
     import opensim as osim
@@ -157,6 +191,7 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
         up = muscle.upper_body(work/'so', work/'model_so.osim')
         frames.update(net_moment_lumbar_nm_kg=up['lumbar'], net_moment_shoulder_nm_kg=up['shoulder'])
         summary['muscle'].update(net_moments(up))
+        summary['muscle'].update(muscle_split(frames))
     if 'kinematic' in dims:
         summary['kinematic'] = kinematic_summary(run, frames, reach_task)
     if 'upper' in dims:

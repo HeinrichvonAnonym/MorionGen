@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-# Full evalkit line over a manifest: residual / RULA-REBA / muscle / kinematic per row (OpenSim python), per-method sanity
-# check, then the distribution smoke of every registered evaluator that has rows (torch python; tmr_soma re-executes
-# itself in the Kimodo environment).
-#   scripts/run_evalkit_batch.sh --manifest M.json --out DIR [--workers 6] [--dims residual,ergo,muscle,kinematic]
+# Full evalkit v1.2 line over a manifest (config/evalkit_v12_20261108.json: repair the floor first, then the loads):
+#   pass 1  every dimension on the method floor (residual primary: does the method keep its own floor)
+#   pass 2  the self floor of every row (still-landmark level of its pass-1 frames), refitted, every dimension (loads primary)
+#   merged per-method check (residual from pass 1, loads from pass 2, method-floor loads alongside), then the distribution
+#   smoke of every registered evaluator that has rows (torch python; tmr_soma re-executes itself in the Kimodo environment).
+#   scripts/run_evalkit_batch.sh --manifest M.json --out DIR [--workers 6] [--dims residual,ergo,muscle,kinematic[,upper]]
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OSIM_PY="${OSIM_PY:-$HOME/.local/share/opensim-api/bin/python}"
@@ -20,8 +22,12 @@ done
 [[ -n "$MANIFEST" && -n "$OUT" ]] || { echo "usage: $0 --manifest M.json --out DIR [--workers N] [--dims D]" >&2; exit 2; }
 mkdir -p "$OUT/distribution"
 cd "$ROOT"
-nice -n "${NICE:-19}" "$OSIM_PY" python/scripts/evalkit_batch.py run --manifest "$MANIFEST" --out "$OUT/rows" --workers "$WORKERS" --dims "$DIMS"
-nice -n "${NICE:-19}" "$OSIM_PY" python/scripts/evalkit_batch.py check --manifest "$MANIFEST" --rows "$OUT/rows" --out "$OUT/check.json"
+B=(nice -n "${NICE:-19}" "$OSIM_PY" python/scripts/evalkit_batch.py)
+"${B[@]}" run --manifest "$MANIFEST" --out "$OUT/rows" --workers "$WORKERS" --dims "$DIMS"
+"${B[@]}" manifest-self-floor --manifest "$MANIFEST" --rows "$OUT/rows" --out "$OUT/manifest_selffloor.json"
+"${B[@]}" run --manifest "$OUT/manifest_selffloor.json" --out "$OUT/rows_selffloor" --workers "$WORKERS" --dims "$DIMS"
+"${B[@]}" check --manifest "$MANIFEST" --rows "$OUT/rows" --self-manifest "$OUT/manifest_selffloor.json" --self-rows "$OUT/rows_selffloor" \
+  --out "$OUT/check.json"
 for E in t2m omomo flowmdm_babel tmr_soma; do
   nice -n "${NICE:-19}" "$TORCH_PY" python/scripts/evalkit_distribution.py smoke --evaluator "$E" --manifest "$MANIFEST" --out "$OUT/distribution"
 done

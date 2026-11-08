@@ -8,6 +8,9 @@ V1 equivalence: 3 E3 runs (first valid by id of e1 C0, e1 W0X, e2 G4) in the e3 
 on the E3 work directories. V2 ground-truth reactions: the heldout2 synthetic control clips, the same FBLS kinematics
 with the evalkit and with the truth ground reactions. V3 floor: first smoke8x5 row by id of each method, floor -2 / +2 cm
 (v11 rows_floor2cm). V4 front end: the same rows in the e3 mode. V5 (AddB) is not executable (registration).
+H3 (config/evalkit_v12_20261108.json, run --only H3 after evalkit_validate.py selffloor --split heldout3): truth-GRF lumbar
+on the heldout3 controls; report-h3 scores the self-floor lumbar of the control and whole-clip floor-defect clips
+against it (upper_muscle/validation_h3.json).
 """
 import argparse
 import json
@@ -46,6 +49,15 @@ def truth_clips():
     return sorted(p.name for p in (DATA/'tool/heldout2').glob('*__control'))
 
 
+SELF_FLOOR = DATA/'tool_selffloor/heldout3'
+WHOLE_FLOOR = ('float_whole_m', 'penetrate_whole_m')
+
+
+def h3_controls():
+    """v1.2 lumbar arm (config/evalkit_v12_20261108.json, validation.lumbar): heldout3 controls with a self-floor lumbar run."""
+    return sorted(p.parents[2].name for p in SELF_FLOOR.glob('*__control/upper/lumbar/lumbar.json'))
+
+
 def floor_rows():
     rows = json.loads(SMOKE_MANIFEST.read_text())['rows']
     return [sorted((r for r in rows if r['method'] == m), key=lambda r: r['id'])[0] for m in sorted({r['method'] for r in rows})]
@@ -61,6 +73,8 @@ def tasks(only):
         out += [('V3', f"{r['id']}__floor{s}") for r in floor_rows() for s in ('-2cm', '+2cm')]
     if 'V4' in only:
         out += [('V4', r['id']) for r in floor_rows()]
+    if 'H3' in only:
+        out += [('H3', c) for c in h3_controls()]
     return out
 
 
@@ -74,18 +88,22 @@ def solve(task):
         if arm == 'V1':
             d = next(x for x in equivalence_runs() if x['id'] == name)
             upper_muscle.lumbar_fbls(d['run'], OUT/'V1'/name/'lumbar', 75., 'e3')
-        elif arm == 'V2':
-            tool = DATA/'tool/heldout2'/name; e = json.loads((tool/'evalkit.json').read_text())
-            f = np.load(tool/'frames.npz', allow_pickle=True)
+        elif arm in ('V2', 'H3'):
+            tool = DATA/'tool/heldout2'/name if arm == 'V2' else SELF_FLOOR/name
+            e = json.loads((tool/'evalkit.json').read_text()); f = np.load(tool/'frames.npz', allow_pickle=True)
             contact = (f['times'], {s: {k: f[f'contact_{s}_{k}'] for k in ('heel', 'toe')} for s in 'rl'})
             floor, src = e['receipt']['floor_eval_m'], e['receipt']['run']
-            est = OUT/'V2'/name/'evalkit'
-            upper_muscle.lumbar_fbls(src, est, e['receipt']['mass_kg'], 'evalkit', floor, contact)
-            tru = OUT/'V2'/name/'truth'; tru.mkdir(parents=True, exist_ok=True)
+            if arm == 'V2':
+                est = OUT/'V2'/name/'evalkit'
+                upper_muscle.lumbar_fbls(src, est, e['receipt']['mass_kg'], 'evalkit', floor, contact)
+            else:
+                est = tool/'upper/lumbar'
+            tru = OUT/arm/name/'truth'; tru.mkdir(parents=True, exist_ok=True)
             for item in SHARED_FIT:
                 if not (tru/item).exists():
                     (shutil.copytree if (est/item).is_dir() else shutil.copy)(est/item, tru/item)
-            upper_muscle.lumbar_fbls(src, tru, e['receipt']['mass_kg'], 'truth', floor, contact, DATA/'truth_eval/heldout2'/name/'grf.xml')
+            split = 'heldout2' if arm == 'V2' else SELF_FLOOR.name
+            upper_muscle.lumbar_fbls(src, tru, e['receipt']['mass_kg'], 'truth', floor, contact, DATA/'truth_eval'/split/name/'grf.xml')
         elif arm == 'V3':
             d = V11/'rows_floor2cm'/name
             run.add_upper(json.loads((d/'evalkit.json').read_text())['receipt']['run'], d)
@@ -228,13 +246,59 @@ def report(args):
                           {kk: vv for kk, vv in v.items() if kk != 'rows'} if isinstance(v, dict) else v) for k, v in out.items()}, indent=1))
 
 
+def report_h3(args):
+    """v1.2 lumbar line (config/evalkit_v12_20261108.json, validation.lumbar): self-floor L5/S1 p95 of the heldout3 control
+    and whole-clip floor-defect clips against the truth-GRF value of the control of the same base and subject."""
+    reg = json.loads((ROOT/'config/evalkit_v12_20261108.json').read_text())['validation']['lumbar']
+    per = []
+    for p in sorted(SELF_FLOOR.glob('*/upper/lumbar/lumbar.json')):
+        clip = p.parents[2].name; base, defect = clip.split('__')
+        if defect != 'control' and not defect.startswith(WHOLE_FLOOR):
+            continue
+        est, tru = json.loads(p.read_text()), lumbar(OUT/'H3'/f'{base}__control'/'truth')
+        row = {'clip': clip, 'defect': defect, 'status': [est['status'], tru and tru['status']],
+               'reachable_frames': [est['reachable_frames'], tru and tru['reachable_frames']], 'frames': est['frames'],
+               'forced_external_frames': est.get('forced_external_frames')}
+        for k in COMPARE+('L5_S1_ap_shear_p95_n', 'erector_spinae_activation_mean'):
+            x, y = est['metrics'].get(k), tru and tru['metrics'].get(k)
+            row[k] = {'estimated': x, 'truth': y, 'relative': None if x is None or y is None or k.startswith('type2') or not y else (x-y)/abs(y)}
+        for k in ('L5_S1_compression_p95_bw', 'L5_S1_compression_mean_bw'):
+            x, y = est.get('forced_metrics', {}).get(f'forced_{k}'), tru and tru['metrics'].get(k)
+            row[f'forced_{k}'] = {'estimated': x, 'truth': y, 'relative': None if x is None or y is None or not y else (x-y)/abs(y)}
+        per.append(row)
+
+    def stats(rows, k):
+        pairs = [(r[k]['estimated'], r[k]['truth']) for r in rows if r[k]['estimated'] is not None and r[k]['truth'] is not None]
+        return {'abs_relative': q([abs((x-y)/y) for x, y in pairs if y]), 'signed_relative': q([(x-y)/y for x, y in pairs if y]),
+                'spearman': spearman(*zip(*pairs)) if len(pairs) > 2 else None, 'pairs': len(pairs)}
+    both = [r for r in per if r['status'] == ['measured', 'measured']]
+    keys = ('L5_S1_compression_p95_bw', 'L5_S1_compression_mean_bw', 'L5_S1_ap_shear_p95_n', 'erector_spinae_activation_mean',
+            'forced_L5_S1_compression_p95_bw', 'forced_L5_S1_compression_mean_bw')
+    st = {k: stats(both, k) for k in keys}
+    by_defect = {d: {k: stats([r for r in both if r['defect'].startswith(d)], k) for k in ('L5_S1_compression_p95_bw', 'forced_L5_S1_compression_p95_bw')}
+                 for d in ('control',)+WHOLE_FLOOR}
+    p95 = st['L5_S1_compression_p95_bw']
+    gate = {'spearman': p95['spearman'], 'median_abs_relative': p95['abs_relative']['median'] if p95['abs_relative'] else None}
+    gate['pass'] = bool(gate['spearman'] is not None and gate['spearman'] >= .8 and gate['median_abs_relative'] is not None
+                        and gate['median_abs_relative'] <= .15)
+    out = {'registration': 'config/evalkit_v12_20261108.json', 'rule': reg['pass'], 'clips': len(per), 'both_measured': len(both),
+           'statuses': {f'{a}|{b}': sum(r['status'] == [a, b] for r in per) for a, b in {tuple(r['status']) for r in per}},
+           'gate': gate, 'statistics': st, 'by_defect': by_defect, 'per_clip': per,
+           'errors': sorted(p.stem for p in (OUT/'errors').glob('H3_*.json')) if (OUT/'errors').exists() else []}
+    (OUT/'validation_h3.json').write_text(json.dumps(out, indent=1))
+    print(json.dumps({k: v for k, v in out.items() if k not in ('per_clip', 'statistics')}, indent=1))
+    print(json.dumps({k: {'spearman': v['spearman'], 'median_abs_relative': v['abs_relative'] and v['abs_relative']['median'],
+                          'median_signed_relative': v['signed_relative'] and v['signed_relative']['median'], 'pairs': v['pairs']}
+                      for k, v in st.items()}, indent=1))
+
+
 def main():
     a = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = a.add_subparsers(dest='step', required=True)
     r = sub.add_parser('run'); r.add_argument('--workers', type=int, default=5); r.add_argument('--only', default='V1,V2,V3,V4')
-    sub.add_parser('report')
+    sub.add_parser('report'); sub.add_parser('report-h3')
     args = a.parse_args()
-    {'run': run_all, 'report': report}[args.step](args)
+    {'run': run_all, 'report': report, 'report-h3': report_h3}[args.step](args)
 
 
 if __name__ == '__main__':
