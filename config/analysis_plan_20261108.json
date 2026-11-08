@@ -1,0 +1,121 @@
+{
+ "version": "analysis-plan-draft-1",
+ "created": "2026-11-08 23:15",
+ "status": "draft; frozen together with config/motion_output_contract_20261108.json, config/evalkit_batch_protocol_20261108.json and the inference registration after user review (develop_logs/notes/20261108_batch_design_decisions.md section 14 item 7), before any batch result",
+ "builds_on": {
+  "design": "develop_logs/notes/20261108_batch_design_decisions.md sections 0, 2-5, 8, 14 (section 14 overrides conflicting parts of section 13)",
+  "deck": "develop_logs/notes/decks/MotionGeneration_科研汇报_v5.2.pptx: questions (p.4), metrics (p.5), E criterion (p.6), three layers (p.7), windows (p.8), switches (p.9), judgements 1-4 (p.16)",
+  "evaluation": "config/evalkit_v12_20261108.json (residual primary on the method floor, loads primary on the self floor), config/evalkit_batch_protocol_20261108.json"
+ },
+ "scope": "Within-method comparisons on the new batch (24 tasks per method, 5 seeds, inference registration). Each method is evaluated on its own tasks; there is no cross-method ranking.",
+
+ "metric_classes": {
+  "rule": "Conclusions rest on metrics the switched component does not optimize directly. Constrained metrics show only that the constraint took effect (section 8).",
+  "conclusion_metrics": {
+   "accuracy": "target error (m) and success within the method's tolerance (deck p.5; per task family: hand position error, waypoint / goal error, keyframe error)",
+   "smoothness": "jerk_0p1s (RMS third derivative of joint positions, 0.1 s difference step) and boundary jerk (differences across window junctions; autoregressive methods only)",
+   "physical_feasibility": "residual_force_rms_bw and residual_positive_share (evalkit residual, method floor)",
+   "loads": "leg muscle effort and reserve (evalkit muscle), L5/S1 compression (evalkit upper, lumbar subsample), net joint moments (descriptive: net moments are not loads)",
+   "ergonomics": "RULA and REBA class shares (certain_risk, certain_acceptable; evalkit ergo)",
+   "distribution": "FID on the official evaluation batches (on vs off within a method)"
+  },
+  "constrained_metrics": {
+   "always": ["bone length deviation (all segments, every frame)", "foot height relative to the method's own declared ground (world.json)"],
+   "per_switch": {
+    "chois.guidance": "foot-ground and hand-object terms of its guidance: foot height, penetration and hand-object distance are constraint checks for this switch",
+    "primal.ground_snap": "foot height and penetration",
+    "kimodo.correction / ardy.correction": "the constrained joints' error at the constraint frames (it is also the accuracy metric: reported, but a cost conclusion cannot rest on it)"
+   }
+  }
+ },
+
+ "questions": {
+  "Q1_cost_of_guidance": {
+   "question": "What does each way of enforcing a spatial constraint (training layer, sampling layer, output layer) cost, and where does the cost fall: smoothness, foot-ground, physical feasibility or loads?",
+   "primary_contrasts": {
+    "motionlcm": "control_residual 1 - 0 (training layer)",
+    "omnicontrol": "spatial 1 - 0 at realism 1 (sampling layer); secondary: realism x spatial interaction (deck p.20)",
+    "chois": "guidance 1 - 0 (sampling layer)",
+    "kimodo": "correction 1 - 0 (output layer; the reused 416 pairs)",
+    "ardy": "correction 1 - 0 at history_long 0 (output layer with write-back); secondary: correction x history_long",
+    "dart": "goal_update 1 - 0 (goal reading)"
+   },
+   "primary_metrics": ["target error", "jerk_0p1s (boundary jerk for ARDY / DART)", "residual_force_rms_bw"],
+   "text_factor": {
+    "methods": "MotionLCM, OmniControl (CLoSD after its text interface is checked; inference registration)",
+    "estimands": {
+     "guidance_cost": "on - off within the consistent text",
+     "conflict_cost": "(neutral - consistent) within guidance on: the extra cost when the text contradicts the control signal",
+     "deck_estimand": "on - off within the neutral text (continues the deck's estimate)"
+    }
+   },
+   "dose": "risk-zone tasks (floor, knee, overhead; inference registration) are the dose variable: the contrast is reported per zone, and the zone x switch interaction is a registered secondary contrast",
+   "mechanism_hypothesis": {
+    "H_bone": "Joint-position representation plus in-sampling gradient guidance stretches bones: OmniControl spatial 1 - 0 bone length deviation > 0, larger in the risk zones than in the deck's 12 tasks (zone x spatial > 0)",
+    "H_fk": "Methods whose joints come from rotations through forward kinematics (ARDY, Kimodo, PRIMAL, CHOIS) keep bone length within numerical error in every condition (structural check, reported per method)",
+    "H_dart": "Counter-test: DART predicts joints and rotations separately (7 mm apart on the native matrix); its bone length deviation is reported with goal_update on and off, no direction registered",
+    "measured_on": "uncorrected outputs, source layer (no OpenSim), every row; never used to screen tasks or rows"
+   }
+  },
+  "Q2_effect_of_improvements": {
+   "question": "Do the junction treatments and history choices lower these costs at the same task accuracy?",
+   "primary_contrasts": {
+    "primal": "inertialization 1 - 0 (averaged over ground_snap and reprojection, deck p.25); secondary: ground_snap 1 - 0, reprojection 1 - 0",
+    "ardy": "history_long 1 - 0 within correction 1 (write-back propagation, deck p.26)",
+    "closd": "execution_context 1 - 0 (prefix from the physics execution vs the model's own prediction)"
+   },
+   "primary_metrics": ["boundary jerk", "target error (accuracy must not drop: reported next to every cost effect)", "residual_force_rms_bw"],
+   "later_comparators": "the post-hoc correction group and the user's own method enter as comparators registered later (config/evalkit_batch_protocol_20261108.json, post_hoc_correction section); this plan reserves their slot and reports no result for them"
+  },
+  "Q3_ergonomics": {
+   "question": "How do RULA / REBA and the body loads change under the same switches?",
+   "primary_contrasts": "the primary contrasts of Q1 and Q2",
+   "primary_metrics": ["RULA certain_risk share", "REBA certain_risk share", "leg muscle effort"],
+   "secondary_metrics": ["L5/S1 compression on the lumbar subsample", "net joint moments (descriptive)"],
+   "floor": "loads and ergonomics primary on the self floor (v1.2); the method-floor values are the setting check below",
+   "risk_zone": "the risk-zone tasks are where RULA / REBA can register risk at all (design section 1: the deck's targets sit in the comfort zone); per-zone results are reported"
+  }
+ },
+
+ "statistics": {
+  "effect": "paired difference on - off within (task, text, seed); mean over seeds; equal weight per task",
+  "interval": "95% percentile bootstrap with two-level clusters, text then task (methods without text variation: task; Kimodo: source motion as in deck p.23); 10000 resamples, seed 20261108 (约定，未经推演)",
+  "dedup": "rows with byte-identical inputs enter once (input sha256)",
+  "multiplicity": "Holm within each question over the methods' primary contrasts, per primary metric; secondary contrasts and metrics are reported without correction and labelled secondary (约定，未经推演)",
+  "key_effects": "the Holm-tested effects also get a cluster t interval and an exact sign-flip test (as deck p.17)",
+  "validity_gates": "evalkit gates as registered (IK error, unmeasurable frames); the primary set is pairs whose two runs both pass; all pairs reported as sensitivity",
+  "measurement_consistency": {
+   "rule": "an OpenSim-based effect is read directly only when the two arms are in the same measurement state (section 8)",
+   "checks": ["unmeasurable share", "foot offset distribution (median and IQR)", "share of rows inside the +-0.5 cm threshold band"],
+   "flag": "any check differing by more than 5 percentage points (shares) or 0.5 cm (offset median) between the arms labels the effect 'measurement state differs', reported descriptively (约定，未经推演)"
+  }
+ },
+
+ "settings_robustness": {
+  "rule": "A main conclusion is written as a conclusion only if the effect has the same sign and a 95% interval excluding 0 in every applicable setting; otherwise it is labelled 'setting-dependent' and reported with each setting's value (section 8)",
+  "settings": {
+   "floor": {"values": ["method floor", "self floor"], "applies_to": "every evalkit metric (residual, ergo, muscle, upper)"},
+   "neck_reading": {"values": ["joint line (primary)", "rotation reading"], "applies_to": "RULA conclusions on ARDY, CHOIS, Kimodo, PRIMAL (config/evalkit_neck_supp_20261108.json; other methods: joint line only)"},
+   "threshold_band": {"values": ["-0.5 cm", "registered", "+0.5 cm"], "applies_to": "residual_positive_share and penetration_share (rescore only)"}
+  },
+  "not_settings": "contact tolerance 2 / 3 cm is not a setting of the main batch (section 14 item 4): at most a descriptive check on a small subsample"
+ },
+
+ "descriptive_only": [
+  "every comparison between methods, including levels (medians per condition) and the subset FID",
+  "CHOIS loads (lumbar, leg muscle): hand-held object load not modelled until the mass source is decided (contract)",
+  "the contact-tolerance check",
+  "the reproduction subset (native matrix): sensitivity of the conclusions to the text wording",
+  "the rotation neck reading itself (no truth on generated motion)",
+  "net joint moments",
+  "secondary contrasts (labelled)",
+  "effects flagged 'measurement state differs'"
+ ],
+
+ "pending_user_decisions": {
+  "split_use": "which set the baseline conclusions use (development, held-out or both) and at which step the held-out results are opened once (section 14 item 1)",
+  "deck_recheck": "whether the two-level (text -> task) re-check of the deck's MotionLCM trunk-tilt and OmniControl realism-jerk intervals on the existing data (section 1, section 13 step 1) is still done"
+ },
+
+ "conventions_not_derived": ["10000 resamples, seed 20261108", "Holm per question and primary metric", "measurement-consistency limits 5 pp / 0.5 cm"]
+}
