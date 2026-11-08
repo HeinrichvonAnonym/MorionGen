@@ -1,6 +1,7 @@
 {
- "version": "analysis-plan-draft-1",
+ "version": "analysis-plan-draft-2",
  "created": "2026-11-08 23:15",
+ "revised": "2026-11-09 00:06 user review: crossed text x task design and intervals, bone length / foot height classes, gate pass rates as results, Kimodo reuse label, Holm scope, pending_user",
  "status": "draft; frozen together with config/motion_output_contract_20261108.json, config/evalkit_batch_protocol_20261108.json and the inference registration after user review (develop_logs/notes/20261108_batch_design_decisions.md section 14 item 7), before any batch result",
  "builds_on": {
   "design": "develop_logs/notes/20261108_batch_design_decisions.md sections 0, 2-5, 8, 14 (section 14 overrides conflicting parts of section 13)",
@@ -20,12 +21,21 @@
    "distribution": "FID on the official evaluation batches (on vs off within a method)"
   },
   "constrained_metrics": {
-   "always": ["bone length deviation (all segments, every frame)", "foot height relative to the method's own declared ground (world.json)"],
+   "always": [],
    "per_switch": {
-    "chois.guidance": "foot-ground and hand-object terms of its guidance: foot height, penetration and hand-object distance are constraint checks for this switch",
-    "primal.ground_snap": "foot height and penetration",
+    "chois.guidance": "its foot-ground term: foot height relative to the method's own declared ground (world.json) and penetration are constraint checks for this switch; its hand-object term likewise makes hand-object distance a constraint check",
+    "primal.ground_snap": "foot height relative to the method's own declared ground and penetration",
     "kimodo.correction / ardy.correction": "the constrained joints' error at the constraint frames (it is also the accuracy metric: reported, but a cost conclusion cannot rest on it)"
    }
+  },
+  "bone_length_and_foot_height": {
+   "decision": "user 2026-11-09 00:06 review: bone length deviation and foot height relative to the method's own ground are not constrained metrics in general",
+   "bone_length_deviation": {
+    "fk_methods": "ARDY, Kimodo, PRIMAL, CHOIS (joints from rotations through forward kinematics): structural check, reported per method and condition (H_fk)",
+    "joint_position_methods": "MotionLCM, OmniControl, DART: mechanism outcome metric, analysed as a result of the switch (H_bone, H_dart)",
+    "closd": "structural check of the physics character (rigid bodies)"
+   },
+   "foot_height_relative_to_own_ground": "constrained only under chois.guidance and primal.ground_snap; under every other switch an outcome metric of the foot-ground family"
   }
  },
 
@@ -36,7 +46,7 @@
     "motionlcm": "control_residual 1 - 0 (training layer)",
     "omnicontrol": "spatial 1 - 0 at realism 1 (sampling layer); secondary: realism x spatial interaction (deck p.20)",
     "chois": "guidance 1 - 0 (sampling layer)",
-    "kimodo": "correction 1 - 0 (output layer; the reused 416 pairs)",
+    "kimodo": "correction 1 - 0 (output layer) on the reused 416 pairs, labelled 're-check of data already seen in the deck' (PPT 已见数据的复核); these pairs are outside the development / held-out split",
     "ardy": "correction 1 - 0 at history_long 0 (output layer with write-back); secondary: correction x history_long",
     "dart": "goal_update 1 - 0 (goal reading)"
    },
@@ -79,11 +89,15 @@
 
  "statistics": {
   "effect": "paired difference on - off within (task, text, seed); mean over seeds; equal weight per task",
-  "interval": "95% percentile bootstrap with two-level clusters, text then task (methods without text variation: task; Kimodo: source motion as in deck p.23); 10000 resamples, seed 20261108 (约定，未经推演)",
+  "interval": {
+   "design": "in the new batch the paraphrases rotate with the seeds, so text is crossed with task, not nested: every task carries all 5 paraphrases of its hand (rotation scheme: inference registration)",
+   "primary": "95% percentile bootstrap with task clusters (each task with all its seeds and paraphrases); Kimodo: source motion as in deck p.23; 10000 resamples, seed 20261108 (约定，未经推演)",
+   "cross_paraphrase": "text x task crossed bootstrap: tasks and paraphrases resampled independently in each draw, every (task, paraphrase) cell weighted by the product of its task and paraphrase draw counts; reported next to the primary interval as the interval for generalizing over wordings; methods with a text table only (MotionLCM, OmniControl, and CLoSD if its text interface takes the table); same resamples and seed (约定，未经推演)"
+  },
   "dedup": "rows with byte-identical inputs enter once (input sha256)",
-  "multiplicity": "Holm within each question over the methods' primary contrasts, per primary metric; secondary contrasts and metrics are reported without correction and labelled secondary (约定，未经推演)",
-  "key_effects": "the Holm-tested effects also get a cluster t interval and an exact sign-flip test (as deck p.17)",
-  "validity_gates": "evalkit gates as registered (IK error, unmeasurable frames); the primary set is pairs whose two runs both pass; all pairs reported as sensitivity",
+  "multiplicity": "Holm within each question over the methods' primary contrasts, per primary metric, applied only in the primary setting (method floor for residual, self floor for loads and ergonomics, joint-line neck reading, registered thresholds); in the other settings of settings_robustness a conclusion needs the same sign and a raw (unadjusted) 95% interval excluding 0; secondary contrasts and metrics are reported without correction and labelled secondary (约定，未经推演)",
+  "key_effects": "Holm uses the p value of the exact sign-flip test over task-cluster means; the Holm-tested effects also get a cluster t interval (as deck p.17)",
+  "validity_gates": "evalkit gates as registered (IK error, unmeasurable frames); each arm's gate pass rate per evaluator is reported as a result for every primary contrast (per-arm rate and the paired on - off difference with the primary interval), not only used as a measurement-state flag; it is not in the Holm family; the primary set for the other metrics is pairs whose two runs both pass; all pairs reported as sensitivity",
   "measurement_consistency": {
    "rule": "an OpenSim-based effect is read directly only when the two arms are in the same measurement state (section 8)",
    "checks": ["unmeasurable share", "foot offset distribution (median and IQR)", "share of rows inside the +-0.5 cm threshold band"],
@@ -92,7 +106,7 @@
  },
 
  "settings_robustness": {
-  "rule": "A main conclusion is written as a conclusion only if the effect has the same sign and a 95% interval excluding 0 in every applicable setting; otherwise it is labelled 'setting-dependent' and reported with each setting's value (section 8)",
+  "rule": "A main conclusion is written as a conclusion only if it passes Holm in the primary setting and has the same sign and a raw 95% interval excluding 0 in every other applicable setting; otherwise it is labelled 'setting-dependent' and reported with each setting's value (section 8)",
   "settings": {
    "floor": {"values": ["method floor", "self floor"], "applies_to": "every evalkit metric (residual, ergo, muscle, upper)"},
    "neck_reading": {"values": ["joint line (primary)", "rotation reading"], "applies_to": "RULA conclusions on ARDY, CHOIS, Kimodo, PRIMAL (config/evalkit_neck_supp_20261108.json; other methods: joint line only)"},
@@ -116,7 +130,12 @@
   "decision": "user 2026-11-08 23:22",
   "baseline_conclusions": "development set only (the split dimensions and rules: inference registration)",
   "held_out": "the baselines' held-out results are opened once, together with the user's own method, at its final comparison; until then no held-out evalkit summary, native metric or figure of any baseline is computed for viewing",
-  "enforcement": "the batch writes held-out rows like any other row; the analysis scripts select the development set by the registered split and refuse held-out rows unless the final-comparison flag is given; opening the held-out set is recorded in the notes with its time and commit"
+  "enforcement": "the batch writes held-out rows like any other row; the analysis scripts select the development set by the registered split and refuse held-out rows unless the final-comparison flag is given; opening the held-out set is recorded in the notes with its time and commit",
+  "kimodo_reuse": "the reused 416 Kimodo pairs were already seen in the deck: they are labelled 'PPT 已见数据的复核' (re-check of deck-seen data) and belong to neither the development nor the held-out set"
+ },
+ "pending_user": {
+  "held_out_fallback": "fallback rule for the held-out set: what opens it, and when, if the user's own method does not reach a final comparison (asked before the freeze, one question at a time)",
+  "chois_object_mass": "source of the CHOIS hand-held object mass: dataset material / per-category lookup (约定) / not modelled, lower bound without hand-held load only (asked in the contract revision, section 14 item 3)"
  },
  "deck_recheck": {
   "decision": "user 2026-11-08 23:25 (approx., answer received between 23:22 and 23:26): done now, before the freeze, from the existing native metrics only (no new evaluation); the affected conclusions are listed to the user before anything is written here",
@@ -151,5 +170,5 @@
   }
  },
 
- "conventions_not_derived": ["10000 resamples, seed 20261108", "Holm per question and primary metric", "measurement-consistency limits 5 pp / 0.5 cm"]
+ "conventions_not_derived": ["10000 resamples, seed 20261108", "text x task crossed bootstrap with product weights", "Holm per question and primary metric, primary setting only", "measurement-consistency limits 5 pp / 0.5 cm"]
 }
