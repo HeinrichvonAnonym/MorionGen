@@ -41,7 +41,7 @@ def run(args,upstream,root,data):
     weights=out/'weights';weights.mkdir(exist_ok=True)
     if not (weights/'Humanoid.pth').exists(): (weights/'Humanoid.pth').symlink_to(checkpoint)
     os.chdir(data/'baselines/CLoSD')
-    history=[];poses=[];contacts=[];planner=[];planner_samples=[];phase={'changed':False,'frame':0};start=time.perf_counter()
+    history=[];poses=[];rotations=[];dofs=[];contacts=[];planner=[];planner_samples=[];phase={'changed':False,'frame':0};start=time.perf_counter()
     original_target=CLoSDMultiTask.set_random_target_loc
     def fixed_target(task,env_ids,state):
         original_target(task,env_ids,state)
@@ -107,6 +107,8 @@ def run(args,upstream,root,data):
         torch.cuda.synchronize();elapsed=time.perf_counter()-tick
         poses.append(task._rigid_body_pos[0].detach().cpu().numpy().copy())
         contacts.append(task._contact_forces[0].detach().cpu().numpy().copy())
+        rotations.append(task._rigid_body_rot[0].detach().cpu().numpy().copy())
+        dofs.append(task._dof_pos[0].detach().cpu().numpy().copy())
         history.append({'frame':frame,'seconds':elapsed,'request_wall_seconds':wall,
             'phc_action_seconds':phase.get('last_action_seconds'),
             'timing_scope':'seconds covers native env_step including triggered DiP and PhysX; PHC action timing is separate',
@@ -125,7 +127,8 @@ def run(args,upstream,root,data):
             xyz=np.stack(poses)[:,[names.index(mapping[n]) for n in HUMANML_NAMES]]
             save_motion(out/'motion.npz',xyz,HUMANML_NAMES,30,{'units':'m','axes':'right-handed Z-up','model':'CLoSD',
                 'variant':'native DiP + PHC + IsaacGym human','context_source':args.context_source,'seed':args.seed},contact_forces=np.stack(contacts))
-            np.savez_compressed(out/'native_physics.npz',joints=np.stack(poses),body_names=names,contact_forces=np.stack(contacts))
+            np.savez_compressed(out/'native_physics.npz',joints=np.stack(poses),rotations_xyzw=np.stack(rotations),dof_positions=np.stack(dofs),
+                body_names=names,contact_forces=np.stack(contacts))
             json_write(out/'metrics.json',evaluate({'joints':xyz,'joint_names':HUMANML_NAMES,'fps':30},{'name':'native_root_goal_change'}))
             json_write(out/'trace.json',{'steps':history,'planner':planner,'planner_sampling':planner_samples,'cold_start_seconds':cold[0],'clock':args.clock,
                 'execution_wall_seconds':time.perf_counter()-execution_start[0],
