@@ -219,6 +219,11 @@ def run_batch(args):
                           'estimated_wall_min': round(sum(x*y for x, y in zip(length, per))/args.workers/60, 1),
                           'methods': {m: sum(r['method'] == m for r in rows) for m in sorted({r['method'] for r in rows})}}, indent=1))
         return
+    frozen = json.loads(Path(args.offset_reference).read_text()) if args.offset_reference else None
+    if frozen:
+        missing = sorted({r['method'] for r in rows if r.get('per_clip_correction', True)} - set(frozen['methods']))
+        if missing:
+            raise SystemExit(f'{args.offset_reference} has no offset reference for {missing}')
     Path(args.out).mkdir(parents=True, exist_ok=True)
     counts, refs = {}, None
     with ProcessPoolExecutor(args.workers, mp_context=mp.get_context('spawn'), max_tasks_per_child=1) as p:
@@ -226,9 +231,13 @@ def run_batch(args):
             for rid, status in p.map(offset_job, [(r, args.out) for r in rows]):
                 counts[f'offset_{status}'] = counts.get(f'offset_{status}', 0)+1
                 print(json.dumps({'id': rid, 'stage': 'offset', 'status': status}), flush=True)
-            refs = offset_references(rows, args.out)
-            (Path(args.out)/'floor_offsets.json').write_text(json.dumps(refs, indent=1))
-            print(json.dumps({'offset_reference': refs}), flush=True)
+            refs = batch = offset_references(rows, args.out)
+            if frozen:
+                refs = {m: {**v, 'source': str(args.offset_reference)} for m, v in frozen['methods'].items()}
+            (Path(args.out)/'floor_offsets.json').write_text(json.dumps(
+                refs if not frozen else {**refs, '_batch_median': batch, '_note': 'frozen reference used; _batch_median: drift diagnostic'},
+                indent=1))
+            print(json.dumps({'offset_reference': refs, **({'batch_median': batch} if frozen else {})}), flush=True)
         use = lambda r: refs and r['method'] in refs and r.get('per_clip_correction', True)
         tasks = [(r, args.out, row_dims(r, dims), refs[r['method']]['offset_reference_m'] if use(r) else None) for r in rows]
         for rid, status in p.map(job, tasks):
@@ -236,6 +245,23 @@ def run_batch(args):
             print(json.dumps({'id': rid, 'status': status, **counts}), flush=True)
     (Path(args.out)/'batch.json').write_text(json.dumps({'manifest': str(args.manifest), 'dims': dims, 'counts': counts,
                                                           'floor_offsets': refs, 'finished': time.strftime('%Y-%m-%d %H:%M')}, indent=1))
+
+
+def offset_reference(args):
+    """Frozen per-method offset reference (config/evalkit_batch_protocol_20261108.json, offset_reference): stage 1 on
+    the registered rows, their per-method median written once; batches then use it via run --offset-reference, so
+    rows streamed in later do not move it."""
+    rows = json.loads(Path(args.manifest).read_text())['rows']
+    Path(args.rows).mkdir(parents=True, exist_ok=True)
+    with ProcessPoolExecutor(args.workers, mp_context=mp.get_context('spawn'), max_tasks_per_child=1) as p:
+        status = dict(p.map(offset_job, [(r, args.rows) for r in rows]))
+    refs = offset_references(rows, args.rows)
+    Path(args.out).write_text(json.dumps({
+        'created': time.strftime('%Y-%m-%d %H:%M'), 'manifest': str(args.manifest), 'rows_dir': str(args.rows),
+        'status': 'frozen once registered; never recomputed after any batch row is evaluated',
+        'rows': {m: sorted(r['id'] for r in rows if r['method'] == m and status.get(r['id']) in ('ok', 'skip')) for m in refs},
+        'failed': sorted(i for i, s in status.items() if s == 'failed'), 'methods': refs}, indent=1))
+    print(json.dumps(refs, indent=1))
 
 
 def manifest_shift(args):
@@ -524,6 +550,10 @@ def main():
     r.add_argument('--dims', default='residual,ergo,muscle,kinematic', help='add upper for the upper-body muscle dimension')
     r.add_argument('--workers', type=int, default=6)
     r.add_argument('--dry-run', action='store_true')
+    r.add_argument('--offset-reference', help='frozen per-method offset reference (offset-reference); default: the manifest median')
+    o = sub.add_parser('offset-reference', help='freeze the per-method offset reference from registered rows')
+    o.add_argument('--manifest', required=True); o.add_argument('--rows', required=True); o.add_argument('--out', required=True)
+    o.add_argument('--workers', type=int, default=6)
     f = sub.add_parser('manifest-self-floor'); f.add_argument('--manifest', required=True); f.add_argument('--rows', required=True)
     f.add_argument('--out', required=True)
     ls = sub.add_parser('manifest-lumbar-sample', help='mark the lumbar (upper) subsample per method x condition x task x text')
@@ -533,7 +563,7 @@ def main():
     args = a.parse_args()
     {'manifest-e4': manifest_e4, 'manifest-shift': manifest_shift, 'manifest-self-floor': manifest_self_floor, 'check': check,
      'run': run_batch, 'manifest-unique-c0': manifest_unique_c0, 'refresh': refresh,
-     'manifest-lumbar-sample': manifest_lumbar_sample}[args.step](args)
+     'manifest-lumbar-sample': manifest_lumbar_sample, 'offset-reference': offset_reference}[args.step](args)
 
 
 if __name__ == '__main__':

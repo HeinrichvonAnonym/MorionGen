@@ -5,7 +5,7 @@
 #   merged per-method check (residual from pass 1, loads from pass 2, method-floor loads alongside), then the distribution
 #   smoke of every registered evaluator that has rows (torch python; tmr_soma re-executes itself in the Kimodo environment).
 #   scripts/run_evalkit_batch.sh --manifest M.json --out DIR [--workers 6] [--dims residual,ergo,muscle,kinematic[,upper]]
-#     [--arms both|self|method] [--lumbar-per-cell N] [--no-distribution]
+#     [--arms both|self|method] [--lumbar-per-cell N] [--no-distribution] [--offset-reference FROZEN.json]
 # Arms (config/evalkit_batch_protocol_20261108.json):
 #   both    pass 1 every dimension, pass 2 every dimension (the full line above)
 #   self    pass 1 only residual and kinematic (the self floor needs its frames), pass 2 every dimension: the primary
@@ -13,12 +13,14 @@
 #   method  pass 1 every dimension, no pass 2 (method-floor loads only, descriptive)
 # --lumbar-per-cell N: upper (lumbar) only on the first N seeds of every method x condition x task x text condition;
 #   rerunning with a larger N (0: every row) adds it to the newly sampled rows only.
+# --offset-reference: the frozen per-method offset reference (evalkit_batch.py offset-reference); without it the
+#   reference is the manifest median, which moves when rows are streamed in and re-evaluates the method's rows.
 # --no-distribution: skip the distribution smoke (fill-in reruns; per-task batches, see the protocol)
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OSIM_PY="${OSIM_PY:-$HOME/.local/share/opensim-api/bin/python}"
 TORCH_PY="${TORCH_PY:-$("$OSIM_PY" -c "import sys; sys.path.insert(0, '$ROOT/utils'); from motiogen.config import data_root, load_config; print(data_root(load_config())/'envs/motiogen-motionlcm/bin/python')")}"
-MANIFEST="" OUT="" WORKERS=6 DIMS=residual,ergo,muscle,kinematic ARMS=both LUMBAR="" DISTRIBUTION=1
+MANIFEST="" OUT="" WORKERS=6 DIMS=residual,ergo,muscle,kinematic ARMS=both LUMBAR="" DISTRIBUTION=1 OFFREF=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --manifest) MANIFEST="$2"; shift 2 ;;
@@ -28,6 +30,7 @@ while [[ $# -gt 0 ]]; do
     --arms) ARMS="$2"; shift 2 ;;
     --lumbar-per-cell) LUMBAR="$2"; shift 2 ;;
     --no-distribution) DISTRIBUTION=0; shift ;;
+    --offset-reference) OFFREF=(--offset-reference "$2"); shift 2 ;;
     *) echo "unknown argument $1" >&2; exit 2 ;;
   esac
 done
@@ -45,7 +48,7 @@ if [[ -n "$LUMBAR" ]]; then
   "${B[@]}" manifest-lumbar-sample --manifest "$MANIFEST" --per-cell "$LUMBAR" --out "$OUT/manifest_lumbar.json"
   MANIFEST="$OUT/manifest_lumbar.json"
 fi
-"${B[@]}" run --manifest "$MANIFEST" --out "$OUT/rows" --workers "$WORKERS" --dims "$PASS1"
+"${B[@]}" run --manifest "$MANIFEST" --out "$OUT/rows" --workers "$WORKERS" --dims "$PASS1" "${OFFREF[@]}"
 if [[ "$ARMS" == method ]]; then
   "${B[@]}" check --manifest "$MANIFEST" --rows "$OUT/rows" --out "$OUT/check.json"
 else
