@@ -4,7 +4,7 @@
 Per run: the recorded task input (scenario.json / PRIMAL timing records) equals the job input, intervention_checks
 (utils/motiogen/native_receipt_checks.py) with the native matrix row conventions, the queue receipt (device, worker
 seconds) and the native timing records. No outcome metric is read.
-Output: develop_logs/test_runs/20261109_inference_smoke/check.json (--round2: plan_round2.json, queue_round2, check_round2.json)
+Output: develop_logs/test_runs/20261109_inference_smoke/check.json (--round2 / --chois-retry: plan_<name>.json, queue_<name>, check_<name>.json)
 """
 import json
 import sys
@@ -78,9 +78,9 @@ def check_job(job, receipt):
 
 
 def main():
-    second = '--round2' in sys.argv
-    plan = json.loads((OUT/('plan_round2.json' if second else 'plan.json')).read_text())
-    state = json.loads((OUT/('queue_round2' if second else 'queue')/'state.json').read_text())
+    suffix = next((s for s in ('round2', 'chois_retry') if '--'+s.replace('_', '-') in sys.argv), None)
+    plan = json.loads((OUT/(f'plan_{suffix}.json' if suffix else 'plan.json')).read_text())
+    state = json.loads((OUT/(f'queue_{suffix}' if suffix else 'queue')/'state.json').read_text())
     res = [check_job(j, state['jobs'][j['id']]) for j in plan['jobs']]
     lock = sorted({(r['job'].split('_')[1], r['device']) for r in res})
     report = {'queue_status': state.get('status'), 'devices_used': lock, 'runs': res,
@@ -88,7 +88,7 @@ def main():
               'all_inputs_match': all((all(r['input_matches_job'].values()) if isinstance(r['input_matches_job'], dict) else r['input_matches_job'])
                                       for r in res if r['status'] == 'success'),
               'all_intervention_checks_passed': all(r.get('intervention_checks_passed') for r in res if r['status'] == 'success')}
-    (OUT/('check_round2.json' if second else 'check.json')).write_text(json.dumps(report, indent=1))
+    (OUT/(f'check_{suffix}.json' if suffix else 'check.json')).write_text(json.dumps(report, indent=1))
     for r in res:
         print(r['job'], r['status'], 'device', r['device'], 'worker_s', round(r['worker_seconds'] or 0, 1), 'input', r.get('input_matches_job'),
               'checks', r.get('intervention_checks_passed'))

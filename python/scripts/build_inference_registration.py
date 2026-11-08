@@ -48,12 +48,12 @@ def matrix_worker_medians():
 
 def smoke_timing():
     out = {}
-    for name in ('check.json', 'check_round2.json'):
+    for name, label in (('check.json', 'round 1'), ('check_round2.json', 'round 2'), ('check_chois_retry.json', 'CHOIS retry after freeing RAM')):
         if not (SMOKE/name).exists():
             continue
         for r in load(SMOKE/name)['runs']:
             m = r['job'].split('_')[1]
-            out.setdefault(m, []).append({'round': 1 if name == 'check.json' else 2, 'job': r['job'], 'status': r['status'],
+            out.setdefault(m, []).append({'round': label, 'job': r['job'], 'status': r['status'],
                                           'device': r['device'], 'worker_seconds': round(r['worker_seconds'], 1) if r['worker_seconds'] else None,
                                           'input_matches_job': r.get('input_matches_job'),
                                           'intervention_checks_passed': r.get('intervention_checks_passed')})
@@ -173,13 +173,16 @@ def main():
                 'gpu_lock': 'per card: utils/motiogen/runtime.py gpu_lock locks run_root/.gpu-<device>.lock; utils/motiogen/experiment_queue.py '
                             'sets gpu_index and CUDA_VISIBLE_DEVICES per lane (lines 61, 70); both cards ran in parallel in the smoke',
                 'ram_budget': 'the RAM budget of the resource review (utils/motiogen/runtime.py budgets: min(ram_max, available - reserve)) is '
-                              'machine-wide and not coordinated by the per-card lock; CHOIS (reviewed bound 10 GiB, reserve 6 GiB) was refused '
-                              'by the gate at 15.7 GiB available',
+                              'machine-wide, checked once at job start and not coordinated by the per-card lock; CHOIS (reviewed bound 10 GiB, '
+                              'reserve 6 GiB) was refused in both rounds (15.7 GiB available) and ran after the user freed memory (21.0 GiB); '
+                              'the queue does not retry a refused job',
+                'resource_gate_rule': 'a resource_gate refusal is an admission refusal (no model code ran, no output): the job is put back in '
+                                      'the queue until admitted and is not a generation failure; generation failures stay recorded and are '
+                                      'never replaced (contract layer 6) (约定)',
                 'smoke': smoke, 'smoke_source': 'develop_logs/test_runs/20261109_inference_smoke (build_inference_smoke.py, check_inference_smoke.py)'},
             'not_done': 'no check of whether a method reaches a target, falls, or stretches bones; no task was filtered (design section 14 item 2)'},
         'compute_estimate': {'basis': 'slower of the two smoke runs per method (worker seconds incl. process start, both cards busy); 约定, a '
-                                      'planning figure only; CHOIS has no smoke timing (resource gate) and is not in the total (native matrix '
-                                      'median 18.9 s x 86 runs is about 0.5 h)',
+                                      'planning figure only; CHOIS timed on one card with the other idle',
                              'native_matrix_worker_median_s': matrix, 'native_matrix_source': MATRIX_WORKER_MEDIAN_S, 'per_method': estimate,
                              'total_gpu_hours': round(sum(v['gpu_hours'] or 0 for v in estimate.values()), 1),
                              'two_cards_wall_hours': round(sum(v['gpu_hours'] or 0 for v in estimate.values())/2, 1)},
@@ -187,8 +190,7 @@ def main():
                                     'of the nominal body for the pelvis joint', 'paraphrase templates and zone phrases', 'held-out positions '
                                     '(interleaved choice)', 'paused clock only', 'HumanML3D standing-frame thresholds and scaling choices',
                                     '200-row evalkit subsample', 'compute estimate'],
-        'pending_user': ['CHOIS smoke and timing: refused twice by the RAM gate (needs 16 GiB available, 15.7 GiB free with no generation running)',
-                         'CLoSD runs root-goal tasks (8 directions x 3 distances), not risk-zone reaching, although design section 2 lists it '
+        'pending_user': [                         'CLoSD runs root-goal tasks (8 directions x 3 distances), not risk-zone reaching, although design section 2 lists it '
                          'among the reach methods (tasks.closd)',
                          'CHOIS and ARDY have no held-out position (their added windows / all 8 directions were already run in V2 / M0) and '
                          'are held out only through seed 24',
