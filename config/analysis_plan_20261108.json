@@ -75,7 +75,7 @@
     "closd": "execution_context 1 - 0 (prefix from the physics execution vs the model's own prediction)"
    },
    "primary_metrics": ["boundary jerk", "target error (accuracy must not drop: reported next to every cost effect)", "residual_force_rms_bw"],
-   "later_comparators": "the post-hoc correction group and the user's own method enter as comparators registered later (config/evalkit_batch_protocol_20261108.json, post_hoc_correction section); this plan reserves their slot and reports no result for them"
+   "later_comparators": "the post-hoc correction group and the user's own method enter as comparators registered later (config/evalkit_batch_protocol_20261108.json, later_comparators); this plan reserves their slot and reports no result for them"
   },
   "Q3_ergonomics": {
    "question": "How do RULA / REBA and the body loads change under the same switches?",

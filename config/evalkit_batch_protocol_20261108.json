@@ -1,9 +1,11 @@
 {
- "version": "batch-protocol-draft-1",
+ "version": "batch-protocol-draft-2",
  "created": "2026-11-08 15:41",
- "status": "draft; frozen together with config/motion_output_contract_20261108.json after user review (develop_logs/notes/20261108_batch_design_decisions.md section 13 step 4-5), before any batch result",
+ "revised": "2026-11-09 00:33 design section 14 items 4-6: contact tolerance out of the main batch, post-hoc correction as a later comparator, lumbar re-timed on an idle CPU",
+ "status": "draft; frozen together with config/motion_output_contract_20261108.json, config/analysis_plan_20261108.json and the inference registration after user review (develop_logs/notes/20261108_batch_design_decisions.md section 14 item 7), before any batch result",
  "builds_on": {
-  "design": "develop_logs/notes/20261108_batch_design_decisions.md sections 4, 8, 9, 11",
+  "design": "develop_logs/notes/20261108_batch_design_decisions.md sections 4, 8, 9, 11, 14 (section 14 overrides conflicting parts of sections 8 and 13)",
+  "analysis_plan": "config/analysis_plan_20261108.json (contrasts, settings, intervals)",
   "output_contract": "config/motion_output_contract_20261108.json (what the generation side writes; the per-pair measurability is fixed there)",
   "evalkit": "config/evalkit_v12_20261108.json (repair the floor first, then the loads)",
   "lumbar": "config/evalkit_upper_muscle_20261108.json"
@@ -12,7 +14,10 @@
   "2026-11-08 15:16": "the large run is configurable; it may run only the repaired (self) floor first, with the method-floor loads and the remaining lumbar rows filled in later; nothing else is dropped",
   "2026-11-08 15:16 lumbar": "lumbar first on a stratified subsample (1-2 seeds per method x task x text condition), filled in later by input hash; the large batch is not run now",
   "2026-11-08 15:16 muscles": "neck and shoulder stay reserved; the generation side stores the native rotations they need (contract L4)",
-  "2026-11-08 after 20:59 neck reading": "RULA stays on the joint-line neck reading (primary); for methods whose output carries neck and head rotations the batch also reports RULA with the rotation reading as a sensitivity (neck supplement, config/evalkit_neck_supp_20261108.json: CHOIS / Kimodo median B - A -12 deg, RULA class changed on 17% / 25% of frames; ARDY / PRIMAL 4% / 8%)"
+  "2026-11-08 after 20:59 neck reading": "RULA stays on the joint-line neck reading (primary); for methods whose output carries neck and head rotations the batch also reports RULA with the rotation reading as a sensitivity (neck supplement, config/evalkit_neck_supp_20261108.json: CHOIS / Kimodo median B - A -12 deg, RULA class changed on 17% / 25% of frames; ARDY / PRIMAL 4% / 8%)",
+  "2026-11-08 23:00 section 14 item 4": "contact tolerance 2 / 3 cm out of the main batch; at most a descriptive check on a small subsample (settings_sensitivity.contact_tolerance_2_3cm)",
+  "2026-11-08 23:00 section 14 item 5": "the post-hoc correction group is a comparator, not a tool correction (later_comparators.post_hoc_correction)",
+  "2026-11-08 23:00 section 14 item 6": "re-time lumbar on an idle CPU, then choose 1 or 2 seeds per stratum (lumbar_subsample.timing, .proposal)"
  },
  "rows": {
   "manifest_fields": {
@@ -112,7 +117,7 @@
     "shoulder": "reserved"
    },
    "cost_s_per_motion_s": 30.0,
-   "cost_note": "smoke8x5 under CPU contention: lumbar median about 1190 s per row, about 80% of CPU; to be re-timed on an idle CPU before the batch"
+   "cost_note": "smoke8x5 under CPU contention (14 workers plus other jobs): 0.82-1.01 s per frame; idle single process 2026-11-09: 0.32-0.33 s per frame, about 33 s per motion second (lumbar_subsample.timing)"
   },
   "cost_note": "约定，未经推演: per-motion-second costs are smoke estimates under contention (SECONDS_PER_MOTION_SECOND in evalkit_batch.py)"
  },
@@ -120,7 +125,25 @@
   "stratum": "method x condition x task x text_condition",
   "within_stratum": "the first --lumbar-per-cell seeds in ascending seed order (deterministic; seeds are generator seeds, unrelated to the outcome)",
   "default_per_cell": 1,
-  "per_cell_note": "约定，未经推演 (user: 1-2 seeds)",
+  "per_cell_note": "约定，未经推演 (user: 1-2 seeds); choice pending the user after the idle-CPU timing (proposal below)",
+  "timing": {
+   "when": "2026-11-09 00:08-00:31, CPU about 88% idle (load average 2.1-2.8 on 20 cores), no other compute job",
+   "how": "python/scripts/lumbar_timing.py: smoke8x5 rows copied without their upper outputs, run.add_upper in one process, one row at a time, nice 19; lumbar metrics equal the stored ones (25 of 25 per row)",
+   "rows": [
+    {"method": "motionlcm", "frames": 496, "motion_s": 4.95, "wall_s": 163.3, "s_per_frame": 0.329, "contended_s": 468.9},
+    {"method": "omnicontrol", "frames": 976, "motion_s": 9.75, "wall_s": 311.6, "s_per_frame": 0.319, "contended_s": 803.4},
+    {"method": "ardy", "frames": 1996, "motion_s": 19.95, "wall_s": 665.5, "s_per_frame": 0.333, "contended_s": 2017.5}
+   ],
+   "reading": "cost is linear in frames, about 0.33 s per frame (100 Hz evalkit frames); the smoke rows took 2.6-3.0 times longer under contention",
+   "output": "develop_logs/test_runs/20261109_lumbar_timing/timing.json"
+  },
+  "proposal": {
+   "cells": "720 strata on the new batch: per method conditions x 24 tasks, MotionLCM 2 x 2 text, OmniControl 4 x 2 text, CHOIS 2, ARDY 4, DART 2, PRIMAL 8, CLoSD 2 (CLoSD text factor pending the inference registration); Kimodo's 416 reused pairs have no task id, so each of their 832 rows is its own stratum and all are sampled at any per-cell value",
+   "row_frames": "frames per row as in the current native tasks (MotionLCM / OmniControl 5 s, CHOIS 4 s, Kimodo 3 s, ARDY / DART / PRIMAL / CLoSD 20 s), pending the inference registration",
+   "per_cell_1": {"rows": 1552, "cpu_h": 108.9, "wall_h_10_processes": "10.9 at the idle cost, 33.0 at the smoke contention cost"},
+   "per_cell_2": {"rows": 2272, "cpu_h": 194.8, "wall_h_10_processes": "19.5 at the idle cost, 59.1 at the smoke contention cost"},
+   "recommendation": "1 seed per stratum: L5/S1 is a secondary metric (analysis plan Q3); the primary interval clusters by task, so both choices give 24 task clusters per contrast; the second seed can be added later without refitting (fill_in). Cost of the choice: with 1 seed every task contributes one paraphrase, so the lumbar cross-paraphrase interval rests on one paraphrase per task"
+  },
   "fill_in": "rerun with a larger --lumbar-per-cell (0: every row): rows already measured are skipped by their batch key, newly sampled rows gain upper without refitting",
   "reporting": "lumbar statistics state the subsample (rows, strata); not-sampled rows have upper_lumbar_status not_sampled and enter no lumbar statistic"
  },
@@ -258,8 +281,12 @@
  "settings_sensitivity": {
   "floor": "method_floor vs self_floor: implemented (arms)",
   "threshold_pm_0p5cm": "descriptive band in check (residual_positive_share_depth_-+5mm, rescore only): implemented",
-  "contact_tolerance_2_3cm": "not implemented (design section 8); needs a re-evaluation arm, to be registered before the batch",
-  "post_hoc_correction_group": "not implemented; scope decided by the user after the precheck (design section 8)",
+  "contact_tolerance_2_3cm": {
+   "status": "removed from the main batch (design section 14 item 4, overrides section 8); not a setting of any main conclusion (analysis plan settings_robustness.not_settings)",
+   "reason": "contact tolerance is an evaluation-tool parameter: widening it absorbs a method's failure to keep its ground; threshold sensitivity is covered by the +-0.5 cm threshold band",
+   "optional_check": "at most a descriptive check on a small subsample; not implemented; if run, its rows, size and the re-evaluation arm are registered here before it is run, and its results enter no conclusion"
+  },
+  "post_hoc_correction_group": "moved to later_comparators.post_hoc_correction (design section 14 item 5): a comparator, not a tool correction",
   "neck_reading": {
    "primary": "joint line (ergo.neck_angles, revision 3 per-skeleton zero): the evalkit rula_* fields",
    "sensitivity": "rotation reading: head point = neck + R_head_global (head_rest - neck_rest), same zero (A = B in the rest pose); RULA rescored with only neck_flexion_deg and neck_side_bent replaced (evalkit.neck_rotation, from the row's cached fit and contact masks, no new solve)",
@@ -271,6 +298,24 @@
    "implemented": true
   }
  },
+ "later_comparators": {
+  "rule": "comparators added after the main batch use the same contract and the same unmodified evalkit; their definitions are registered before any of their results is seen",
+  "post_hoc_correction": {
+   "what": "the same post-hoc correction (bone-length projection plus ground snap) applied to every baseline's output and later to the user's own method; no new generation (design section 8, section 14 item 5)",
+   "run_directories": "the corrected outputs are written as separate run directories that satisfy the same motion output contract (config/motion_output_contract_20261108.json), with a reference to the uncorrected source run and the correction version",
+   "evaluation": "evaluated by the same, unmodified evalkit; the correction must never be built into evalkit preprocessing",
+   "defects": "bone length and ground defects are always measured on the uncorrected outputs (as in v1.2: the self floor only makes loads computable and never hides a defect)",
+   "metric_correction_magnitude": {
+    "meaning": "how far the correction moves the joints: bone length pulled back and ground shift; it quantifies 'only a slight correction is needed'",
+    "applies_to": "every baseline and the user's own method, with the same correction",
+    "definition": "placeholder: the bone-length projection, the ground snap and the magnitude statistics are registered here once the user's own method has a prototype, before any result of the correction is seen"
+   },
+   "timing": "may wait until the user's method has a prototype",
+   "status": "not implemented; reserved"
+  },
+  "own_method": "the user's own method enters under the same contract and evalkit at its final comparison (analysis plan split_use)"
+ },
+
  "conventions_not_derived": [
   "planned_order self then both",
   "default_per_cell 1",
