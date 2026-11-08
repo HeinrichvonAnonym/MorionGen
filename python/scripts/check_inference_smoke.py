@@ -4,7 +4,7 @@
 Per run: the recorded task input (scenario.json / PRIMAL timing records) equals the job input, intervention_checks
 (utils/motiogen/native_receipt_checks.py) with the native matrix row conventions, the queue receipt (device, worker
 seconds) and the native timing records. No outcome metric is read.
-Output: develop_logs/test_runs/20261109_inference_smoke/check.json (--round2 / --chois-retry: plan_<name>.json, queue_<name>, check_<name>.json)
+Output: develop_logs/test_runs/20261109_inference_smoke/check.json (--round2 / --chois-retry / --ardy-paused: plan_<name>.json, queue_<name>, check_<name>.json)
 """
 import json
 import sys
@@ -25,6 +25,25 @@ def motion_fields(path):
     return {'frames': len(joints), 'fps': fps, 'finite': bool(np.isfinite(joints).all())}
 
 
+# paused clock: the text / goal update requested at 5 s takes effect at these points (inference registration tasks.clock)
+REGISTERED_EVENT = {'ardy': lambda c: 5.2, 'dart': lambda c: 154 if c.get('goal_update') else None, 'closd': lambda c: 150}
+
+
+def condition_of(intervention):
+    return dict(intervention['condition'])
+
+
+def applied_event(method, run, condition):
+    if method == 'ardy':
+        events = [json.loads(line) for line in (run/'events.jsonl').read_text().splitlines() if '"prompt_update"' in line]
+        return events[0]['applied_seconds'] if len(events) == 1 else None
+    if method == 'dart':
+        return json.loads((run/'trace.json').read_text()).get('applied_update_frame')
+    if method == 'closd':
+        return json.loads((run/'trace.json').read_text()).get('goal_applied_frame')
+    return None
+
+
 def check_job(job, receipt):
     run = Path(receipt['run_dir']); rel = str(run.relative_to(ROOT))
     out = {'job': job['id'], 'run': rel, 'device': receipt.get('device'), 'worker_seconds': receipt.get('elapsed_seconds'),
@@ -32,6 +51,7 @@ def check_job(job, receipt):
     if receipt['status'] != 'success':
         return out
     method = job['method']
+    out['clock'] = json.loads((run/'scenario.json').read_text()).get('clock', 'paused')
     if method == 'primal':
         records = json.loads((run/'factorial/timing.json').read_text())
         setup = json.loads((run/'factorial/setup_timing.json').read_text()) if (run/'factorial/setup_timing.json').exists() else {}
@@ -42,8 +62,8 @@ def check_job(job, receipt):
                    **motion_fields(run/'factorial'/(r['variant']+'_canonical.npz'))}
             rows.append({'variant': r['variant'], 'initial_seed': r.get('initial_seed'), 'initial_history': r.get('initial_history'),
                          'generation_seconds': r['seconds'], 'intervention_checks': intervention_checks(row, ROOT)})
-        out['input_matches_job'] = all(r['initial_seed'] == job['scene']['initial_seed'] and r['initial_history'] == job['scene']['initial_history']
-                                       for r in rows)
+        out['input_matches_job'] = out['clock'] == 'paused' and all(r['initial_seed'] == job['scene']['initial_seed']
+                                                                    and r['initial_history'] == job['scene']['initial_history'] for r in rows)
         out['combinations'] = rows
         out['intervention_checks_passed'] = all(r['intervention_checks']['passed'] for r in rows)
         out['native_timing'] = {'setup': {k: v for k, v in setup.items() if k.endswith('_seconds')},
@@ -55,6 +75,10 @@ def check_job(job, receipt):
             'closd': ('goal_start', 'goal_next'), 'ardy': ('prompt', 'updates', 'native_root_path'),
             'chois': ('native_window_index', 'native_sequence')}[method]
     out['input_matches_job'] = {k: scenario.get(k) == job['scene'].get(k) for k in keys}
+    out['input_matches_job']['clock_paused'] = out['clock'] == 'paused'
+    out['event_applied'] = applied_event(method, run, condition_of(intervention))
+    if method in REGISTERED_EVENT:
+        out['input_matches_job']['event_applied_as_registered'] = out['event_applied'] == REGISTERED_EVENT[method](condition_of(intervention))
     if method == 'chois':
         sequences = list((run/'raw/chois_results/res_npz_files').rglob('*.npz'))
         with np.load(sequences[0], allow_pickle=False) as s:
@@ -78,7 +102,7 @@ def check_job(job, receipt):
 
 
 def main():
-    suffix = next((s for s in ('round2', 'chois_retry') if '--'+s.replace('_', '-') in sys.argv), None)
+    suffix = next((s for s in ('round2', 'chois_retry', 'ardy_paused') if '--'+s.replace('_', '-') in sys.argv), None)
     plan = json.loads((OUT/(f'plan_{suffix}.json' if suffix else 'plan.json')).read_text())
     state = json.loads((OUT/(f'queue_{suffix}' if suffix else 'queue')/'state.json').read_text())
     res = [check_job(j, state['jobs'][j['id']]) for j in plan['jobs']]

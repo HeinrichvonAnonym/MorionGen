@@ -48,13 +48,15 @@ def matrix_worker_medians():
 
 def smoke_timing():
     out = {}
-    for name, label in (('check.json', 'round 1'), ('check_round2.json', 'round 2'), ('check_chois_retry.json', 'CHOIS retry after freeing RAM')):
+    for name, label in (('check.json', 'round 1'), ('check_round2.json', 'round 2'), ('check_chois_retry.json', 'CHOIS retry after freeing RAM'),
+                        ('check_ardy_paused.json', 'ARDY rerun with the paused clock')):
         if not (SMOKE/name).exists():
             continue
         for r in load(SMOKE/name)['runs']:
             m = r['job'].split('_')[1]
             out.setdefault(m, []).append({'round': label, 'job': r['job'], 'status': r['status'],
                                           'device': r['device'], 'worker_seconds': round(r['worker_seconds'], 1) if r['worker_seconds'] else None,
+                                          'clock': r.get('clock'), 'event_applied': r.get('event_applied'),
                                           'input_matches_job': r.get('input_matches_job'),
                                           'intervention_checks_passed': r.get('intervention_checks_passed')})
     return out
@@ -145,7 +147,9 @@ def main():
                 'HumanML3D joints themselves'}
     matrix.pop('kimodo', None)
     counts = tasks['counts']
-    warm = {m: max((x['worker_seconds'] for x in v if x['status'] == 'success' and x['worker_seconds']), default=None) for m, v in smoke.items()}
+    valid = lambda x: x['status'] == 'success' and x['worker_seconds'] and x['clock'] == 'paused' and (
+        all(x['input_matches_job'].values()) if isinstance(x['input_matches_job'], dict) else x['input_matches_job'])
+    warm = {m: max((x['worker_seconds'] for x in v if valid(x)), default=None) for m, v in smoke.items()}
     estimate = {m: {'runs_to_generate': counts[m]['to_generate'], 'seconds_per_run_basis': warm.get(m),
                     'gpu_hours': round(counts[m]['to_generate']*warm[m]/3600, 1) if warm.get(m) else None}
                 for m in counts}
@@ -177,6 +181,11 @@ def main():
                                             'covers no risk-zone reaching and has no text factor; STRIKE_PUNCH (never run in the native '
                                             'matrix) is a later extension that needs a new entry point, a smoke test and the input-reaches-'
                                             'the-model check; design section 2 revised by the user accordingly',
+            '2026-11-09 03:26 clock': 'paused clock only; registered: 953 / 960 identical paused-realtime pairs, the 7 CLoSD pairs whose '
+                                      'goal frame varied with machine speed, the reason (realtime input drifts with CPU contention in a '
+                                      'parallel batch and breaks the pairing), the event points under the paused clock; native-matrix '
+                                      'realtime results are a reproduction-subset reference only; realtime latency is a later separately '
+                                      'registered experiment; PRIMAL added to the list of methods the matrix ran with a realtime clock',
             '2026-11-09 03:21 overhead front': 'option A: the overhead zone is defined by world height (1.683 m) and upper-arm elevation '
                                                'against the vertical (>= 91.2 deg); in front the elevation relative to the thorax is not '
                                                'guaranteed above 90 deg and can be as low as 67.8 deg with the largest backward lean; the '
@@ -189,7 +198,28 @@ def main():
                            for m, v in tasks['methods'].items()},
             'kimodo': tasks['kimodo'],
             'native_matrix': 'tasks 0-11 of every method are the native matrix tasks (reproduction subset, design section 2)',
-            'clock': 'paused only (约定，未经推演): the native matrix also ran DART, CLoSD and ARDY with a realtime clock; the batch does not',
+            'clock': {'rule': 'paused clock only (user 2026-11-09 03:26); the native matrix also ran DART, CLoSD, ARDY and PRIMAL with a '
+                              'realtime clock, the batch does not',
+                      'evidence': 'native matrix clock_pairs (20261024_native_matrix_analysis/analysis.json): paused and realtime runs of the '
+                                  'same method, task, seed and condition have identical coordinates in 953 of 960 pairs (ARDY 240/240, '
+                                  'DART 120/120, PRIMAL 480/480, CLoSD 113/120); the 7 CLoSD pairs differ because under the realtime clock '
+                                  'the goal took effect at frame 106-140 instead of 150, depending on how fast the machine ran. In the '
+                                  'section-14 smoke an ARDY job that took a realtime template by mistake applied its 5 s text update at '
+                                  '0.4 s (all 4429 earlier paused ARDY updates at 5 s took effect at 5.2 s)',
+                      'reason': 'in a parallel batch a realtime clock lets the input drift with CPU contention, which breaks the pairing of '
+                                'the switch contrasts; the realtime results of the native matrix are a reference of the reproduction '
+                                'subset only; realtime latency is a later, separately registered experiment',
+                      'registered_event_points': {
+                          'ardy': 'text update requested at 5 s takes effect at 5.2 s (frame 104 at 20 fps): from the first 0.4 s commit '
+                                  'window starting at or after it (utils/motiogen/ardy_native.py scheduled_prompt); 4429 / 4429 earlier '
+                                  'paused updates; the root-path waypoints are frame-indexed and fixed in advance (speed switch at 5 s)',
+                          'dart': 'goal update requested at frame 150 takes effect at frame 154 (the next 8-frame primitive boundary) when '
+                                  'goal_update is 1, and never when it is 0; 65 / 65 earlier paused runs each',
+                          'closd': 'goal update requested at 5 s takes effect at frame 150 (30 Hz control step); 142 / 142 earlier paused '
+                                   'runs requested at 5 s',
+                          'primal': 'no external event (unconditioned continuation)',
+                          'motionlcm / omnicontrol / chois': 'offline, no clock; the reach target time is 2.5 s',
+                          'check': 'check_inference_smoke.py compares the applied point of every smoke run with these values'}},
             'closd': 'CLoSD runs its native REACH state, a root-goal task: the goal is a ground point and the text is the state-machine constant '
                      '"A person is walking." (baselines/CLoSD closd/env/tasks/closd_task.py lines 34-37); it gets 8 directions x 3 distances like '
                      'DART and no risk-zone hand targets. Its only hand-target state is STRIKE_PUNCH (wrist target 1-1.5 m away, text "A person is '
@@ -264,7 +294,8 @@ def main():
                                        'max_abs_z': {m: {'legacy (already run)': v['legacy_max_abs_z'], 'risk': v['risk_max_abs_z']} for m, v in hints['methods'].items()},
                                        'note': 'no clipping in the adapters; the largest |z| is the floor height (0.15 m against a dataset wrist mean '
                                                'of 0.98 m, sd 0.30 m)', 'source': 'develop_logs/test_runs/20261109_inference_premises/hint_zscores.json'},
-                'smoke_receipts': 'scenario equals job input and intervention_checks pass (smoke below)'},
+                'smoke_receipts': 'scenario equals job input, paused clock, the update takes effect at the registered event point '
+                                  '(tasks.clock.registered_event_points) and intervention_checks pass (smoke below)'},
             '3_engineering': {
                 'gpu_lock': 'per card: utils/motiogen/runtime.py gpu_lock locks run_root/.gpu-<device>.lock; utils/motiogen/experiment_queue.py '
                             'sets gpu_index and CUDA_VISIBLE_DEVICES per lane (lines 61, 70); both cards ran in parallel in the smoke',
@@ -272,22 +303,29 @@ def main():
                               'machine-wide, checked once at job start and not coordinated by the per-card lock; CHOIS (reviewed bound 10 GiB, '
                               'reserve 6 GiB) was refused in both rounds (15.7 GiB available) and ran after the user freed memory (21.0 GiB); '
                               'the queue does not retry a refused job',
+                'user_site': 'the queue must be started with PYTHONNOUSERSITE=1: the user site-packages hold huggingface-hub 2.4.0, '
+                             'which the ARDY environment (transformers, huggingface-hub 1.33.0) rejects at import; one ARDY rerun '
+                             'started without it failed at import on both cards (queue_ardy_paused_failed_usersite, no model code ran) '
+                             'and was restarted with it',
                 'resource_gate_rule': 'a resource_gate refusal is an admission refusal (no model code ran, no output): the job is put back in '
                                       'the queue until admitted and is not a generation failure; generation failures stay recorded and are '
                                       'never replaced (contract layer 6) (约定)',
                 'smoke': smoke, 'smoke_source': 'develop_logs/test_runs/20261109_inference_smoke (build_inference_smoke.py, check_inference_smoke.py)'},
             '4_held_out_unseen': held_out_scan(),
             'not_done': 'no check of whether a method reaches a target, falls, or stretches bones; no task was filtered (design section 14 item 2)'},
-        'compute_estimate': {'basis': 'slower of the two smoke runs per method (worker seconds incl. process start, both cards busy); 约定, a '
-                                      'planning figure only; CHOIS timed on one card with the other idle',
+        'compute_estimate': {'basis': 'slower of the valid smoke runs per method (paused clock, inputs and event points as registered; '
+                                      'worker seconds incl. process start, both cards busy); 约定, a planning figure only; CHOIS timed on '
+                                      'one card with the other idle; ARDY from the paused rerun (its first two smoke runs took a realtime '
+                                      'template and paced to the wall clock: 56.2 / 63.5 s, excluded)',
+                             'native_matrix_worker_median_note': 'mixes paused and realtime jobs',
                              'native_matrix_worker_median_s': matrix, 'native_matrix_source': MATRIX_WORKER_MEDIAN_S, 'per_method': estimate,
                              'total_gpu_hours': round(sum(v['gpu_hours'] or 0 for v in estimate.values()), 1),
                              'two_cards_wall_hours': round(sum(v['gpu_hours'] or 0 for v in estimate.values())/2, 1)},
         'conventions_not_derived': ['risk heights 0.15 / 0.5 m and the 5 cm overhead margin', '0.8 x arm length', 'task origin: hip-centre midpoint '
                                     'of the nominal body for the pelvis joint', 'paraphrase templates and zone phrases', 'held-out positions '
-                                    '(interleaved choice)', 'paused clock only', 'HumanML3D standing-frame thresholds and scaling choices',
+                                    '(interleaved choice)', 'HumanML3D standing-frame thresholds and scaling choices',
                                     '200-row evalkit subsample', 'compute estimate'],
-        'pending_user': ['paused clock only', 'official evaluation batch scale', 'held_out_fallback (analysis plan)'],
+        'pending_user': ['official evaluation batch scale', 'held_out_fallback (analysis plan)'],
     }
     OUT.write_text(json.dumps(reg, indent=1, ensure_ascii=False)+'\n')
     print(json.dumps({k: reg[k] for k in ('compute_estimate',)}, indent=1)[:3000])

@@ -4,8 +4,10 @@
 Rows come from config/inference_tasks_20261109.json and must be development rows; the job of each row is the native
 matrix job (CHOIS: 20261024_native_followups) of the same method and condition with the task input replaced. Only receipts, intervention calls
 and timings of these runs are inspected, never an outcome metric.
+Templates are paused-clock jobs only (the ARDY matrix also holds realtime jobs with the same command).
 Writes develop_logs/test_runs/20261109_inference_smoke/plan.json (--round2: plan_round2.json, a second development row per
-method for warm timing); run it with python/scripts/experiments.py run.
+method for warm timing; --ardy-paused: plan_ardy_paused.json, the two ARDY rows again, their first runs having taken a
+realtime template); run it with python/scripts/experiments.py run.
 """
 import copy
 import json
@@ -43,15 +45,15 @@ def arg(command, flag, values):
 
 
 def template(method, condition):
-    jobs = json.loads(TEMPLATES[method].read_text())['jobs']
+    jobs = [j for j in json.loads(TEMPLATES[method].read_text())['jobs'] if j['scene'].get('clock', 'paused') == 'paused']
     if method in ('motionlcm', 'omnicontrol', 'ardy', 'chois'):
         return next(j for j in jobs if j['method'] == method and j['config']['_intervention'] == condition)
     if method == 'dart':
-        return next(j for j in jobs if j['method'] == 'dart' and j['scene'].get('clock') == 'paused'
+        return next(j for j in jobs if j['method'] == 'dart'
                     and j['command'][j['command'].index('--goal-feedback')+1] == str(condition['goal_update']))
     if method == 'closd':
         source = 'simulation' if condition['execution_context'] else 'prediction'
-        return next(j for j in jobs if j['scene'].get('clock') == 'paused' and j['command'][j['command'].index('--context-source')+1] == source)
+        return next(j for j in jobs if j['command'][j['command'].index('--context-source')+1] == source)
     return next(j for j in jobs if j['method'] == 'primal' and j['scene'].get('family') == 1)
 
 
@@ -82,11 +84,13 @@ def job(method, task, seed, condition, prompt, run_tag):
 
 def main():
     second = '--round2' in sys.argv
+    ardy_paused = '--ardy-paused' in sys.argv
     tasks = json.loads((ROOT/'config/inference_tasks_20261109.json').read_text())
     header = tasks['rows']['header']
     rows = [dict(zip(header, r)) for r in tasks['rows']['data']]
     jobs = []
-    for method, tid, seed, condition, level in (SMOKE_ROUND2 if second else SMOKE):
+    smoke = [s for s in SMOKE+SMOKE_ROUND2 if s[0] == 'ardy'] if ardy_paused else SMOKE_ROUND2 if second else SMOKE
+    for method, tid, seed, condition, level in smoke:
         cond_index = tasks['methods'][method]['conditions'].index(condition)
         row = next(r for r in rows if r['method'] == method and r['task'] == tid and r['seed'] == seed
                    and r['condition'] == cond_index and r['text_level'] == level)
@@ -99,7 +103,7 @@ def main():
             'source': 'config/inference_tasks_20261109.json', 'templates': {m: str(p.relative_to(ROOT)) for m, p in TEMPLATES.items()},
             'jobs': jobs}
     OUT.mkdir(parents=True, exist_ok=True)
-    (OUT/('plan_round2.json' if second else 'plan.json')).write_text(json.dumps(plan, indent=1))
+    (OUT/('plan_ardy_paused.json' if ardy_paused else 'plan_round2.json' if second else 'plan.json')).write_text(json.dumps(plan, indent=1))
     for j in jobs:
         print(j['id'], json.dumps(j['scene'])[:200], [x for x in j['command'] if '/' not in x])
 
