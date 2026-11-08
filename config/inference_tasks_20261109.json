@@ -1,10 +1,10 @@
 {
  "version": "inference-tasks-draft-1",
- "created": "2026-11-09 02:57",
+ "created": "2026-11-09 03:07",
  "status": "draft; frozen with config/inference_registration_20261109.json and the other three section-14 files after user review",
  "generator": {
   "script": "python/scripts/build_inference_tasks.py",
-  "sha256": "50bcc358353fa9f5853c13a4ef1243c6371ff408ab0fefe96e4af3efab35bdaa"
+  "sha256": "89ff270632ead2cf694b8bf9fce9b2c2ce71f984620e5d89dbeaf45cedf083a2"
  },
  "inputs_sha256": {
   "develop_logs/test_runs/20261109_task_reachability/reachability.json": "ff3b3e0eb693079e444beee1bac783c23ee1ec8eaa3d439a79ef7a944aa903e6",
@@ -1598,7 +1598,7 @@
    ]
   },
   "closd": {
-   "family": "native root-goal change (REACH task: ground goal, second goal at 5 s of 20 s); does not cover risk-zone reaching (design section 2 lists CLoSD among the reach methods; to be confirmed by the user)",
+   "family": "native root-goal change (REACH task: ground goal, second goal at 5 s of 20 s); does not cover risk-zone reaching, no text factor (user 2026-11-09 03:07; design section 2 revised)",
    "tasks": [
     {
      "id": 0,

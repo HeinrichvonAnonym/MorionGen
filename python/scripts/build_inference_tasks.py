@@ -246,7 +246,7 @@ def main():
     methods = {
         'motionlcm': {'family': 'reach (wrist position target at 2.5 s of a 5 s clip)', 'tasks': reach_t, 'text': 'neutral / consistent x 5 paraphrases'},
         'omnicontrol': {'family': 'reach, same 24 tasks as motionlcm', 'tasks': reach_t, 'text': 'neutral / consistent x 5 paraphrases'},
-        'closd': {'family': 'native root-goal change (REACH task: ground goal, second goal at 5 s of 20 s); does not cover risk-zone reaching (design section 2 lists CLoSD among the reach methods; to be confirmed by the user)',
+        'closd': {'family': 'native root-goal change (REACH task: ground goal, second goal at 5 s of 20 s); does not cover risk-zone reaching, no text factor (user 2026-11-09 03:07; design section 2 revised)',
                   'tasks': root_goal_tasks(matrix, 'closd', -.75, 1.), 'goal_next_rule': 'goal_next = -0.75 goal_start + 1.0 R90(u), R90(x, y) = (-y, x) (native matrix rule)',
                   'text': 'native fixed text "A person is walking." (no text factor, no paraphrase rotation)'},
         'dart': {'family': 'native goal reaching (reach_location policy), second goal at 5 s of 20 s', 'tasks': root_goal_tasks(matrix, 'dart', -1., .5),

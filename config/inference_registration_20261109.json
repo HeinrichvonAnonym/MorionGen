@@ -1,6 +1,6 @@
 {
  "version": "inference-registration-draft-1",
- "created": "2026-11-09 03:04",
+ "created": "2026-11-09 03:07",
  "status": "draft; frozen together with config/motion_output_contract_20261108.json, config/evalkit_batch_protocol_20261108.json and config/analysis_plan_20261108.json after user review (design section 14, plan item 5); no batch generation before the freeze",
  "builds_on": [
   "develop_logs/notes/20261108_batch_design_decisions.md sections 2, 3, 5, 14",
@@ -9,10 +9,10 @@
  "files": {
   "tasks": {
    "path": "config/inference_tasks_20261109.json",
-   "sha256": "175a0b9853361df13af39217bdd9805a2cb0e8279fa16791c58cc7aa174db8a4",
+   "sha256": "8eedd70a2fbfeeed28f05a10e7ac4afc6b76189612cff6743a5a7205c9246917",
    "generator": {
     "script": "python/scripts/build_inference_tasks.py",
-    "sha256": "50bcc358353fa9f5853c13a4ef1243c6371ff408ab0fefe96e4af3efab35bdaa"
+    "sha256": "89ff270632ead2cf694b8bf9fce9b2c2ce71f984620e5d89dbeaf45cedf083a2"
    }
   },
   "registration_generator": {
@@ -75,7 +75,7 @@
     ]
    },
    "closd": {
-    "family": "native root-goal change (REACH task: ground goal, second goal at 5 s of 20 s); does not cover risk-zone reaching (design section 2 lists CLoSD among the reach methods; to be confirmed by the user)",
+    "family": "native root-goal change (REACH task: ground goal, second goal at 5 s of 20 s); does not cover risk-zone reaching, no text factor (user 2026-11-09 03:07; design section 2 revised)",
     "tasks": 24,
     "conditions": [
      {
