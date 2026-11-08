@@ -1,0 +1,39 @@
+{
+ "method": "closd",
+ "created": "2026-11-09 01:06",
+ "contract": "config/motion_output_contract_20261108.json L5_world",
+ "status_values": {
+  "cited": "stated in the method paper, docs or code at the given line",
+  "inferred_from_code": "follows from the cited code, not stated in words",
+  "约定": "约定，未经推演: not found in the method sources; basis given"
+ },
+ "canonical_frame": "project motion.npz: right-handed Z-up, metres; native Y-up maps (x, y, z) -> (x, -z, y) (utils/motiogen/motion.py:17-18,55-61, applied in utils/motiogen/adapters.py:80-81)",
+ "paths": "baselines/... are relative to the data root (config/baselines.json data_root); other paths are repository paths",
+ "up_axis": {
+  "value": "+Z",
+  "basis": "baselines/CLoSD/closd/env/tasks/humanoid.py:496-497 and base_task.py:195-201 (sim_params.up_axis = gymapi.UP_AXIS_Z, gravity.z = -9.81)",
+  "status": "cited"
+ },
+ "forward_axis": {
+  "value": "+X of the root body",
+  "basis": "baselines/CLoSD/closd/utils/torch_utils.py:201-212 calc_heading \"the heading is the direction on the xy plane ... this is the x axis heading\"",
+  "status": "cited"
+ },
+ "units": {
+  "value": "metres",
+  "basis": "IsaacGym SI units; goal distances in metres in comments (baselines/CLoSD/closd/env/tasks/humanoid_im.py:749)",
+  "status": "inferred_from_code"
+ },
+ "fps": {
+  "value": 30,
+  "basis": "baselines/CLoSD/closd/data/cfg/env/im_single_prim.yaml:35 \"controlFrequencyInv: 2 # 30 Hz\" with SIM_TIMESTEP 1/60; the planner (DiP) runs at 20 fps internally and is converted to 30 fps (closd.py:133-140)",
+  "status": "cited"
+ },
+ "floor": {
+  "height_m": 0.0,
+  "definition": "IsaacGym ground plane, normal +Z, distance 0 (the code sets only the normal; PlaneParams().distance defaults to 0.0, read from the installed gymapi 2026-11-09)",
+  "basis": "baselines/CLoSD/closd/env/tasks/humanoid.py:589-599; isaacgym preview 4 gymapi.PlaneParams() -> distance 0.0",
+  "status": "cited",
+  "floor_reference_key": "closd"
+ }
+}

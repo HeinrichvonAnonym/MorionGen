@@ -1,0 +1,39 @@
+{
+ "method": "primal",
+ "created": "2026-11-09 01:06",
+ "contract": "config/motion_output_contract_20261108.json L5_world",
+ "status_values": {
+  "cited": "stated in the method paper, docs or code at the given line",
+  "inferred_from_code": "follows from the cited code, not stated in words",
+  "约定": "约定，未经推演: not found in the method sources; basis given"
+ },
+ "canonical_frame": "project motion.npz: right-handed Z-up, metres; native Y-up maps (x, y, z) -> (x, -z, y) (utils/motiogen/motion.py:17-18,55-61, applied in utils/motiogen/adapters.py:80-81)",
+ "paths": "baselines/... are relative to the data root (config/baselines.json data_root); other paths are repository paths",
+ "up_axis": {
+  "value": "+Y",
+  "basis": "baselines/PRIMAL/README.md:86 \"PRIMAL uses the Y-up world coordinate\"",
+  "status": "cited"
+ },
+ "forward_axis": {
+  "value": "+Z",
+  "basis": "baselines/PRIMAL/primal/utils/mop_repr.py:272-278: x = left_hip - right_hip with y zeroed, y up, z = x cross y, so the first frame faces +Z",
+  "status": "inferred_from_code"
+ },
+ "units": {
+  "value": "metres",
+  "basis": "control speeds in m/s (baselines/PRIMAL/scripts/run_principledControl.sh:81); SMPL-X body model in metres",
+  "status": "inferred_from_code"
+ },
+ "fps": {
+  "value": 30,
+  "basis": "baselines/PRIMAL/primal/configs/data/amass_smplx.yaml:22 \"framerate: 30\"",
+  "status": "cited"
+ },
+ "floor": {
+  "height_m": 0.0,
+  "definition": "ground_snap=1: the lowest FK joint is placed at y = 0.01 m on the plane y = 0; ground_snap=0 declares no floor (not in any scored set)",
+  "basis": "baselines/PRIMAL/primal/models/motion_diffuser.py:721-722 (\"ground plane (y=0.01)\"), 533-554, 971-986; eval_metrics.py:180-182 \"Assuming the ground plane is XZ=0\"",
+  "status": "cited",
+  "floor_reference_key": "primal"
+ }
+}

@@ -1,0 +1,45 @@
+{
+ "method": "chois",
+ "created": "2026-11-09 01:06",
+ "contract": "config/motion_output_contract_20261108.json L5_world",
+ "status_values": {
+  "cited": "stated in the method paper, docs or code at the given line",
+  "inferred_from_code": "follows from the cited code, not stated in words",
+  "约定": "约定，未经推演: not found in the method sources; basis given"
+ },
+ "canonical_frame": "project motion.npz: right-handed Z-up, metres; native Y-up maps (x, y, z) -> (x, -z, y) (utils/motiogen/motion.py:17-18,55-61, applied in utils/motiogen/adapters.py:80-81)",
+ "paths": "baselines/... are relative to the data root (config/baselines.json data_root); other paths are repository paths",
+ "up_axis": {
+  "value": "+Z",
+  "basis": "baselines/chois_release/manip/lafan1/utils.py:462-463 \"The floor is on z = xxx\"; evaluation_metrics.py:63-64 \"z is up\"",
+  "status": "cited"
+ },
+ "forward_axis": {
+  "value": "-Y",
+  "basis": "baselines/chois_release/manip/lafan1/utils.py:462-477: the rest-pose body-left axis (x) is projected to the xy plane and aligned to world +X, so the first frame faces -Y",
+  "status": "inferred_from_code"
+ },
+ "units": {
+  "value": "metres",
+  "basis": "baselines/chois_release/evaluation_metrics.py:128-129 \"H_ankle = 0.08 # meter\"",
+  "status": "cited"
+ },
+ "fps": {
+  "value": 30,
+  "basis": "baselines/chois_release/evaluation_metrics.py:44 determine_floor_height_and_contacts(..., fps=30); window 120 frames (trainer_chois.py:3122); no fps statement in the README",
+  "status": "cited"
+ },
+ "floor": {
+  "height_m": 0.0,
+  "definition": "OMOMO world floor z = 0 (mesh sole on z = 0 in the source windows); CHOIS canonicalisation rotates about z and zeroes the first-frame root xy only; guidance=1 pulls the support toe to z = 0.02 m",
+  "basis": "baselines/chois_release/manip/data/cano_traj_dataset.py:579-582; manip/model/transformer_object_motion_cond_diffusion.py:648,691-699; guidance baselines/chois_release/trainer_chois.py:1895 (support_foot_height target 0.02); config/evalkit_floor_reference_20261107.json methods.chois (per window)",
+  "status": "cited",
+  "floor_reference_key": "chois (per window)"
+ },
+ "objects": {
+  "object_mass_kg": null,
+  "object_mass_source": "not provided by the dataset (checked 2026-11-09: rest_object_geo json holds centre of mass and rest pose only; the OMOMO sequences hold pose / scale / centre of mass only; no mass in the OMOMO paper or the CHOIS code)",
+  "main_analysis": "hand-held object not modelled (loads are lower bounds)",
+  "sensitivity": "config/chois_object_mass_lookup_20261109.json (per-category masses, 约定，未经推演)"
+ }
+}

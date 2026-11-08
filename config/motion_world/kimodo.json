@@ -1,0 +1,47 @@
+{
+ "method": "kimodo",
+ "created": "2026-11-09 01:06",
+ "contract": "config/motion_output_contract_20261108.json L5_world",
+ "status_values": {
+  "cited": "stated in the method paper, docs or code at the given line",
+  "inferred_from_code": "follows from the cited code, not stated in words",
+  "约定": "约定，未经推演: not found in the method sources; basis given"
+ },
+ "canonical_frame": "project motion.npz: right-handed Z-up, metres; native Y-up maps (x, y, z) -> (x, -z, y) (utils/motiogen/motion.py:17-18,55-61, applied in utils/motiogen/adapters.py:80-81)",
+ "paths": "baselines/... are relative to the data root (config/baselines.json data_root); other paths are repository paths",
+ "up_axis": {
+  "value": "+Y",
+  "basis": "baselines/kimodo/docs/source/key_concepts/motion_representation.md:10-13 \"right-handed ... Y up, +Z forward\"",
+  "status": "cited"
+ },
+ "forward_axis": {
+  "value": "+Z",
+  "basis": "same lines; docs/source/user_guide/constraints.md:36 \"defaults to 0.0 radians (facing +Z)\"",
+  "status": "cited"
+ },
+ "units": {
+  "value": "metres",
+  "basis": "baselines/kimodo/docs/source/user_guide/constraints.md:26 \"Units: Meters\"",
+  "status": "cited"
+ },
+ "fps": {
+  "value": 30,
+  "basis": "baselines/kimodo/kimodo/exports/motion_io.py:22-23 KIMODO_CONVERT_TARGET_FPS = 30.0; docs/source/benchmark/pipeline.md:51",
+  "status": "cited"
+ },
+ "floor": {
+  "height_m": 0.0,
+  "definition": "raw output (post_processing=False): BVH floor y=0, ground plane XZ (\"Y is the absolute hip height above the ground\")",
+  "basis": "baselines/kimodo/docs/source/user_guide/constraints.md:25-26,35; config/evalkit_floor_reference_20261107.json methods.kimodo",
+  "status": "cited",
+  "variants": {
+   "post_processing=True": {
+    "definition": "toe base at y = 0.02 m (SOMA skeletons)",
+    "basis": "baselines/kimodo/kimodo/postprocess.py:276-278 \"above_ground_offset = 0.02 if isinstance(skeleton, (SOMASkeleton30, SOMASkeleton77)) else 0.007\"",
+    "status": "cited",
+    "floor_reference_key": "kimodo__postprocess"
+   }
+  },
+  "floor_reference_key": "kimodo"
+ }
+}

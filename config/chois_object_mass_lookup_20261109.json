@@ -1,0 +1,26 @@
+{
+ "created": "2026-11-09 01:06",
+ "status": "draft: values for user review before the freeze",
+ "use": "sensitivity check only (user 2026-11-09 00:58). Main analysis: hand-held object not modelled, CHOIS loads are lower bounds. Sensitivity: the object's mass as an external load split evenly between the hands in contact",
+ "source_check": "the OMOMO / CHOIS data give no mass (checked 2026-11-09): outputs/assets/chois/processed_data/rest_object_geo/*.json hold rest_pose_ori_obj_rot, rest_pose_ori_com_pos, obj_trans_to_com_pos only; the test sequences hold seq_name, betas, gender, trans2joint, rest_offsets, trans, root_orient, pose_body, obj_scale, obj_trans, obj_rot, obj_com_pos only; no mass, density or inertia in the CHOIS code or the OMOMO paper",
+ "basis": "约定，未经推演: typical mass of a common product of the category, not measured on the OMOMO objects; the range is the plausible span for the category and is reported with the point value",
+ "evaluator_support": "not implemented: evalkit lumbar and leg dimensions take no hand load yet; to be implemented and registered before any CHOIS load result is seen",
+ "objects_kg": {
+  "vacuum": {"value": 4.0, "range": [2.5, 7.0], "status": "约定"},
+  "mop": {"value": 1.0, "range": [0.5, 2.0], "status": "约定"},
+  "floorlamp": {"value": 5.0, "range": [3.0, 10.0], "status": "约定"},
+  "clothesstand": {"value": 4.0, "range": [2.0, 8.0], "status": "约定"},
+  "tripod": {"value": 2.0, "range": [1.0, 4.0], "status": "约定"},
+  "suitcase": {"value": 4.0, "range": [2.5, 15.0], "status": "约定", "note": "empty shell at the low end; packed at the high end"},
+  "plasticbox": {"value": 2.0, "range": [1.0, 5.0], "status": "约定"},
+  "woodchair": {"value": 6.0, "range": [4.0, 9.0], "status": "约定"},
+  "whitechair": {"value": 4.0, "range": [2.5, 7.0], "status": "约定"},
+  "largetable": {"value": 15.0, "range": [8.0, 25.0], "status": "约定"},
+  "smalltable": {"value": 6.0, "range": [3.0, 10.0], "status": "约定"},
+  "largebox": {"value": 3.0, "range": [1.0, 10.0], "status": "约定", "note": "contents unknown"},
+  "smallbox": {"value": 1.0, "range": [0.3, 4.0], "status": "约定", "note": "contents unknown"},
+  "trashcan": {"value": 2.0, "range": [1.0, 5.0], "status": "约定"},
+  "monitor": {"value": 5.0, "range": [3.0, 8.0], "status": "约定"}
+ },
+ "objects_listed_from": "outputs/assets/chois/processed_data/captured_objects (15 objects)"
+}

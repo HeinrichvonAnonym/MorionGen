@@ -135,7 +135,7 @@
  },
  "pending_user": {
   "held_out_fallback": "fallback rule for the held-out set: what opens it, and when, if the user's own method does not reach a final comparison (asked before the freeze, one question at a time)",
-  "chois_object_mass": "source of the CHOIS hand-held object mass: dataset material / per-category lookup (约定) / not modelled, lower bound without hand-held load only (asked in the contract revision, section 14 item 3)"
+  "chois_object_mass": "resolved (user 2026-11-09 00:58): the dataset gives no mass (checked: rest_object_geo json, OMOMO sequence fields, paper), so the main analysis does not model the hand-held object and CHOIS loads are lower bounds; the per-category lookup masses of config/chois_object_mass_lookup_20261109.json (约定，未经推演) are a sensitivity check, after evalkit supports hand loads (contract method_capability.chois.object_mass)"
  },
  "deck_recheck": {
   "decision": "user 2026-11-08 23:25 (approx., answer received between 23:22 and 23:26): done now, before the freeze, from the existing native metrics only (no new evaluation); the affected conclusions are listed to the user before anything is written here",

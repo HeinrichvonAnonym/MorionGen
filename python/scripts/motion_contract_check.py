@@ -140,7 +140,8 @@ def npz_keys(p):
 
 
 LEGACY_KEYS = {'global_rotations': {'global_rotations'}, 'global_rot_mats': {'global_rot_mats'}, 'object_positions': {'object_positions'},
-               'object_rotations': {'object_rotations'}, 'contact_forces': {'contact_forces'}, 'smplx_params': {'pose'}}
+               'object_rotations': {'object_rotations'}, 'contact_forces': {'contact_forces'}, 'smplx_params': {'pose'},
+               'rotations_xyzw': {'rotations_xyzw'}}
 
 
 def check_l4(path, method):
@@ -163,17 +164,55 @@ def check_l4(path, method):
             if npz_keys(p) & LEGACY_KEYS.get(k, {k}) and (method != 'primal' or 'betas' in npz_keys(p.parent/'initial_history.npz')):
                 legacy = True; continue
         miss.append(k)
-    if method == 'chois' and 'object_mass_kg' in miss:
-        miss = [m for m in miss if m != 'object_mass_kg'] + ['object_mass_kg (no mass in any CHOIS output)']
-    return layer(miss, legacy=legacy)
+    out = layer(miss, legacy=legacy)
+    if cap.get('native_optional'):
+        out['optional_present'] = [k for k in cap['native_optional']
+                                   if k in native or (cap.get('native_legacy', {}).get(k) and (d/cap['native_legacy'][k]).exists())]
+    return out
+
+
+WORLD_DIR = ROOT/'config/motion_world'
+WORLD_STATUS = {'cited', 'inferred_from_code', '约定'}
+
+
+def check_world_file(method):
+    """config/motion_world/<method>.json: every required field has value, basis and an allowed status."""
+    p = WORLD_DIR/f'{method}.json'
+    w = read_json(p)
+    if w is None:
+        return layer([f'{p.relative_to(ROOT)}'])
+    miss = []
+    for k in LAYERS['L5_world']['method_file']['required']:
+        e = w.get(k)
+        if k == 'floor':
+            if not isinstance(e, dict) or not {'height_m', 'definition', 'basis', 'status'} <= set(e):
+                miss.append('floor: height_m / definition / basis / status')
+            elif e['status'] not in WORLD_STATUS:
+                miss.append(f"floor status {e['status']}")
+        elif not isinstance(e, dict) or not {'value', 'basis', 'status'} <= set(e):
+            miss.append(f'{k}: value / basis / status')
+        elif e['status'] not in WORLD_STATUS:
+            miss.append(f"{k} status {e['status']}")
+    out = layer(miss)
+    out['sha256'] = hashlib.sha256(p.read_bytes()).hexdigest()
+    out['conventions'] = {k: w[k]['status'] for k in ('up_axis', 'forward_axis', 'units', 'fps') if isinstance(w.get(k), dict)}
+    out['conventions']['floor'] = (w.get('floor') or {}).get('status')
+    return out
 
 
 def check_l5(path, method):
     d = Path(path).parent.parent if method == 'primal' else Path(path)
+    mf = check_world_file(method)
     w = read_json(d/'world.json')
     if w is None:
-        return layer(['world.json (legacy floors: config/evalkit_floor_reference_20261107.json)'])
+        if mf['state'] != 'ok':
+            return layer(['world.json'] + mf['missing'])
+        out = layer([], legacy=True)
+        out['legacy_source'] = f'config/motion_world/{method}.json + config/evalkit_floor_reference_20261107.json'
+        return out
     miss = [k for k in LAYERS['L5_world']['required'] if k not in w]
+    if 'method_world_sha256' in w and w['method_world_sha256'] != mf.get('sha256'):
+        miss.append('method_world_sha256 differs from the current method file')
     if method == 'chois':
         miss += [k for k in LAYERS['L5_world']['objects']['required_if_object'] if k not in w]
     if method == 'closd' and 'contact_forces' not in npz_keys(d/'native_physics.npz'):
@@ -234,8 +273,13 @@ def scan(args):
             if L == 'L2_task':
                 summary[m][L]['legacy_format'] = dict(collections.Counter(r[L].get('legacy_format', 'scenario') for r in rs))
                 summary[m][L]['new_batch_missing'] = dict(collections.Counter(x for r in rs for x in r[L].get('new_batch_missing', [])))
-    (out/'scan.json').write_text(json.dumps({'contract': CONTRACT['version'], 'summary': summary, 'runs': results}, indent=1))
-    print(json.dumps(summary, indent=1))
+            if L == 'L4_native' and any('optional_present' in r[L] for r in rs):
+                summary[m][L]['optional_present'] = dict(collections.Counter(x for r in rs for x in r[L].get('optional_present', [])))
+    worlds = {m: check_world_file(m) for m in CAP}
+    (out/'scan.json').write_text(json.dumps({'contract': CONTRACT['version'], 'method_world_files': worlds,
+                                             'summary': summary, 'runs': results}, indent=1, ensure_ascii=False))
+    print(json.dumps({'method_world_files': {m: {k: w[k] for k in ('state', 'missing', 'conventions')} for m, w in worlds.items()},
+                      'summary': summary}, indent=1, ensure_ascii=False))
 
 
 def measurable(method, evaluator):

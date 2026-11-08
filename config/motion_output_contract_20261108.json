@@ -1,7 +1,11 @@
 {
  "created": "2026-11-08 15:33",
- "version": "contract-draft-1",
- "status": "draft: frozen only after the user review (develop_logs/notes/20261108_batch_design_decisions.md section 13 step 5); generation of the large batch does not start before the freeze",
+ "version": "contract-draft-2",
+ "revised": "2026-11-09 01:06",
+ "status": "draft: frozen together with config/analysis_plan_20261108.json, config/evalkit_batch_protocol_20261108.json and the inference registration after the user review (develop_logs/notes/20261108_batch_design_decisions.md section 14); generation of the large batch does not start before the freeze",
+ "user_decisions": {
+  "2026-11-09 00:58 contract (design section 14 item 3)": "CLoSD: the new batch has rotations_xyzw, confirmed by a smoke run; every method's world conventions carry their source, unfound ones are marked 约定; PRIMAL legacy data has SMPL-X; MotionLCM features_263 optional; CHOIS mass: check the dataset first, and if absent the main analysis does not model the hand-held object (lower bound) with per-category lookup masses as a sensitivity check (约定)"
+ },
  "scope": "every generated motion of the large batch and of the official-evaluation batch, one run directory per motion; the generation system itself is not changed by this file (it belongs to another session); python/scripts/motion_contract_check.py validates run directories against it",
  "layers": {
   "L1_identity": {
@@ -92,12 +96,22 @@
   },
   "L5_world": {
    "purpose": "the method's own conventions and physical quantities",
+   "method_file": {
+    "path": "config/motion_world/<method>.json",
+    "required": {
+     "up_axis": "native up axis",
+     "forward_axis": "native forward axis",
+     "units": "native length unit",
+     "fps": "native frame rate",
+     "floor": "height_m in canonical Z, definition, switch variants"
+    },
+    "per_entry": "value, basis (paper / docs / code file:line, or the reason when nothing is found) and status: cited, inferred_from_code, or 约定 when not found in the method sources (design section 14 item 3)"
+   },
    "file": "world.json",
    "required": {
-    "floor_height_m": "the floor the method declares, canonical Z (paper / code basis in floor_basis)",
-    "floor_basis": "citation of the paper or code line",
-    "up_axis": "native up axis",
-    "forward_axis": "native forward axis"
+    "method_world": "path of config/motion_world/<method>.json",
+    "method_world_sha256": "sha256 of that file at generation time",
+    "floor_variant": "the floor variant of this run's switches (method_file floor.variants key, or 'default')"
    },
    "objects": {
     "required_if_object": [
@@ -105,6 +119,7 @@
      "object_mass_kg",
      "object_mass_source"
     ],
+    "object_mass_kg": "null when the dataset gives no mass (CHOIS: method_capability.chois.object_mass)",
     "arrays_in_motion_npz": [
      "object_positions",
      "object_rotations"
@@ -115,7 +130,7 @@
      "contact_forces (T, B, 3) with body_names, native_physics.npz"
     ]
    },
-   "legacy": "the method floors of the legacy runs come from config/evalkit_floor_reference_20261107.json"
+   "legacy": "legacy runs have no world.json: the conventions come from config/motion_world/<method>.json and the scored floors from config/evalkit_floor_reference_20261107.json (status legacy)"
   },
   "L6_integrity": {
    "purpose": "completeness and no silent replacement",
@@ -154,13 +169,18 @@
    "head_orientation": "native (rotations)",
    "hands": "absent (hand points only)",
    "body_shape": "to_verify",
-   "objects": "native positions / rotations; mass absent",
+   "objects": "native positions / rotations; mass absent (not in the CHOIS outputs and not in the OMOMO data; checked 2026-11-09, see object_mass)",
+   "object_mass": {
+    "decision": "user 2026-11-09 00:58: the dataset gives no mass, so the main analysis does not model the hand-held object (loads are lower bounds); per-category lookup masses are a sensitivity check (约定，未经推演)",
+    "checked": "outputs/assets/chois/processed_data/rest_object_geo/*.json (centre of mass and rest pose only); OMOMO sequence fields (pose, scale, centre of mass only); the OMOMO paper and the CHOIS code (no mass, density or inertia)",
+    "lookup": "config/chois_object_mass_lookup_20261109.json",
+    "evaluator_support": "not implemented: the lumbar and leg dimensions take no hand load yet; to be implemented and registered before any CHOIS load result is seen"
+   },
    "physics": "absent",
    "native_required": [
     "global_rotations",
     "object_positions",
-    "object_rotations",
-    "object_mass_kg"
+    "object_rotations"
    ],
    "native_legacy": {
     "global_rotations": "raw/native_prediction.npz",
@@ -172,19 +192,22 @@
   "closd": {
    "skeleton": "SMPL 24 simulated bodies",
    "joints": "native (simulation)",
-   "global_rotations_with_twist": "absent (body orientations of the simulation not saved)",
-   "head_orientation": "absent",
+   "global_rotations_with_twist": "native in the new batch (native_physics.npz rotations_xyzw: world orientation of the 24 simulated rigid bodies, quaternion x, y, z, w; written by utils/motiogen/closd_runtime.py, code committed 2026-10-31, present in every CLoSD run from 2026-10-29 on); absent in the 2026-10-24 (240 runs) and 2026-10-25 (32 runs) legacy data",
+   "head_orientation": "native in the new batch (Head rigid-body orientation in rotations_xyzw); absent in the legacy data",
    "hands": "absent",
    "body_shape": "absent",
    "objects": "absent",
    "physics": "native contact forces (native_physics.npz)",
+   "contact_forces_reproducibility": "measured 2026-11-09 (develop_logs/test_runs/20261109_closd_rotation_smoke, same seed and event, two runs on one card plus the 10-29 run on another card): joints, rotations_xyzw and dof_positions are bit-identical, contact_forces are not; per frame the summed vertical force differs by up to 854 N (p95 215-291 N), 0.5 s window means by up to 127 N, the whole-run mean by under 1.1 N, foot contact (Fz > 20 N) agrees on 94-96% of frames. No registered metric uses them; any use needs a user decision (the earlier E4 and native-matrix analyses used per-frame values)",
    "native_required": [
-    "body_rotations",
+    "rotations_xyzw",
     "contact_forces"
    ],
    "native_legacy": {
+    "rotations_xyzw": "native_physics.npz",
     "contact_forces": "native_physics.npz"
    },
+   "smoke": "develop_logs/test_runs/20261109_closd_rotation_smoke (python/scripts/closd_rotation_smoke.py): one run with the current code; rotations_xyzw shape, quaternion norms, bone vectors R_parent^T (p_child - p_parent) constant over frames",
    "shoulder_girdle": "absent"
   },
   "dart": {
@@ -228,9 +251,11 @@
    "body_shape": "absent",
    "objects": "absent",
    "physics": "absent",
-   "native_required": [
+   "native_required": [],
+   "native_optional": [
     "features_263"
    ],
+   "native_optional_note": "optional (design section 14 item 3): its rotation part comes from shortest-arc bone directions, so it carries no twist and adds no capability over the joints",
    "native_legacy": {},
    "shoulder_girdle": "absent (collar joint positions only: no scapula, no upper-arm twist)"
   },
@@ -243,9 +268,11 @@
    "body_shape": "absent",
    "objects": "absent",
    "physics": "absent",
-   "native_required": [
+   "native_required": [],
+   "native_optional": [
     "features_263"
    ],
+   "native_optional_note": "optional (design section 14 item 3): its rotation part comes from shortest-arc bone directions, so it carries no twist and adds no capability over the joints",
    "native_legacy": {
     "features_263": "raw/features.npy"
    },
@@ -266,6 +293,7 @@
    "native_legacy": {
     "smplx_params": "factorial/<switch>.npz pose (transl, global_orient, body_pose) + factorial/initial_history.npz betas"
    },
+   "legacy_note": "the legacy PRIMAL runs hold the SMPL-X parameters (pose per switch file, betas in initial_history.npz); design section 14 item 3",
    "shoulder_girdle": "to_verify"
   },
   "_keys": [
@@ -331,7 +359,7 @@
     "joints"
    ],
    "conditional": {
-    "objects": "object_mass_kg (absent: lumbar reported with the held load not modelled)"
+    "objects": "object_mass_kg (CHOIS: null, main analysis without the held load = lower bound; lookup masses of config/chois_object_mass_lookup_20261109.json as a sensitivity check once hand loads are implemented)"
    },
    "status": "active"
   },
@@ -347,7 +375,7 @@
     "global_rotations_with_twist",
     "shoulder_girdle"
    ],
-   "status": "reserved; shoulder muscle model not downloaded"
+   "status": "reserved: models downloaded and load in OpenSim 4.6 (assets/shoulder); intended model MoBL-ARMS (user 2026-11-08 23:06), integration with the FBLS torso not started"
   },
   "distribution_t2m": {
    "needs": [

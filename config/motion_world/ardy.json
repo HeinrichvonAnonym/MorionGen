@@ -1,0 +1,47 @@
+{
+ "method": "ardy",
+ "created": "2026-11-09 01:06",
+ "contract": "config/motion_output_contract_20261108.json L5_world",
+ "status_values": {
+  "cited": "stated in the method paper, docs or code at the given line",
+  "inferred_from_code": "follows from the cited code, not stated in words",
+  "约定": "约定，未经推演: not found in the method sources; basis given"
+ },
+ "canonical_frame": "project motion.npz: right-handed Z-up, metres; native Y-up maps (x, y, z) -> (x, -z, y) (utils/motiogen/motion.py:17-18,55-61, applied in utils/motiogen/adapters.py:80-81)",
+ "paths": "baselines/... are relative to the data root (config/baselines.json data_root); other paths are repository paths",
+ "up_axis": {
+  "value": "+Y",
+  "basis": "baselines/ardy/ardy/exports/mujoco.py:29 \"In ardy, the coordinate system is y up and z forward, right handed\"",
+  "status": "cited"
+ },
+ "forward_axis": {
+  "value": "+Z",
+  "basis": "baselines/ardy/scripts/generate.py:240 \"first_heading_angle = torch.zeros(...)  # facing +Z\"",
+  "status": "cited"
+ },
+ "units": {
+  "value": "metres",
+  "basis": "no unit statement for the native posed_joints; the skeleton BVH import works in metres (baselines/ardy/ardy/skeleton/bvh.py:544,560)",
+  "status": "约定"
+ },
+ "fps": {
+  "value": 20,
+  "basis": "baselines/ardy/README.md:67-68 (ARDY-Core-RP-20FPS-Horizon40); generate.py:189-192 writes model.motion_rep.fps; config/baselines.json",
+  "status": "cited"
+ },
+ "floor": {
+  "height_m": 0.0,
+  "definition": "raw output (correction=0): mesh sole on the training floor y=0 (bind skin flat on y=0); no floor enforcement at generation",
+  "basis": "config/evalkit_floor_reference_20261107.json methods.ardy (raw toe base in its lowest 10% of frames 0.013-0.018 m vs 0.0152 m bind)",
+  "status": "inferred_from_code",
+  "variants": {
+   "correction=1": {
+    "definition": "contact frames pin the toe base at the rig height 0.007 m above y=0",
+    "basis": "baselines/ardy/ardy/postprocess.py:117,156-161 (\"above_ground_offset: float = 0.007\"; \"lowest point (toe) is at ground level (y=0)\")",
+    "status": "cited",
+    "floor_reference_key": "ardy__correction"
+   }
+  },
+  "floor_reference_key": "ardy"
+ }
+}

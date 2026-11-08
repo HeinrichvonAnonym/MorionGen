@@ -1,0 +1,39 @@
+{
+ "method": "omnicontrol",
+ "created": "2026-11-09 01:06",
+ "contract": "config/motion_output_contract_20261108.json L5_world",
+ "status_values": {
+  "cited": "stated in the method paper, docs or code at the given line",
+  "inferred_from_code": "follows from the cited code, not stated in words",
+  "约定": "约定，未经推演: not found in the method sources; basis given"
+ },
+ "canonical_frame": "project motion.npz: right-handed Z-up, metres; native Y-up maps (x, y, z) -> (x, -z, y) (utils/motiogen/motion.py:17-18,55-61, applied in utils/motiogen/adapters.py:80-81)",
+ "paths": "baselines/... are relative to the data root (config/baselines.json data_root); other paths are repository paths",
+ "up_axis": {
+  "value": "+Y",
+  "basis": "baselines/OmniControl/data_loaders/humanml/utils/metrics.py:213 \"# 10 left, 11 right foot. XZ plane, y up\"",
+  "status": "cited"
+ },
+ "forward_axis": {
+  "value": "+Z",
+  "basis": "baselines/OmniControl/data_loaders/humanml/scripts/motion_process.py:184-207 \"All initially face Z+\" (training data; no re-canonicalisation at generation)",
+  "status": "cited"
+ },
+ "units": {
+  "value": "metres",
+  "basis": "baselines/OmniControl/data_loaders/humanml/utils/metrics.py:152-153 \"error for each kps in metre\"",
+  "status": "cited"
+ },
+ "fps": {
+  "value": 20,
+  "basis": "baselines/OmniControl/sample/generate.py:31 \"fps = 12.5 if args.dataset == 'kit' else 20\"",
+  "status": "cited"
+ },
+ "floor": {
+  "height_m": 0.0,
+  "definition": "learned, not enforced at generation: HumanML3D floors each training sequence at its lowest joint (y = 0) and turns frame 0 to face +Z; the model output has no floor step",
+  "basis": "HumanML3D preprocessing, copy in baselines/OmniControl/data_loaders/humanml/scripts/motion_process.py:177-179 (\"Put on Floor\"), 184-207 (\"All initially face Z+\")",
+  "status": "cited",
+  "floor_reference_key": "humanml3d"
+ }
+}

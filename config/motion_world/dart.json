@@ -1,0 +1,39 @@
+{
+ "method": "dart",
+ "created": "2026-11-09 01:06",
+ "contract": "config/motion_output_contract_20261108.json L5_world",
+ "status_values": {
+  "cited": "stated in the method paper, docs or code at the given line",
+  "inferred_from_code": "follows from the cited code, not stated in words",
+  "约定": "约定，未经推演: not found in the method sources; basis given"
+ },
+ "canonical_frame": "project motion.npz: right-handed Z-up, metres; native Y-up maps (x, y, z) -> (x, -z, y) (utils/motiogen/motion.py:17-18,55-61, applied in utils/motiogen/adapters.py:80-81)",
+ "paths": "baselines/... are relative to the data root (config/baselines.json data_root); other paths are repository paths",
+ "up_axis": {
+  "value": "+Z",
+  "basis": "baselines/DART/README.md:235 \"Please ensure the 3D scene is z-up and the floor plane has zero height\"",
+  "status": "cited"
+ },
+ "forward_axis": {
+  "value": "+Y",
+  "basis": "baselines/DART/utils/smpl_utils.py:54-62: x = right_hip - left_hip (SMPL-X joints 2 - 1) with z zeroed, z up, y = z cross x, so the canonical body faces +Y",
+  "status": "inferred_from_code"
+ },
+ "units": {
+  "value": "metres",
+  "basis": "no unit statement in DART; SMPL-X body model in metres; reward slack 0.03 on foot z (env_reach_location_mld.py:365-374) consistent with metres",
+  "status": "约定"
+ },
+ "fps": {
+  "value": 30,
+  "basis": "baselines/DART/README.md:205 \"BABEL uses 30 fps\"; control/env/env_reach_location_mld.py:366-367 \"assert fps == 30\"",
+  "status": "cited"
+ },
+ "floor": {
+  "height_m": 0.0,
+  "definition": "z = 0; at reset the lowest of the 22 joints of the first frame is put on the floor; the policy reward keeps the feet within 0.03 m of floor_height 0",
+  "basis": "baselines/DART/control/env/env_reach_location_mld.py:131,144 (\"make init frame foot on floor\"), 365-374",
+  "status": "cited",
+  "floor_reference_key": "dart"
+ }
+}
