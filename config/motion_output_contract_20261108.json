@@ -16,7 +16,8 @@
     "weight_binding.json": "weight identity (checkpoint path and sha256)",
     "environment.json|implementation.json": "environment and code identity",
     "intervention.json": "the switch condition of the run"
-   }
+   },
+   "legacy": "PRIMAL: one run directory holds every switch combination; the switch is the factorial file name (ground<g>_reproject<r>_inertialize<i>)"
   },
   "L2_task": {
    "purpose": "one task format for every method; legacy runs use three formats (joint-position scenario, root goal change of CLoSD / DART, unconditioned continuation of PRIMAL) plus the Kimodo case files",
@@ -221,8 +222,8 @@
   "motionlcm": {
    "skeleton": "HumanML3D 22",
    "joints": "native",
-   "global_rotations_with_twist": "to_verify (263-d features not saved; their rotation part may come from inverse kinematics of positions, which carries no twist)",
-   "head_orientation": "to_verify",
+   "global_rotations_with_twist": "absent (verified 2026-11-08: HumanML3D skeleton.inverse_kinematics_np builds the 263-d rotation part with qbetween from bone directions (shortest arc), so twist about each bone is zero by construction)",
+   "head_orientation": "absent (head is a leaf joint: only the neck-head bone direction, no axial head rotation)",
    "hands": "absent",
    "body_shape": "absent",
    "objects": "absent",
@@ -231,13 +232,13 @@
     "features_263"
    ],
    "native_legacy": {},
-   "shoulder_girdle": "to_verify"
+   "shoulder_girdle": "absent (collar joint positions only: no scapula, no upper-arm twist)"
   },
   "omnicontrol": {
    "skeleton": "HumanML3D 22",
    "joints": "native",
-   "global_rotations_with_twist": "to_verify (raw/features.npy 263-d; same question as MotionLCM)",
-   "head_orientation": "to_verify",
+   "global_rotations_with_twist": "absent (verified 2026-11-08: HumanML3D skeleton.inverse_kinematics_np builds the 263-d rotation part with qbetween from bone directions (shortest arc), so twist about each bone is zero by construction)",
+   "head_orientation": "absent (head is a leaf joint: only the neck-head bone direction, no axial head rotation)",
    "hands": "absent",
    "body_shape": "absent",
    "objects": "absent",
@@ -248,22 +249,22 @@
    "native_legacy": {
     "features_263": "raw/features.npy"
    },
-   "shoulder_girdle": "to_verify"
+   "shoulder_girdle": "absent (collar joint positions only: no scapula, no upper-arm twist)"
   },
   "primal": {
    "skeleton": "SMPL-X 22",
    "joints": "native",
-   "global_rotations_with_twist": "to_verify (factorial/<switch>.npz pose (1, T, 69); the 2026-11-08 batch note says SMPL-X parameters are not saved: layout of the 69 values unverified)",
-   "head_orientation": "to_verify",
+   "global_rotations_with_twist": "native (verified 2026-11-08: pose 69 = transl 3 + global_orient axis-angle 3 + body_pose axis-angle 21x3 (PRIMAL motion_diffuser.aa2rotcont, motionclip._fwd_smplx_seq); generated in rotation space)",
+   "head_orientation": "native (SMPL-X head joint rotation in body_pose)",
    "hands": "absent",
-   "body_shape": "to_verify",
+   "body_shape": "native (betas 16, factorial/initial_history.npz)",
    "objects": "absent",
    "physics": "absent",
    "native_required": [
     "smplx_params"
    ],
    "native_legacy": {
-    "pose_69": "factorial/<switch>.npz"
+    "smplx_params": "factorial/<switch>.npz pose (transl, global_orient, body_pose) + factorial/initial_history.npz betas"
    },
    "shoulder_girdle": "to_verify"
   },

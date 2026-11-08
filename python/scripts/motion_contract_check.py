@@ -57,7 +57,8 @@ def check_l1(d, method):
     miss += [f for f in ('weight_binding.json', 'intervention.json') if not (d/f).exists()]
     if not ((d/'environment.json').exists() or (d/'implementation.json').exists()):
         miss.append('environment.json|implementation.json')
-    return layer(miss)
+    legacy = method == 'primal' and 'intervention.json' in miss
+    return layer([f for f in miss if not (legacy and f == 'intervention.json')], legacy=legacy)
 
 
 def check_l2(d, method):
@@ -139,7 +140,7 @@ def npz_keys(p):
 
 
 LEGACY_KEYS = {'global_rotations': {'global_rotations'}, 'global_rot_mats': {'global_rot_mats'}, 'object_positions': {'object_positions'},
-               'object_rotations': {'object_rotations'}, 'contact_forces': {'contact_forces'}, 'pose_69': {'pose'}}
+               'object_rotations': {'object_rotations'}, 'contact_forces': {'contact_forces'}, 'smplx_params': {'pose'}}
 
 
 def check_l4(path, method):
@@ -159,7 +160,7 @@ def check_l4(path, method):
             p = path if (loc.startswith('factorial/') and method == 'primal') else d/loc
             if method == 'primal':
                 p = path.with_name(path.name.replace('_canonical', ''))
-            if npz_keys(p) & LEGACY_KEYS.get(k, {k}):
+            if npz_keys(p) & LEGACY_KEYS.get(k, {k}) and (method != 'primal' or 'betas' in npz_keys(p.parent/'initial_history.npz')):
                 legacy = True; continue
         miss.append(k)
     if method == 'chois' and 'object_mass_kg' in miss:
