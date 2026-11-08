@@ -1,0 +1,42 @@
+{
+ "created": "2026-11-08 20:47",
+ "version": "neck-supp-1",
+ "registered_before_results": "this file and python/scripts/evalkit_neck_supp.py are committed before either part is run; no field changes after the run",
+ "why": "The RULA supplement (config/evalkit_rula_supp_20261108.json) traced every scored-risk false kill to the neck input (develop_logs/notes/20261107_evalkit_heldout_distribution_batch.md, 2026-11-08 19:13 correction): per-clip tool - truth neck offset SD 6.5 deg, clips below -6 deg average 21% false kill, clips at or above -3 deg none. Both sides read the neck from joint positions; the offset comes from the 1 cm landmark-offset convention of the synthetic export. User decisions 2026-11-08 19:08 and after 20:42: register a neck supplement, mind that body models differ in their neutral neck; reuse the existing per-skeleton neutral analysis (ergo revision 3, commit cfd7736: config/ergo_neutral_offsets_20261105.json) instead of redoing it; run both parts.",
+ "neutral": {
+  "source": "config/ergo_neutral_offsets_20261105.json (revision 3): per skeleton, the rest-pose reading of ergo.neck_angles is the zero; rest pose assumed head-neutral (revision 3 assumption, unchanged here); CHOIS per run from fk_rest; MotionLCM / OmniControl excluded (no rigid skeleton)",
+  "rotation_reading_zero": "the rotation reading below equals the joint-line reading in the rest pose by construction, so the same per-skeleton zero applies to both; no new neutral is introduced"
+ },
+ "part_real": {
+  "question": "On generated motion, how far does the head joint's own rotation (invisible to the neck-to-head line) move the RULA neck input and the RULA frame class?",
+  "rows": "the registered offset-reference set (develop_logs/test_runs/20261108_offset_reference/manifest.json, 2026-11-08 18:39) restricted to methods with neck and head rotations: ARDY 48, CHOIS 24, Kimodo 52, PRIMAL 96 (220 rows)",
+  "not_included": {"dart": "the 24 DART rows of the set are legacy exports (joints only); DART native runs are not added, the set stays fixed",
+                   "closd": "no body rotations in the output", "motionlcm": "neck excluded in revision 3", "omnicontrol": "neck excluded in revision 3"},
+  "rotations": {"ardy": "motion.npz global_rotations (cskel27)", "chois": "raw/native_prediction.npz global_rotations (SMPL-X 22)",
+                "kimodo": "motion.npz global_rot_mats (SOMA77; neck -> Neck2 -> head)",
+                "primal": "factorial/<variant>.npz pose (transl 3 + global_orient 3 + body_pose 63 axis-angle) chained over the SMPL-X 22 tree"},
+  "convention_check": "pre-registration probe (2 rows per method): R_parent^T (child - parent) equals the rest-skeleton bone (cskel27 / fk_rest / somaskel77 joints.p / SMPL-X neutral betas 0) within 0.025 deg and 0 mm for neck->head, Spine3->neck (Kimodo neck->Neck2->head): global rotations are identity at rest in the joints' own frame. Per row the rest neck-to-head vector is rebuilt from the row itself as the median over frames of sum R_parent^T (child - parent) along the neck-to-head chain (the skeleton files need torch, absent from the OpenSim python). Gate per row: max over frames of the angle between the per-frame rebuild and the median <= 0.5 deg (约定，未经推演), else the row is reported as failed_convention and not used",
+  "readings": {
+   "A_joint_line": "ergo.neck_angles on the native joints (neck-to-head line against pelvis-to-neck; flexion, side bend), minus the revision 3 zero: what evalkit scores",
+   "B_rotation": "ergo.neck_angles with the head point replaced by neck + R_head_global (head_rest - neck_rest), the rest bone carried by the head joint's global rotation, minus the same zero",
+   "B_minus_A": "for a single neck->head bone (ARDY, CHOIS, PRIMAL) the head joint's local rotation applied to the bone; for Kimodo the Neck2 and head local rotations together"
+  },
+  "frame_match_gate": "A from the native arrays must equal the evalkit source reading (biomech_sources.load, frames round(times x fps)) within 0.05 deg on every scored frame (约定，未经推演), else failed_frame_match",
+  "scoring": "per row as evalkit_batch run pass 1 with the frozen offset reference (config/evalkit_offset_reference_20261108.json): fit (cached work copied from the offset-reference rows), residual contact masks, ergo.score with the RULA inputs captured; A class = evalkit class (reproduction gate: recomputed classes equal ergo.score classes on every frame); B class = the same inputs with neck_flexion_deg and neck_side_bent from B under the revision 3 rules (extension tolerance 5 deg, side bend > 10 deg); unmeasurable frames stay unmeasurable",
+  "reported": "per method and pooled: B - A flexion and side bend (median, p5, p95 over frames; per-row median distribution), share of frames whose RULA neck flexion band (extension / 0-10 / 10-20 / > 20 deg) differs, RULA class transition counts A -> B, certain-risk share A vs B, rows with any class change",
+  "status": "descriptive; no truth exists for generated motion, so neither reading is declared correct; evalkit scoring is not changed by this result"
+ },
+ "part_synth": {
+  "question": "How much of the RULA false-kill rate on the synthetic set comes from the size of the neck and head landmark offsets?",
+  "clips": "the method-floor tool runs of heldout2 + heldout3 + heldout4, v1.1 ergo pass clips (the decomposition set of the RULA supplement), each against its unchanged truth",
+  "scales": [0, 0.5, 1, 1.5],
+  "scales_note": "factor on the drawn offsets of the neck and head landmarks only (1 = the registered 1 cm SD); 约定，未经推演",
+  "construction": "X0 = synth.export of the clip with landmark_offset_sd_m 0 and the same seed (crc32 of the clip id; the normal draws scale linearly, so jitter and floor shift are the same draws); X1 = the stored input; station positions are linear in the offset, so X_k = X0 + k (X1 - X0) on the neck and head columns and X1 elsewhere",
+  "gates": ["re-export with the registered SD reproduces the stored input (max abs difference <= 1e-9 m) and the SD-0 re-export has the same floor shift", "scale 1 reproduces the stored tool RULA class on every frame"],
+  "scoring": "tool RULA recomputed with the source X_k (ergo.score: neck and shoulder elevation come from the source; the neck point also sets the shoulder-elevation up axis, reported as a side effect); coordinates, contact and gates of the stored tool run unchanged",
+  "reported": "per scale: pooled RULA false-kill and missed-kill with the one-sided 95% Clopper-Pearson bound, per subject (10), subjects over 5%, per base task, and the tool - truth neck flexion input (median, p5, p95) on truth certain-acceptable frames",
+  "status": "descriptive; the registered RULA line, the 1 cm convention and the borderline reading stay as they are; any change of the convention is a new version decided by the user"
+ },
+ "background": "nohup setsid, nice 19, process pool max_tasks_per_child=1",
+ "conventions_not_derived": ["offset scales 0 / 0.5 / 1 / 1.5", "convention gate 0.5 deg", "frame-match gate 0.05 deg", "neck flexion bands follow RULA"]
+}
