@@ -53,26 +53,28 @@ weight_audit_path=BASE/'20261024_native_weight_audit/audit.json'
 weight_audit={r['run']:r for r in json.loads(weight_audit_path.read_text())['rows']} if weight_audit_path.exists() else {}
 superseded=set();replacement_checks=[]
 deferred_source_jobs=set();source_replay_replacements=[]
-for plan_file,state_file in SOURCES:
-    if not (BASE/plan_file).exists() or not (BASE/state_file).exists():continue
-    p=json.loads((BASE/plan_file).read_text());s=json.loads((BASE/state_file).read_text())
-    for group in p.get('source_replay_groups',[]):
-        if all(s['jobs'].get(job,{}).get('status')=='success' for job in group['jobs']):
-            superseded.update(str((ROOT/run).resolve()) for run in group['prior_runs'])
-            source_replay_replacements.append({**group,'replacement_runs':[str(Path(s['jobs'][job]['run_dir']).relative_to(ROOT)) for job in group['jobs']]})
-        else:deferred_source_jobs.update(group['jobs'])
-    for replacement in p.get('replacements',[]):
-        if s['jobs'][replacement['job']]['status']=='success':
-            old=Path(replacement['prior_run'])/'factorial';new=Path(s['jobs'][replacement['job']]['run_dir'])/'factorial'
-            checks=[]
-            for file in sorted(old.glob('*_canonical.npz')):
-                a=load_motion(file)['joints'];b=load_motion(new/file.name)['joints']
-                checks.append({'variant':file.stem,'exact_same_coordinates':bool(np.array_equal(a,b)),
-                    'max_abs_delta_m':float(np.max(np.abs(a-b))) if a.shape==b.shape else None})
-            if len(checks)!=8 or not all(c['exact_same_coordinates'] for c in checks):
-                raise ValueError('Instrumented PRIMAL replay changed original motion: '+replacement['job'])
-            replacement_checks.append({'job':replacement['job'],'old_run':replacement['prior_run'],'replacement_run':str(new.parent),'checks':checks,
-                'scope':'Instrumentation replay, not an additional independent sample; original raw data retained'})
+def load_replacements():
+    """Superseded runs and replacement receipts of the matrix plans (module state read by read_run)."""
+    for plan_file,state_file in SOURCES:
+        if not (BASE/plan_file).exists() or not (BASE/state_file).exists():continue
+        p=json.loads((BASE/plan_file).read_text());s=json.loads((BASE/state_file).read_text())
+        for group in p.get('source_replay_groups',[]):
+            if all(s['jobs'].get(job,{}).get('status')=='success' for job in group['jobs']):
+                superseded.update(str((ROOT/run).resolve()) for run in group['prior_runs'])
+                source_replay_replacements.append({**group,'replacement_runs':[str(Path(s['jobs'][job]['run_dir']).relative_to(ROOT)) for job in group['jobs']]})
+            else:deferred_source_jobs.update(group['jobs'])
+        for replacement in p.get('replacements',[]):
+            if s['jobs'][replacement['job']]['status']=='success':
+                old=Path(replacement['prior_run'])/'factorial';new=Path(s['jobs'][replacement['job']]['run_dir'])/'factorial'
+                checks=[]
+                for file in sorted(old.glob('*_canonical.npz')):
+                    a=load_motion(file)['joints'];b=load_motion(new/file.name)['joints']
+                    checks.append({'variant':file.stem,'exact_same_coordinates':bool(np.array_equal(a,b)),
+                        'max_abs_delta_m':float(np.max(np.abs(a-b))) if a.shape==b.shape else None})
+                if len(checks)!=8 or not all(c['exact_same_coordinates'] for c in checks):
+                    raise ValueError('Instrumented PRIMAL replay changed original motion: '+replacement['job'])
+                replacement_checks.append({'job':replacement['job'],'old_run':replacement['prior_run'],'replacement_run':str(new.parent),'checks':checks,
+                    'scope':'Instrumentation replay, not an additional independent sample; original raw data retained'})
             superseded.add(str(Path(replacement['prior_run']).resolve()))
 
 def read_primal(path,task,manifest):
@@ -350,181 +352,187 @@ def read_run(path,task,clock='paused'):
     if not row['finite']:rejected.append({'run':row['run'],'reason':'non-finite motion'});return
     rows.append(row)
 
-for plan_file,state_file in SOURCES:
-    if not (BASE/plan_file).exists() or not (BASE/state_file).exists():continue
-    plan=json.loads((BASE/plan_file).read_text());state=json.loads((BASE/state_file).read_text())
-    for job in plan['jobs']:
-        if job['method'] not in FACTORS:continue
-        receipt=state['jobs'].get(job['id'],{'status':'absent'})
-        for incident in process_incidents(receipt):
-            key=(job['id'],incident['run_dir'],incident['status'])
-            incidents[key]={'job':job['id'],'method':job['method'],**incident,
-                            'queue_evidence':str((BASE/state_file).relative_to(ROOT))}
-        # Later continuation state supersedes the migrated parent's pending rows.
-        coverage[job['id']]={'method':job['method'],'status':receipt['status'],'reason':receipt.get('reason')}
-        if receipt['status']=='success' and job['id'] not in deferred_source_jobs:
-            run_path=Path(receipt['run_dir'])
-            relative=str(run_path.relative_to(ROOT)) if run_path.is_absolute() else str(run_path)
-            started=receipt.get('started_at');registered=state.get('process_create_time')
-            operational_timing[relative]={'queue':state_file,
-                'batch_queue_wait_seconds':max(0.,datetime.fromisoformat(started).timestamp()-registered) if started and registered else None,
-                'worker_seconds':receipt.get('elapsed_seconds'),
-                'scope':'Time from this batch queue process creation to task admission; not native online input response or model compute. Reused pilot retains its original admission.'}
-            read_run(receipt['run_dir'],job.get('task_id',0),job.get('scene',{}).get('clock','paused'))
-    for reused in plan.get('reused',[]):read_run(reused['run'],reused['task'],reused.get('clock','paused'))
+def main(destination=BASE/'20261024_native_matrix_analysis/analysis.json'):
+    load_replacements()
+    for plan_file,state_file in SOURCES:
+        if not (BASE/plan_file).exists() or not (BASE/state_file).exists():continue
+        plan=json.loads((BASE/plan_file).read_text());state=json.loads((BASE/state_file).read_text())
+        for job in plan['jobs']:
+            if job['method'] not in FACTORS:continue
+            receipt=state['jobs'].get(job['id'],{'status':'absent'})
+            for incident in process_incidents(receipt):
+                key=(job['id'],incident['run_dir'],incident['status'])
+                incidents[key]={'job':job['id'],'method':job['method'],**incident,
+                                'queue_evidence':str((BASE/state_file).relative_to(ROOT))}
+            # Later continuation state supersedes the migrated parent's pending rows.
+            coverage[job['id']]={'method':job['method'],'status':receipt['status'],'reason':receipt.get('reason')}
+            if receipt['status']=='success' and job['id'] not in deferred_source_jobs:
+                run_path=Path(receipt['run_dir'])
+                relative=str(run_path.relative_to(ROOT)) if run_path.is_absolute() else str(run_path)
+                started=receipt.get('started_at');registered=state.get('process_create_time')
+                operational_timing[relative]={'queue':state_file,
+                    'batch_queue_wait_seconds':max(0.,datetime.fromisoformat(started).timestamp()-registered) if started and registered else None,
+                    'worker_seconds':receipt.get('elapsed_seconds'),
+                    'scope':'Time from this batch queue process creation to task admission; not native online input response or model compute. Reused pilot retains its original admission.'}
+                read_run(receipt['run_dir'],job.get('task_id',0),job.get('scene',{}).get('clock','paused'))
+        for reused in plan.get('reused',[]):read_run(reused['run'],reused['task'],reused.get('clock','paused'))
 
-groups=defaultdict(list)
-derived_units={'root_waypoint_success_5cm':'fraction','new_goal_success_30cm_hold_05s':'fraction',
- 'initial_goal_success_30cm_hold_05s':'fraction',
- 'boundary_position_jump':'m','boundary_velocity_jump':'m/s','boundary_jerk_rms':'m/s^3',
- 'wall_native_observed_goal_success':'fraction','foot_candidate_contact_fraction_5cm':'fraction',
- 'foot_sliding_given_5cm_contact_10cms':'fraction','native_reset_count':'count',
- 'native_object_mean_obj_com_pos_err':'mm','native_object_mean_start_obj_com_pos_err':'mm',
- 'native_object_mean_end_obj_com_pos_err':'mm','native_object_mean_penetration_score':'m',
- 'native_object_mean_hand_penetration_score':'m','native_object_mean_contact_f1_score':'fraction'}
-for row in rows:
-    row['intervention_checks']=intervention_checks(row,ROOT)
-    row['operational_timing']=operational_timing.get(row['run'])
-    if row['operational_timing'] is not None:
-        row['operational_timing']['eager_mp4_created']=(ROOT/row['run']/'motion.mp4').is_file()
-    binding_path=ROOT/row['run']/'weight_binding.json'
-    row['weight_identity_evidence']=str(binding_path.relative_to(ROOT)) if binding_path.exists() else str(weight_audit_path.relative_to(ROOT))
-    if binding_path.exists():
-        binding=json.loads(binding_path.read_text())
-        if 'after_run_unchanged' in binding:
-            row['weight_identity']=binding['identity'] if binding.get('after_run_unchanged') else None
-            row['weight_identity_scope']='Bound before load and file change-times checked after native inference'
+    groups=defaultdict(list)
+    derived_units={'root_waypoint_success_5cm':'fraction','new_goal_success_30cm_hold_05s':'fraction',
+     'initial_goal_success_30cm_hold_05s':'fraction',
+     'boundary_position_jump':'m','boundary_velocity_jump':'m/s','boundary_jerk_rms':'m/s^3',
+     'wall_native_observed_goal_success':'fraction','foot_candidate_contact_fraction_5cm':'fraction',
+     'foot_sliding_given_5cm_contact_10cms':'fraction','native_reset_count':'count',
+     'native_object_mean_obj_com_pos_err':'mm','native_object_mean_start_obj_com_pos_err':'mm',
+     'native_object_mean_end_obj_com_pos_err':'mm','native_object_mean_penetration_score':'m',
+     'native_object_mean_hand_penetration_score':'m','native_object_mean_contact_f1_score':'fraction'}
+    for row in rows:
+        row['intervention_checks']=intervention_checks(row,ROOT)
+        row['operational_timing']=operational_timing.get(row['run'])
+        if row['operational_timing'] is not None:
+            row['operational_timing']['eager_mp4_created']=(ROOT/row['run']/'motion.mp4').is_file()
+        binding_path=ROOT/row['run']/'weight_binding.json'
+        row['weight_identity_evidence']=str(binding_path.relative_to(ROOT)) if binding_path.exists() else str(weight_audit_path.relative_to(ROOT))
+        if binding_path.exists():
+            binding=json.loads(binding_path.read_text())
+            if 'after_run_unchanged' in binding:
+                row['weight_identity']=binding['identity'] if binding.get('after_run_unchanged') else None
+                row['weight_identity_scope']='Bound before load and file change-times checked after native inference'
+            else:
+                retrospective=weight_audit.get(row['run'],{})
+                row['weight_identity']=retrospective.get('identity') if retrospective.get('passed') else None
+                row['weight_identity_scope']=retrospective.get('scope','Initial binding lacks after-run receipt; reconciliation required')
         else:
-            retrospective=weight_audit.get(row['run'],{})
-            row['weight_identity']=retrospective.get('identity') if retrospective.get('passed') else None
-            row['weight_identity_scope']=retrospective.get('scope','Initial binding lacks after-run receipt; reconciliation required')
-    else:
-        binding=weight_audit.get(row['run'],{})
-        row['weight_identity']=binding.get('identity') if binding.get('passed') else None
-        row['weight_identity_scope']=binding.get('scope','Dedicated weight identity receipt pending reconciliation; empty asset lists do not prove equality')
-    for metric in row['values']:
-        if row['units'].get(metric):continue
-        unit=derived_units.get(metric)
-        if metric.startswith('native_object_'):
-            unit=contract['chois_native_units'].get(metric.removeprefix('native_object_'),unit)
-        if unit is None:
-            if metric.endswith('_seconds'):unit='s'
-            elif metric.endswith('_m_s'):unit='m/s'
-            elif metric.endswith('_m'):unit='m'
-            elif metric.endswith('_fraction'):unit='fraction'
-            elif metric.endswith('_rtf'):unit='s/s'
-            elif metric.endswith('_gib'):unit='GiB'
-            elif metric.endswith('_count'):unit='count'
-        if unit is not None:row['units'][metric]=unit
-    groups[(row['method'],row['task'],row['seed'],row['clock'])].append(row)
-blocks=[];deltas=defaultdict(list);simple_deltas=defaultdict(list)
-for (method,task,seed,clock),group in groups.items():
-    same_inputs=len({r['input_signature'] for r in group})==1
-    same_assets=all(r['weight_identity'] is not None for r in group) and len({r['weight_identity'] for r in group})==1
-    same_shape=len({(r['frames'],r['fps']) for r in group})==1
-    valid_interventions=all(r['intervention_checks']['passed'] for r in group)
-    result=factorial_block(group,FACTORS[method])
-    result.update(method=method,task=task,seed=seed,clock=clock,same_inputs=same_inputs,same_assets=same_assets,same_shape=same_shape,valid_interventions=valid_interventions)
-    if not(same_inputs and same_assets and same_shape and valid_interventions):
-        result['complete']=False;result['rejection']='Paired input/assets/frame-rate or executed-intervention receipt mismatch';result['contrasts']=[]
-    for contrast in result['contrasts']:
-        key=(method,clock,tuple(contrast['factors']),contrast['metric'])
-        deltas[key].append((task,contrast['delta']))
-    simple=result.pop('simple_contrasts',[])
-    if result['complete']:
-        for contrast in simple:
-            key=(method,clock,contrast['factor'],tuple(sorted(contrast['fixed'].items())),contrast['metric'])
-            simple_deltas[key].append((task,contrast['delta']))
-    blocks.append(result)
-def summarize_effect_values(method,metric,values,include_sensitivity=True):
-    parent_by_task={r['task']:r.get('resampling_group',str(r['task'])) for r in rows if r['method']==method}
-    summary=clustered_interval([v for _,v in values],[task for task,_ in values],resample_groups=[parent_by_task[task] for task,_ in values])
-    if include_sensitivity:
-        summary['sensitivity']=task_sensitivity([v for _,v in values],[task for task,_ in values],[parent_by_task[task] for task,_ in values])
-    # A signed delta has no universal better direction, especially for interactions.
-    summary.pop('improved_fraction',None)
-    units={r['units'].get(metric) for r in rows if r['method']==method and metric in r['values'] and r['units'].get(metric)}
-    if len(units)>1:raise ValueError(f'Mixed metric units: {method}/{metric}/{units}')
-    return {'unit':next(iter(units),''),**summary}
-summaries=[{'method':method,'clock':clock,'factors':list(factors),'metric':metric,
-            **summarize_effect_values(method,metric,values)}
-           for (method,clock,factors,metric),values in deltas.items()]
-simple_summaries=[{'method':method,'clock':clock,'factor':factor,'fixed':dict(fixed),'metric':metric,
-                   **summarize_effect_values(method,metric,values,False)}
-                  for (method,clock,factor,fixed,metric),values in simple_deltas.items()]
-clock_groups=defaultdict(dict)
-for row in rows:
-    key=(row['method'],row['task'],row['seed'],json.dumps(row['condition'],sort_keys=True))
-    clock_groups[key][row['clock']]=row
-clock_pairs=[]
-for (method,task,seed,condition),pair in clock_groups.items():
-    if set(pair)!=set(['paused','realtime']):continue
-    a,b=pair['paused'],pair['realtime']
-    clock_pairs.append({'method':method,'task':task,'seed':seed,'condition':condition,
-        'same_assets':a['weight_identity'] is not None and a['weight_identity']==b['weight_identity'],
-        'same_shape':(a['frames'],a['fps'])==(b['frames'],b['fps']),
-        'exact_same_coordinates':a['trajectory_sha256']==b['trajectory_sha256'],
-        'paused_run':a['run'],'realtime_run':b['run'],
-        'scope':'Separate clock outcomes; matching coordinates never counted as two independent motion samples'})
-capability=[]
-success_metrics=['position_success_rate','root_waypoint_success_5cm','initial_goal_success_30cm_hold_05s','new_goal_success_30cm_hold_05s','new_goal_success_before_next_reset','new_goal_success_reset_free_episode','wall_native_observed_goal_success']
-for method in FACTORS:
-    method_rows=[r for r in rows if r['method']==method]
-    for clock in sorted({r['clock'] for r in method_rows}):
-        for condition in sorted({json.dumps(r['condition'],sort_keys=True) for r in method_rows if r['clock']==clock}):
-            selected=[r for r in method_rows if r['clock']==clock and json.dumps(r['condition'],sort_keys=True)==condition]
-            for metric in success_metrics:
-                measured=[r for r in selected if metric in r['values'] and r['intervention_checks']['passed'] and r['weight_identity'] is not None]
-                if not measured:continue
-                stats=clustered_interval([r['values'][metric] for r in measured],[r['task'] for r in measured])
-                stats.pop('improved_fraction',None)
-                capability.append({'method':method,'clock':clock,'condition':condition,'metric':metric,
-                    'completed_runs':len(measured),'runs_with_any_failure':sum(r['values'][metric]<1 for r in measured),
-                    'run_mean_success_fraction':float(np.mean([r['values'][metric] for r in measured])),
-                    'scope':'Position/waypoint rates are within-run constraint fractions; goal rates are binary per run. Process failures excluded and reported separately.',**stats})
-acceptance=[]
-for method in FACTORS:
-    for clock in (['paused','realtime'] if method in ['ardy','dart','primal','closd'] else ['paused']):
-        selected=[r for r in rows if r['method']==method and r['clock']==clock]
-        valid=[r for r in selected if r['intervention_checks']['passed'] and r['weight_identity'] is not None]
-        keys={(r['task'],r['seed'],tuple(r['condition'][k] for k in FACTORS[method])) for r in valid}
-        if len(keys)!=len(valid):raise ValueError('Duplicate scientific cell: '+method+'/'+clock)
-        if any(task not in range(12) or seed not in range(20,25) for task,seed,_ in keys):raise ValueError('Unexpected task/seed outside registered matrix')
-        per_task=5*2**len(FACTORS[method]);expected=12*per_task
-        task_rows=[{'task':task,'accepted_cells':sum(key[0]==task for key in keys),'expected_cells':per_task} for task in range(12)]
-        acceptance.append({'method':method,'clock':clock,'accepted_cells':len(keys),'expected_cells':expected,
-            'cells_requiring_receipt_reconciliation':len(selected)-len(valid),
-            'complete_blocks':sum(b['complete'] for b in blocks if b['method']==method and b['clock']==clock),
-            'expected_blocks':60,'covered_tasks':sum(t['accepted_cells']>0 for t in task_rows),
-            'complete_tasks':sum(t['accepted_cells']==per_task for t in task_rows),'expected_tasks':12,'task_rows':task_rows})
-for incident in incidents.values():
-    if incident.get('run_dir'):
-        run=Path(incident['run_dir']);run=run if run.is_absolute() else ROOT/run
-        incident['run']=str(run.relative_to(ROOT))
-        stderr=run/'stderr.log'
-        if stderr.exists():
-            errors=[line for line in stderr.read_text(errors='replace').splitlines() if 'Error:' in line or 'Exception:' in line]
-            if errors:incident['underlying_error']=errors[-1]
-    latest=coverage.get(incident['job'],{})
-    incident['later_same_job_success']=latest.get('status')=='success'
-    incident['resolution']='后续同一任务已成功；保留此次执行失败' if incident['later_same_job_success'] else '原始失败保留，不进入能力失败率'
-    if incident['method']=='primal' and 'Native primitive output too short' in incident.get('underlying_error',''):
-        replacement=next((r for r in rows if r['method']=='primal' and r['task']==0 and r['seed']==20 and r['clock']=='paused' and r['frames']==600),None)
-        if replacement:
-            incident['replacement_run']=replacement['run']
-            incident['resolution']='修正原生块数上界后重新生成并截取600帧；新运行已纳入完整配对块，旧588帧运行不用于推断'
-result={'updated_at':datetime.now(timezone.utc).isoformat(),'rows':rows,'blocks':blocks,'contrasts':summaries,'rejected':rejected,
-        'analysis_source_sha256':ANALYSIS_SOURCES,
-        'simple_effects':simple_summaries,
-        'matrix_acceptance':acceptance,
-        'replacement_checks':replacement_checks,
-        'source_replay_replacements':source_replay_replacements,
-        'capability_rates':capability,
-        'clock_pairs':clock_pairs,
-        'coverage':{m:dict(Counter(v['status'] for v in coverage.values() if v['method']==m)) for m in FACTORS},
-        'failures':list(incidents.values()),
-        'interpretation':'Within fixed pretrained systems; each clock analyzed separately, not pooled as independent samples. Marginal contrasts average other factors; interactions are differences of differences. Equal task weight; task-cluster bootstrap except PRIMAL groups short/long initial histories sharing the effective warm RNG seed. Intervals are conditional on selected tasks, not a population architecture ranking.'}
-if any(checksum(ROOT/path)!=digest for path,digest in ANALYSIS_SOURCES.items()):
-    raise RuntimeError('Analysis implementation changed during this calculation; retain previous coherent snapshot')
-destination=BASE/'20261024_native_matrix_analysis/analysis.json';json_write(destination,result)
-print(json.dumps({'output':str(destination),'runs':len(rows),'complete_blocks':sum(r['complete'] for r in blocks),'coverage':result['coverage'],'rejected':rejected}))
+            binding=weight_audit.get(row['run'],{})
+            row['weight_identity']=binding.get('identity') if binding.get('passed') else None
+            row['weight_identity_scope']=binding.get('scope','Dedicated weight identity receipt pending reconciliation; empty asset lists do not prove equality')
+        for metric in row['values']:
+            if row['units'].get(metric):continue
+            unit=derived_units.get(metric)
+            if metric.startswith('native_object_'):
+                unit=contract['chois_native_units'].get(metric.removeprefix('native_object_'),unit)
+            if unit is None:
+                if metric.endswith('_seconds'):unit='s'
+                elif metric.endswith('_m_s'):unit='m/s'
+                elif metric.endswith('_m'):unit='m'
+                elif metric.endswith('_fraction'):unit='fraction'
+                elif metric.endswith('_rtf'):unit='s/s'
+                elif metric.endswith('_gib'):unit='GiB'
+                elif metric.endswith('_count'):unit='count'
+            if unit is not None:row['units'][metric]=unit
+        groups[(row['method'],row['task'],row['seed'],row['clock'])].append(row)
+    blocks=[];deltas=defaultdict(list);simple_deltas=defaultdict(list)
+    for (method,task,seed,clock),group in groups.items():
+        same_inputs=len({r['input_signature'] for r in group})==1
+        same_assets=all(r['weight_identity'] is not None for r in group) and len({r['weight_identity'] for r in group})==1
+        same_shape=len({(r['frames'],r['fps']) for r in group})==1
+        valid_interventions=all(r['intervention_checks']['passed'] for r in group)
+        result=factorial_block(group,FACTORS[method])
+        result.update(method=method,task=task,seed=seed,clock=clock,same_inputs=same_inputs,same_assets=same_assets,same_shape=same_shape,valid_interventions=valid_interventions)
+        if not(same_inputs and same_assets and same_shape and valid_interventions):
+            result['complete']=False;result['rejection']='Paired input/assets/frame-rate or executed-intervention receipt mismatch';result['contrasts']=[]
+        for contrast in result['contrasts']:
+            key=(method,clock,tuple(contrast['factors']),contrast['metric'])
+            deltas[key].append((task,contrast['delta']))
+        simple=result.pop('simple_contrasts',[])
+        if result['complete']:
+            for contrast in simple:
+                key=(method,clock,contrast['factor'],tuple(sorted(contrast['fixed'].items())),contrast['metric'])
+                simple_deltas[key].append((task,contrast['delta']))
+        blocks.append(result)
+    def summarize_effect_values(method,metric,values,include_sensitivity=True):
+        parent_by_task={r['task']:r.get('resampling_group',str(r['task'])) for r in rows if r['method']==method}
+        summary=clustered_interval([v for _,v in values],[task for task,_ in values],resample_groups=[parent_by_task[task] for task,_ in values])
+        if include_sensitivity:
+            summary['sensitivity']=task_sensitivity([v for _,v in values],[task for task,_ in values],[parent_by_task[task] for task,_ in values])
+        # A signed delta has no universal better direction, especially for interactions.
+        summary.pop('improved_fraction',None)
+        units={r['units'].get(metric) for r in rows if r['method']==method and metric in r['values'] and r['units'].get(metric)}
+        if len(units)>1:raise ValueError(f'Mixed metric units: {method}/{metric}/{units}')
+        return {'unit':next(iter(units),''),**summary}
+    summaries=[{'method':method,'clock':clock,'factors':list(factors),'metric':metric,
+                **summarize_effect_values(method,metric,values)}
+               for (method,clock,factors,metric),values in deltas.items()]
+    simple_summaries=[{'method':method,'clock':clock,'factor':factor,'fixed':dict(fixed),'metric':metric,
+                       **summarize_effect_values(method,metric,values,False)}
+                      for (method,clock,factor,fixed,metric),values in simple_deltas.items()]
+    clock_groups=defaultdict(dict)
+    for row in rows:
+        key=(row['method'],row['task'],row['seed'],json.dumps(row['condition'],sort_keys=True))
+        clock_groups[key][row['clock']]=row
+    clock_pairs=[]
+    for (method,task,seed,condition),pair in clock_groups.items():
+        if set(pair)!=set(['paused','realtime']):continue
+        a,b=pair['paused'],pair['realtime']
+        clock_pairs.append({'method':method,'task':task,'seed':seed,'condition':condition,
+            'same_assets':a['weight_identity'] is not None and a['weight_identity']==b['weight_identity'],
+            'same_shape':(a['frames'],a['fps'])==(b['frames'],b['fps']),
+            'exact_same_coordinates':a['trajectory_sha256']==b['trajectory_sha256'],
+            'paused_run':a['run'],'realtime_run':b['run'],
+            'scope':'Separate clock outcomes; matching coordinates never counted as two independent motion samples'})
+    capability=[]
+    success_metrics=['position_success_rate','root_waypoint_success_5cm','initial_goal_success_30cm_hold_05s','new_goal_success_30cm_hold_05s','new_goal_success_before_next_reset','new_goal_success_reset_free_episode','wall_native_observed_goal_success']
+    for method in FACTORS:
+        method_rows=[r for r in rows if r['method']==method]
+        for clock in sorted({r['clock'] for r in method_rows}):
+            for condition in sorted({json.dumps(r['condition'],sort_keys=True) for r in method_rows if r['clock']==clock}):
+                selected=[r for r in method_rows if r['clock']==clock and json.dumps(r['condition'],sort_keys=True)==condition]
+                for metric in success_metrics:
+                    measured=[r for r in selected if metric in r['values'] and r['intervention_checks']['passed'] and r['weight_identity'] is not None]
+                    if not measured:continue
+                    stats=clustered_interval([r['values'][metric] for r in measured],[r['task'] for r in measured])
+                    stats.pop('improved_fraction',None)
+                    capability.append({'method':method,'clock':clock,'condition':condition,'metric':metric,
+                        'completed_runs':len(measured),'runs_with_any_failure':sum(r['values'][metric]<1 for r in measured),
+                        'run_mean_success_fraction':float(np.mean([r['values'][metric] for r in measured])),
+                        'scope':'Position/waypoint rates are within-run constraint fractions; goal rates are binary per run. Process failures excluded and reported separately.',**stats})
+    acceptance=[]
+    for method in FACTORS:
+        for clock in (['paused','realtime'] if method in ['ardy','dart','primal','closd'] else ['paused']):
+            selected=[r for r in rows if r['method']==method and r['clock']==clock]
+            valid=[r for r in selected if r['intervention_checks']['passed'] and r['weight_identity'] is not None]
+            keys={(r['task'],r['seed'],tuple(r['condition'][k] for k in FACTORS[method])) for r in valid}
+            if len(keys)!=len(valid):raise ValueError('Duplicate scientific cell: '+method+'/'+clock)
+            if any(task not in range(12) or seed not in range(20,25) for task,seed,_ in keys):raise ValueError('Unexpected task/seed outside registered matrix')
+            per_task=5*2**len(FACTORS[method]);expected=12*per_task
+            task_rows=[{'task':task,'accepted_cells':sum(key[0]==task for key in keys),'expected_cells':per_task} for task in range(12)]
+            acceptance.append({'method':method,'clock':clock,'accepted_cells':len(keys),'expected_cells':expected,
+                'cells_requiring_receipt_reconciliation':len(selected)-len(valid),
+                'complete_blocks':sum(b['complete'] for b in blocks if b['method']==method and b['clock']==clock),
+                'expected_blocks':60,'covered_tasks':sum(t['accepted_cells']>0 for t in task_rows),
+                'complete_tasks':sum(t['accepted_cells']==per_task for t in task_rows),'expected_tasks':12,'task_rows':task_rows})
+    for incident in incidents.values():
+        if incident.get('run_dir'):
+            run=Path(incident['run_dir']);run=run if run.is_absolute() else ROOT/run
+            incident['run']=str(run.relative_to(ROOT))
+            stderr=run/'stderr.log'
+            if stderr.exists():
+                errors=[line for line in stderr.read_text(errors='replace').splitlines() if 'Error:' in line or 'Exception:' in line]
+                if errors:incident['underlying_error']=errors[-1]
+        latest=coverage.get(incident['job'],{})
+        incident['later_same_job_success']=latest.get('status')=='success'
+        incident['resolution']='后续同一任务已成功；保留此次执行失败' if incident['later_same_job_success'] else '原始失败保留，不进入能力失败率'
+        if incident['method']=='primal' and 'Native primitive output too short' in incident.get('underlying_error',''):
+            replacement=next((r for r in rows if r['method']=='primal' and r['task']==0 and r['seed']==20 and r['clock']=='paused' and r['frames']==600),None)
+            if replacement:
+                incident['replacement_run']=replacement['run']
+                incident['resolution']='修正原生块数上界后重新生成并截取600帧；新运行已纳入完整配对块，旧588帧运行不用于推断'
+    result={'updated_at':datetime.now(timezone.utc).isoformat(),'rows':rows,'blocks':blocks,'contrasts':summaries,'rejected':rejected,
+            'analysis_source_sha256':ANALYSIS_SOURCES,
+            'simple_effects':simple_summaries,
+            'matrix_acceptance':acceptance,
+            'replacement_checks':replacement_checks,
+            'source_replay_replacements':source_replay_replacements,
+            'capability_rates':capability,
+            'clock_pairs':clock_pairs,
+            'coverage':{m:dict(Counter(v['status'] for v in coverage.values() if v['method']==m)) for m in FACTORS},
+            'failures':list(incidents.values()),
+            'interpretation':'Within fixed pretrained systems; each clock analyzed separately, not pooled as independent samples. Marginal contrasts average other factors; interactions are differences of differences. Equal task weight; task-cluster bootstrap except PRIMAL groups short/long initial histories sharing the effective warm RNG seed. Intervals are conditional on selected tasks, not a population architecture ranking.'}
+    if any(checksum(ROOT/path)!=digest for path,digest in ANALYSIS_SOURCES.items()):
+        raise RuntimeError('Analysis implementation changed during this calculation; retain previous coherent snapshot')
+    json_write(destination,result)
+    print(json.dumps({'output':str(destination),'runs':len(rows),'complete_blocks':sum(r['complete'] for r in blocks),'coverage':result['coverage'],'rejected':rejected}))
+
+
+if __name__=='__main__':
+    main(Path(sys.argv[1]) if len(sys.argv)>1 else BASE/'20261024_native_matrix_analysis/analysis.json')
