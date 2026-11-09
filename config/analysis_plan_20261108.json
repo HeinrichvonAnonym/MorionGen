@@ -3,7 +3,154 @@
  "created": "2026-11-08 23:15",
  "revised": "2026-11-09 00:06 user review: crossed text x task design and intervals, bone length / foot height classes, gate pass rates as results, Kimodo reuse label, Holm scope, pending_user; 2026-11-09 03:21 user (answer received between 03:17 and 03:21): overhead strategy descriptives (Q3_ergonomics.overhead_strategy); 2026-11-09 03:57: statistics.fid_interval pointer (user, answer received between 03:36 and 03:57), cross_paraphrase no longer lists CLoSD (no text factor, user 03:07); 2026-11-09 04:03 user: held-out fallback and its reading (split_use); 2026-11-09 04:08 user: ARDY has no held-out set, DART FID descriptive only, CHOIS mass lookup not used in this batch",
  "status": "frozen 2026-11-09 04:11 (manifest config/freeze_20261109.json, git tag freeze-20261109; user approval 2026-11-09 04:08); later changes only as timestamped revision records appended to revisions_after_freeze, and only before any batch result is seen",
- "revisions_after_freeze": [],
+ "revisions_after_freeze": [
+  {
+   "time": "2026-11-09 14:14",
+   "before_any_batch_result": true,
+   "commit": "b7e5911",
+   "change": "statistics.interval.primary: the primary interval is the cluster t interval on G - 1 df of the equal-task-weight mean (clusters = registered parents: task; PRIMAL resampling group; Kimodo source motion). With one task per cluster this is native_analysis.cluster_t_interval over task means; with unequal tasks per cluster (PRIMAL 1-2 tasks per group, Kimodo several cases per source motion) the cluster-robust (CR1) variance of the task-weighted mean, which equals it when every cluster has the same number of tasks. The exact sign flip for Holm runs over per-cluster sums of task means (the same estimand; identical to cluster means with one task per cluster). The task-cluster percentile bootstrap (10000 resamples, seed 20261108) is reported next to it as a sensitivity result. settings_robustness reads the raw cluster t interval in the other settings. Zone x switch (dose, 2-3 tasks per zone): Welch t interval over task means, the within-stratum bootstrap as sensitivity. The FID interval (statistics.fid_interval) is unchanged. User decision 2026-11-09 (option A)",
+   "found_in": "synthetic null validation (b), run 1 (develop_logs/test_runs/20261109_analysis_validation/run1_percentile_bootstrap_primary_failed/synthetic.json), not in any batch result. Share of null datasets whose percentile-bootstrap interval excluded 0, by cluster count: G = 12 (PRIMAL) 9.5 %; G = 20 (MotionLCM, OmniControl, DART, CLoSD) 6.1-9.0 %; G = 24 (CHOIS, ARDY) 6.3-6.9 %; G = 385 (Kimodo) 5.8 %. Expected from the bootstrap's sqrt((G-1)/G) standard error and normal quantile: 8.7 / 7.1 / 6.8 / 5.1 %",
+   "consistent_with": "M0 / V1 (develop_logs/notes/20261031_m0_v1_v5_report.md): primary interval cluster t (G - 1 df) with the exact sign flip, bootstrap reported alongside; v5 (develop_logs/test_runs/20261030_next_round/v5/v5.json): 9 of 90 effects excluded 0 only under the bootstrap, never the reverse, and the bootstrap interval was narrower in all 90 (median width ratio 0.835)",
+   "cross_paraphrase": "reported separately in (b) (user 2026-11-09): outside 3-7 % null false-positive rate in any scenario -> descriptive only. Run 2: 0.6-1.5 % in every scenario, so the crossed interval is descriptive; analyze_batch.py reads the role from synthetic.json",
+   "synthetic_distributions": "(b) adds two scenarios built from the native matrix residuals (user 2026-11-09): marginal on - off deltas within (task, seed) of analysis.json per (method, clock, switch, metric), centred and scaled (115 groups, 6870 residuals; metrics: target errors, jerk_rms, boundary_jerk_rms, trunk_inclination, upper-arm elevations, foot sliding); 'native_shape' as is (skewness -0.46, excess kurtosis 5.1) and 'native_shape_skew_aligned' with each group oriented to positive skew (skewness +1.16); every random term is drawn from the pool. The cluster t interval and Holm must meet the thresholds in every scenario",
+   "validation_a": {
+    "output": "develop_logs/test_runs/20261109_analysis_validation/native.json",
+    "attribution": "develop_logs/test_runs/20261109_analysis_validation/native_v5_scipy1.11.2.json",
+    "result": "analysis.json rows (13 fields), 1440 per-run jerk values, 924 contrasts and 1076 simple effects of analysis.json (2000 resamples, seed 20261024), 80 deck_recheck effects and the 72-item gate (10000, seed 20261108) reproduce within relative 1e-9 (max 1.8e-13). v5: 9 of 103 items exceed 1e-9 (max 3.7e-9), each in one cluster t interval endpoint only; means, sign-flip p values and bootstrap intervals agree",
+    "items_beyond_tolerance": [
+     "primal inertialization foot_sliding_given_5cm_contact_10cms",
+     "primal inertialization jerk_common_0p1s",
+     "primal ground_snap foot_sliding_given_5cm_contact_10cms",
+     "primal reprojection foot_floor_penetration_fraction",
+     "primal reprojection foot_sliding_given_5cm_contact_10cms",
+     "kimodo jerk_native",
+     "kimodo jerk_common_0p1s",
+     "kimodo foot_skate_from_pred_contacts",
+     "kimodo foot_skate_max_vel"
+    ],
+    "t_quantile": {
+     "scipy 1.10.1 / 1.11.2": {
+      "df7": 2.3646242510102993,
+      "df6": 2.4469118487916806
+     },
+     "scipy 1.15.3 / 1.16.3": {
+      "df7": 2.3646242515927844,
+      "df6": 2.4469118511449692
+     }
+    },
+    "attribution_rerun": "the same code under scipy 1.11.2 (python 3.10.22, numpy 1.26.4) reproduces all 103 v5 items, max relative difference 1.8e-13",
+    "decision": "user 2026-11-09: (a) passed with this attribution"
+   },
+   "environment_pinned": {
+    "python": "3.13.9",
+    "numpy": "2.3.5",
+    "scipy": "1.16.3",
+    "interpreter": "system python3 with PYTHONNOUSERSITE=1",
+    "enforced": "analyze_batch.py refuses any other version and writes the versions into its output"
+   },
+   "validation_b_run2": {
+    "output": "develop_logs/test_runs/20261109_analysis_validation/synthetic.json",
+    "datasets": "1000 per scenario and effect size (0, 0.5, 1, 2 SD), 3 scenarios",
+    "results": {
+     "native_shape": {
+      "cluster_t_null_excludes_0": [
+       0.04,
+       0.059
+      ],
+      "cluster_t_coverage_0.5_1_2_SD": [
+       0.935,
+       0.964
+      ],
+      "bootstrap_null_excludes_0": [
+       0.052,
+       0.098
+      ],
+      "holm_familywise_null": {
+       "Q1": {
+        "rate": 0.041,
+        "upper95": 0.0529,
+        "passed": true
+       },
+       "Q2": {
+        "rate": 0.054,
+        "upper95": 0.0673,
+        "passed": true
+       }
+      }
+     },
+     "native_shape_skew_aligned": {
+      "cluster_t_null_excludes_0": [
+       0.037,
+       0.063
+      ],
+      "cluster_t_coverage_0.5_1_2_SD": [
+       0.924,
+       0.965
+      ],
+      "bootstrap_null_excludes_0": [
+       0.055,
+       0.104
+      ],
+      "holm_familywise_null": {
+       "Q1": {
+        "rate": 0.053,
+        "upper95": 0.0662,
+        "passed": true
+       },
+       "Q2": {
+        "rate": 0.068,
+        "upper95": 0.0826,
+        "passed": false
+       }
+      }
+     },
+     "normal": {
+      "cluster_t_null_excludes_0": [
+       0.042,
+       0.061
+      ],
+      "cluster_t_coverage_0.5_1_2_SD": [
+       0.928,
+       0.96
+      ],
+      "bootstrap_null_excludes_0": [
+       0.058,
+       0.092
+      ],
+      "holm_familywise_null": {
+       "Q1": {
+        "rate": 0.049,
+        "upper95": 0.0618,
+        "passed": true
+       },
+       "Q2": {
+        "rate": 0.047,
+        "upper95": 0.0595,
+        "passed": true
+       }
+      }
+     }
+    },
+    "boundary_cases": "17 of 17 passed",
+    "sign_flip_equivalence": "300 vectors and 396 in-run cross-checks against native_analysis.sign_flip_p: 0 mismatches",
+    "failing_criterion": "native_shape_skew_aligned, null: Q2 Holm familywise 68 / 1000 = 6.8 %, 95 % upper bound 8.26 % > 7 %; every other criterion passed"
+   },
+   "skew_null_extension_rule": "registered before the data (user 2026-11-09): 4000 further null datasets of native_shape_skew_aligned with independent seeds (indices 1000-4999, never generated before; python/scripts/validate_batch_analysis.py skew-extra, commit b7e5911); combined with the first 1000, the Q2 Holm familywise point estimate <= 7 % passes, > 7 % fails; the 95 % upper bound is reported and is not a gate. The Holm p value stays the exact sign flip. Output: develop_logs/test_runs/20261109_analysis_validation/synthetic_skew_null_extra.json",
+   "interpretations": [
+    "gate pass per run = the evaluator produced its value (lumbar: measured; neck: ok); the frame-level IK gate shows in the unmeasurable share, so the 'all pairs' sensitivity differs from the primary set mainly for lumbar",
+    "a row is inside the band when its median lowest-landmark elevation is within 2.5 +/- 0.5 cm below the floor",
+    "MotionLCM / OmniControl primary contrasts are reported per text level, both in the Holm family; the conflict cost is secondary",
+    "CHOIS target error = native waypoint xy error",
+    "Kimodo and ARDY correction target errors are constrained and outside Holm; Kimodo is reported per constraint type",
+    "boundary jerk boundaries: DART trace steps, CLoSD planner frames (new derivation, not in v5), ARDY chunk_boundaries, PRIMAL every 14 frames",
+    "PRIMAL clusters = registered resampling groups",
+    "PRIMAL generated runs keep legacy L1, L3, L4 (contract revision record)",
+    "Q3 overhead-strategy descriptive not implemented: its registered precondition is not met",
+    "CHOIS read_run not yet exercised on new batch runs (rehearsal checks it)"
+   ],
+   "conventions": "约定，未经推演: the synthetic model variances, the 3-7 % / 90-98 % / 7 % thresholds, the 5000-dataset extension size"
+  }
+ ],
  "builds_on": {
   "design": "develop_logs/notes/20261108_batch_design_decisions.md sections 0, 2-5, 8, 14 (section 14 overrides conflicting parts of section 13)",
   "deck": "develop_logs/notes/decks/MotionGeneration_科研汇报_v5.2.pptx: questions (p.4), metrics (p.5), E criterion (p.6), three layers (p.7), windows (p.8), switches (p.9), judgements 1-4 (p.16)",
