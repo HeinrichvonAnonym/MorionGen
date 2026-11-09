@@ -149,6 +149,20 @@
     "CHOIS read_run not yet exercised on new batch runs (rehearsal checks it)"
    ],
    "conventions": "约定，未经推演: the synthetic model variances, the 3-7 % / 90-98 % / 7 % thresholds, the 5000-dataset extension size"
+  },
+  {
+   "time": "2026-11-09 15:02",
+   "before_any_batch_result": true,
+   "commit": "b7e5911 (code), 0e2ffd3 (rule record, committed before the extra data)",
+   "validation_outputs": {
+    "a": "develop_logs/test_runs/20261109_analysis_validation/native.json",
+    "a_attribution": "develop_logs/test_runs/20261109_analysis_validation/native_v5_scipy1.11.2.json",
+    "b": "develop_logs/test_runs/20261109_analysis_validation/synthetic.json",
+    "b_skew_null_extension": "develop_logs/test_runs/20261109_analysis_validation/synthetic_skew_null_extra.json",
+    "b_run1_failed": "develop_logs/test_runs/20261109_analysis_validation/run1_percentile_bootstrap_primary_failed/synthetic.json"
+   },
+   "skew_null_extension_result": "native_shape_skew_aligned null, indices 1000-4999: Q2 Holm familywise 212/4000; combined with the first 1000: 280/5000 = 0.056 <= 0.07 (rule passed); 95 % upper bound 0.0616 (reported, not a gate). Q1 combined 245/5000 = 0.049. Cluster t null excludes-0 rates over the 5000: 0.0462-0.0570",
+   "status": "validation (a) passed (user decision on the scipy attribution); validation (b) passed: every criterion of synthetic.json except the skew-aligned Q2 Holm family, which passed the registered extension rule; analyze_batch.py accepts the run only with synthetic_skew_null_extra.json passed and tied to the sha256 of synthetic.json"
   }
  ],
  "builds_on": {
