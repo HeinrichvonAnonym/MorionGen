@@ -458,9 +458,20 @@ def kimodo_values(manifest_rows):
     return {r['case']: r for r in rows if r['case'] in cases}
 
 
+def stored_net_moments(d, e):
+    """evalkit_batch.net_moments without its OpenSim fallbacks (the pinned analysis interpreter has no OpenSim): rows
+    evaluated by the current evalkit store the net_moment_* fields; a row that would need the fallback stops the analysis."""
+    out = {k: v for k, v in e['muscle'].items() if k.startswith('net_moment_')}
+    if not out and (Path(d)/'work/so/so_so_force.sto').exists():
+        raise ValueError(f'{d}: net moments not stored; rerun the row with the current evalkit')
+    return out
+
+
 def evalkit_values(lay, manifest_rows):
     """Per manifest row id: evalkit values by setting, evaluator gates and measurement-state fields."""
+    import evalkit_batch
     from evalkit_batch import DEPTH_BAND_M, rows_summary
+    evalkit_batch.net_moments = stored_net_moments
     from evalkit.spec import SPEC
     depth = SPEC['residual']['penetration_depth_m']
     msum = rows_summary(lay['method'], manifest_rows) if lay['method'].exists() else {}
