@@ -16,6 +16,19 @@
    "offset_reference": "the method-floor pass uses --offset-reference config/evalkit_offset_reference_20261108.json (frozen)",
    "freeze_check": "python/scripts/build_freeze_manifest.py --check accepts a config referenced after the freeze only when a revision record lists it under added_configs and its sha256 is unchanged",
    "tested": "on the full plans of the self check with no queue state: 644 linked inference rows (PRIMAL expanded to 480 switch rows) and 832 Kimodo rows, 2116 jobs listed as missing, no row without a required field, no Kimodo row with task_id, 36 linked CHOIS rows on added windows carry the added reference"
+  },
+  {
+   "time": "2026-11-09 15:34",
+   "before_any_batch_result": true,
+   "change": "batch orchestration python/scripts/batch_pipeline.py (commit a7d0cdf): start / resume / status; runner detached with nohup setsid nice -n 19 and PYTHONNOUSERSITE=1; state in BATCH/stages.json; batch directory develop_logs/test_runs/NAME is a link to <data_root>/batch_runs/NAME (runs, queues, evalkit rows, logs on the data disk). Evaluation starts after the whole generation (execution_order). Stage order: generate_main, generate_chois, generate_retry (resource_gate jobs only, the same job and seed, one card), [rehearsal: shadow], contract (complete, scan), manifest, [formal with --reuse-batch: seed_evalkit], eval_method (run, method floor, dims residual,ergo,muscle,kinematic, --offset-reference config/evalkit_offset_reference_20261108.json), eval_self (manifest-self-floor, run, same dims), eval_lumbar (manifest-lumbar-sample on the self-floor manifest, --per-cell 1 --defer-split deck_recheck,held_out, run with upper added), neck_rotation (both arms), analysis (python/scripts/analyze_batch.py; rehearsal --structure-only plus a held-out refusal probe). Output names follow analyze_batch.layout (evalkit/development/{method, self_manifest.json, self, lumbar_manifest.json}); every process pool spawn with max_tasks_per_child=1 (evalkit_batch.py).",
+   "held_out": "held-out rows are not evaluated by this orchestrator: evalkit_batch.py run writes and prints the median offset of its manifest (_batch_median, a drift diagnostic), which on the held-out manifest would be a held-out summary; how held-out rows are evaluated per row is decided before that step",
+   "rehearsal_reuse": "user 2026-11-09: rehearsal rows are taken over by the formal batch under the skip / reuse rules, not recomputed. Generation: python/scripts/build_batch_plan.py --reuse-batch links a formal job to a rehearsal run when the run succeeded, its contract is complete (integrity.json done) and its input identity (scan_seen_inputs.identity) equals the job (the frozen reuse rule); evalkit: rehearsal row directories of equal id and input_sha256 are copied in and the evalkit batch key skips or recomputes them",
+   "status": "status prints stage states, queue counts per method (success / failed / timeout / resource_gate / pending / running, attempts, summed elapsed seconds), evalkit row counts (evalkit.json / error.json present) and elapsed times; no metric is read or printed",
+   "failures": "resource_gate (admission refusal before the model runs) is rerun once in generate_retry with the same job and seed; a failure after the model ran stays recorded (failure.json) and is never rerun or replaced; the frozen queue retries a timeout once with the same job and seed (retryable_statuses default) and keeps both attempts",
+   "conventions_not_derived": [
+    "free-space / memory floors before each stage: data disk 100 GiB, system disk 20 GiB, available memory 6 GiB (约定，未经推演)",
+    "evalkit workers 10 (formal), 6 (rehearsal) (约定，未经推演)"
+   ]
   }
  ],
  "builds_on": {
