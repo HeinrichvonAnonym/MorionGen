@@ -565,10 +565,33 @@ def build_units(manifest_rows, final=False):
                 for key in (TARGET.get(m),) + SOURCE_KEYS:
                     if key and s['values'].get(key) is not None:
                         u['values'][f'{key}@source'] = float(s['values'][key])
-                u['block'] = {'signature': s['input_signature'], 'weights': s['weight_identity'], 'shape': (s['frames'], s['fps']),
+                u['block'] = {'signature': block_signature(m, run, s), 'weights': s['weight_identity'], 'shape': (s['frames'], s['fps']),
                               'interventions': bool(s['intervention_checks']['passed'])}
         units.append(u)
     return units, missing, src_rejected
+
+
+CONTRACT_SCENE_FIELDS = ('task_id', 'paraphrase_id', 'text_condition', 'target_zone')
+CONTRACT_KIND_FIELDS = ('kind', 'prompt', 'constraints', 'duration_seconds', 'initial_state')
+
+
+def block_signature(method, run, source_row):
+    """Input signature of a run inside its paired block: the native-matrix scene hash with the contract L2 fields that
+    build_batch_plan.py adds to batch scenes removed (the entry scripts do not read them), so batch runs and linked
+    earlier runs of one block compare on their inputs; ARDY native_root_path normalised as scan_seen_inputs.identity
+    (the default switch_seconds 5 dropped); PRIMAL keeps the initial-history hash."""
+    from scan_seen_inputs import r6
+    if method == 'primal':
+        return source_row['input_signature']
+    scene = json.loads((ROOT/run/'scenario.json').read_text())
+    drop = CONTRACT_SCENE_FIELDS + (CONTRACT_KIND_FIELDS if method in ('dart', 'closd') else ())
+    scene = {k: v for k, v in scene.items() if k not in drop}
+    if method == 'ardy' and 'native_root_path' in scene:
+        p = {k: v for k, v in scene['native_root_path'].items() if not (k == 'switch_seconds' and v == 5.)}
+        p['direction_xz'] = r6(p['direction_xz'])
+        scene['native_root_path'] = p
+        scene['updates'] = [{**u, 'time_seconds': float(u['time_seconds'])} for u in scene.get('updates', [])]
+    return hashlib.sha256(json.dumps(scene, sort_keys=True).encode()).hexdigest()
 
 
 def validate_blocks(units):
