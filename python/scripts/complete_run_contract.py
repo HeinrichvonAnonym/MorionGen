@@ -17,7 +17,8 @@ Runs whose status is not success keep their directory and get failure.json (stat
 Rerunning skips runs whose integrity.json verifies.
 
 scan gate (exit 1 otherwise): new runs ok in every layer except the contract-listed PRIMAL legacy (L1 identity, L3
-motion, L4 native); linked earlier runs legacy or ok (no gap) in every layer.
+motion, L4 native); linked earlier runs legacy or ok (no gap) in every layer; links to rehearsal runs (origin
+rehearsal) as new runs.
 """
 import argparse
 import hashlib
@@ -161,7 +162,7 @@ def scan(batch):
         d, method = ROOT/x['run'], x['row']['method']
         for t in targets(d, method):
             r = mcc.check_run(t, method)
-            bad = gate(r, method, True)
+            bad = gate(r, method, x.get('origin') != 'rehearsal')
             out['linked'][str(t)] = {'method': method, **{L: r[L]['state'] for L in LAYERS}, 'problems': bad}
             problems += [f'{t}: {b}' for b in bad]
     summary = {k: {'runs': len(v), 'with_problems': sum(bool(r['problems']) for r in v.values())} for k, v in out.items()}

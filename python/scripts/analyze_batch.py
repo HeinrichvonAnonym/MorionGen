@@ -28,6 +28,7 @@ import hashlib
 import itertools
 import json
 import math
+import os
 import subprocess
 import sys
 import time
@@ -396,6 +397,11 @@ def layout(batch, split):
             'lumbar_manifest': base/'lumbar_manifest.json', 'self': base/'self'}
 
 
+def repo_relative(run):
+    """Run path relative to the repository without resolving links (batch directories link to the data disk)."""
+    return str(Path(os.path.abspath(ROOT/run)).relative_to(ROOT))
+
+
 def weight_identity(anm, row):
     """analyze_native_matrix.main weight identity of one row (binding receipt, else the retrospective audit)."""
     binding = ROOT/row['run']/'weight_binding.json'
@@ -417,7 +423,7 @@ def source_rows(manifest_rows):
     runs = {}
     for r in manifest_rows:
         if r['method'] != 'kimodo':
-            runs.setdefault(str(Path(r['run']).resolve().relative_to(ROOT)), int(r['task_id']))
+            runs.setdefault(repo_relative(r['run']), int(r['task_id']))
     failed = {}
     for run, task in sorted(runs.items()):
         try:
@@ -539,7 +545,7 @@ def build_units(manifest_rows, final=False):
             task = int(r['task_id'])
             u.update(task=task, parent=parent_of(m, task), seed=int(r['seed']), text=r['text_condition'],
                      paraphrase=r['paraphrase_id'], zone=r['target_zone'])
-            run = str(Path(r['run']).resolve().relative_to(ROOT))
+            run = repo_relative(r['run'])
             variant = Path(r['source']).name.removesuffix('_canonical.npz') if m == 'primal' else None
             s = src.get((run, variant))
             if s is None:

@@ -12,17 +12,23 @@ Self check (exit 1 on any difference): every selected frozen row is exactly one 
 equals its frozen row; method, condition, task, paraphrase, seed, text and target read back from the job's scene, command
 and config equal the frozen row and task.
 
-  build_batch_plan.py --out DIR [--rehearsal] [--deadline-hours H]
+  build_batch_plan.py --out DIR [--rehearsal] [--deadline-hours H] [--run-root REL] [--reuse-batch BATCH]
 Writes DIR/plan_main.json (every method but CHOIS, devices 0 and 1), DIR/plan_chois.json (device 0, the other card idle,
 as CHOIS was timed in the smoke), DIR/links.json and DIR/self_check.json.
 --rehearsal: per method one development (task, seed, text level, paraphrase) group with all its conditions (rows of the
-group that are reuse candidates become links), plus one more link for each method that has reuse candidates.
+group that are reuse candidates become links), plus one more link for each method that has reuse candidates; the jobs
+those links replace are also written to DIR/shadow.json (ids suffixed __shadow, device 0), generated once to compare
+their motion with the linked run.
+--run-root: run_root of every job (relative to the repository, through the batch directory link to the data disk).
+--reuse-batch: a rehearsal batch directory; its successful jobs whose contract is complete (integrity.json done) and
+whose input identity equals the job's become links with origin rehearsal (the frozen reuse rule applied to rehearsal runs).
 """
 import argparse
 import copy
 import datetime
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -185,29 +191,55 @@ def rehearsal_rows(rows):
     return out
 
 
+def rehearsal_runs(batch):
+    """{job id: run relative to the repository} of the successful attempts in BATCH/queue*/state.json whose contract is complete."""
+    out = {}
+    for state in sorted(Path(batch).glob('queue*/state.json')):
+        for job, rec in json.loads(state.read_text())['jobs'].items():
+            for a in rec.get('attempts', []):
+                d = Path(os.path.abspath(ROOT/a.get('run_dir', '')))
+                if a.get('status') == 'success' and a.get('run_dir') and (d/'integrity.json').is_file() \
+                        and json.loads((d/'integrity.json').read_text()).get('done'):
+                    out[job] = str(d.relative_to(ROOT))
+    return out
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--out', required=True, type=Path)
     p.add_argument('--rehearsal', action='store_true')
     p.add_argument('--deadline-hours', type=float, default=96.)
+    p.add_argument('--run-root')
+    p.add_argument('--reuse-batch', type=Path)
     args = p.parse_args()
+    if args.rehearsal and args.reuse_batch:
+        raise SystemExit('--reuse-batch is for the formal plan')
     tasks, header, rows = load_tasks()
     keys = [row_key(r) for r in rows]
     problems = [] if len(keys) == len(set(keys)) else ['frozen rows are not unique on (method, task, seed, condition, text_level)']
     selected = rehearsal_rows(rows) if args.rehearsal else rows
-    jobs, links = [], []
+    reusable = rehearsal_runs(args.reuse_batch) if args.reuse_batch else {}
+    jobs, links, shadows = [], [], []
     for r in selected:
         j = batch_job(tasks, header, r)
+        if args.run_root:
+            j.setdefault('config', {})['run_root'] = args.run_root
         if j['inference_row'] != r:
             problems.append(f'{j["id"]}: inference_row differs from the frozen row')
         got, want = readback(j), expected(tasks, r)
         if got != want:
             problems.append(f'{j["id"]}: ' + ', '.join(k for k in sorted(set(got) | set(want)) if got.get(k) != want.get(k)))
+        digest = hashlib.sha256(job_identity(j).encode()).hexdigest()
         if r['reuse_candidate']:
             bad = verify_link(j, r['identical_seen_run'])
             if bad:
                 problems.append(f'{j["id"]} link {bad}')
-            links.append({'row': r, 'run': r['identical_seen_run'], 'job_identity_sha256': hashlib.sha256(job_identity(j).encode()).hexdigest()})
+            links.append({'row': r, 'run': r['identical_seen_run'], 'job_identity_sha256': digest, 'origin': 'frozen_reuse'})
+            if args.rehearsal:
+                shadows.append({**copy.deepcopy(j), 'id': j['id'] + '__shadow', 'shadow_of': r['identical_seen_run']})
+        elif j['id'] in reusable and verify_link(j, reusable[j['id']]) is None:
+            links.append({'row': r, 'run': reusable[j['id']], 'job_identity_sha256': digest, 'origin': 'rehearsal',
+                          'rehearsal_batch': str(args.reuse_batch)})
         else:
             jobs.append(j)
     covered = [row_key(j['inference_row']) for j in jobs] + [row_key(x['row']) for x in links]
@@ -218,23 +250,31 @@ def main():
         problems.append('not every frozen row is covered')
     counts = {m: {'rows': sum(r['method'] == m for r in selected), 'jobs': sum(j['method'] == m for j in jobs),
                   'links': sum(x['row']['method'] == m for x in links),
+                  'rehearsal_links': sum(x['row']['method'] == m and x['origin'] == 'rehearsal' for x in links),
                   'held_out_jobs': sum(j['method'] == m and j['inference_row']['split'] == 'held_out' for j in jobs)}
               for m in tasks['methods']}
     for m, c in counts.items():
         frozen = tasks['counts'][m]
-        if not args.rehearsal and (c['links'] != frozen['reuse_candidates'] or c['jobs'] != frozen['rows'] - frozen['reuse_candidates']):
-            problems.append(f'{m}: jobs / links {c["jobs"]} / {c["links"]} differ from the frozen counts')
+        reused = c['rehearsal_links']
+        if not args.rehearsal and (c['links'] - reused != frozen['reuse_candidates']
+                                   or c['jobs'] + reused != frozen['rows'] - frozen['reuse_candidates']):
+            problems.append(f'{m}: jobs / links {c["jobs"]} / {c["links"]} ({reused} rehearsal) differ from the frozen counts')
+    if args.run_root and any(j.get('config', {}).get('run_root') != args.run_root for j in jobs + shadows):
+        problems.append('a job without the batch run_root')
     now = datetime.datetime.now(datetime.timezone.utc)
     common = {'source': str(TASKS_PATH.relative_to(ROOT)),
               'source_sha256': hashlib.sha256(TASKS_PATH.read_bytes()).hexdigest(),
               'builder': str(Path(__file__).resolve().relative_to(ROOT)), 'rehearsal': args.rehearsal,
               'deadline': (now + datetime.timedelta(hours=args.deadline_hours)).isoformat(), 'report_reserve_seconds': 0,
-              'templates': {m: str(t.relative_to(ROOT)) for m, t in smoke.TEMPLATES.items()}}
+              'templates': {m: str(t.relative_to(ROOT)) for m, t in smoke.TEMPLATES.items()}, 'run_root': args.run_root,
+              'reuse_batch': str(args.reuse_batch) if args.reuse_batch else None}
     args.out.mkdir(parents=True, exist_ok=True)
     report = {'created': now.isoformat(), 'rehearsal': args.rehearsal, 'counts': counts, 'problems': problems,
+              'shadow_jobs': len(shadows),
               'checked': ['frozen rows unique', 'each selected row exactly one job or link', 'inference_row equals the frozen row',
                           'method, condition, task, paraphrase, seed, text, target and clock read back from scene / command / '
-                          'config equal the frozen row and task', 'links: run exists, status success, input identity equal']}
+                          'config equal the frozen row and task', 'links: run exists, status success, input identity equal',
+                          'rehearsal links: contract complete (integrity.json done)', 'every job carries the batch run_root']}
     (args.out/'self_check.json').write_text(json.dumps(report, indent=1, ensure_ascii=False) + '\n')
     if problems:
         print(json.dumps(report, indent=1, ensure_ascii=False)[:4000])
@@ -245,6 +285,10 @@ def main():
         plan = {**copy.deepcopy(common), 'devices': devices, 'jobs': js,
                 'scope': 'large batch generation (design section 14), ' + ('rehearsal' if args.rehearsal else 'formal')}
         (args.out/name).write_text(json.dumps(plan, indent=1, ensure_ascii=False) + '\n')
+    if args.rehearsal:
+        (args.out/'shadow.json').write_text(json.dumps({**copy.deepcopy(common), 'devices': [0], 'jobs': shadows,
+                                                        'scope': 'rehearsal shadow jobs: motion compared with the linked run'},
+                                                       indent=1, ensure_ascii=False) + '\n')
     (args.out/'links.json').write_text(json.dumps({**common, 'links': links}, indent=1, ensure_ascii=False) + '\n')
     print(json.dumps({'counts': counts, 'problems': 0}, ensure_ascii=False))
 

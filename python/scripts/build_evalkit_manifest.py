@@ -10,7 +10,7 @@ median diagnostic summarise every row of their manifest).
 
 Row fields (evaluation protocol rows.manifest_fields): id, method, source, condition, split, task_id, seed, paraphrase_id,
 text_condition, target_zone, reach_task (MotionLCM / OmniControl wrist target), world (config/motion_world/<method>.json
-path and sha256), input_sha256, origin (generated / linked) and run; PRIMAL: one row per switch combination
+path and sha256), input_sha256, origin (generated / linked / rehearsal) and run; PRIMAL: one row per switch combination
 (factorial/<switch>_canonical.npz). CHOIS rows of the windows not in config/evalkit_floor_reference_20261107.json carry
 reference (landmark offsets above the floor) and floor_m from config/evalkit_floor_reference_chois_added_20261109.json.
 Kimodo rows have no task_id: each case is its own lumbar stratum (protocol lumbar_subsample); cluster = source motion.
@@ -126,7 +126,7 @@ def main():
         else:
             missing.append({'job': j['id'], 'inference_row': j['inference_row'], 'last_status': status.get(j['id'])})
     for x in links:
-        rows += rows_for(x['row'], ROOT/x['run'], 'linked', added_floor)
+        rows += rows_for(x['row'], ROOT/x['run'], 'rehearsal' if x.get('origin') == 'rehearsal' else 'linked', added_floor)
     kim = kimodo_rows()
     if a.kimodo != 'all':
         cases = sorted({r['case'] for r in kim})[:int(a.kimodo)]
