@@ -163,6 +163,11 @@
    },
    "skew_null_extension_result": "native_shape_skew_aligned null, indices 1000-4999: Q2 Holm familywise 212/4000; combined with the first 1000: 280/5000 = 0.056 <= 0.07 (rule passed); 95 % upper bound 0.0616 (reported, not a gate). Q1 combined 245/5000 = 0.049. Cluster t null excludes-0 rates over the 5000: 0.0462-0.0570",
    "status": "validation (a) passed (user decision on the scipy attribution); validation (b) passed: every criterion of synthetic.json except the skew-aligned Q2 Holm family, which passed the registered extension rule; analyze_batch.py accepts the run only with synthetic_skew_null_extra.json passed and tied to the sha256 of synthetic.json"
+  },
+  {
+   "time": "2026-11-09 17:57",
+   "before_any_batch_result": true,
+   "change": "found in the batch rehearsal (structure only, no value seen), commits 688f775 and 341085a of python/scripts/analyze_batch.py: (1) evalkit rows are read under the pinned interpreter, which has no OpenSim; evalkit_batch.net_moments imports OpenSim only for its fallbacks on rows that predate the stored net_moment_* fields, so the analysis reads the stored fields and stops on a row that would need the fallback (equal to evalkit_batch.net_moments on all 76 rehearsal rows with the muscle dimension, compared under the OpenSim interpreter). (2) paired-block validation compared the hash of the whole scene; batch scenes carry the contract L2 fields added by build_batch_plan.py (task_id, paraphrase_id, text_condition, target_zone; DART / CLoSD also kind, prompt, constraints, duration_seconds, initial_state), which the entry scripts do not read, and ARDY writes the default switch_seconds and integer update times differently from the earlier runs, so every block mixing linked earlier runs with batch runs was rejected as inputs differ (the rehearsal ARDY block). The signature now drops those fields and normalises the ARDY path as scan_seen_inputs.identity (the registered reuse identity); PRIMAL keeps the initial-history hash. Checked: the rehearsal ARDY block has one signature; in the formal plan all 960 non-PRIMAL blocks, 97 of them mixing links and jobs, have one signature; the 7 rehearsal shadow jobs (scene with the added fields) reproduced the motion of their linked runs bit for bit. Validation (a) and (b) do not use these functions; the 17 boundary cases pass."
   }
  ],
  "builds_on": {
