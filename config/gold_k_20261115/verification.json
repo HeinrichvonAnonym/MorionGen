@@ -1,0 +1,48 @@
+{
+  "positive": {
+    "status": "passed",
+    "rows": 2348,
+    "included_entries": 2277,
+    "final_unique_recordings": 607,
+    "profiles": 8,
+    "development_folds": 25,
+    "evidence_files_verified": 99
+  },
+  "negative_probes": [
+    {
+      "case": "subject_leak",
+      "rejected": true,
+      "reason": "Andy subject mismatch"
+    },
+    {
+      "case": "historical_han_in_holdout",
+      "rejected": true,
+      "reason": "Previously exposed Han subject in final holdout"
+    },
+    {
+      "case": "lost_native_rotation",
+      "rejected": true,
+      "reason": "Wrong native capability: closd"
+    },
+    {
+      "case": "duplicate_alias_leak",
+      "rejected": true,
+      "reason": "CoLLaboratE scene mismatch"
+    },
+    {
+      "case": "holdout_in_cv",
+      "rejected": true,
+      "reason": "Holdout in development CV: andy_leave_909"
+    }
+  ],
+  "verified_at": "2026-11-15T23:10:48.715863+08:00",
+  "configuration_commit": "7eb60bc0badad0a72bb1f8827319ff703a112bf4",
+  "verified_artifacts": {
+    "config/gold_k_20261115/degradations.json": "ae7f1b331c5ff47a46cd530f012a67c7315d2e7caadf73ca2c023846402f4e9f",
+    "config/gold_k_20261115/evidence.json": "c26d8864b1302154216004084677dda475b9374f5b1828ef6f86341a149ed2b9",
+    "config/gold_k_20261115/split.json": "757b9e29072362b89a7ff5cdb0007a37b34e86a45e739320e73e3355a3a82934",
+    "config/gold_k_20261115/trials.jsonl": "47d19f0a0f7b87321e45d177a51a1e3a5f530225947c1999072041e4abde847d",
+    "python/scripts/check_gold_k_registration.py": "9c1fd2a848706ac1da2a66945f107b7a9f205918557ecbaac01be7ce7f5909c3"
+  },
+  "scope": "registration consistency, historical-use separation and evidence integrity; no K model performance evaluation"
+}
