@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "protocol": "gold_k_20261115_v1",
+  "status": "specified; adapters and experiments not executed",
+  "purpose": "把同一参照运动导出为八个基线的实际输入信息，分开测量表示损失、适配误差和补齐误差。",
+  "evidence_file": "evidence.json",
+  "profile_count": 8,
+  "information_note": "八种输出契约可有相同的信息量。MotionLCM 与 OmniControl 共用 HumanML22 位置退化，区别在原生特征的保存/解码路径；DART 与 PRIMAL 保留相近的 SMPL-X 姿态信息，参数序列化不同。",
+  "reference": {
+    "fields": ["timestamps_s", "joint_centres_m", "segment_world_rotations", "head_world_rotation", "thorax_world_rotation", "joint_valid", "orientation_valid", "calibration_id", "reference_origin", "subject_group", "recording_id"],
+    "origins": {
+      "andy": "独立光学标记刚体标定与重建；实测、冗余点重建、惯性回退、先验分别留 provenance。光学主评分只使用经开发集验收并冻结规则的光学参考窗。",
+      "collaborate": "发布 BVH 的真实层级、通道顺序、非根平移和原生帧率做 FK，保存头与胸段旋转；用作表示一致性和场景迁移参照。",
+      "han": "原始头/胸标记构建参考；已有 AddB 关节中心中的插值脊柱和肩中点 neck 用作待检输入。"
+    },
+    "primary_target": "R_relative = transpose(R_thorax) @ R_head；世界旋转统一为解剖段坐标到世界坐标。",
+    "anatomical_calibration": "固定世界坐标转换 A 和段坐标校准 B_s，R_anatomical_s = A @ R_native_s @ B_s。解剖轴定义、角度分解及 B_s 求法先用开发集确定并版本化；旋转矩阵测地角为主指标。",
+    "reference_acceptance": "标记数、非共线性、冗余点重建误差、时间对齐和中立姿态质量先在开发集检验。适配器/补齐器不参与生成其自身的评分真值。",
+    "separation": "评分端单独保存真实 head/thorax 旋转与被遮蔽的观测；预测端只接受各 profile 的 allowed_inputs。"
+  },
+  "common_export": {
+    "steps": [
+      "按 trials.jsonl 的分组取原记录；先固定标定窗与评分窗，再切片、导出和增加退化。",
+      "从测得且有效的关节中心/段旋转，按目标模型的 rest pose、父子拓扑和体型规则拟合一次带完整可用旋转的目标骨架；保存拟合损失。",
+      "按 profile 的 fps 重采样，选择所列字段并序列化。只添加该格式要求的确定性编码，不按方法名称叠加随机噪声。",
+      "将导出运动重新读入 K；与同时间、同有效窗的参照以及带完整旋转的目标骨架分别比较。"
+    ],
+    "units_axes": "统一运动入口使用 m、右手 Z-up；原生旁路按真实轴系单独保存。Y-up 到 Z-up 用 utils/motiogen/motion.py Y_TO_Z，世界旋转左乘同一变换。",
+    "time": "保持原始秒时钟，输出 t0+k/fps，终点不超出原记录。下采样的抗混叠、旋转插值与短段处理在开发阶段实现并冻结；共同对照使用同一时间滤波，缺测段保持掩码。",
+    "body_shape": "body_shape 有原始测量/参数才传入；其余使用目标固定模板及协议允许的尺度标定，保留 fitted/template/measured 标识。形状拟合参数和误差在评分端单列。",
+    "unsupported_joints": "手指、眼、下颌、肩胛等超出参考观测的字段用 valid=false；序列化必须填值时采用明确的 rest/template 值并标记 synthetic。它们不充当独立真值或额外预测输入。",
+    "gold_not_in_prediction_input": ["reference head/thorax rotations absent from the selected format", "hidden markers or virtual face markers", "held-out labels", "reference reconstruction residuals used as pose hints", "full reference pose used as missing-field initialization"],
+    "consumer_status": "现有统一位置 loader 与 native 旋转入口能力不同；本登记指定目标保留信息。后续接入时逐项实现读取与掩码，防止旁路文件中的旋转被遗漏。",
+    "no_runtime_physics": "格式导出只构造运动学表示；CLoSD 的接触力与 CHOIS 的物体状态保留可用性标记，动力学另行验证。"
+  },
+  "profiles": [
+    {
+      "id": "D1_motionlcm_humanml22_positions",
+      "method": "motionlcm",
+      "fps": 20,
+      "skeleton": "HumanML3D 22",
+      "joint_names": "evidence.baseline_samples.motionlcm[0].joint_names",
+      "allowed_inputs": ["joints[T,22,3]", "joint_names[22]", "fps", "units_axes", "valid_masks"],
+      "serialization": ["motion.npz", "optional raw/joints.npy"],
+      "transform": "完整目标骨架取 HumanML22 关节位置；移除段旋转、面部/HeadEnd 标记、原始 marker、姿态参数和体型标签。保留 neck、head、spine1/2/3、双侧 collar/shoulder。",
+      "head_orientation_policy": "withheld",
+      "thorax": "由 spine3、neck、左右 collar/shoulder 的位置及固定标定恢复胸段坐标。",
+      "head": "neck→head 给出一条方向，绕该方向的转动缺少独立观测；补齐结果附带不确定性。",
+      "question": "位置骨架能够恢复多少胸段姿态和头相对胸段旋转？",
+      "information_equivalence_group": "humanml22_positions",
+      "source_sample_method": "motionlcm"
+    },
+    {
+      "id": "D2_omnicontrol_humanml263_roundtrip",
+      "method": "omnicontrol",
+      "fps": 20,
+      "skeleton": "HumanML3D 22 / 263 features",
+      "joint_names": "evidence.baseline_samples.omnicontrol[0].joint_names",
+      "allowed_inputs": ["joints[T,22,3]", "features_263[1,1,T,263]", "joint_names[22]", "fps", "units_axes", "valid_masks"],
+      "serialization": ["motion.npz", "raw/features.npy"],
+      "transform": "先执行 D1 的关节筛选，再用已固定 HumanML 编解码器由位置构造 root、相对位置、骨方向派生旋转、速度及脚接触特征，解码回 joints；记录编解码边界损失及 T/T-1 对齐。",
+      "head_orientation_policy": "withheld",
+      "feature_rule": "263 特征的旋转部分只由已保留的位置计算；完整参考头旋转不写回该字段。",
+      "thorax": "与 D1 相同的位置观测；派生特征不计作新增独立胸段观测。",
+      "head": "与 D1 相同的独立旋转信息；单列 codec 误差，匹配解码位置时采用相同补齐器作配对对照。",
+      "question": "相同稀疏信息经过真实特征编码后，补齐误差增加多少？",
+      "information_equivalence_group": "humanml22_positions",
+      "source_sample_method": "omnicontrol"
+    },
+    {
+      "id": "D3_ardy_soma27_global_rotations",
+      "method": "ardy",
+      "fps": 20,
+      "skeleton": "cskel27 / SOMA 27 named",
+      "joint_names": "evidence.baseline_samples.ardy[0].joint_names",
+      "allowed_inputs": ["joints[T,27,3]", "global_rotations[T,27,3,3]", "joint_names[27]", "fps", "units_axes", "valid_masks"],
+      "serialization": ["motion.npz"],
+      "transform": "映射到实际 27 节点拓扑，保留世界位置和世界旋转；胸段用 Spine3，头段用 head。额外脊柱节点的旋转分配由固定 retarget 规则给出并记录。",
+      "head_orientation_policy": "preserve_native",
+      "thorax": "Spine/Spine3 与 spine1/spine2 分别按名字和层级处理。",
+      "head": "直接读取 head 的旋转，经段坐标标定计算头胸相对姿态。",
+      "question": "27 节点重定向与世界旋转约定带来多少适配误差？",
+      "source_sample_method": "ardy"
+    },
+    {
+      "id": "D4_chois_smplx22_plus_hand_points",
+      "method": "chois",
+      "fps": 30,
+      "skeleton": "SMPL-X body 22 + 2 hand points",
+      "joint_names": "evidence.baseline_samples.chois[0].joint_names",
+      "allowed_inputs": ["joints[T,24,3]", "global_rotations[T,22,3,3]", "joint_names[24]", "fps", "units_axes", "valid_masks"],
+      "serialization": ["motion.npz", "raw/native_prediction.npz"],
+      "transform": "保留 body22 的姿态与旋转，另列两侧 hand point；body wrist 使用 left/right_wrist_body，hand point 使用 left/right_wrist。头胸使用 body22 的 head 与 spine3。",
+      "head_orientation_policy": "preserve_native",
+      "auxiliary": "物体位置/旋转在来源存在时单独保存；K 头胸主比较只读身体字段。手点无观测时按 common_export 的模板与掩码约定处理。",
+      "question": "24 位置节点与 22 旋转节点的双路映射是否改变头胸姿态？",
+      "source_sample_method": "chois"
+    },
+    {
+      "id": "D5_closd_smpl24_body_quaternions",
+      "method": "closd",
+      "fps": 30,
+      "skeleton": "SMPL 24 rigid bodies + canonical22 view",
+      "joint_names": "evidence.baseline_samples.closd[1].body_names",
+      "allowed_inputs": ["native joints[T,24,3]", "rotations_xyzw[T,24,4]", "body_names[24]", "dof_positions[T,69]", "canonical joints[T,22,3]", "fps", "units_axes", "valid_masks"],
+      "serialization": ["native_physics.npz", "motion.npz"],
+      "transform": "映射到 SMPL24 刚体层级，以 x,y,z,w 四元数保存世界旋转；按真实 body 顺序导出，另生成统一22节点视图。以 Chest 和 Head 为胸/头段，DOF 用模型关节坐标编码。",
+      "head_orientation_policy": "preserve_native",
+      "physics": "由运动学参考构造的导出项标为 synthetic_format。contact_forces 标为 unavailable；运行刚体仿真是独立实验。",
+      "legacy": "2026-10-24/25 native-matrix 旧记录缺少旋转，按实际字段登记 legacy_positions_only；与本主 profile 分列。",
+      "question": "刚体命名、四元数顺序和 24→22 映射分别造成多少误差？",
+      "source_sample_method": "closd"
+    },
+    {
+      "id": "D6_dart_smplx_matrix_parameters",
+      "method": "dart",
+      "fps": 30,
+      "skeleton": "SMPL-X 22",
+      "joint_names": "evidence.baseline_samples.dart[0].joint_names",
+      "allowed_inputs": ["joints[T,22,3]", "transl[T,3]", "global_orient[T,3,3]", "body_pose[T,21,3,3]", "betas[T,10]", "gender", "pelvis_delta[3]", "fps", "units_axes", "valid_masks"],
+      "serialization": ["motion.npz", "smplx_params.npz"],
+      "transform": "将完整目标姿态写成 root 世界旋转和 21 个父子局部旋转矩阵，配套平移、形状及 pelvis_delta；按 SMPL-X 父子链 FK 取得 head/spine3 世界旋转，同时保留位置入口。",
+      "head_orientation_policy": "preserve_native",
+      "dual_path": "本格式退化用同一目标状态输出位置与姿态。真实 DART 的网络关节与旋转 FK 存在差异，另以实际输出审计该差异，格式退化不合成任意 7mm 噪声。",
+      "legacy": "缺 smplx_params 的旧输出登记 legacy_positions_only，不从参考真值补回原生姿态。",
+      "question": "局部旋转、体型和 pelvis 偏移的读取是否稳定保留头胸姿态？",
+      "source_sample_method": "dart"
+    },
+    {
+      "id": "D7_kimodo_soma77_native_channels",
+      "method": "kimodo",
+      "fps": 30,
+      "skeleton": "SOMA 77",
+      "joint_names": "utils/motiogen/motion.py:SOMA77_NAMES (source hash in evidence.json)",
+      "allowed_inputs": ["posed_joints[T,77,3]", "local_rot_mats[T,77,3,3]", "global_rot_mats[T,77,3,3]", "fps", "native_axes", "valid_masks"],
+      "serialization": ["motion.npz (native Y-up)"],
+      "transform": "保存 SOMA77 的原生位置、局部与世界旋转；胸段 spine3，颈链 neck→Neck2→head，单独保留 HeadEnd。由父子旋转逐级组合，在读取端执行固定 Y→Z 变换。",
+      "head_orientation_policy": "preserve_native",
+      "reference_support": "Andy/Han 的参考范围主要在身体。77 通道所需的指、眼、下颌等采用显式 template 值与掩码；HeadEnd 若由目标骨架生成，标为 derived，不计独立观测。",
+      "question": "较长颈链和细骨架在聚合到解剖头胸段时引入多少误差？",
+      "source_sample_method": "kimodo"
+    },
+    {
+      "id": "D8_primal_smplx_axis_angle69",
+      "method": "primal",
+      "fps": 30,
+      "skeleton": "SMPL-X 22",
+      "joint_names": "HumanML22 body order / utils/motiogen/evalkit/ergo.py:SMPL22_NAMES",
+      "allowed_inputs": ["pose[1,T,69]", "joints[1,T,22,3]", "betas[1,H,16]", "fps", "units_axes", "valid_masks"],
+      "serialization": ["factorial/<switch>.npz", "factorial/initial_history.npz", "optional <switch>_canonical.npz"],
+      "transform": "pose 依次打包 transl3、root 轴角3、21×3 body 轴角；betas16 保存于初始历史，旋转指数映射后按 SMPL-X 层级 FK。历史长度 H 读真实元数据，主样例 H=2。",
+      "head_orientation_policy": "preserve_native",
+      "history_rule": "初始历史只能取该试次允许的过去输入；不以将被评分的未来真值作历史。格式退化继承所选 switch 的记录与分组，不重新执行控制开关。",
+      "question": "轴角打包、跨 π 连续性和历史/输出帧对齐是否改变头胸姿态？",
+      "source_sample_method": "primal"
+    }
+  ],
+  "two_tasks": {
+    "format_completion_and_adaptation": "八个 D profile 的主任务。D1/D2 学习或规则补齐缺少的旋转；D3-D8 首先验证已有旋转的读取、映射和标定。每种 profile 同时保留 source-native 与 position-only 读取的配对对照。",
+    "observation_gap_reconstruction": "参考构建与运行时掉点作为独立轴：先在完整且有效的观测窗中遮蔽头、胸或两者观测，再测恢复误差。自然缺测窗报告恢复覆盖与辅助一致性；拥有独立参照时才计真实角度误差。",
+    "shared_masks": {
+      "regions": ["head", "thorax", "head_and_thorax"],
+      "gap_seconds": [0.1, 0.5, 1.0, 2.0],
+      "seed": "sha256(protocol|recording_id|region|gap_seconds|replicate)",
+      "selection": "可评分窗及遮蔽起点用开发集冻结的可见性规则和确定性 seed 选择；同记录跨 profile 共用秒级遮蔽区间。",
+      "leakage": "遮蔽区域中所有能重建被遮观测的冗余字段同时遮蔽：位置、局部/全局旋转、姿态参数及派生特征一致更新。依赖被遮祖先旋转的全局量同步处理。",
+      "context": "离线双向恢复与在线仅过去恢复分开登记；窗口隔离整个原记录，滤波与历史上下文沿用对应模式。",
+      "convention": "时长为本轮工程压力档位，未经功效分析；完整窗本身的格式能力由无额外遮蔽的主任务衡量。"
+    }
+  },
+  "evaluation": {
+    "comparisons": ["完整参考→带可用旋转的目标骨架：retarget/标定损失", "目标骨架→序列化→读回：编码与接口损失", "退化输入→补齐/适配→完整参考：实际头胸误差"],
+    "metrics": ["头相对胸段的 SO(3) 测地角：acos(clip((trace(R_ref^T R_pred)-1)/2,-1,1))，单位度", "头与胸各自的旋转误差；固定解剖轴后的屈伸、侧弯、轴向转动误差", "头/颈位置误差及运动连续性", "有效窗覆盖、掉点时长分层、姿势分层误差与不确定性校准"],
+    "aggregation": "先按原记录汇总，再按受试者与任务报告；Andy 留出5人和电视留出场景分别列结果；重复文件计一次，Han 多段回归到原记录权重。",
+    "uncertainty": "D1/D2 将轴向转动标为欠观测，比较固定中立/颈头方向等简单对照及带不确定性的补齐。输出预测误差与原生观测能力分别报告。",
+    "freeze_before_final": ["参照重建与解剖标定版本", "目标骨架 rest pose/体型规则及模型文件哈希", "抗混叠/插值、段边界处理和标定/评分时间窗规则", "HumanML codec 版本及归一化参数来源", "适配实现与缺测掩码传播", "训练参数、权重、验证选择规则及不确定性方法", "评价代码与计数清单"],
+    "implementation_status": "本提交冻结人员/记录名单和八种退化的输入信息契约；数值适配实现及参照精度验收留待开发阶段，用户补充注意事项后推进。"
+  }
+}

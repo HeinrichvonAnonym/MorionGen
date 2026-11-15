@@ -5,3 +5,6 @@ outputs
 develop_rules.md
 report_rules.md
 .vscode
+
+# OpenSim runtime log
+/opensim.log

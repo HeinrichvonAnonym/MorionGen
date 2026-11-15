@@ -1,0 +1,85 @@
+schema_version: 1
+extends: motion_retarget_hiphi_object.yaml
+
+paths:
+  output_root: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/outputs/motion_retarget_hiphi_object_pilot_v2
+
+object_pilot:
+  selection_manifest: config/hiphi_object_pilot_selection_v2.json
+  contact_enter_m: 0.02
+  contact_exit_m: 0.03
+  contact_minimum_frames: 5
+  # Upper bound for the greedy covering set, not a requirement that all 16
+  # vertices be active.  Small-object grasps rotate through more than four
+  # credible finger/palm vertices during one persistent contact segment.
+  contact_patch_vertices: 16
+  contact_patch_max_distance_m: 0.035
+  contact_patch_minimum_opposition: 0.0
+  # A contact frame and its selected patch use the same hysteresis envelope;
+  # otherwise 25--30 mm release frames are declared contact but receive no
+  # geometric constraint and visibly snap away from the object.
+  contact_patch_active_enter_m: 0.02
+  contact_patch_active_exit_m: 0.03
+  # Hand-level contact already has a five-frame hysteresis gate.  Requiring
+  # the same mesh vertex for five frames discards sliding/rolling contact on
+  # small objects as the active point crosses adjacent SMPL-X vertices.
+  contact_patch_active_minimum_frames: 1
+  contact_anchor_segment_m: 0.010
+  contact_anchor_segment_minimum_frames: 18
+  contact_anchor_segment_normal_degrees: 30.0
+  # Keep the skin on the released object surface; collision clearance is the
+  # SDF term's responsibility and must not be hidden as an artificial gap.
+  contact_surface_offset_m: 0.002
+  optimize_hand_pose: true
+  ik_iterations: 180
+  ik_learning_rate: 0.01
+  ik_final_learning_rate_scale: 0.03
+  mano_learning_rate_scale: 0.6
+  arm_max_delta_degrees: [10.0, 10.0, 15.0, 15.0, 20.0, 20.0, 20.0, 20.0]
+  # Leave numerical headroom below the 30 degree P95 acceptance gate after
+  # SO(3) composition and float32 archive round-trip.
+  mano_max_delta_degrees: 29.5
+  # Contact is ordered above non-contact penetration in the agreed pilot
+  # priority.  These terms share metre-squared units with the SDF loss, so the
+  # relative weights intentionally preserve the native grasp before moving
+  # unconstrained hand surface out of the object.
+  contact_plane_weight: 12000.0
+  contact_tangent_weight: 5000.0
+  contact_normal_weight: 16.0
+  contact_slip_weight: 48.0
+  penetration_weight: 6000.0
+  penetration_max_weight: 48000.0
+  penetration_topk_vertices: 64
+  pose_prior_weight: 8.0
+  hand_pose_prior_weight: 2.5
+  delta_velocity_weight: 3.0
+  delta_acceleration_weight: 12.0
+  c4_knot_seconds: 0.04
+  c4_huber_degrees: 45.0
+  c4_post_projection: false
+  c4_polish_iterations: 0
+  c4_polish_learning_rate: 0.005
+  c4_polish_max_degrees: 2.0
+  c4_polish_prior_weight: 5.0
+  acceptance:
+    object_translation_m: 0.0001
+    object_rotation_deg: 0.01
+    contact_median_m: 0.02
+    contact_p95_m: 0.04
+    penetration_p95_m: 0.01
+    penetration_max_m: 0.03
+    noncontact_joint_median_m: 0.03
+    noncontact_joint_p95_m: 0.08
+    normal_angle_median_deg: 45.0
+    normal_angle_p95_deg: 75.0
+    normal_gap_p95_m: 0.012
+    tangent_error_p95_m: 0.025
+    tangent_slip_p95_m_s: 0.25
+    contact_patch_frame_coverage: 0.80
+    contact_patch_active_vertices_p05: 1.0
+    arm_delta_p95_deg: 20.0
+    arm_delta_max_deg: 30.0
+    mano_delta_p95_deg: 30.0
+    mano_delta_max_deg: 45.0
+    mujoco_object_translation_m: 0.001
+    mujoco_object_rotation_deg: 0.1

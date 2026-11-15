@@ -1,8 +1,9 @@
 """E v2 dynamic references: 24 kin30 clips (walk, squat, sts, wholebody x 6) tracked with Moco, split by subject.
 
 --select writes config/e_v2_moco_refs_20261106.json (seed 20261106; subjects are split globally, so no subject is in both
-calibration and test). --run solves them with the smoke-tested configuration, at most 3 at a time, 2 h each; a clip that
-times out is retried once at 1.5 s and otherwise recorded as failed, never replaced.
+calibration and test). --run solves them with the smoke-tested configuration, at most 3 at a time. A solve fails when the
+final stage does not converge (IPOPT, 3000 iterations per stage) or the 12 h hang guard expires; a failed solve is retried
+once at 1.5 s and otherwise recorded as failed, never replaced. A converged solve whose evaluation fails is not retried.
 """
 import argparse, json, subprocess, sys, time
 from concurrent.futures import ThreadPoolExecutor
@@ -21,7 +22,7 @@ CLASSES = ('walk', 'squat', 'sts', 'wholebody')
 PER_SPLIT = 3
 SEED = 20261106
 MIN_SECONDS = 1.5
-TIMEOUT_S = 7200
+TIMEOUT_S = 43200
 RETRY_SECONDS = 1.5
 
 
@@ -55,7 +56,7 @@ def select():
                     'subjects shuffled and halved (redrawn until each class has >= 3 eligible subjects per half); per class '
                     'and half 3 subjects drawn, one trial per subject drawn',
             'solve': {'continuation': True, 'mesh_interval_s': .02, 'max_parallel': 3, 'timeout_s': TIMEOUT_S,
-                      'retry_on_timeout_seconds': RETRY_SECONDS, 'failed_entries_are_not_replaced': True},
+                      'retry_seconds': RETRY_SECONDS, 'failed_entries_are_not_replaced': True},
             'subjects': {sp: sorted(s for s, v in side.items() if v == sp) for sp in ('calibration', 'test')},
             'refs': sorted(chosen, key=lambda x: (x['split'], x['class'], x['trial']))}
     assert not set(spec['subjects']['calibration']) & set(spec['subjects']['test'])
@@ -85,7 +86,7 @@ def one(ref, args):
         solve = json.loads((out/'solve.json').read_text()) if (out/'solve.json').exists() else None
         rec['attempts'].append({'seconds': seconds, 'exit': code, 'wall_s': round(time.time()-start),
                                 'success': bool(solve and solve['success']), 'evaluated': (out/'evaluation.json').exists()})
-        if code != 'timeout':
+        if rec['attempts'][-1]['success']:
             break
     last = rec['attempts'][-1]
     rec['status'] = 'ok' if last['success'] and last['evaluated'] else 'failed'

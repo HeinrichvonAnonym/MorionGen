@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "dataset": "HiPHI",
+  "seed": 20261101,
+  "mirrored": false,
+  "sampling": "fixed-seed stratified random selection with unique actor and object category",
+  "selected": [
+    {
+      "sequence_id": "Bringing-carry_0206",
+      "actor_id": "A048",
+      "object_category": "box",
+      "stratum": "human_robot_collaboration_transport"
+    },
+    {
+      "sequence_id": "Cause_motion-pull_0251",
+      "actor_id": "A016",
+      "object_category": "table",
+      "stratum": "industrial_positioning"
+    },
+    {
+      "sequence_id": "Cause_to_move_in_place-turn_0143",
+      "actor_id": "A011",
+      "object_category": "clothrack",
+      "stratum": "workcell_assembly_adjustment"
+    },
+    {
+      "sequence_id": "Placing-shower_0015",
+      "actor_id": "A035",
+      "object_category": "bucket",
+      "stratum": "service_cleaning"
+    },
+    {
+      "sequence_id": "Placing-drizzle_0005",
+      "actor_id": "A008",
+      "object_category": "bottle",
+      "stratum": "service_pouring"
+    }
+  ],
+  "replacements": []
+}
+

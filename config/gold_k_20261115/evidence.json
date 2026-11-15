@@ -1,0 +1,1379 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-15",
+  "repository_head_before_registration": "9a5f89944502128e3fdbfc15b41e42d7e9d045ac",
+  "audit_scope": [
+    "当前仓库 config、notes、脚本与相关 test_runs；数据盘 motion_retarget 两套任务账本/manifest；Han val_a 实际结果。",
+    "CoLLaboratE 使用痕迹搜索覆盖 notes/config/scripts/utils 及 test_runs 文本（后者单文件上限5MB）；匹配集中于盘点与报告。",
+    "结论针对可追溯的项目使用记录；未审计上游预训练数据，也未推断未留下记录的人工查看。"
+  ],
+  "inventory_sources": [
+    {
+      "path": "develop_logs/test_runs/20261114_152201_gold_data_audit/andy_audit.json",
+      "bytes": 543253,
+      "sha256": "edcbdd60e171237fc8a38d85ae8066ef5cf01f6a015da182f944a5478e3275af"
+    },
+    {
+      "path": "develop_logs/test_runs/20261114_152201_gold_data_audit/han_audit.json",
+      "bytes": 3415882,
+      "sha256": "39809c2c66ff89ec8766aa6f6ee7127bc4ce9cc26a3ce5777fa95b7b50ec2fad"
+    },
+    {
+      "path": "develop_logs/test_runs/20261114_152201_gold_data_audit/mingei_audit.json",
+      "bytes": 19270458,
+      "sha256": "7fdf5ef20971d46e3681f907661c9926f3fc2e3597f07c3cf753e25957d50886"
+    }
+  ],
+  "historical_sources": [
+    {
+      "path": "develop_logs/notes/motion_retarget_pose_diagnosis_20261101.md",
+      "bytes": 8670,
+      "sha256": "f76481735c8374f9eb8f942962c67f3923dff848d3fd5ad5cd8deceb97a16dcc"
+    },
+    {
+      "path": "develop_logs/notes/motion_retarget_stage_report_20261101.md",
+      "bytes": 10757,
+      "sha256": "27f8b5bac204466b7997446d4cc68664b0a881bdb9f8611639423cab7bc1c365"
+    },
+    {
+      "path": "develop_logs/notes/motion_retarget_andy_hiphi_source_native_stage_20261101.md",
+      "bytes": 1908,
+      "sha256": "137b3713613970ecd992d34d65e0afb72c75b142d621a2667b2d15ffaf2e1a4e"
+    },
+    {
+      "path": "develop_logs/notes/20261107_evalkit_fit4_and_addb_paired.md",
+      "bytes": 4673,
+      "sha256": "f66aa9eeafb7519e0d49e20be3ceba9a2d545fc64662463d21a942f06d0706ac"
+    },
+    {
+      "path": "config/e_v2_moco_refs_20261106.json",
+      "bytes": 9751,
+      "sha256": "a7d0f4a794ae9e663328889034f02774645487bdc78226065f91d894ea7b52ec"
+    },
+    {
+      "path": "config/val_a_addb_20261105_amend4.json",
+      "bytes": 3563,
+      "sha256": "f8e488bac9cc622737d0fd1ec8e69788304ef837950f4db0b0d8126d7cc5d465"
+    },
+    {
+      "path": "config/evalkit_addb_paired_20261107.json",
+      "bytes": 3131,
+      "sha256": "15b9a011a081030150f121a3c23a4f1917b3d4b20f83298af0a6263354829e10"
+    },
+    {
+      "path": "scripts/run_motion_retarget_andy_hiphi_source_native.sh",
+      "bytes": 5108,
+      "sha256": "100a4fe97fd2821bd8b2f027acda3a168e8cd7776be57fab662bb5bb9824ca22"
+    },
+    {
+      "path": "develop_logs/test_runs/motion_retarget_andy_hiphi_source_native/pilot_validate.log",
+      "bytes": 31890,
+      "sha256": "dfc19f1bfdbd2be7e9ff4e208bf9db85234b1663cea1de99e33f73d262e2203b"
+    }
+  ],
+  "events": [
+    {
+      "id": "motion_retarget",
+      "kind": "execution_ledger_snapshot",
+      "ledger_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/motion_retarget/ledger.sqlite3",
+      "manifest": {
+        "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/motion_retarget/manifest.jsonl",
+        "bytes": 155907,
+        "sha256": "fb26bbc4542b77c86f460dd36fba85a373a8f75ffbc48dc52a3c9e8376beb445"
+      },
+      "rows": [
+        {
+          "sequence_id": "Participant_2193_Setup_B_Seq_6_Trial_4",
+          "profile": "female_165",
+          "status": "complete",
+          "attempts": 2,
+          "updated_at": 1793519088.055295
+        },
+        {
+          "sequence_id": "Participant_2193_Setup_B_Seq_6_Trial_4",
+          "profile": "male_178",
+          "status": "complete",
+          "attempts": 6,
+          "updated_at": 1793515307.961187
+        }
+      ],
+      "interpretation": "已执行/已尝试的记录；running 是账本状态，不代表审计时进程仍在运行。"
+    },
+    {
+      "id": "motion_retarget_andy_hiphi_source_native",
+      "kind": "execution_ledger_snapshot",
+      "ledger_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/motion_retarget_andy_hiphi_source_native/ledger.sqlite3",
+      "manifest": {
+        "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/motion_retarget_andy_hiphi_source_native/manifest.jsonl",
+        "bytes": 56863,
+        "sha256": "ed7a574774a706b41fe3263031011c322e8d801b53fe23d20e24ae908169a1ab"
+      },
+      "rows": [
+        {
+          "sequence_id": "Participant_2193_Setup_B_Seq_3_Trial_1",
+          "profile": "source_native",
+          "status": "running",
+          "attempts": 2,
+          "updated_at": 1793521883.3045852
+        },
+        {
+          "sequence_id": "Participant_2193_Setup_B_Seq_6_Trial_4",
+          "profile": "source_native",
+          "status": "complete",
+          "attempts": 3,
+          "updated_at": 1793545306.903442
+        },
+        {
+          "sequence_id": "Participant_2274_Setup_B_Seq_1_Trial_1",
+          "profile": "source_native",
+          "status": "running",
+          "attempts": 2,
+          "updated_at": 1793521883.3045964
+        },
+        {
+          "sequence_id": "Participant_5319_Setup_B_Seq_6_Trial_2",
+          "profile": "source_native",
+          "status": "complete",
+          "attempts": 3,
+          "updated_at": 1793545308.1786237
+        }
+      ],
+      "interpretation": "已执行/已尝试的记录；running 是账本状态，不代表审计时进程仍在运行。"
+    },
+    {
+      "id": "han_val_a",
+      "kind": "computed_results_and_development_feedback",
+      "selection": {
+        "path": "develop_logs/test_runs/20261105_val_a/selection.json",
+        "bytes": 158987,
+        "sha256": "8b55e19f39fe4da8ae72ce2b59630fe6d4649747b10752152d103486ab45c15c"
+      },
+      "analysis": {
+        "path": "develop_logs/test_runs/20261105_val_a/analysis.json",
+        "bytes": 83876,
+        "sha256": "054e1a56fb0f349378836cbb0c5fb1ff288186854f9adb5eeb473c3fa65508e0"
+      },
+      "tuning": {
+        "path": "develop_logs/test_runs/20261105_val_a/amend4_dev_grid.json",
+        "bytes": 35834,
+        "sha256": "2d026936b6d22ac7a7f49c452ed527a505e711e60bfd36782e90a878a11739cb"
+      },
+      "kin30_counts_by_subject": {
+        "s001": 16,
+        "s002": 9,
+        "s003": 6,
+        "s004": 8,
+        "s005": 11,
+        "s006": 12,
+        "s007": 2
+      },
+      "kin30_result_files": [
+        {
+          "trial_id": "Han2023_s001_split0_20220513_dog_2_segment_1",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split0_20220513_dog_2_segment_1.json",
+          "bytes": 1978,
+          "sha256": "dc48462f5cdf13c9d7f5ba72d83b983dd2a189a37f87c43782ac4215b5d970a0"
+        },
+        {
+          "trial_id": "Han2023_s001_split1_20220513_balletsmalljump_2_segment_0",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split1_20220513_balletsmalljump_2_segment_0.json",
+          "bytes": 2081,
+          "sha256": "1f77a1d58c93f7939b2e7ae49e98c62e914c76460007842c9d70480b84f4e0ca"
+        },
+        {
+          "trial_id": "Han2023_s001_split1_20220513_balletsmalljump_2_segment_1",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split1_20220513_balletsmalljump_2_segment_1.json",
+          "bytes": 2070,
+          "sha256": "32c0be4cad99a56a379c0516750a3914af0225c5169d4c813724700313804778"
+        },
+        {
+          "trial_id": "Han2023_s001_split1_20220513_balletsmalljump_3_segment_0",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split1_20220513_balletsmalljump_3_segment_0.json",
+          "bytes": 2067,
+          "sha256": "97b24ee05a18906571fe5aced460f712ef935b3fcc1d064c26fd353d1d6bad07"
+        },
+        {
+          "trial_id": "Han2023_s001_split1_20220513_balletsmalljump_4_segment_1",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split1_20220513_balletsmalljump_4_segment_1.json",
+          "bytes": 2069,
+          "sha256": "8c3daa560b22ed23038291098616c26131ecb915f5d443659dd2d48ae18099a3"
+        },
+        {
+          "trial_id": "Han2023_s001_split1_20220513_soccerkick_4_segment_0",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split1_20220513_soccerkick_4_segment_0.json",
+          "bytes": 1995,
+          "sha256": "8bbd2e90324cb5b6aeaf4312a14ccc0b55e91080fbdafd8bb3af74a5e76bf3ff"
+        },
+        {
+          "trial_id": "Han2023_s001_split2_20220513_chair_2_segment_1",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split2_20220513_chair_2_segment_1.json",
+          "bytes": 1942,
+          "sha256": "d538fcbd28fc5c3805390326ce6b49cc90c878cb28e2b3abf982a6750c58030e"
+        },
+        {
+          "trial_id": "Han2023_s001_split2_20220513_taichi_1_segment_0",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split2_20220513_taichi_1_segment_0.json",
+          "bytes": 1985,
+          "sha256": "b2496e5033847962bb9d1a1345f60cea3955a1f2a96ed9cde35d87f979b3773b"
+        },
+        {
+          "trial_id": "Han2023_s001_split2_20220513_treearms_2_segment_0",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split2_20220513_treearms_2_segment_0.json",
+          "bytes": 1970,
+          "sha256": "8327b5f26015e1b69511ffa042986fb34aa02a537fb3070993a0a73897db1132"
+        },
+        {
+          "trial_id": "Han2023_s001_split2_20220513_treearms_2_segment_2",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split2_20220513_treearms_2_segment_2.json",
+          "bytes": 1688,
+          "sha256": "40d3ea80508b975485ff37f5e875420b97cbb8ae415249272830b921f77f6d1c"
+        },
+        {
+          "trial_id": "Han2023_s001_split3_20220513_step_2_segment_1",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split3_20220513_step_2_segment_1.json",
+          "bytes": 1997,
+          "sha256": "57b929f263c9df1541b5da002a0766c0205632495cde8b8fbc78141c2fc88d1a"
+        },
+        {
+          "trial_id": "Han2023_s001_split3_20220513_tennisgroundstroke_1_segment_0",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split3_20220513_tennisgroundstroke_1_segment_0.json",
+          "bytes": 1992,
+          "sha256": "9826771ced844a1853c231aa850edd9ba0ba8adaecf61f8dbc093b4bf69d6511"
+        },
+        {
+          "trial_id": "Han2023_s001_split3_20220513_walk_3_segment_0",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split3_20220513_walk_3_segment_0.json",
+          "bytes": 1982,
+          "sha256": "35d79d4abdf6cf4f22e5db83e18df7e3bcac93a860d5ce431a14d35632f06d4e"
+        },
+        {
+          "trial_id": "Han2023_s001_split3_20220513_worrier1_2_segment_0",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split3_20220513_worrier1_2_segment_0.json",
+          "bytes": 2017,
+          "sha256": "e122366b7a1c8c2364ef9447cc2a2fd6e6be8d83008e733d09ade5567831b790"
+        },
+        {
+          "trial_id": "Han2023_s001_split4_20220513_ballethighleg_1_segment_0",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split4_20220513_ballethighleg_1_segment_0.json",
+          "bytes": 2048,
+          "sha256": "f93d8657e737aad14d88a390a575b1e7a808e9d4c03f4ca59fd89ef749de5916"
+        },
+        {
+          "trial_id": "Han2023_s001_split4_20220513_ballethighleg_2_segment_1",
+          "subject": "s001",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s001_split4_20220513_ballethighleg_2_segment_1.json",
+          "bytes": 1968,
+          "sha256": "16f03d17f7de1bd1b96d0c00c384da91c5803d0f1fbf0feea96362549e631bf2"
+        },
+        {
+          "trial_id": "Han2023_s002_split1_20220520_balletsmalljump_1_segment_0",
+          "subject": "s002",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s002_split1_20220520_balletsmalljump_1_segment_0.json",
+          "bytes": 2076,
+          "sha256": "4d81de9f8c540e64348d7b62a866c8caf926ece00042e6a490eb0bb11420e7d9"
+        },
+        {
+          "trial_id": "Han2023_s002_split1_20220520_balletsmalljump_2_segment_0",
+          "subject": "s002",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s002_split1_20220520_balletsmalljump_2_segment_0.json",
+          "bytes": 2076,
+          "sha256": "aac8d0e890ed956ab552518d705a38a80d6f9d3c6561724b85346eea715a18c1"
+        },
+        {
+          "trial_id": "Han2023_s002_split1_20220520_balletsmalljump_3_segment_0",
+          "subject": "s002",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s002_split1_20220520_balletsmalljump_3_segment_0.json",
+          "bytes": 2068,
+          "sha256": "5277a63ab1d8c654d773327579efde90d184613fad815087dc76c422fcbc8127"
+        },
+        {
+          "trial_id": "Han2023_s002_split2_20220520_idling_1_segment_2",
+          "subject": "s002",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s002_split2_20220520_idling_1_segment_2.json",
+          "bytes": 1936,
+          "sha256": "dfc6b987830fd46e257005054512881a6b5c660c5d70e8441b1a93d150ec4668"
+        },
+        {
+          "trial_id": "Han2023_s002_split2_20220520_idling_6_segment_1",
+          "subject": "s002",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s002_split2_20220520_idling_6_segment_1.json",
+          "bytes": 1933,
+          "sha256": "e53cfbd902b8b0176d52fd06030838bb0670bd6d549150677eaad8061f961263"
+        },
+        {
+          "trial_id": "Han2023_s002_split2_20220520_idling_6_segment_2",
+          "subject": "s002",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s002_split2_20220520_idling_6_segment_2.json",
+          "bytes": 1935,
+          "sha256": "e959649c0d30ca9f94825133b8dba2a14c5980f3a811447ba1b9ad8919875062"
+        },
+        {
+          "trial_id": "Han2023_s002_split2_20220520_squat_3_segment_1",
+          "subject": "s002",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s002_split2_20220520_squat_3_segment_1.json",
+          "bytes": 1946,
+          "sha256": "7fd676a1b2df75a7d0ec0bde2b542e4dce637709751e5d26809b1048fad81e1b"
+        },
+        {
+          "trial_id": "Han2023_s002_split2_20220520_static_1_segment_0",
+          "subject": "s002",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s002_split2_20220520_static_1_segment_0.json",
+          "bytes": 1599,
+          "sha256": "9dd89fe4e9b507b1b6b494493080234ade7108751781d04ef5d2e0e45ef9a84e"
+        },
+        {
+          "trial_id": "Han2023_s002_split3_20220520_walk_3_segment_0",
+          "subject": "s002",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s002_split3_20220520_walk_3_segment_0.json",
+          "bytes": 2039,
+          "sha256": "57709426472682201fa05aed5582dba76cc3f0ec24f1a395fe7417539e22b3a0"
+        },
+        {
+          "trial_id": "Han2023_s003_split1_20220523_balletsmalljump_4_segment_0",
+          "subject": "s003",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s003_split1_20220523_balletsmalljump_4_segment_0.json",
+          "bytes": 2073,
+          "sha256": "5abd43c7a87754a07fcc5b48b48d867b9b5c983763fd99fc258c9b05a1bc5012"
+        },
+        {
+          "trial_id": "Han2023_s003_split3_20220523_walk_1_segment_0",
+          "subject": "s003",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s003_split3_20220523_walk_1_segment_0.json",
+          "bytes": 2031,
+          "sha256": "ec95663f105d06a08a5c3dbad9ff2da48b883e52df4747f1404f609acaa4d6f2"
+        },
+        {
+          "trial_id": "Han2023_s003_split3_20220523_walk_3_segment_0",
+          "subject": "s003",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s003_split3_20220523_walk_3_segment_0.json",
+          "bytes": 2025,
+          "sha256": "a5bab6bda282fdc19859a18d4e5f23bfd01de4569e2f1bc4fe8278c9b3784497"
+        },
+        {
+          "trial_id": "Han2023_s003_split3_20220523_walk_4_segment_0",
+          "subject": "s003",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s003_split3_20220523_walk_4_segment_0.json",
+          "bytes": 2041,
+          "sha256": "e0f8efbfb5d8f42551e5d7bb08327d5ab7e9ecdcc8b6d898243df8ec4d1bd73a"
+        },
+        {
+          "trial_id": "Han2023_s003_split4_20220523_worrier2_3_segment_1",
+          "subject": "s003",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s003_split4_20220523_worrier2_3_segment_1.json",
+          "bytes": 1945,
+          "sha256": "56bbefbb31471bbbdc552b1b64f3b99a9108237956681de27eb1e8380605dbd7"
+        },
+        {
+          "trial_id": "Han2023_s003_split4_20220523_worrier2_4_segment_0",
+          "subject": "s003",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s003_split4_20220523_worrier2_4_segment_0.json",
+          "bytes": 2012,
+          "sha256": "cd653611410770f8ad816c7a3579408031ff71306d57c23cb7d2f3c1da250d36"
+        },
+        {
+          "trial_id": "Han2023_s004_split2_20220524_idling_1_segment_2",
+          "subject": "s004",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s004_split2_20220524_idling_1_segment_2.json",
+          "bytes": 1927,
+          "sha256": "17e4688d2218bd54f3cbccb59feb489bd998dc1bdd7fd4e81eadbd2917ac8130"
+        },
+        {
+          "trial_id": "Han2023_s004_split2_20220524_idling_3_segment_2",
+          "subject": "s004",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s004_split2_20220524_idling_3_segment_2.json",
+          "bytes": 1934,
+          "sha256": "78f838014e16587e1a043d6413babe128452df352976d979d499bc81ffc0b34e"
+        },
+        {
+          "trial_id": "Han2023_s004_split2_20220524_squat_1_segment_1",
+          "subject": "s004",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s004_split2_20220524_squat_1_segment_1.json",
+          "bytes": 1925,
+          "sha256": "70945b3321bb530fe46fc7f4d8ab978ff1c811a06644b165eca915b228cf8d32"
+        },
+        {
+          "trial_id": "Han2023_s004_split2_20220524_tree_1_segment_0",
+          "subject": "s004",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s004_split2_20220524_tree_1_segment_0.json",
+          "bytes": 1982,
+          "sha256": "5f1381aa5f9252357f01e5de250bdd72dec62132e43b72edb78050a12ed91cba"
+        },
+        {
+          "trial_id": "Han2023_s004_split2_20220524_treearms_3_segment_1",
+          "subject": "s004",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s004_split2_20220524_treearms_3_segment_1.json",
+          "bytes": 1939,
+          "sha256": "f117bfa7b236042fe6e87f874aa8e212874e98128dbdc57cf4e9e7ba17d43c9f"
+        },
+        {
+          "trial_id": "Han2023_s004_split3_20220524_worrier1_1_segment_0",
+          "subject": "s004",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s004_split3_20220524_worrier1_1_segment_0.json",
+          "bytes": 2030,
+          "sha256": "f8d657708447a125f72f309141ce414358396b6b68a6b95a977a88347c4c6621"
+        },
+        {
+          "trial_id": "Han2023_s004_split3_20220524_worrier1_2_segment_1",
+          "subject": "s004",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s004_split3_20220524_worrier1_2_segment_1.json",
+          "bytes": 1990,
+          "sha256": "6a41d8782539e86dd5e5410c0cd15bed389025d4457873a258d0aa765ab00aff"
+        },
+        {
+          "trial_id": "Han2023_s004_split4_20220524_worrier2_3_segment_2",
+          "subject": "s004",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s004_split4_20220524_worrier2_3_segment_2.json",
+          "bytes": 2033,
+          "sha256": "a69929c81edeb6b01bd2fae22c49b14219db51f5eabc8d2575cb622476d652e0"
+        },
+        {
+          "trial_id": "Han2023_s005_split1_20220610_balletsmalljump_1_full_segment_0",
+          "subject": "s005",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s005_split1_20220610_balletsmalljump_1_full_segment_0.json",
+          "bytes": 2074,
+          "sha256": "99dd06f04bea48b3092919d48b32f6191a51f7381fa5c4ab3c8e44f295b6b998"
+        },
+        {
+          "trial_id": "Han2023_s005_split1_20220610_balletsmalljump_3_full_segment_0",
+          "subject": "s005",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s005_split1_20220610_balletsmalljump_3_full_segment_0.json",
+          "bytes": 2082,
+          "sha256": "08c38c3b0472e887b6b6f81cba5cb23e06dfe7e3329fef62e683bb4a5e549cb1"
+        },
+        {
+          "trial_id": "Han2023_s005_split1_20220610_balletsmalljump_4_full_segment_0",
+          "subject": "s005",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s005_split1_20220610_balletsmalljump_4_full_segment_0.json",
+          "bytes": 2079,
+          "sha256": "93859ac9a9fbb638c67d7ad6b19c942e824815ff957d2473577d2bffc3c90884"
+        },
+        {
+          "trial_id": "Han2023_s005_split1_20220610_balletsmalljump_4_full_segment_1",
+          "subject": "s005",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s005_split1_20220610_balletsmalljump_4_full_segment_1.json",
+          "bytes": 2090,
+          "sha256": "d480d85dc548d8d70dec55e9f23706f8c2aa3a03627f42d269676d1a27b1b203"
+        },
+        {
+          "trial_id": "Han2023_s005_split2_20220610_idling_1_segment_1",
+          "subject": "s005",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s005_split2_20220610_idling_1_segment_1.json",
+          "bytes": 1928,
+          "sha256": "6a7d27ac8110c36b2386a796a3302a669cf755237af351dd7faa01a1632cd362"
+        },
+        {
+          "trial_id": "Han2023_s005_split2_20220610_idling_2_segment_1",
+          "subject": "s005",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s005_split2_20220610_idling_2_segment_1.json",
+          "bytes": 1930,
+          "sha256": "68438665c7403775c2a2880de5d608705b5f88151056bd9572522dfc2602c7f9"
+        },
+        {
+          "trial_id": "Han2023_s005_split2_20220610_idling_2_segment_3",
+          "subject": "s005",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s005_split2_20220610_idling_2_segment_3.json",
+          "bytes": 1931,
+          "sha256": "b84e1e6d74d828967d363a8f22f245d2670f44b1e6258241f877fef1a38e7294"
+        },
+        {
+          "trial_id": "Han2023_s005_split2_20220610_idling_3_segment_1",
+          "subject": "s005",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s005_split2_20220610_idling_3_segment_1.json",
+          "bytes": 1926,
+          "sha256": "8b42fb96e20c9e1d10802178f3e24a810137c71bcb27e5b9f277b165fb94d8f2"
+        },
+        {
+          "trial_id": "Han2023_s005_split3_20220610_walk_2_segment_0",
+          "subject": "s005",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s005_split3_20220610_walk_2_segment_0.json",
+          "bytes": 2038,
+          "sha256": "37775d89fbc259d57db4b4f639704e0d8de66c5bea15f928ced5a21f07bba690"
+        },
+        {
+          "trial_id": "Han2023_s005_split3_20220610_worrier1_3_segment_1",
+          "subject": "s005",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s005_split3_20220610_worrier1_3_segment_1.json",
+          "bytes": 1957,
+          "sha256": "32d01e7882b124ffa7e78f42dc5e1031b255413d7306c1ce516a10a43f4dc6b1"
+        },
+        {
+          "trial_id": "Han2023_s005_split4_20220610_worrier2_2_segment_1",
+          "subject": "s005",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s005_split4_20220610_worrier2_2_segment_1.json",
+          "bytes": 1937,
+          "sha256": "81d174d1f76ea7790d971273b61ea0c6fd5f79b890339173c1c47a5d5ac019d7"
+        },
+        {
+          "trial_id": "Han2023_s006_split1_20220614_balletsmalljump_2_full_segment_0",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split1_20220614_balletsmalljump_2_full_segment_0.json",
+          "bytes": 2084,
+          "sha256": "1c71ef1b0a8bf30aaa1fd158ae3c2a9f66fd4ef3b92a14185ea486ed31b51ea0"
+        },
+        {
+          "trial_id": "Han2023_s006_split1_20220614_balletsmalljump_2_segment_0",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split1_20220614_balletsmalljump_2_segment_0.json",
+          "bytes": 2064,
+          "sha256": "af9d11dc2a7f1143035236053adfdbbedf8514a574ac653041816492ecc892b8"
+        },
+        {
+          "trial_id": "Han2023_s006_split1_20220614_balletsmalljump_3_segment_0",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split1_20220614_balletsmalljump_3_segment_0.json",
+          "bytes": 2061,
+          "sha256": "e5411f05c2c66a730619578289083a8b0147884015c35370f8e2c35f6bbb9517"
+        },
+        {
+          "trial_id": "Han2023_s006_split1_20220614_hopping_1_segment_1",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split1_20220614_hopping_1_segment_1.json",
+          "bytes": 2049,
+          "sha256": "90338deb70cafee2b63d5ee353379c95ceed09f4e23580f5504039ff1d8e215e"
+        },
+        {
+          "trial_id": "Han2023_s006_split1_20220614_soccerkick_2_segment_0",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split1_20220614_soccerkick_2_segment_0.json",
+          "bytes": 2043,
+          "sha256": "f8252657f20d5de110796417d9ac44b6eb036d41db71913ce1b9880bd69c7c61"
+        },
+        {
+          "trial_id": "Han2023_s006_split2_20220614_idling_2_segment_0",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split2_20220614_idling_2_segment_0.json",
+          "bytes": 1944,
+          "sha256": "a75b3877a89dd5ffd62a6dd57e50561f8e65ee21f350e281cbe46948060c0e93"
+        },
+        {
+          "trial_id": "Han2023_s006_split2_20220614_idling_3_segment_0",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split2_20220614_idling_3_segment_0.json",
+          "bytes": 1914,
+          "sha256": "945f998e90f5d234ddc8bf3358552166ae6412e9ce5a65380f4118b454a853c3"
+        },
+        {
+          "trial_id": "Han2023_s006_split2_20220614_idling_4_segment_0",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split2_20220614_idling_4_segment_0.json",
+          "bytes": 1936,
+          "sha256": "cd3be405781c4d89c289898aa7baf195b43acec8c9d9660f70362453abf747dd"
+        },
+        {
+          "trial_id": "Han2023_s006_split2_20220614_idling_4_segment_1",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split2_20220614_idling_4_segment_1.json",
+          "bytes": 1933,
+          "sha256": "73cf1b3c9710569a9e33b7a72df09bbf3b7c5b0eac8f6e1ad01dccedbbdde246"
+        },
+        {
+          "trial_id": "Han2023_s006_split3_20220614_walk_3_segment_0",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split3_20220614_walk_3_segment_0.json",
+          "bytes": 2018,
+          "sha256": "7557e5f02287c7e1aead958744e9d011a568c38a78a93e677fd17b491979d043"
+        },
+        {
+          "trial_id": "Han2023_s006_split3_20220614_worrier1_2_segment_1",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split3_20220614_worrier1_2_segment_1.json",
+          "bytes": 2011,
+          "sha256": "625d5fdba3632844889cce780f019186f3484d4490bb6ecb0166b66e15cb4b63"
+        },
+        {
+          "trial_id": "Han2023_s006_split3_20220614_worrier1_2_segment_2",
+          "subject": "s006",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s006_split3_20220614_worrier1_2_segment_2.json",
+          "bytes": 2027,
+          "sha256": "1acaaf761b53b67fedfca5d2216aa157cd1c28e47a8036bbbce60272ce7b0123"
+        },
+        {
+          "trial_id": "Han2023_s007_split1_20220705_static_1_segment_0",
+          "subject": "s007",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s007_split1_20220705_static_1_segment_0.json",
+          "bytes": 1605,
+          "sha256": "9a8ae681bd82d02dfa655c204195216631f2a5f484ea658a05276414bc847a91"
+        },
+        {
+          "trial_id": "Han2023_s007_split3_20220705_ballet_high_leg_3_segment_1",
+          "subject": "s007",
+          "path": "develop_logs/test_runs/20261105_val_a/runs/kin30/Han2023_s007_split3_20220705_ballet_high_leg_3_segment_1.json",
+          "bytes": 2070,
+          "sha256": "3b247eb3312624569243615da95b9defddd75e5a311989865e5848725f0eea5f"
+        }
+      ],
+      "note": "每人已有结果。外力调试共享运动学与拟合；本登记按受试者把全部 Han 数据并入开发。"
+    }
+  ],
+  "known_prior_exposure": {
+    "andy": "全部195条已做缺值/标签/可见性盘点；2193诊断修改并回归；5319 pilot 完成；2274任务尝试。",
+    "collaborate": "全量头部/骨架/通道头信息及各包少量数值轨迹格式核查；未找到按补齐误差选模型的记录。",
+    "han": "7人均有结果，64个 kin30 结果文件；外力规则与共享拟合链已有开发反馈。"
+  },
+  "duplicate_groups": [
+    {
+      "sha256": "9692f12ae6980582b5b6eb9204b58bfd368406471516e43a4f81de7f7498fe11",
+      "canonical": "collaborate/LAB/EAWS/S1/S1P01R1.bvh",
+      "aliases": [
+        "collaborate/LAB/EAWS/S1/S1P01R2.bvh",
+        "collaborate/LAB/EAWS/S1/S1P01R3.bvh"
+      ]
+    },
+    {
+      "sha256": "85266c9411fcf1e9ea693aaf2b852f3b211d5bac66cdfecaea5ba5a523b58828",
+      "canonical": "collaborate/Television_AssemblyPackaging/Television_AssemblyPackaging/Television_Assembly/S01/Board_Connection/TVBS01P02R28.bvh",
+      "aliases": [
+        "collaborate/Television_AssemblyPackaging/Television_AssemblyPackaging/Television_Assembly/S01/Board_Connection/TVBS01P02R29.bvh"
+      ]
+    }
+  ],
+  "baseline_samples": {
+    "motionlcm": [
+      {
+        "path": "develop_logs/test_runs/20261109_024413_motionlcm_demo_ab0c550d/motion.npz",
+        "bytes": 29996,
+        "sha256": "93c2713cc7e7357a5c772561e8f8e46aea349e935e2c2b068331f028f4442145",
+        "arrays": {
+          "joints": {
+            "shape": [
+              100,
+              22,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "joint_names": {
+            "shape": [
+              22
+            ],
+            "dtype": "<U14"
+          },
+          "fps": {
+            "shape": [],
+            "dtype": "float64"
+          },
+          "metadata_json": {
+            "shape": [],
+            "dtype": "<U593"
+          }
+        },
+        "joint_names": [
+          "pelvis",
+          "left_hip",
+          "right_hip",
+          "spine1",
+          "left_knee",
+          "right_knee",
+          "spine2",
+          "left_ankle",
+          "right_ankle",
+          "spine3",
+          "left_foot",
+          "right_foot",
+          "neck",
+          "left_collar",
+          "right_collar",
+          "head",
+          "left_shoulder",
+          "right_shoulder",
+          "left_elbow",
+          "right_elbow",
+          "left_wrist",
+          "right_wrist"
+        ],
+        "fps": 20.0
+      }
+    ],
+    "omnicontrol": [
+      {
+        "path": "develop_logs/test_runs/20261109_024413_omnicontrol_demo_5d316f25/motion.npz",
+        "bytes": 56480,
+        "sha256": "5bf4699d1903fb6e10bf6931c166b35062e13512e65d405ba167180a36bfc487",
+        "arrays": {
+          "joints": {
+            "shape": [
+              196,
+              22,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "joint_names": {
+            "shape": [
+              22
+            ],
+            "dtype": "<U14"
+          },
+          "fps": {
+            "shape": [],
+            "dtype": "float64"
+          },
+          "metadata_json": {
+            "shape": [],
+            "dtype": "<U585"
+          }
+        },
+        "joint_names": [
+          "pelvis",
+          "left_hip",
+          "right_hip",
+          "spine1",
+          "left_knee",
+          "right_knee",
+          "spine2",
+          "left_ankle",
+          "right_ankle",
+          "spine3",
+          "left_foot",
+          "right_foot",
+          "neck",
+          "left_collar",
+          "right_collar",
+          "head",
+          "left_shoulder",
+          "right_shoulder",
+          "left_elbow",
+          "right_elbow",
+          "left_wrist",
+          "right_wrist"
+        ],
+        "fps": 20.0
+      },
+      {
+        "path": "develop_logs/test_runs/20261109_024413_omnicontrol_demo_5d316f25/raw/features.npy",
+        "bytes": 206320,
+        "sha256": "86c45fc6d399428e5e11e2d3c73692f7f72c21d5898ecab0700a4501afaa1246",
+        "arrays": {
+          "array": {
+            "shape": [
+              1,
+              1,
+              196,
+              263
+            ],
+            "dtype": "float32"
+          }
+        }
+      }
+    ],
+    "ardy": [
+      {
+        "path": "develop_logs/test_runs/20261109_033337_ardy_demo_892762b0/motion.npz",
+        "bytes": 1229963,
+        "sha256": "d2cf131ba187ff12999a3d3f531ac03baaf1a584ff3ac50b65ba28107b158f36",
+        "arrays": {
+          "joints": {
+            "shape": [
+              400,
+              27,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "joint_names": {
+            "shape": [
+              27
+            ],
+            "dtype": "<U15"
+          },
+          "fps": {
+            "shape": [],
+            "dtype": "float64"
+          },
+          "metadata_json": {
+            "shape": [],
+            "dtype": "<U647"
+          },
+          "global_rotations": {
+            "shape": [
+              400,
+              27,
+              3,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "chunk_boundaries": {
+            "shape": [
+              49
+            ],
+            "dtype": "int64"
+          },
+          "overlap_errors_m": {
+            "shape": [
+              170640
+            ],
+            "dtype": "float64"
+          }
+        },
+        "joint_names": [
+          "pelvis",
+          "Spine",
+          "spine1",
+          "spine2",
+          "Spine3",
+          "neck",
+          "head",
+          "RightShoulder",
+          "right_shoulder",
+          "right_elbow",
+          "right_wrist",
+          "RightHandEnd",
+          "RightHandThumb1",
+          "LeftShoulder",
+          "left_shoulder",
+          "left_elbow",
+          "left_wrist",
+          "LeftHandEnd",
+          "LeftHandThumb1",
+          "right_hip",
+          "right_knee",
+          "right_ankle",
+          "right_foot",
+          "left_hip",
+          "left_knee",
+          "left_ankle",
+          "left_foot"
+        ],
+        "fps": 20.0
+      }
+    ],
+    "chois": [
+      {
+        "path": "develop_logs/test_runs/20261109_030212_chois_demo_99afcd3a/motion.npz",
+        "bytes": 44333,
+        "sha256": "4a25a104f39db3b940ccb3437113aaeecfd69726fb8229561beaa4b2e15e6817",
+        "arrays": {
+          "joints": {
+            "shape": [
+              120,
+              24,
+              3
+            ],
+            "dtype": "float64"
+          },
+          "joint_names": {
+            "shape": [
+              24
+            ],
+            "dtype": "<U16"
+          },
+          "fps": {
+            "shape": [],
+            "dtype": "float64"
+          },
+          "metadata_json": {
+            "shape": [],
+            "dtype": "<U608"
+          },
+          "object_positions": {
+            "shape": [
+              120,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "object_rotations": {
+            "shape": [
+              120,
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "hand_object_distances_m": {
+            "shape": [
+              120,
+              2
+            ],
+            "dtype": "float32"
+          }
+        },
+        "joint_names": [
+          "pelvis",
+          "left_hip",
+          "right_hip",
+          "spine1",
+          "left_knee",
+          "right_knee",
+          "spine2",
+          "left_ankle",
+          "right_ankle",
+          "spine3",
+          "left_foot",
+          "right_foot",
+          "neck",
+          "left_collar",
+          "right_collar",
+          "head",
+          "left_shoulder",
+          "right_shoulder",
+          "left_elbow",
+          "right_elbow",
+          "left_wrist_body",
+          "right_wrist_body",
+          "left_wrist",
+          "right_wrist"
+        ],
+        "fps": 30.0
+      },
+      {
+        "path": "develop_logs/test_runs/20261109_030212_chois_demo_99afcd3a/raw/native_prediction.npz",
+        "bytes": 126518,
+        "sha256": "5c69653a2d30db406d467f52af1d770d8433ccec3ad6ebb3c0339dea5711f337",
+        "arrays": {
+          "joints": {
+            "shape": [
+              120,
+              24,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "global_rotations": {
+            "shape": [
+              120,
+              22,
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "object_positions": {
+            "shape": [
+              120,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "object_rotations": {
+            "shape": [
+              120,
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "hand_object_distances_m": {
+            "shape": [
+              120,
+              2
+            ],
+            "dtype": "float32"
+          }
+        }
+      }
+    ],
+    "closd": [
+      {
+        "path": "develop_logs/test_runs/20261109_024631_closd_demo_228a80ac/motion.npz",
+        "bytes": 161856,
+        "sha256": "31699779ab2d3ad830e5fc7426f85c72562fd66472d254bd87403f8a6c20e38f",
+        "arrays": {
+          "joints": {
+            "shape": [
+              600,
+              22,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "joint_names": {
+            "shape": [
+              22
+            ],
+            "dtype": "<U14"
+          },
+          "fps": {
+            "shape": [],
+            "dtype": "float64"
+          },
+          "metadata_json": {
+            "shape": [],
+            "dtype": "<U153"
+          },
+          "contact_forces": {
+            "shape": [
+              600,
+              24,
+              3
+            ],
+            "dtype": "float32"
+          }
+        },
+        "joint_names": [
+          "pelvis",
+          "left_hip",
+          "right_hip",
+          "spine1",
+          "left_knee",
+          "right_knee",
+          "spine2",
+          "left_ankle",
+          "right_ankle",
+          "spine3",
+          "left_foot",
+          "right_foot",
+          "neck",
+          "left_collar",
+          "right_collar",
+          "head",
+          "left_shoulder",
+          "right_shoulder",
+          "left_elbow",
+          "right_elbow",
+          "left_wrist",
+          "right_wrist"
+        ],
+        "fps": 30.0
+      },
+      {
+        "path": "develop_logs/test_runs/20261109_024631_closd_demo_228a80ac/native_physics.npz",
+        "bytes": 544130,
+        "sha256": "251bf2625e833bb17882c48b4f3b371972fb2ce0842641ccd5dd1428feeb0ae7",
+        "arrays": {
+          "joints": {
+            "shape": [
+              600,
+              24,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "rotations_xyzw": {
+            "shape": [
+              600,
+              24,
+              4
+            ],
+            "dtype": "float32"
+          },
+          "dof_positions": {
+            "shape": [
+              600,
+              69
+            ],
+            "dtype": "float32"
+          },
+          "body_names": {
+            "shape": [
+              24
+            ],
+            "dtype": "<U10"
+          },
+          "contact_forces": {
+            "shape": [
+              600,
+              24,
+              3
+            ],
+            "dtype": "float32"
+          }
+        },
+        "body_names": [
+          "Pelvis",
+          "L_Hip",
+          "L_Knee",
+          "L_Ankle",
+          "L_Toe",
+          "R_Hip",
+          "R_Knee",
+          "R_Ankle",
+          "R_Toe",
+          "Torso",
+          "Spine",
+          "Chest",
+          "Neck",
+          "Head",
+          "L_Thorax",
+          "L_Shoulder",
+          "L_Elbow",
+          "L_Wrist",
+          "L_Hand",
+          "R_Thorax",
+          "R_Shoulder",
+          "R_Elbow",
+          "R_Wrist",
+          "R_Hand"
+        ]
+      }
+    ],
+    "dart": [
+      {
+        "path": "develop_logs/test_runs/20261109_024521_dart_demo_61174897/motion.npz",
+        "bytes": 145487,
+        "sha256": "076f8c35b08ec01cca57234a869d29a7fa8f0307687b30a7f26034b49549c648",
+        "arrays": {
+          "joints": {
+            "shape": [
+              600,
+              22,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "joint_names": {
+            "shape": [
+              22
+            ],
+            "dtype": "<U14"
+          },
+          "fps": {
+            "shape": [],
+            "dtype": "float64"
+          },
+          "metadata_json": {
+            "shape": [],
+            "dtype": "<U168"
+          }
+        },
+        "joint_names": [
+          "pelvis",
+          "left_hip",
+          "right_hip",
+          "spine1",
+          "left_knee",
+          "right_knee",
+          "spine2",
+          "left_ankle",
+          "right_ankle",
+          "spine3",
+          "left_foot",
+          "right_foot",
+          "neck",
+          "left_collar",
+          "right_collar",
+          "head",
+          "left_shoulder",
+          "right_shoulder",
+          "left_elbow",
+          "right_elbow",
+          "left_wrist",
+          "right_wrist"
+        ],
+        "fps": 30.0
+      },
+      {
+        "path": "develop_logs/test_runs/20261109_024521_dart_demo_61174897/smplx_params.npz",
+        "bytes": 509512,
+        "sha256": "84caf9ac4ec6fee46471149692e0e590cd2d3a3563d97eb075be6101ce970376",
+        "arrays": {
+          "transl": {
+            "shape": [
+              600,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "global_orient": {
+            "shape": [
+              600,
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "body_pose": {
+            "shape": [
+              600,
+              21,
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "betas": {
+            "shape": [
+              600,
+              10
+            ],
+            "dtype": "float32"
+          },
+          "pelvis_delta": {
+            "shape": [
+              3
+            ],
+            "dtype": "float32"
+          },
+          "gender": {
+            "shape": [],
+            "dtype": "<U4"
+          },
+          "fps": {
+            "shape": [],
+            "dtype": "int64"
+          },
+          "joints_vs_motion_max_abs_m": {
+            "shape": [],
+            "dtype": "float32"
+          },
+          "description": {
+            "shape": [],
+            "dtype": "<U195"
+          }
+        },
+        "fps": 30
+      }
+    ],
+    "primal": [
+      {
+        "path": "develop_logs/test_runs/20261109_024734_primal_demo_0b5f7d4b/factorial/ground1_reproject0_inertialize1.npz",
+        "bytes": 324506,
+        "sha256": "706e0f918c40c6c4421c88f4cf3e2c1b4fcd89799ce58c5389a1161a53bf6c8c",
+        "arrays": {
+          "pose": {
+            "shape": [
+              1,
+              600,
+              69
+            ],
+            "dtype": "float32"
+          },
+          "joints": {
+            "shape": [
+              1,
+              600,
+              22,
+              3
+            ],
+            "dtype": "float32"
+          }
+        }
+      },
+      {
+        "path": "develop_logs/test_runs/20261109_024734_primal_demo_0b5f7d4b/factorial/initial_history.npz",
+        "bytes": 1184,
+        "sha256": "7b75f6e275dd05ebed2537ba00e1e690572f9850a7bca79885767040c31d7c68",
+        "arrays": {
+          "pose": {
+            "shape": [
+              1,
+              2,
+              69
+            ],
+            "dtype": "float32"
+          },
+          "betas": {
+            "shape": [
+              1,
+              2,
+              16
+            ],
+            "dtype": "float32"
+          }
+        }
+      }
+    ],
+    "kimodo": [
+      {
+        "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/benchmarks/kimodo-stratified-20261008/generated_raw/content/constraints_notext/end-effectors/feet_posrot/0014/motion.npz",
+        "bytes": 587390,
+        "sha256": "7ced4f5cdd63c7ca93e5177dffa8a71860aebcec976a57b9fd9fec779a950999",
+        "arrays": {
+          "local_rot_mats": {
+            "shape": [
+              90,
+              77,
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "global_rot_mats": {
+            "shape": [
+              90,
+              77,
+              3,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "posed_joints": {
+            "shape": [
+              90,
+              77,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "root_positions": {
+            "shape": [
+              90,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "smooth_root_pos": {
+            "shape": [
+              90,
+              3
+            ],
+            "dtype": "float32"
+          },
+          "foot_contacts": {
+            "shape": [
+              90,
+              6
+            ],
+            "dtype": "bool"
+          },
+          "global_root_heading": {
+            "shape": [
+              90,
+              2
+            ],
+            "dtype": "float32"
+          }
+        }
+      }
+    ]
+  },
+  "contract_sources": [
+    {
+      "path": "config/motion_output_contract_20261108.json",
+      "bytes": 21797,
+      "sha256": "8ebab416c561647e5090ef89ddf1ae4095c54bd5e9e54355a5ccfab3a4c7de2a"
+    },
+    {
+      "path": "config/baseline_sources.json",
+      "bytes": 748,
+      "sha256": "7f96f5893e822b4d9cfabe2fba08d40cfb935e0fbf9fc6e1deaaf9c9bdafa9e7"
+    },
+    {
+      "path": "utils/motiogen/motion.py",
+      "bytes": 4503,
+      "sha256": "15ddda16c474ccf5dae777092699701bff7e8228c32b31bcba3704232653c517"
+    },
+    {
+      "path": "utils/motiogen/evalkit/neck_rotation.py",
+      "bytes": 7779,
+      "sha256": "a5fa935c70d6d80162e326514ab2cba397a467b71a05ed381e9eb26c1e81a08a"
+    },
+    {
+      "path": "utils/motiogen/evalkit/ergo.py",
+      "bytes": 11928,
+      "sha256": "a657929e6a9adc9991062a623e5ecd2738c0ee7a3624d609522272009cf50cb7"
+    }
+  ],
+  "local_roots": {
+    "andy": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/datasets/andydata_lab_oneperson_v1/files",
+    "collaborate": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/datasets/collaborate_mingei_mocap_v1/files",
+    "han": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/datasets/addbiomechanics_v1/files"
+  },
+  "alias_rule": "同一 Andy Participant/Setup/Seq/Trial 跨 /datasets/AnDy 与 /MorionGen/datasets 副本、模态及导出继承相同 id；盘挂载末位1为本机实际路径。"
+}

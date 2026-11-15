@@ -1,0 +1,144 @@
+schema_version: 1
+
+paths:
+  dataset_root: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/datasets
+  data_root: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen
+  output_root: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/outputs/motion_retarget
+  smplx_model_dir: /home/heinrich/RoboLab/python/benchmark/asset/human/smplx/models/smplx
+  mano_model_dir: /home/heinrich/TactileLab/data/GRAB/mano_v1_2/models
+  ssm2_marker_map: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/baselines/PRIMAL/primal/utils/SSM2.json
+  smplsim_repo: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/baselines/SMPLSim
+  gvhmr_repo: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/staged_third_party/python/gvhmr
+  wilor_repo: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/staged_third_party/python/wilor
+
+environments:
+  driver_python: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-smplsim/bin/python
+  retarget_python: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-smplsim/bin/python
+  gvhmr_python: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-gvhmr/bin/python
+  wilor_python: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-wilor/bin/python
+  mujoco_python: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/envs/motiogen-smplsim/bin/python
+
+upstreams:
+  gvhmr:
+    url: https://github.com/zju3dv/GVHMR.git
+    commit: ee960bb6e2ea2d381aa97f08e9b71ef320b624b1
+  wilor:
+    url: https://github.com/rolpotamias/WiLoR.git
+    commit: fcb911312a38fa8badd30d9656a167485d61b8f9
+  smplsim:
+    commit: b5c08720503ad5fff64050c4d289c42d947fcf8d
+
+datasets:
+  andy:
+    root: AnDy
+    input_mode: auto
+    source_fps: 120.0
+    body_priority: [qualisys, gvhmr_video, xsens_bvh]
+    hand_priority: [wilor_video]
+    video_sync:
+      max_abs_offset_seconds: 5.0
+      min_correlation: 0.25
+      min_overlap_seconds: 1.0
+  comfi:
+    root: COMFI
+    input_mode: auto
+    source_fps: 40.0
+    body_priority: [mocap_aligned, gvhmr_video]
+    hand_priority: [wilor_video]
+  hiphi:
+    root: HiPHI/data/repository
+    input_mode: bvh
+    source_fps: null
+    include_mirrored: false
+    require_download_verified: true
+    body_priority: [bvh]
+    hand_priority: [bvh]
+
+profiles:
+  male_178:
+    gender: male
+    height_m: 1.78
+    betas: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  female_165:
+    gender: female
+    height_m: 1.65
+    betas: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+canonicalization:
+  axes: Z-up
+  units: m
+  origin_xy: start
+  heading: first_0.5s
+  floor: first_1.0s
+  preserve_source_transform: true
+  preserve_source_fps: true
+
+temporal_continuity:
+  required_order: 4
+  spline_degree: 5
+  body_knot_seconds: 0.12
+  hand_knot_seconds: 0.12
+  translation_knot_seconds: 0.16
+  robust_iterations: 3
+  rotation_huber_degrees: 8.0
+  translation_huber_m: 0.02
+
+hands:
+  video_model: wilor
+  missing_policy: smooth_prior_mark_invalid
+  inference_batch_size: 16
+  min_detection_confidence: 0.5
+  max_normalized_reprojection_error: 0.03
+  max_joint_angular_speed_rad_s: 30.0
+  short_gap_seconds: 0.5
+  good_coverage: 0.8
+  partial_coverage: 0.3
+
+fitting:
+  window_frames: 128
+  iterations: 200
+  learning_rate_pose: 0.025
+  learning_rate_translation: 0.05
+  huber_delta_m: 0.03
+  pose_prior_weight: 0.005
+  elbow_prior_multiplier: 20.0
+  elbow_prior_activation_degrees: 0.5
+  velocity_weight: 0.02
+  acceleration_weight: 0.1
+  boundary_weight: 0.1
+  foot_contact_weight: 0.002
+  foot_contact_speed_m_s: 0.08
+  foot_contact_height_m: 0.08
+  andy_head_min_markers: 3
+  andy_head_min_triangle_area_m2: 0.0001
+  native_hand_iterations: 200
+  native_hand_learning_rate: 0.04
+  native_hand_huber_delta_m: 0.01
+  native_hand_pose_prior_weight: 0.0001
+  native_hand_velocity_weight: 0.0002
+  native_hand_acceleration_weight: 0.001
+  marker_track_outlier_m: 0.08
+  min_marker_tracks: 20
+  joint_track_outlier_m: 0.10
+  min_joint_tracks: 10
+  device: auto
+
+quality:
+  max_height_error_m: 0.002
+  body_median_error_m: 0.05
+  body_p95_error_m: 0.10
+  native_hand_median_error_m: 0.015
+  mujoco_fk_error_m: 0.002
+  disk_reserve_gib: 200
+
+batch:
+  workers: 2
+  gpus: [0, 1]
+  resume: true
+  retries: 2
+  estimated_compressed_bytes_per_frame: 3000
+  andy_preflight_median_frames: 8898
+  scratch_subdir: scratch
+  cache_subdir: cache
+  atomic_writes: true
+

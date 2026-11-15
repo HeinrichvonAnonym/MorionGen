@@ -1,0 +1,608 @@
+{
+  "schema_version": 1,
+  "protocol": "gold_k_20261115_v1",
+  "registered_date": "2026-11-15",
+  "status": "membership_registered_before_new_K_training_or_evaluation",
+  "scope": "项目内 K 参照构建、格式适配与头胸补齐；共享拟合链的 E/X/M/J 沿用使用历史。",
+  "seed": "gold-k-20261115-v1",
+  "selection_attempts": 1,
+  "selection_rule": "Andy: 已执行/尝试者固定开发；其余按 SHA256(seed|andy|setup|subject) 升序，A 前2人、B 前3人留出。数量是工程约定。",
+  "andy": {
+    "development_subjects": [
+      "909",
+      "2193",
+      "2274",
+      "3327",
+      "5124",
+      "5319",
+      "5521",
+      "8410"
+    ],
+    "final_holdout_subjects": [
+      "541",
+      "5535",
+      "8524",
+      "9266",
+      "9875"
+    ],
+    "forced_development_subjects": [
+      "2193",
+      "2274",
+      "5319"
+    ],
+    "candidate_hash_order": {
+      "A": [
+        "541",
+        "5535",
+        "3327",
+        "909",
+        "5521",
+        "8410"
+      ],
+      "B": [
+        "9875",
+        "9266",
+        "8524",
+        "5124"
+      ]
+    }
+  },
+  "collaborate": {
+    "development_subsets": [
+      "AirplaneRiveting",
+      "Glassblowing_Process",
+      "LAB",
+      "MasticCultivation",
+      "SlikWeaving"
+    ],
+    "final_holdout_subsets": [
+      "Television_AssemblyPackaging"
+    ],
+    "final_holdout_local_subjects": [
+      "S01",
+      "S02",
+      "S03"
+    ],
+    "identity_scope": "subset-local; cross-subset identity unresolved; final claim is unseen task domain",
+    "development_cv": "LAB only, leave one local subject out; other real-task subsets are development transfer checks"
+  },
+  "han": {
+    "development_subjects": [
+      "s001",
+      "s002",
+      "s003",
+      "s004",
+      "s005",
+      "s006",
+      "s007"
+    ],
+    "final_holdout_subjects": [],
+    "correction": "原 2/5 建议由历史核查改为 7/0；splitN 是文件切分，按 s00N 合并。"
+  },
+  "counts": [
+    {
+      "dataset": "andy",
+      "partition": "development",
+      "entries": 120,
+      "included_entries": 120,
+      "recordings": 120,
+      "subject_groups": 8,
+      "exclusions": {}
+    },
+    {
+      "dataset": "andy",
+      "partition": "final_holdout",
+      "entries": 75,
+      "included_entries": 75,
+      "recordings": 75,
+      "subject_groups": 5,
+      "exclusions": {}
+    },
+    {
+      "dataset": "collaborate",
+      "partition": "development",
+      "entries": 1356,
+      "included_entries": 1291,
+      "recordings": 1291,
+      "subject_groups": 16,
+      "exclusions": {
+        "duplicate_alias": 2,
+        "zero_bytes": 63
+      }
+    },
+    {
+      "dataset": "collaborate",
+      "partition": "final_holdout",
+      "entries": 533,
+      "included_entries": 532,
+      "recordings": 532,
+      "subject_groups": 3,
+      "exclusions": {
+        "duplicate_alias": 1
+      }
+    },
+    {
+      "dataset": "han",
+      "partition": "development",
+      "entries": 264,
+      "included_entries": 259,
+      "recordings": 178,
+      "subject_groups": 7,
+      "exclusions": {
+        "zero_bytes": 5
+      }
+    },
+    {
+      "dataset": "han",
+      "partition": "final_holdout",
+      "entries": 0,
+      "included_entries": 0,
+      "recordings": 0,
+      "subject_groups": 0,
+      "exclusions": {}
+    }
+  ],
+  "development_folds": [
+    {
+      "id": "andy_leave_909",
+      "validation_groups": [
+        "andy/909"
+      ],
+      "training_groups": [
+        "andy/2193",
+        "andy/2274",
+        "andy/3327",
+        "andy/5124",
+        "andy/5319",
+        "andy/5521",
+        "andy/8410"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "andy_leave_2193",
+      "validation_groups": [
+        "andy/2193"
+      ],
+      "training_groups": [
+        "andy/909",
+        "andy/2274",
+        "andy/3327",
+        "andy/5124",
+        "andy/5319",
+        "andy/5521",
+        "andy/8410"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "andy_leave_2274",
+      "validation_groups": [
+        "andy/2274"
+      ],
+      "training_groups": [
+        "andy/909",
+        "andy/2193",
+        "andy/3327",
+        "andy/5124",
+        "andy/5319",
+        "andy/5521",
+        "andy/8410"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "andy_leave_3327",
+      "validation_groups": [
+        "andy/3327"
+      ],
+      "training_groups": [
+        "andy/909",
+        "andy/2193",
+        "andy/2274",
+        "andy/5124",
+        "andy/5319",
+        "andy/5521",
+        "andy/8410"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "andy_leave_5124",
+      "validation_groups": [
+        "andy/5124"
+      ],
+      "training_groups": [
+        "andy/909",
+        "andy/2193",
+        "andy/2274",
+        "andy/3327",
+        "andy/5319",
+        "andy/5521",
+        "andy/8410"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "andy_leave_5319",
+      "validation_groups": [
+        "andy/5319"
+      ],
+      "training_groups": [
+        "andy/909",
+        "andy/2193",
+        "andy/2274",
+        "andy/3327",
+        "andy/5124",
+        "andy/5521",
+        "andy/8410"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "andy_leave_5521",
+      "validation_groups": [
+        "andy/5521"
+      ],
+      "training_groups": [
+        "andy/909",
+        "andy/2193",
+        "andy/2274",
+        "andy/3327",
+        "andy/5124",
+        "andy/5319",
+        "andy/8410"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "andy_leave_8410",
+      "validation_groups": [
+        "andy/8410"
+      ],
+      "training_groups": [
+        "andy/909",
+        "andy/2193",
+        "andy/2274",
+        "andy/3327",
+        "andy/5124",
+        "andy/5319",
+        "andy/5521"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "han_leave_s001",
+      "validation_groups": [
+        "han/s001"
+      ],
+      "training_groups": [
+        "han/s002",
+        "han/s003",
+        "han/s004",
+        "han/s005",
+        "han/s006",
+        "han/s007"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_cv_with_prior_exposure"
+    },
+    {
+      "id": "han_leave_s002",
+      "validation_groups": [
+        "han/s002"
+      ],
+      "training_groups": [
+        "han/s001",
+        "han/s003",
+        "han/s004",
+        "han/s005",
+        "han/s006",
+        "han/s007"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_cv_with_prior_exposure"
+    },
+    {
+      "id": "han_leave_s003",
+      "validation_groups": [
+        "han/s003"
+      ],
+      "training_groups": [
+        "han/s001",
+        "han/s002",
+        "han/s004",
+        "han/s005",
+        "han/s006",
+        "han/s007"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_cv_with_prior_exposure"
+    },
+    {
+      "id": "han_leave_s004",
+      "validation_groups": [
+        "han/s004"
+      ],
+      "training_groups": [
+        "han/s001",
+        "han/s002",
+        "han/s003",
+        "han/s005",
+        "han/s006",
+        "han/s007"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_cv_with_prior_exposure"
+    },
+    {
+      "id": "han_leave_s005",
+      "validation_groups": [
+        "han/s005"
+      ],
+      "training_groups": [
+        "han/s001",
+        "han/s002",
+        "han/s003",
+        "han/s004",
+        "han/s006",
+        "han/s007"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_cv_with_prior_exposure"
+    },
+    {
+      "id": "han_leave_s006",
+      "validation_groups": [
+        "han/s006"
+      ],
+      "training_groups": [
+        "han/s001",
+        "han/s002",
+        "han/s003",
+        "han/s004",
+        "han/s005",
+        "han/s007"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_cv_with_prior_exposure"
+    },
+    {
+      "id": "han_leave_s007",
+      "validation_groups": [
+        "han/s007"
+      ],
+      "training_groups": [
+        "han/s001",
+        "han/s002",
+        "han/s003",
+        "han/s004",
+        "han/s005",
+        "han/s006"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_cv_with_prior_exposure"
+    },
+    {
+      "id": "collaborate_LAB_leave_S1",
+      "validation_groups": [
+        "collaborate/LAB/S1"
+      ],
+      "training_groups": [
+        "collaborate/LAB/S2",
+        "collaborate/LAB/S3",
+        "collaborate/LAB/S4",
+        "collaborate/LAB/S5",
+        "collaborate/LAB/S6",
+        "collaborate/LAB/S7",
+        "collaborate/LAB/S8",
+        "collaborate/LAB/S9",
+        "collaborate/LAB/S10"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "collaborate_LAB_leave_S2",
+      "validation_groups": [
+        "collaborate/LAB/S2"
+      ],
+      "training_groups": [
+        "collaborate/LAB/S1",
+        "collaborate/LAB/S3",
+        "collaborate/LAB/S4",
+        "collaborate/LAB/S5",
+        "collaborate/LAB/S6",
+        "collaborate/LAB/S7",
+        "collaborate/LAB/S8",
+        "collaborate/LAB/S9",
+        "collaborate/LAB/S10"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "collaborate_LAB_leave_S3",
+      "validation_groups": [
+        "collaborate/LAB/S3"
+      ],
+      "training_groups": [
+        "collaborate/LAB/S1",
+        "collaborate/LAB/S2",
+        "collaborate/LAB/S4",
+        "collaborate/LAB/S5",
+        "collaborate/LAB/S6",
+        "collaborate/LAB/S7",
+        "collaborate/LAB/S8",
+        "collaborate/LAB/S9",
+        "collaborate/LAB/S10"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "collaborate_LAB_leave_S4",
+      "validation_groups": [
+        "collaborate/LAB/S4"
+      ],
+      "training_groups": [
+        "collaborate/LAB/S1",
+        "collaborate/LAB/S2",
+        "collaborate/LAB/S3",
+        "collaborate/LAB/S5",
+        "collaborate/LAB/S6",
+        "collaborate/LAB/S7",
+        "collaborate/LAB/S8",
+        "collaborate/LAB/S9",
+        "collaborate/LAB/S10"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "collaborate_LAB_leave_S5",
+      "validation_groups": [
+        "collaborate/LAB/S5"
+      ],
+      "training_groups": [
+        "collaborate/LAB/S1",
+        "collaborate/LAB/S2",
+        "collaborate/LAB/S3",
+        "collaborate/LAB/S4",
+        "collaborate/LAB/S6",
+        "collaborate/LAB/S7",
+        "collaborate/LAB/S8",
+        "collaborate/LAB/S9",
+        "collaborate/LAB/S10"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "collaborate_LAB_leave_S6",
+      "validation_groups": [
+        "collaborate/LAB/S6"
+      ],
+      "training_groups": [
+        "collaborate/LAB/S1",
+        "collaborate/LAB/S2",
+        "collaborate/LAB/S3",
+        "collaborate/LAB/S4",
+        "collaborate/LAB/S5",
+        "collaborate/LAB/S7",
+        "collaborate/LAB/S8",
+        "collaborate/LAB/S9",
+        "collaborate/LAB/S10"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "collaborate_LAB_leave_S7",
+      "validation_groups": [
+        "collaborate/LAB/S7"
+      ],
+      "training_groups": [
+        "collaborate/LAB/S1",
+        "collaborate/LAB/S2",
+        "collaborate/LAB/S3",
+        "collaborate/LAB/S4",
+        "collaborate/LAB/S5",
+        "collaborate/LAB/S6",
+        "collaborate/LAB/S8",
+        "collaborate/LAB/S9",
+        "collaborate/LAB/S10"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "collaborate_LAB_leave_S8",
+      "validation_groups": [
+        "collaborate/LAB/S8"
+      ],
+      "training_groups": [
+        "collaborate/LAB/S1",
+        "collaborate/LAB/S2",
+        "collaborate/LAB/S3",
+        "collaborate/LAB/S4",
+        "collaborate/LAB/S5",
+        "collaborate/LAB/S6",
+        "collaborate/LAB/S7",
+        "collaborate/LAB/S9",
+        "collaborate/LAB/S10"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "collaborate_LAB_leave_S9",
+      "validation_groups": [
+        "collaborate/LAB/S9"
+      ],
+      "training_groups": [
+        "collaborate/LAB/S1",
+        "collaborate/LAB/S2",
+        "collaborate/LAB/S3",
+        "collaborate/LAB/S4",
+        "collaborate/LAB/S5",
+        "collaborate/LAB/S6",
+        "collaborate/LAB/S7",
+        "collaborate/LAB/S8",
+        "collaborate/LAB/S10"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    },
+    {
+      "id": "collaborate_LAB_leave_S10",
+      "validation_groups": [
+        "collaborate/LAB/S10"
+      ],
+      "training_groups": [
+        "collaborate/LAB/S1",
+        "collaborate/LAB/S2",
+        "collaborate/LAB/S3",
+        "collaborate/LAB/S4",
+        "collaborate/LAB/S5",
+        "collaborate/LAB/S6",
+        "collaborate/LAB/S7",
+        "collaborate/LAB/S8",
+        "collaborate/LAB/S9"
+      ],
+      "scope": "same_dataset_only",
+      "interpretation": "development_model_selection"
+    }
+  ],
+  "group_policy": [
+    "按人先分组再切窗；同一记录、重叠窗、镜像、重定向、模型体型变体和八种退化继承同一 partition/group_id。",
+    "CoLLaboratE 的重复文件共享 recording_id；零文件与重复别名仍保留在名单，参与计数时用 status=included。",
+    "Han 的 _full_segment_N 与 _segment_N 合并原记录；With_Arm/No_Arm 的同源文件继承同一受试者分组。",
+    "LAB 的跨人 CV 限于 LAB；跨包 S01 身份未核实前，不把名字当全局人员 ID。"
+  ],
+  "final_use": [
+    "所有参数、参照质量门、动作窗口规则、八种适配和模型选择只用 development；随后一次性运行 final_holdout。",
+    "留出受试者的测量标定执行预先固定规则，标定时间窗与评分窗分离；标定结果只提供协议允许的尺度/坐标信息。",
+    "只读盘点、文件校验和既有覆盖率已发生；本次留出用于今后的方法冻结验证，记录这种已知数据结构的状态。",
+    "最终模型可合用全部开发来源；跨数据集单向迁移实验另按明确训练来源报告。",
+    "留出结果用于修改方法后，该版本留出转为已使用；新一轮检验另行登记。"
+  ],
+  "reference_status": "candidate_reference; raw visibility and BVH presence do not establish anatomical accuracy",
+  "conventions_not_power_derived": [
+    "Andy 8/5 人及 setup A 4/2、B 4/3",
+    "电视场景整包留出",
+    "开发集按人留一交叉验证"
+  ],
+  "manifest": {
+    "path": "trials.jsonl",
+    "sha256": "47d19f0a0f7b87321e45d177a51a1e3a5f530225947c1999072041e4abde847d"
+  }
+}

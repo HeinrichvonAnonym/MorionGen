@@ -1,0 +1,201 @@
+schema_version: 1
+extends: motion_retarget_hiphi_object_v3.yaml
+
+paths:
+  output_root: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/outputs/motion_retarget_hiphi_object_pilot_v4
+
+temporal_continuity:
+  required_order: 3
+  spline_degree: 5
+  body_knot_seconds: 0.04
+  hand_knot_seconds: 0.04
+  translation_knot_seconds: 0.04
+
+object_pilot:
+  selection_manifest: config/hiphi_object_pilot_selection_v4.json
+  solver_version: constrained_se3_v4
+  archive_schema_version: 5
+  reuse_previous_contact_binding: false
+  direct_c4_optimization: true
+  c4_knot_seconds: 0.04
+  ik_window_frames: 128
+  surface_remap_max_geodesic_m: 0.005
+  topology_weld_tolerance_m: 0.00005
+  surface_remap_stable_fraction: 0.01
+  surface_remap_required_stable_rounds: 2
+  surface_remap_maximum_outer_rounds: 6
+  surface_remap_transition_m: 0.002
+  # One exact source capsule sample is a persistent anatomical identity during
+  # the distance-only contact tier. Keep one target-hand vertex for its
+  # contiguous run while OBJ face/barycentric anchors remain frame-dynamic.
+  # Real rolling/sliding or finger changes select another source proxy and
+  # therefore another run; posed-normal noise must not change anatomy inside a
+  # persistent proxy run.
+  surface_remap_constant_vertex_per_proxy_run: true
+  surface_remap_vertex_selection: dynamic_reference_initial_binding_then_contact_and_finger_updates
+  # Initial target-human identity is established on the source-driven dynamic
+  # target-shape reference, before reach IK. The palm tier only solves 6D
+  # reach: rebinding there against a still-distant baseline selects vertices
+  # by arm-placement error. Contact, normal and dynamic-finger tiers alternate
+  # bounded target-vertex/OBJ-patch updates with continuous solves until two
+  # correspondence rounds change by less than 1%.
+  surface_remap_vertex_lock_after_tier: 4
+  surface_remap_active_tiers: [1, 2, 3]
+  surface_remap_vertex_switch_tiers: [1, 2, 3]
+  # A rebind must also remain compatible with the immutable target-shape hand
+  # surface transported onto the source BVH dynamic skeleton. This prevents a
+  # drifted current pose from selecting vertices that only make its own drift
+  # self-consistent. The 1.5 mm slack is below the 3 mm median contact gate.
+  surface_remap_reference_gap_slack_m: 0.0015
+  # Candidate ordering also retains the immutable source-driven target-hand
+  # reference as a metric 1 m/m term. This breaks iteration-dependent ties
+  # between nearby feasible vertices without changing the 1.5 mm hard slack.
+  surface_remap_reference_cost_scale: 1.0
+  # A tier-4 target-vertex correction must also stay inside a 5 mm posed-mesh
+  # neighbourhood of the established vertex. Combined with the same segment,
+  # proxy radial/longitudinal identity and normal gates, this prevents the 38%
+  # whole-phalange rebinding seen in the rejected unrestricted experiment.
+  target_vertex_remap_max_distance_m: 0.005
+  surface_remap_preserve_proxy_identity: true
+  tier_activation_releases_old_vertex_ownership: false
+  surface_remap_normal_feasibility: proxy_identity_hard_then_normal_hard_after_contact_passes
+  surface_remap_normal_tier_path: pre_continuous_temporal_dp_inside_proxy_identity
+  target_proxy_radial_tolerance_degrees: 30.0
+  # Four samples along every released BVH capsule are spaced by one third.
+  target_proxy_longitudinal_tolerance: 0.34
+  # Eight released proxy samples contain redundant points on the same capsule.
+  # Preserve a multi-region grasp without over-constraining zero-beta target
+  # hand morphology; the acceptance gate below still requires >=3 points.
+  target_contact_points_per_hand: 4
+  normal_infeasible_frame_policy: preserve_source_constraint_and_fail_tier
+  # Bounded numerical projection after the six AL outer iterations. It runs
+  # only with stable discrete correspondence; each pass is accepted only when
+  # the exact aggregate P95 gate violation decreases. There is deliberately no
+  # residual-magnitude activation threshold: such a threshold is not a
+  # physical constraint and the individual acceptance gates remain unchanged.
+  feasibility_projection_passes: 6
+  # If the joint projector stalls, project the worst exact hard gate alone.
+  # A step is accepted only when every active gate is componentwise monotone
+  # and the total exact violation strictly decreases.
+  targeted_feasibility_projection_passes: 6
+  # Fixed-correspondence polish optimizes exactly the P95 acceptance statistic;
+  # accepted constraints have zero loss and reactivate if they cross the gate.
+  feasibility_projection_quantile: 0.95
+  # The exact quantile has gradient support on only one or two samples. Add
+  # the worst 10% normalized physical residuals as a dense search direction;
+  # exact P95 remains the sole step acceptance and rollback criterion.
+  feasibility_projection_tail_fraction: 0.10
+  # Within 0.1% of the hard gate, switch back to the exact quantile gradient;
+  # this is only a numerical search-mode threshold, never an acceptance gate.
+  feasibility_projection_tail_activation: 1.001
+  feasibility_projection_learning_rate: 0.10
+  surface_remap_identity_switch_m: 0.008
+  # Once radial/longitudinal proxy identity is hard-filtered, a 1.5 mm
+  # improvement is physically meaningful and matches anchor resolution. The
+  # update is performed once per hierarchy tier, not between AL multiplier
+  # updates, so this threshold cannot create a moving optimization target.
+  surface_remap_proxy_identity_switch_m: 0.0015
+  # 1.5 mm is the observed feasibility-residual upper edge and half the old
+  # A discrete OBJ-patch rebind must improve the metric cost by the complete
+  # 3 mm median contact-resolution gate. Sub-resolution movement remains a
+  # continuous hand solve, while real rolling still has the unchanged 5 mm
+  # hard geodesic patch available.
+  surface_remap_anchor_switch_m: 0.003
+  surface_remap_anchor_minimum_frames: 3
+  # All terms are metric metres. Penalize OBJ-patch travel at 1 m/m so the
+  # released source anchor remains the preferred trajectory; the 5 mm patch
+  # is adaptation freedom, not permission for the target to chase the hand.
+  surface_remap_geodesic_cost_scale: 1.0
+  palm_position_tolerance_m: 0.005
+  palm_orientation_tolerance_degrees: 5.0
+  jacobian_relative_singular_value: 0.0001
+  jacobian_rank_failure_fraction: 0.05
+  jacobian_condition_limit: 1000000.0
+  fallback_residual_improvement: 0.30
+  # Preserve near-feasible finger progress when opening root/lower-body DoFs;
+  # grossly infeasible or non-finite failed tiers still restore the checkpoint.
+  fallback_seed_maximum_normalized_p95: 2.0
+  fallback_seed_minimum_improvement: 0.10
+  fallback_root_translation_m: 0.05
+  fallback_root_rotation_degrees: 5.0
+  # This is only the principal SO(3) numerical domain for a correction around
+  # the source BVH hand pose; it is not an anatomical limit. Physical validity
+  # is enforced by the source finger-direction, bend, opposition, trajectory,
+  # contact and penetration gates. A smaller invented trust region clipped the
+  # gold-sample solution before those real constraints could be satisfied.
+  mano_max_delta_degrees: 180.0
+  upper_body_joint_indices: [2, 5, 8, 12, 13, 15, 16, 17, 18, 19, 20]
+  upper_body_max_delta_degrees: [10.0, 10.0, 10.0, 15.0, 15.0, 30.0, 30.0, 45.0, 45.0, 45.0, 45.0]
+  lower_body_fallback_joint_indices: [0, 1, 3, 4, 6, 7, 9, 10]
+  lower_body_max_delta_degrees: [15.0, 15.0, 25.0, 25.0, 20.0, 20.0, 20.0, 20.0]
+  support_foot_joint_indices: [7, 8, 10, 11]
+  support_foot_height_m: 0.08
+  support_foot_speed_m_s: 0.08
+  support_foot_position_tolerance_m: 0.003
+  support_foot_orientation_tolerance_degrees: 3.0
+  # The equality residual uses the locked P95 surface-gap gate.  The stricter
+  # 3 mm median gate remains an independent post-solve validation check.
+  contact_gap_tolerance_m: 0.008
+  # Contact residuals are measured to the released OBJ surface itself so the
+  # 8 mm solver gate and independent validation gate use the same physical
+  # quantity. The following SDF/collision tier owns separation and tolerated
+  # penetration; contact correspondence must not hide a 2 mm offset.
+  contact_surface_offset_m: 0.0
+  # HiPHI thin/open OBJ winding does not define a reliable inside/outside.
+  # Preserve the real triangle-normal axis and choose its sign from the raw
+  # source hand proxy side; this convention is independently recomputed.
+  contact_normal_orientation: source_hand_facing_triangle_axis
+  # This is a P95 residual gate and must match acceptance.normal_angle_p95_deg.
+  # The stricter 30 degree median is checked independently after solve.
+  contact_normal_tolerance_degrees: 60.0
+  collision_tolerance_m: 0.003
+  source_finger_position_tolerance_m: 0.010
+  source_finger_direction_tolerance_degrees: 10.0
+  source_finger_bend_tolerance_degrees: 15.0
+  source_thumb_opposition_tolerance_m: 0.010
+  pose_prior_tolerance_degrees: 10.0
+  source_velocity_tolerance_degrees_s: 30.0
+  source_acceleration_tolerance_degrees_s2: 180.0
+  root_translation_velocity_tolerance_m_s: 0.05
+  root_translation_acceleration_tolerance_m_s2: 0.20
+  augmented_lagrangian:
+    initial_penalty: 1.0
+    penalty_multiplier: 4.0
+    maximum_penalty: 4096.0
+    required_reduction: 0.25
+    maximum_outer_iterations: 6
+    stable_outer_iterations: 2
+    adam_iterations: 100
+    adam_learning_rate_body: 0.003
+    adam_learning_rate_hand: 0.002
+    lbfgs_iterations: 25
+    lbfgs_history: 20
+  acceptance:
+    object_translation_m: 0.0001
+    object_rotation_deg: 0.01
+    palm_position_p95_m: 0.005
+    palm_orientation_p95_deg: 5.0
+    source_contact_recall: 0.95
+    contact_transition_median_frames: 2.0
+    surface_remap_max_geodesic_m: 0.005
+    contact_median_m: 0.003
+    contact_p95_m: 0.008
+    penetration_p95_m: 0.005
+    penetration_max_m: 0.010
+    nonhand_penetration_max_m: 0.003
+    finger_object_local_p95_m: 0.010
+    grasp_aperture_p95_m: 0.010
+    finger_direction_p95_deg: 10.0
+    hand_rotation_p95_deg: 20.0
+    contact_patch_active_vertices_p05: 3.0
+    contact_patch_minimum_regions: 2
+    support_foot_position_p95_m: 0.003
+    support_foot_orientation_p95_deg: 3.0
+    fallback_root_translation_m: 0.05
+    fallback_root_rotation_deg: 5.0
+    normal_angle_median_deg: 30.0
+    normal_angle_p95_deg: 60.0
+    noncontact_joint_median_m: 0.03
+    noncontact_joint_p95_m: 0.08
+    mujoco_object_translation_m: 0.001
+    mujoco_object_rotation_deg: 0.1

@@ -1,0 +1,119 @@
+schema_version: 1
+extends: motion_retarget_hiphi_object_v2.yaml
+
+temporal_continuity:
+  # HiPHI is 90 Hz and contains real finger articulation.  The former 120 ms
+  # native-hand knots suppressed grasp transitions before object IK saw them.
+  hand_knot_seconds: 0.04
+
+fitting:
+  # Absolute point error alone was dominated by immutable palm/bone-length
+  # differences.  These source-relative terms preserve all three phalange
+  # directions and the right-thumb opposition before contact optimization.
+  native_hand_data_weight: 20.0
+  native_hand_direction_weight: 2.0
+  native_hand_bend_weight: 4.0
+  native_hand_thumb_opposition_weight: 2000.0
+  native_hand_pose_prior_weight: 0.00001
+  native_hand_velocity_weight: 0.00005
+  native_hand_acceleration_weight: 0.0001
+
+paths:
+  output_root: /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/outputs/motion_retarget_hiphi_object_pilot_v3
+
+object_pilot:
+  selection_manifest: config/hiphi_object_pilot_selection_v3.json
+  source_contact_points_per_hand: 8
+  # Preserve the complete released contact patch. Four points allowed a
+  # visually open right hand to satisfy the selected subset while the other
+  # observed phalanges drifted off the rack.
+  target_contact_points_per_hand: 8
+  source_contact_enter_m: 0.010
+  source_contact_exit_m: 0.020
+  source_contact_minimum_frames: 9
+  source_contact_relative_speed_m_s: 0.25
+  source_contact_switch_hysteresis_m: 0.003
+  target_vertex_switch_hysteresis_m: 0.006
+  target_normal_assignment_weight_m: 0.020
+  contact_normal_weight: 0.50
+  # Match the contact manifold to the collision safety shell.  Constraining a
+  # single curved-skin vertex to exactly zero offset can put its neighbouring
+  # vertices inside a thin rack tube even while the contact point is perfect.
+  contact_surface_offset_m: 0.002
+  contact_plane_weight: 24000.0
+  contact_tangent_weight: 12000.0
+  penetration_weight: 12000.0
+  penetration_max_weight: 96000.0
+  annotation_max_bridge_s: 0.25
+  annotation_max_gap_m: 0.030
+  annotation_max_speed_m_s: 0.35
+  contact_patch_vertices: 8
+  optimized_body_joint_indices: [2, 5, 8, 12, 13, 15, 16, 17, 18, 19, 20]
+  arm_max_delta_degrees: [8.0, 8.0, 8.0, 12.0, 12.0, 25.0, 25.0, 35.0, 35.0, 35.0, 35.0]
+  # This is only a safety bound.  Source-relative finger direction/bend gates
+  # below now determine correctness; the old 20-degree clamp merely made its
+  # own delta metric pass while leaving the right hand visibly wrong.
+  mano_max_delta_degrees: 60.0
+  root_max_delta_degrees: 10.0
+  root_translation_max_delta_m: 0.08
+  source_landmark_weight: 8000.0
+  finger_landmark_relative_weight: 2.00
+  source_hand_direction_weight: 10.0
+  source_hand_bend_weight: 10.0
+  thumb_opposition_weight: 10000.0
+  source_hand_tail_multiplier: 2.0
+  # Contact refinement must be able to translate the wrist through the full
+  # kinematic chain. Wrist rotation alone cannot close an 8--15 mm whole-hand
+  # offset and previously forced MANO fingers to stretch toward the rack.
+  fine_optimized_body_joint_indices: [12, 13, 15, 16, 17, 18, 19, 20]
+  fine_body_max_delta_degrees: [10.0, 10.0, 20.0, 20.0, 30.0, 30.0, 45.0, 45.0]
+  fine_root_max_delta_degrees: 0.0
+  fine_root_translation_max_delta_m: 0.0
+  coarse_reach_fraction: 0.20
+  fine_contact_fraction: 0.45
+  coarse_ik_iterations: 100
+  coarse_ik_learning_rate: 0.012
+  coarse_reach_weight: 12000.0
+  coarse_pose_prior_weight: 1.0
+  coarse_temporal_weight: 8.0
+  coarse_translation_huber_m: 0.02
+  foot_joint_indices: [7, 8, 10, 11]
+  foot_preservation_weight: 1500.0
+  direct_c4_optimization: true
+  root_pose_prior_weight: 8.0
+  root_translation_prior_weight: 80.0
+  ik_iterations: 300
+  acceptance:
+    object_translation_m: 0.0001
+    object_rotation_deg: 0.01
+    contact_median_m: 0.003
+    contact_p95_m: 0.008
+    penetration_p95_m: 0.003
+    penetration_max_m: 0.010
+    source_contact_recall: 0.95
+    contact_transition_median_frames: 2.0
+    wrist_palm_object_local_p95_m: 0.015
+    finger_object_local_p95_m: 0.010
+    grasp_aperture_p95_m: 0.010
+    hand_rotation_p95_deg: 20.0
+    finger_bend_p95_deg: 20.0
+    thumb_opposition_p95_m: 0.010
+    contact_patch_frame_coverage: 0.95
+    contact_patch_active_vertices_p05: 3.0
+    contact_patch_minimum_regions: 2
+    normal_angle_median_deg: 45.0
+    normal_angle_p95_deg: 75.0
+    normal_gap_p95_m: 0.008
+    tangent_error_p95_m: 0.010
+    tangent_slip_p95_m_s: 0.25
+    noncontact_joint_median_m: 0.03
+    noncontact_joint_p95_m: 0.08
+    arm_delta_p95_deg: 35.0
+    arm_delta_max_deg: 45.0
+    # Contact frames may adapt to the target surface. Correctness is gated by
+    # source-relative direction/bend/opposition above; baseline delta remains
+    # recorded as a safety bound but is no longer a 45-degree self-reference.
+    mano_delta_p95_deg: 60.0
+    mano_delta_max_deg: 60.0
+    mujoco_object_translation_m: 0.001
+    mujoco_object_rotation_deg: 0.1

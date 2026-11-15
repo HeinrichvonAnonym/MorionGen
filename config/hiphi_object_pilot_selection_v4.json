@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "dataset": "HiPHI",
+  "seed": 20261101,
+  "mirrored": false,
+  "sampling": "v4 constrained-retarget gold sample only; the other four locked pilot samples remain deferred",
+  "selected": [
+    {
+      "sequence_id": "Cause_to_move_in_place-turn_0143",
+      "actor_id": "A011",
+      "object_category": "clothrack",
+      "stratum": "workcell_assembly_adjustment"
+    }
+  ],
+  "deferred": [
+    "Bringing-carry_0206",
+    "Cause_motion-pull_0251",
+    "Placing-shower_0015",
+    "Adjusting-adjust_0110"
+  ],
+  "policy": {
+    "gold_sample_first": true,
+    "require_visual_acceptance_before_deferred": true,
+    "reuse_v3_contacts_or_controls": false
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "dataset": "HiPHI",
+  "seed": 20261101,
+  "mirrored": false,
+  "sampling": "fixed-seed stratified random selection with unique actor and object category; deterministic service-scene replacement after geometry failure",
+  "selected": [
+    {
+      "sequence_id": "Bringing-carry_0206",
+      "actor_id": "A048",
+      "object_category": "box",
+      "stratum": "human_robot_collaboration_transport"
+    },
+    {
+      "sequence_id": "Cause_motion-pull_0251",
+      "actor_id": "A016",
+      "object_category": "table",
+      "stratum": "industrial_positioning"
+    },
+    {
+      "sequence_id": "Cause_to_move_in_place-turn_0143",
+      "actor_id": "A011",
+      "object_category": "clothrack",
+      "stratum": "workcell_assembly_adjustment"
+    },
+    {
+      "sequence_id": "Placing-shower_0015",
+      "actor_id": "A035",
+      "object_category": "bucket",
+      "stratum": "service_cleaning"
+    },
+    {
+      "sequence_id": "Adjusting-adjust_0110",
+      "actor_id": "A023",
+      "object_category": "stepstool",
+      "stratum": "workcell_service_tool_adjustment"
+    }
+  ],
+  "replacements": [
+    {
+      "removed_sequence_id": "Placing-drizzle_0005",
+      "replacement_sequence_id": "Cause_to_move_in_place-rock_0102",
+      "reason": "Bottle_A_1 geometry/retarget candidate failed the fixed gates after normal-aware IK: SDF orientation agreement 0.6967, normal-angle P95 96.47 deg, arm-delta P95 25.0 deg, penetration P95 10.94 mm, and tangent-anchor P95 27.05 mm. Further weighting saturated MANO/arm limits and was rejected as overfitting.",
+      "candidate_pool": "non-mirrored HiPHI HOI with object_category=mop, unused actor, and floor/sweep service semantics",
+      "candidate_pool_size": 17,
+      "selection_rule": "lexicographic motion_id order followed by numpy default_rng(20261101).permutation; take first"
+    },
+    {
+      "removed_sequence_id": "Cause_to_move_in_place-rock_0102",
+      "replacement_sequence_id": "Adjusting-tweak_0267",
+      "reason": "The first mop replacement passed object geometry gates but failed the native-hand FK gate after contact IK: 16.12 mm median versus the fixed 15 mm threshold. It was rejected rather than reporting a source-inconsistent hand pose.",
+      "candidate_pool": "same ordered mop service-scene candidate pool as the prior replacement",
+      "candidate_pool_size": 17,
+      "selection_rule": "take the next unused entry from the previously recorded fixed-seed permutation"
+    },
+    {
+      "removed_sequence_id": "Adjusting-tweak_0267",
+      "replacement_sequence_id": "Adjusting-adjust_0078",
+      "reason": "The second mop candidate also failed the native-hand FK gate after object IK (15.78 mm median; right hand 18.97 mm). The mop category was retired rather than repeatedly distorting MANO.",
+      "candidate_pool": "non-mirrored stepstool HOI with adjust/tweak semantics and an unused actor",
+      "candidate_pool_size": 21,
+      "selection_rule": "lexicographic motion_id order followed by numpy default_rng(20261101).permutation; take first"
+    },
+    {
+      "removed_sequence_id": "Adjusting-adjust_0078",
+      "replacement_sequence_id": "Adjusting-adjust_0110",
+      "reason": "The first stepstool candidate failed the baseline native-hand FK gate before object IK (16.66 mm median). The next fixed-order candidate passed baseline FK at 8.88 mm and was therefore eligible for joint retargeting.",
+      "candidate_pool": "same ordered stepstool adjust/tweak pool as the prior replacement",
+      "candidate_pool_size": 21,
+      "selection_rule": "take the first candidate in the recorded permutation whose baseline native-hand FK is <=15 mm; no object-retarget result was inspected for selection"
+    }
+  ]
+}
