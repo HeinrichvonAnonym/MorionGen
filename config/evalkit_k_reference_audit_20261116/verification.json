@@ -1,0 +1,29 @@
+{
+  "parent_commit": "eca963761c6263bd132a2dc9dc8f9ecda8ea038e",
+  "scope": "development-only post-hoc scoring; existing K1/K2 models and coordinates reused, no IK solve or tuning, no holdout re-evaluation",
+  "script_sha256": "301c3339cf502de62e749eb157690d7a5a21482b5a57b9e5ed11e04a998a6201",
+  "results_sha256": "8a1caf0435e7bd4dfe1452b5e57eeab4aea12c5acc75a5490fb79aa7f4bdcf66",
+  "records": 66,
+  "unique_original_records": 22,
+  "participant_groups": 12,
+  "saved_fits": 132,
+  "protected_files_equal_to_parent_commit": 36,
+  "protected_paths": [
+    "config/gold_k_20261115",
+    "config/evalkit_k_validation_20261116",
+    "config/evalkit_k_arms_20261116",
+    "config/evalkit_k_v1.json",
+    "config/evalkit_k_v2.json",
+    "utils/motiogen/evalkit/k",
+    "config/biomechanics_models.json"
+  ],
+  "input_fit_hashes_checked_before_after": true,
+  "scored_body_chains_template_priors": 0,
+  "tests": {
+    "passed": 3,
+    "command": "OPENBLAS_NUM_THREADS=1 /home/heinrich/.local/share/opensim-api/bin/python -m unittest discover -s python/tests -p test_evalkit_k_reference_audit.py"
+  },
+  "arrays_directory": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k_reference_audit_20261116",
+  "arrays_bytes": 46881350,
+  "data_disk_free_bytes": 921732886528
+}
