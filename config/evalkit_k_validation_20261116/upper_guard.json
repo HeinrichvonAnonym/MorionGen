@@ -1,0 +1,28 @@
+{
+  "initial_attempt": {
+    "status": "failed",
+    "reason": "[Errno 2] No such file or directory: '/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/third_party_models/fbls/FBLSmodel.osim'"
+  },
+  "runtime_model_path_override": {
+    "original": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/third_party_models/fbls/FBLSmodel.osim",
+    "resolved": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/third_party_models/fbls/FBLSmodel.osim",
+    "sha256": "d9b00516805c9221663c4e971fe7ec53d537293f39f02fbab7c6f324283a1ce4"
+  },
+  "scope": "Additional DART calibration guard check; existing model path corrected in process only; frozen source unchanged",
+  "status": "passed",
+  "result": {
+    "protocol": "evalkit_upper_muscle_20261108",
+    "lumbar": {
+      "status": "unreliable_kinematics",
+      "reason": "FBLS calibration unavailable: insufficient qualified upright observations"
+    },
+    "neck": {
+      "status": "reserved",
+      "needs": "HYOID head-neck model (Mortensen 2018, 72 muscles, in data_root/third_party_models) posed on chest, neck and head global rotations. Native rotations exist for ARDY, CHOIS (raw/native_prediction.npz) and Kimodo; DART needs the SMPL-X export rerun on the E4 inputs; PRIMAL, CLoSD, MotionLCM and OmniControl need rotations recovered from their native outputs (user decision 2026-11-08: recover, else 'neck not measurable')"
+    },
+    "shoulder": {
+      "status": "reserved",
+      "needs": "a shoulder muscle model (deltoid, rotator cuff, scapular muscles, glenohumeral reaction), none downloaded: MASI (data_root/third_party_models/masi) is a cervical model with only trapezius and levator scapulae at the shoulder. Candidates: MoBL-ARMS (Saul 2015), thoracoscapular model (Seth 2016/2019)"
+    }
+  }
+}

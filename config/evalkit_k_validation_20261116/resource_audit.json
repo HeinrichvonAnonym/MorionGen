@@ -1,0 +1,42 @@
+{
+  "recorded_at": "2026-11-15T17:09:59.207144+00:00",
+  "output_root": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k_20261116",
+  "directory_bytes": {
+    "development_v3": 55339113,
+    "gold_overlays_v3": 12940439,
+    "gaps_development_v4": 21681228,
+    "regression_v2": 48888109,
+    "gold_overlays_candidate": 12471691,
+    "final_holdout": 21931823,
+    "gold_overlays_v4": 12471062,
+    "regression_candidate": 48890469,
+    "development_v5": 55165024,
+    "regression_v5": 48889656,
+    "gaps_development_v3": 21681388,
+    "development": 3860471,
+    "gaps_development_v2": 21681388,
+    "regression_v4": 48888149,
+    "upper_guard": 1603577,
+    "development_v2": 55338794,
+    "development_v4": 15749039,
+    "development_candidate": 55164987,
+    "regression": 48888025,
+    "gaps_development": 21681388,
+    "gaps_final_holdout": 9170015,
+    "gold_overlays": 15488322,
+    "gold_overlays_v2": 17621216,
+    "gaps_development_candidate": 21681228
+  },
+  "total_output_bytes": 697166601,
+  "disk_free_bytes": 934712913920,
+  "final_directories": [
+    "final_holdout",
+    "gaps_final_holdout"
+  ],
+  "selected_development_directories": [
+    "development_candidate",
+    "gaps_development_candidate",
+    "regression_candidate"
+  ],
+  "history": "Other development iterations retained as superseded experiments; no holdout-driven method changes."
+}
