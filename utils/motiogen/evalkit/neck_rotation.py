@@ -1,12 +1,4 @@
-"""RULA with the rotation neck reading (sensitivity, config/evalkit_batch_protocol_20261108.json settings_sensitivity.neck_reading).
-
-evalkit scores the neck from the neck-to-head joint line (ergo.neck_angles, reading A). Reading B replaces the head point
-by neck + R_head_global (head_rest - neck_rest): the rest neck-to-head vector carried by the head joint's global rotation,
-which the joint line cannot see. Global rotations are identity at rest for every method here (checked per row), so A and
-B coincide in the rest pose and share the revision 3 per-skeleton zero. The rest vector is rebuilt from the row itself.
-Same readings and gates as the registered neck supplement (config/evalkit_neck_supp_20261108.json, part_real), on the
-saved fit and contact masks of an evaluated row instead of a new residual step. OpenSim python.
-"""
+"""Versioned K rotation entry point; historical RULA sensitivity remains explicit legacy code."""
 import json
 from pathlib import Path
 
@@ -15,33 +7,28 @@ import numpy as np
 from . import ergo, fit as fit_mod
 from .spec import SIDES, LANDMARKS
 
-METHODS = ('ardy', 'chois', 'kimodo', 'primal')
+METHODS = ('ardy', 'chois', 'kimodo', 'primal', 'dart', 'closd')
 CONVENTION_GATE_DEG, FRAME_GATE_DEG = .5, .05
 BANDS = (0., 10., 20.)
-VERSION = 1
+VERSION = 2
 
 
 def native(method, source):
     """Native joints (T, J, 3), names, global rotations (T, J, 3, 3) and the neck-to-head chain (joint indices)."""
-    from motion import SOMA77_NAMES
-    src = Path(source)
-    if method == 'ardy':
-        z = np.load(src/'motion.npz'); names = [str(n) for n in z['joint_names']]
-        return z['joints'].astype(float), names, z['global_rotations'].astype(float), [names.index('neck'), names.index('head')]
+    from .k import load
+    motion = load(source, method)
+    if motion.rotations is None:
+        raise ValueError('Native rotations unavailable in this export')
+    names = motion.names
+    joints = motion.positions
+    rotations = motion.rotations
     if method == 'chois':
-        z = np.load(src/'raw/native_prediction.npz')
-        return z['joints'][:, :22].astype(float), ergo.SMPL22_NAMES, z['global_rotations'][:, :22].astype(float), [12, 15]
-    if method == 'kimodo':
-        z = np.load(src/'motion.npz'); names = list(SOMA77_NAMES)
-        return z['posed_joints'].astype(float), names, z['global_rot_mats'].astype(float), [names.index(n) for n in ('neck', 'Neck2', 'head')]
-    from scipy.spatial.transform import Rotation
-    z = np.load(str(src).replace('_canonical.npz', '.npz')); pose = z['pose'][0].astype(float)
-    local = Rotation.from_rotvec(pose[:, 3:].reshape(-1, 3)).as_matrix().reshape(len(pose), 22, 3, 3)
-    glob = np.zeros_like(local)
-    for k in range(22):
-        p = ergo.SMPL22_PARENTS[k]
-        glob[:, k] = local[:, k] if p < 0 else glob[:, p] @ local[:, k]
-    return z['joints'][0].astype(float), ergo.SMPL22_NAMES, glob, [12, 15]
+        names = ergo.SMPL22_NAMES
+        joints = joints[:, :22]
+    if len(names) != rotations.shape[1]:
+        raise ValueError('Historical joint-line sensitivity requires matching joint and rotation layouts; use K native segment output')
+    chain = [names.index(n) for n in (('neck','Neck2','head') if method=='kimodo' else ('neck','head'))]
+    return joints, names, rotations, chain
 
 
 def readings(method, source):
@@ -94,9 +81,24 @@ def key(rec):
 
 
 def evaluate(run, out, method):
-    """Rotation-reading RULA of an evaluated row (ergo in its dims): writes out/neck_rotation.npz and the summary into
-    evalkit.json['neck_rotation']; status ok / not_applicable / failed_convention / failed_frame_match / failed_reproduction."""
+    """Attach current K neck reliability to an evaluated row; legacy sensitivity is opt-in below."""
     out = Path(out); rec = json.loads((out/'evalkit.json').read_text()); r = rec['receipt']
+    from .k import load as load_k, evaluate as evaluate_k
+    from .k.posture import summary
+    k = evaluate_k(load_k(run, method))
+    res = summary(k)
+    res['status'] = k['metrics']['neck']['status']
+    res['reason'] = k['metrics']['neck']['reason']
+    rec['neck_rotation'] = {**res, 'key': key(rec)}
+    (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
+    return rec['neck_rotation']
+
+
+def evaluate_legacy(run, out, method):
+    """Historical r3 sensitivity only, on a pinned historical implementation."""
+    out = Path(out); rec = json.loads((out/'evalkit.json').read_text()); r = rec['receipt']
+    if r.get('fit_prepare') != fit_mod.PREPARE:
+        return {'status':'legacy_requires_pinned_checkout', 'reason':'historical fit is preserved'}
     if method not in METHODS:
         res = {'status': 'not_applicable', 'reason': 'no neck and head rotations in this method\'s output (contract L4)'}
     elif 'ergo' not in r['dims']:

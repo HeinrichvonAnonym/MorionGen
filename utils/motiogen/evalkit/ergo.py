@@ -185,7 +185,7 @@ def frame_class(bounds, unmeasurable, risk):
     return np.select([unmeasurable, lo >= risk, hi >= risk], [0, 1, 2], 3)
 
 
-def score(model_path, times, labels, coords, masks, sel, source=None, zero=('unknown', None, None), free=True, unmeasurable=None):
+def score(model_path, times, labels, coords, masks, sel, source=None, zero=('unknown', None, None), free=True, unmeasurable=None, k_result=None):
     """Frame classes on every frame_stride-th scored frame. masks: height-only contact {side: {landmark: (T,) bool}}."""
     keep = np.flatnonzero(sel)[::int(CONV['frame_stride'])]
     dt = float(np.median(np.diff(times))); col = {l: i for i, l in enumerate(labels)}
@@ -195,7 +195,10 @@ def score(model_path, times, labels, coords, masks, sel, source=None, zero=('unk
     speed = np.hypot(np.gradient(coords[:, col['pelvis_tx']], dt), np.gradient(coords[:, col['pelvis_tz']], dt))[keep]
     locomoting = speed >= R3['locomotion_speed_m_s']; flight = ~(contact['r'] | contact['l'])
     known = {'load_score': 0, 'coupling_score': 0, 'load_score_a': 0, 'load_score_b': 0} if free else {}
-    mode, neck, shoulder = source_posture(source, times[keep], zero)
+    if k_result is None:
+        mode, neck, shoulder = source_posture(source, times[keep], zero)
+    else:
+        mode, neck, shoulder = 'k_partial', None, None
     bounds = {m: np.zeros((len(keep), 2), int) for m in RISK}
     for i, row in enumerate(rows):
         both = bool(contact['r'][i] and contact['l'][i])
@@ -206,7 +209,19 @@ def score(model_path, times, labels, coords, masks, sel, source=None, zero=('unk
             for s in SIDES:
                 inp = side_inputs(row, col, s, trunk[i], both, knee, known)
                 src = (None if neck is None else neck[i], None if shoulder is None else shoulder[i, 0 if s == 'l' else 1])
-                a, b = score_union(r3_inputs(inp, *src, locomoting[i], flight[i], both, mode), m)
+                inputs = r3_inputs(inp, *src, locomoting[i], flight[i], both, mode)
+                if k_result is not None:
+                    from scipy.spatial.transform import Rotation
+                    nk = k_result['metrics']['neck']
+                    t = times[keep[i]] + k_result['times'][0]
+                    j = int(np.argmin(np.abs(k_result['times']-t)))
+                    matched = abs(k_result['times'][j]-t) <= 0.51*np.median(np.diff(k_result['times']))
+                    if matched and nk['anatomical_valid'][j]:
+                        angles = Rotation.from_matrix(nk['rotations'][j]).as_euler('XYZ',degrees=True)
+                        inputs.update(neck_flexion_deg=float(-angles[0]),
+                                      neck_side_bent=int(abs(angles[2])>CONV['twist_and_side_bend_threshold_deg']),
+                                      neck_twisted=int(abs(angles[1])>CONV['twist_and_side_bend_threshold_deg']))
+                a, b = score_union(inputs, m)
                 lo, hi = (a, b) if lo is None else (max(lo, a), max(hi, b))
             bounds[m][i] = lo, hi
     gate = np.zeros(len(keep), bool) if unmeasurable is None else unmeasurable[keep]

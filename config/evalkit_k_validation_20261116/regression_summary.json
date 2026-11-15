@@ -1,0 +1,1063 @@
+[
+  {
+    "status": "computed",
+    "method": "motionlcm",
+    "source": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_motionlcm_demo_ab0c550d/motion.npz",
+    "ik": {
+      "rms_mean_m": 0.012277162800000003,
+      "rms_p95_m": 0.0387498775,
+      "max_m": 0.08314343,
+      "unmeasurable_share": 0.0
+    },
+    "calibration": {
+      "frames": 20,
+      "qualified": true,
+      "reason": "",
+      "score_deg_min": 16.408128264433746,
+      "score_deg_max": 17.377486164666692,
+      "score_deg_clip_median": 18.144274536193223
+    },
+    "neck": {
+      "status": "unreliable",
+      "reason": "head_orientation_missing_or_invalid",
+      "message": "颈部指标不可可靠评价",
+      "precision_scope": "unverified",
+      "valid_frames": 0,
+      "total_frames": 100,
+      "coverage": 0.0
+    },
+    "geometric_fit_errors": {
+      "trunk_incline": {
+        "valid": 50,
+        "total": 50,
+        "median_deg": 0.48336863623066306,
+        "p95_deg": 2.1638622086223758,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 0.27263569801246396
+      },
+      "left_knee_flexion": {
+        "valid": 50,
+        "total": 50,
+        "median_deg": 7.053444906067128,
+        "p95_deg": 10.18760083494423,
+        "within_5_deg": 0.0,
+        "within_10_deg": 0.9,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -7.478349456214225
+      },
+      "left_elbow_flexion": {
+        "valid": 50,
+        "total": 50,
+        "median_deg": 4.267270654561807,
+        "p95_deg": 13.629181978586622,
+        "within_5_deg": 0.7,
+        "within_10_deg": 0.74,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -0.948283431102033
+      },
+      "left_thigh_incline": {
+        "valid": 50,
+        "total": 50,
+        "median_deg": 4.640191777380087,
+        "p95_deg": 5.391455082479643,
+        "within_5_deg": 0.88,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -4.6288388656828765
+      },
+      "right_knee_flexion": {
+        "valid": 50,
+        "total": 50,
+        "median_deg": 5.938877256745388,
+        "p95_deg": 6.761728114290334,
+        "within_5_deg": 0.14,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -5.843191155633997
+      },
+      "right_elbow_flexion": {
+        "valid": 50,
+        "total": 50,
+        "median_deg": 1.5027812646599195,
+        "p95_deg": 26.079759297309625,
+        "within_5_deg": 0.68,
+        "within_10_deg": 0.76,
+        "within_20_deg": 0.88,
+        "signed_bias_deg": 4.243403387400255
+      },
+      "right_thigh_incline": {
+        "valid": 50,
+        "total": 50,
+        "median_deg": 4.438908158646122,
+        "p95_deg": 5.001240010913449,
+        "within_5_deg": 0.94,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -4.434373956204449
+      },
+      "neck_head_axis_incline": {
+        "valid": 0,
+        "total": 50,
+        "median_deg": null,
+        "p95_deg": null,
+        "within_5_deg": null,
+        "within_10_deg": null,
+        "within_20_deg": null,
+        "signed_bias_deg": null
+      }
+    },
+    "residual_interface_finite": true,
+    "scope": "source joint-centre geometry versus fitted model joint centres; not independent anatomical accuracy",
+    "ergo": {
+      "source_mode": "k_partial",
+      "frames": 132,
+      "reba": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.30303030303030304,
+        "indeterminate_share": 0.696969696969697,
+        "certain_acceptable_share": 0.0,
+        "lower_median": 3.0,
+        "upper_median": 6.0
+      },
+      "rula": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.0,
+        "indeterminate_share": 1.0,
+        "certain_acceptable_share": 0.0,
+        "lower_median": 3.0,
+        "upper_median": 7.0
+      }
+    },
+    "muscle_interface": {
+      "frames": 11,
+      "finite": true
+    }
+  },
+  {
+    "status": "computed",
+    "method": "omnicontrol",
+    "source": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_omnicontrol_demo_5d316f25/motion.npz",
+    "ik": {
+      "rms_mean_m": 0.0324335643877551,
+      "rms_p95_m": 0.08026126,
+      "max_m": 0.42022622,
+      "unmeasurable_share": 0.2511415525114155
+    },
+    "calibration": {
+      "frames": 20,
+      "qualified": true,
+      "reason": "",
+      "score_deg_min": 11.259036379409142,
+      "score_deg_max": 14.85293431094625,
+      "score_deg_clip_median": 23.71957839223646
+    },
+    "neck": {
+      "status": "unreliable",
+      "reason": "head_orientation_missing_or_invalid",
+      "message": "颈部指标不可可靠评价",
+      "precision_scope": "unverified",
+      "valid_frames": 0,
+      "total_frames": 196,
+      "coverage": 0.0
+    },
+    "geometric_fit_errors": {
+      "trunk_incline": {
+        "valid": 98,
+        "total": 98,
+        "median_deg": 2.6289769278748154,
+        "p95_deg": 16.470945538180686,
+        "within_5_deg": 0.7653061224489796,
+        "within_10_deg": 0.8673469387755102,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 0.42441198853332024
+      },
+      "left_knee_flexion": {
+        "valid": 98,
+        "total": 98,
+        "median_deg": 9.699002923401014,
+        "p95_deg": 11.89063049138229,
+        "within_5_deg": 0.030612244897959183,
+        "within_10_deg": 0.6224489795918368,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -9.483732612776734
+      },
+      "left_elbow_flexion": {
+        "valid": 98,
+        "total": 98,
+        "median_deg": 7.78854700388939,
+        "p95_deg": 40.455187601131556,
+        "within_5_deg": 0.3469387755102041,
+        "within_10_deg": 0.6428571428571429,
+        "within_20_deg": 0.7653061224489796,
+        "signed_bias_deg": 10.36303824645349
+      },
+      "left_thigh_incline": {
+        "valid": 98,
+        "total": 98,
+        "median_deg": 3.2026720835032654,
+        "p95_deg": 6.216556546035694,
+        "within_5_deg": 0.8061224489795918,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -3.011992446615074
+      },
+      "right_knee_flexion": {
+        "valid": 98,
+        "total": 98,
+        "median_deg": 7.201851433658273,
+        "p95_deg": 8.214112938466233,
+        "within_5_deg": 0.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -7.12908930788442
+      },
+      "right_elbow_flexion": {
+        "valid": 98,
+        "total": 98,
+        "median_deg": 4.96041685024246,
+        "p95_deg": 46.326416317878056,
+        "within_5_deg": 0.5,
+        "within_10_deg": 0.673469387755102,
+        "within_20_deg": 0.7857142857142857,
+        "signed_bias_deg": -3.2769724875546236
+      },
+      "right_thigh_incline": {
+        "valid": 98,
+        "total": 98,
+        "median_deg": 2.4222679098268056,
+        "p95_deg": 3.856126273214123,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -2.3826470281522383
+      },
+      "neck_head_axis_incline": {
+        "valid": 0,
+        "total": 98,
+        "median_deg": null,
+        "p95_deg": null,
+        "within_5_deg": null,
+        "within_10_deg": null,
+        "within_20_deg": null,
+        "signed_bias_deg": null
+      }
+    },
+    "residual_interface_finite": true,
+    "scope": "source joint-centre geometry versus fitted model joint centres; not independent anatomical accuracy",
+    "ergo": {
+      "source_mode": "k_partial",
+      "frames": 292,
+      "reba": {
+        "unmeasurable_share": 0.25,
+        "certain_risk_share": 0.05821917808219178,
+        "indeterminate_share": 0.6917808219178082,
+        "certain_acceptable_share": 0.0,
+        "lower_median": 3.0,
+        "upper_median": 5.0
+      },
+      "rula": {
+        "unmeasurable_share": 0.25,
+        "certain_risk_share": 0.010273972602739725,
+        "indeterminate_share": 0.7397260273972602,
+        "certain_acceptable_share": 0.0,
+        "lower_median": 3.0,
+        "upper_median": 7.0
+      }
+    }
+  },
+  {
+    "status": "computed",
+    "method": "ardy",
+    "source": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_033337_ardy_demo_892762b0/motion.npz",
+    "ik": {
+      "rms_mean_m": 0.0028821477,
+      "rms_p95_m": 0.0052713345000000005,
+      "max_m": 0.01469465,
+      "unmeasurable_share": 0.0
+    },
+    "calibration": {
+      "frames": 20,
+      "qualified": true,
+      "reason": "",
+      "score_deg_min": 17.574856310716306,
+      "score_deg_max": 18.805777839320953,
+      "score_deg_clip_median": 22.914707189342792
+    },
+    "neck": {
+      "status": "model_convention",
+      "reason": "",
+      "message": "",
+      "precision_scope": "source_model_convention_pending_external_precision",
+      "valid_frames": 400,
+      "total_frames": 400,
+      "coverage": 1.0
+    },
+    "geometric_fit_errors": {
+      "trunk_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 0.8249153366452197,
+        "p95_deg": 1.3767033779568758,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -0.3083297195500873
+      },
+      "left_knee_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 0.29784088577480716,
+        "p95_deg": 0.9177776321684936,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 0.36259563531326494
+      },
+      "left_elbow_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 3.825053654961648,
+        "p95_deg": 4.419338155175242,
+        "within_5_deg": 0.99,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -3.88310228971756
+      },
+      "left_thigh_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 0.1267545089355293,
+        "p95_deg": 0.30770767014411277,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 0.07291416623434566
+      },
+      "right_knee_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 0.8969409428518631,
+        "p95_deg": 1.521678790362086,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -0.9535570444245323
+      },
+      "right_elbow_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 2.5100270968190905,
+        "p95_deg": 2.8671262742946753,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -2.447291097384535
+      },
+      "right_thigh_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 0.8298099228611502,
+        "p95_deg": 1.284634792193276,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -0.8058369316036109
+      },
+      "neck_head_axis_incline": {
+        "valid": 0,
+        "total": 200,
+        "median_deg": null,
+        "p95_deg": null,
+        "within_5_deg": null,
+        "within_10_deg": null,
+        "within_20_deg": null,
+        "signed_bias_deg": null
+      }
+    },
+    "residual_interface_finite": true,
+    "scope": "source joint-centre geometry versus fitted model joint centres; not independent anatomical accuracy",
+    "ergo": {
+      "source_mode": "k_partial",
+      "frames": 632,
+      "reba": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.0,
+        "indeterminate_share": 0.015822784810126583,
+        "certain_acceptable_share": 0.9841772151898734,
+        "lower_median": 1.0,
+        "upper_median": 2.0
+      },
+      "rula": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.0,
+        "indeterminate_share": 0.7832278481012658,
+        "certain_acceptable_share": 0.21677215189873417,
+        "lower_median": 2.0,
+        "upper_median": 6.0
+      }
+    }
+  },
+  {
+    "status": "computed",
+    "method": "chois",
+    "source": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_030212_chois_demo_99afcd3a/motion.npz",
+    "ik": {
+      "rms_mean_m": 0.006397232916666666,
+      "rms_p95_m": 0.0128492475,
+      "max_m": 0.04226202,
+      "unmeasurable_share": 0.0
+    },
+    "calibration": {
+      "frames": 23,
+      "qualified": true,
+      "reason": "",
+      "score_deg_min": 25.53987650010555,
+      "score_deg_max": 30.318532888547708,
+      "score_deg_clip_median": 35.990401429413765
+    },
+    "neck": {
+      "status": "model_convention",
+      "reason": "",
+      "message": "",
+      "precision_scope": "source_model_convention_pending_external_precision",
+      "valid_frames": 120,
+      "total_frames": 120,
+      "coverage": 1.0
+    },
+    "geometric_fit_errors": {
+      "trunk_incline": {
+        "valid": 40,
+        "total": 40,
+        "median_deg": 0.4907312277261944,
+        "p95_deg": 1.4134248026276166,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 0.19274144600129386
+      },
+      "left_knee_flexion": {
+        "valid": 40,
+        "total": 40,
+        "median_deg": 6.8439953720468925,
+        "p95_deg": 9.257243613654488,
+        "within_5_deg": 0.1,
+        "within_10_deg": 0.975,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -6.686756224440424
+      },
+      "left_elbow_flexion": {
+        "valid": 40,
+        "total": 40,
+        "median_deg": 4.624250926413293,
+        "p95_deg": 5.534128297456239,
+        "within_5_deg": 0.65,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 4.614871407804527
+      },
+      "left_thigh_incline": {
+        "valid": 40,
+        "total": 40,
+        "median_deg": 4.564137282166188,
+        "p95_deg": 7.346981645468966,
+        "within_5_deg": 0.625,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -3.770157910571581
+      },
+      "right_knee_flexion": {
+        "valid": 40,
+        "total": 40,
+        "median_deg": 3.4754829447235114,
+        "p95_deg": 4.478129644104738,
+        "within_5_deg": 0.975,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -3.2461781725692775
+      },
+      "right_elbow_flexion": {
+        "valid": 40,
+        "total": 40,
+        "median_deg": 3.5006209366124708,
+        "p95_deg": 4.108640355716903,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 3.219638101563968
+      },
+      "right_thigh_incline": {
+        "valid": 40,
+        "total": 40,
+        "median_deg": 1.256432545149238,
+        "p95_deg": 2.155624896795867,
+        "within_5_deg": 0.975,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -0.7054435454438557
+      },
+      "neck_head_axis_incline": {
+        "valid": 0,
+        "total": 40,
+        "median_deg": null,
+        "p95_deg": null,
+        "within_5_deg": null,
+        "within_10_deg": null,
+        "within_20_deg": null,
+        "signed_bias_deg": null
+      }
+    },
+    "residual_interface_finite": true,
+    "scope": "source joint-centre geometry versus fitted model joint centres; not independent anatomical accuracy",
+    "ergo": {
+      "source_mode": "k_partial",
+      "frames": 100,
+      "reba": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.64,
+        "indeterminate_share": 0.32,
+        "certain_acceptable_share": 0.04,
+        "lower_median": 4.0,
+        "upper_median": 4.0
+      },
+      "rula": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.16,
+        "indeterminate_share": 0.39,
+        "certain_acceptable_share": 0.45,
+        "lower_median": 3.0,
+        "upper_median": 5.0
+      }
+    }
+  },
+  {
+    "status": "computed",
+    "method": "closd",
+    "source": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024631_closd_demo_228a80ac/motion.npz",
+    "ik": {
+      "rms_mean_m": 0.004024238533333333,
+      "rms_p95_m": 0.006737528999999997,
+      "max_m": 0.02207518,
+      "unmeasurable_share": 0.0
+    },
+    "calibration": {
+      "frames": 30,
+      "qualified": true,
+      "reason": "",
+      "score_deg_min": 18.49885047277751,
+      "score_deg_max": 20.513089813616414,
+      "score_deg_clip_median": 27.11975432248547
+    },
+    "neck": {
+      "status": "model_convention",
+      "reason": "",
+      "message": "",
+      "precision_scope": "source_model_convention_pending_external_precision",
+      "valid_frames": 600,
+      "total_frames": 600,
+      "coverage": 1.0
+    },
+    "geometric_fit_errors": {
+      "trunk_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 0.7750385219090159,
+        "p95_deg": 1.235168081766884,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -0.6620140884163387
+      },
+      "left_knee_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 4.869896830070109,
+        "p95_deg": 9.010645909128712,
+        "within_5_deg": 0.525,
+        "within_10_deg": 0.995,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -5.173913507914088
+      },
+      "left_elbow_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 1.0379739820263438,
+        "p95_deg": 2.8903799882532777,
+        "within_5_deg": 0.995,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 0.6907756768928359
+      },
+      "left_thigh_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 2.359902017813299,
+        "p95_deg": 4.632355040266557,
+        "within_5_deg": 0.96,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -2.152703342781239
+      },
+      "right_knee_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 7.242237524725132,
+        "p95_deg": 11.310882074199462,
+        "within_5_deg": 0.19,
+        "within_10_deg": 0.855,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -7.321992826700494
+      },
+      "right_elbow_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 2.014325490767437,
+        "p95_deg": 3.7789327340113266,
+        "within_5_deg": 0.995,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -2.0732047448404773
+      },
+      "right_thigh_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 3.405990317850184,
+        "p95_deg": 5.7188931011109885,
+        "within_5_deg": 0.775,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -2.9987260756259366
+      },
+      "neck_head_axis_incline": {
+        "valid": 0,
+        "total": 200,
+        "median_deg": null,
+        "p95_deg": null,
+        "within_5_deg": null,
+        "within_10_deg": null,
+        "within_20_deg": null,
+        "signed_bias_deg": null
+      }
+    },
+    "residual_interface_finite": true,
+    "scope": "source joint-centre geometry versus fitted model joint centres; not independent anatomical accuracy",
+    "ergo": {
+      "source_mode": "k_partial",
+      "frames": 633,
+      "reba": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.11690363349131122,
+        "indeterminate_share": 0.48183254344391785,
+        "certain_acceptable_share": 0.40126382306477093,
+        "lower_median": 3.0,
+        "upper_median": 4.0
+      },
+      "rula": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.04739336492890995,
+        "indeterminate_share": 0.9462875197472354,
+        "certain_acceptable_share": 0.00631911532385466,
+        "lower_median": 3.0,
+        "upper_median": 6.0
+      }
+    }
+  },
+  {
+    "status": "computed",
+    "method": "dart",
+    "source": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024521_dart_demo_61174897/motion.npz",
+    "ik": {
+      "rms_mean_m": 0.12055049163333331,
+      "rms_p95_m": 0.1238683205,
+      "max_m": 0.43941543,
+      "unmeasurable_share": 1.0
+    },
+    "calibration": {
+      "frames": 4,
+      "qualified": false,
+      "reason": "insufficient_upright_calibration",
+      "score_deg_min": 21.386214864467526,
+      "score_deg_max": 23.315838050130864,
+      "score_deg_clip_median": 41.07274749465918,
+      "fallback": "model_joint_centres_unverified"
+    },
+    "neck": {
+      "status": "model_convention",
+      "reason": "",
+      "message": "",
+      "precision_scope": "source_model_convention_pending_external_precision",
+      "valid_frames": 569,
+      "total_frames": 600,
+      "coverage": 0.9483333333333334
+    },
+    "geometric_fit_errors": {
+      "trunk_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 1.2413125005652739,
+        "p95_deg": 2.309668366654862,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 0.990178470081639
+      },
+      "left_knee_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 4.745129146269783,
+        "p95_deg": 8.466339310264795,
+        "within_5_deg": 0.52,
+        "within_10_deg": 0.97,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -5.070901917666688
+      },
+      "left_elbow_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 3.113024831772396,
+        "p95_deg": 6.565809635947713,
+        "within_5_deg": 0.855,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -3.195696178848625
+      },
+      "left_thigh_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 1.7936045864045411,
+        "p95_deg": 3.789316052195888,
+        "within_5_deg": 0.99,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -1.1433753505437017
+      },
+      "right_knee_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 7.706059999064011,
+        "p95_deg": 10.286492080944406,
+        "within_5_deg": 0.15,
+        "within_10_deg": 0.89,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -7.3381925708198255
+      },
+      "right_elbow_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 2.1951421270352975,
+        "p95_deg": 3.4730437626419244,
+        "within_5_deg": 0.995,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -2.064742438608862
+      },
+      "right_thigh_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 3.277541833705083,
+        "p95_deg": 5.749699714642044,
+        "within_5_deg": 0.795,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -2.4509372195690666
+      },
+      "neck_head_axis_incline": {
+        "valid": 0,
+        "total": 200,
+        "median_deg": null,
+        "p95_deg": null,
+        "within_5_deg": null,
+        "within_10_deg": null,
+        "within_20_deg": null,
+        "signed_bias_deg": null
+      }
+    },
+    "residual_interface_finite": true,
+    "scope": "source joint-centre geometry versus fitted model joint centres; not independent anatomical accuracy",
+    "ergo": {
+      "source_mode": "k_partial",
+      "frames": 633,
+      "reba": {
+        "unmeasurable_share": 1.0,
+        "certain_risk_share": 0.0,
+        "indeterminate_share": 0.0,
+        "certain_acceptable_share": 0.0,
+        "lower_median": 3.0,
+        "upper_median": 4.0
+      },
+      "rula": {
+        "unmeasurable_share": 1.0,
+        "certain_risk_share": 0.0,
+        "indeterminate_share": 0.0,
+        "certain_acceptable_share": 0.0,
+        "lower_median": 4.0,
+        "upper_median": 6.0
+      }
+    }
+  },
+  {
+    "status": "computed",
+    "method": "primal",
+    "source": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024734_primal_demo_0b5f7d4b/factorial/ground1_reproject0_inertialize1.npz",
+    "ik": {
+      "rms_mean_m": 0.009205671983333334,
+      "rms_p95_m": 0.014536645999999995,
+      "max_m": 0.04574458,
+      "unmeasurable_share": 0.0
+    },
+    "calibration": {
+      "frames": 30,
+      "qualified": true,
+      "reason": "",
+      "score_deg_min": 14.229314707191323,
+      "score_deg_max": 16.259001154949,
+      "score_deg_clip_median": 19.811801890439686
+    },
+    "neck": {
+      "status": "model_convention",
+      "reason": "",
+      "message": "",
+      "precision_scope": "source_model_convention_pending_external_precision",
+      "valid_frames": 600,
+      "total_frames": 600,
+      "coverage": 1.0
+    },
+    "geometric_fit_errors": {
+      "trunk_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 0.5020348315125459,
+        "p95_deg": 1.5028634623961166,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -0.4626594841443683
+      },
+      "left_knee_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 6.976132681210277,
+        "p95_deg": 11.406729746174744,
+        "within_5_deg": 0.325,
+        "within_10_deg": 0.885,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -6.629893645515949
+      },
+      "left_elbow_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 1.5983105036289729,
+        "p95_deg": 2.5977444666823613,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -1.1865551754827421
+      },
+      "left_thigh_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 4.466624852207314,
+        "p95_deg": 6.286912169080854,
+        "within_5_deg": 0.55,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -3.8703586642154995
+      },
+      "right_knee_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 5.795355976048135,
+        "p95_deg": 11.708918706664639,
+        "within_5_deg": 0.45,
+        "within_10_deg": 0.655,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -6.379532264109063
+      },
+      "right_elbow_flexion": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 1.4351347733257835,
+        "p95_deg": 2.3297951063995974,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -1.4670074133364563
+      },
+      "right_thigh_incline": {
+        "valid": 200,
+        "total": 200,
+        "median_deg": 3.7530859725130834,
+        "p95_deg": 4.809393175389997,
+        "within_5_deg": 0.995,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -2.818507306420392
+      },
+      "neck_head_axis_incline": {
+        "valid": 0,
+        "total": 200,
+        "median_deg": null,
+        "p95_deg": null,
+        "within_5_deg": null,
+        "within_10_deg": null,
+        "within_20_deg": null,
+        "signed_bias_deg": null
+      }
+    },
+    "residual_interface_finite": true,
+    "scope": "source joint-centre geometry versus fitted model joint centres; not independent anatomical accuracy",
+    "ergo": {
+      "source_mode": "k_partial",
+      "frames": 633,
+      "reba": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.6334913112164297,
+        "indeterminate_share": 0.2480252764612954,
+        "certain_acceptable_share": 0.11848341232227488,
+        "lower_median": 4.0,
+        "upper_median": 4.0
+      },
+      "rula": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.0995260663507109,
+        "indeterminate_share": 0.8104265402843602,
+        "certain_acceptable_share": 0.09004739336492891,
+        "lower_median": 3.0,
+        "upper_median": 7.0
+      }
+    }
+  },
+  {
+    "status": "computed",
+    "method": "kimodo",
+    "source": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/benchmarks/kimodo-stratified-20261008/generated_raw/content/constraints_notext/end-effectors/feet_posrot/0014/motion.npz",
+    "ik": {
+      "rms_mean_m": 0.01844171244444445,
+      "rms_p95_m": 0.02622708,
+      "max_m": 0.06524523,
+      "unmeasurable_share": 0.0
+    },
+    "calibration": {
+      "frames": 30,
+      "qualified": true,
+      "reason": "",
+      "score_deg_min": 15.638421852050223,
+      "score_deg_max": 16.41833553368319,
+      "score_deg_clip_median": 17.07365019545163
+    },
+    "neck": {
+      "status": "model_convention",
+      "reason": "",
+      "message": "",
+      "precision_scope": "source_model_convention_pending_external_precision",
+      "valid_frames": 90,
+      "total_frames": 90,
+      "coverage": 1.0
+    },
+    "geometric_fit_errors": {
+      "trunk_incline": {
+        "valid": 30,
+        "total": 30,
+        "median_deg": 5.549074428387806,
+        "p95_deg": 6.734052401642276,
+        "within_5_deg": 0.43333333333333335,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 3.9208372974943146
+      },
+      "left_knee_flexion": {
+        "valid": 30,
+        "total": 30,
+        "median_deg": 0.5451373499112013,
+        "p95_deg": 0.9965023857767609,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 0.5476179227930985
+      },
+      "left_elbow_flexion": {
+        "valid": 30,
+        "total": 30,
+        "median_deg": 19.432168784612983,
+        "p95_deg": 21.275278114848362,
+        "within_5_deg": 0.0,
+        "within_10_deg": 0.3333333333333333,
+        "within_20_deg": 0.6,
+        "signed_bias_deg": -14.898056478914578
+      },
+      "left_thigh_incline": {
+        "valid": 30,
+        "total": 30,
+        "median_deg": 0.5860079713827826,
+        "p95_deg": 1.5962197279106867,
+        "within_5_deg": 1.0,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -0.6922917895099527
+      },
+      "right_knee_flexion": {
+        "valid": 30,
+        "total": 30,
+        "median_deg": 5.096170723846057,
+        "p95_deg": 5.669800186759035,
+        "within_5_deg": 0.43333333333333335,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": -5.065853825399466
+      },
+      "right_elbow_flexion": {
+        "valid": 30,
+        "total": 30,
+        "median_deg": 5.16932789639851,
+        "p95_deg": 8.257951729093229,
+        "within_5_deg": 0.4,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 0.24629590292010353
+      },
+      "right_thigh_incline": {
+        "valid": 30,
+        "total": 30,
+        "median_deg": 6.039376297345814,
+        "p95_deg": 6.741938895182781,
+        "within_5_deg": 0.03333333333333333,
+        "within_10_deg": 1.0,
+        "within_20_deg": 1.0,
+        "signed_bias_deg": 6.005272975458616
+      },
+      "neck_head_axis_incline": {
+        "valid": 0,
+        "total": 30,
+        "median_deg": null,
+        "p95_deg": null,
+        "within_5_deg": null,
+        "within_10_deg": null,
+        "within_20_deg": null,
+        "signed_bias_deg": null
+      }
+    },
+    "residual_interface_finite": true,
+    "scope": "source joint-centre geometry versus fitted model joint centres; not independent anatomical accuracy",
+    "ergo": {
+      "source_mode": "k_partial",
+      "frames": 66,
+      "reba": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.7878787878787878,
+        "indeterminate_share": 0.19696969696969696,
+        "certain_acceptable_share": 0.015151515151515152,
+        "lower_median": 6.0,
+        "upper_median": 8.0
+      },
+      "rula": {
+        "unmeasurable_share": 0.0,
+        "certain_risk_share": 0.9848484848484849,
+        "indeterminate_share": 0.015151515151515152,
+        "certain_acceptable_share": 0.0,
+        "lower_median": 6.0,
+        "upper_median": 7.0
+      }
+    }
+  }
+]

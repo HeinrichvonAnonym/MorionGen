@@ -1,0 +1,19 @@
+{
+  "version": "k-1",
+  "angle_tiers_deg": [5, 10, 20],
+  "geometry_epsilon_m": 0.000001,
+  "rotation_tolerance": 0.002,
+  "calibration": {"max_trunk_incline_deg": 20, "max_thigh_incline_deg": 25, "minimum_seconds": 0.5, "native_bone_tolerance_deg": 5},
+  "recovery": {"max_gap_seconds": 0.1, "promote_prediction_to_observation": false},
+  "profiles": {
+    "motionlcm": {"fps": 20, "head": "head", "thorax": "spine3", "orientation": "positions_only"},
+    "omnicontrol": {"fps": 20, "head": "head", "thorax": "spine3", "orientation": "positions_only"},
+    "ardy": {"fps": 20, "head": "head", "thorax": "Spine3", "orientation": "global_rotations"},
+    "chois": {"fps": 30, "head": "head", "thorax": "spine3", "orientation": "global_rotations"},
+    "closd": {"fps": 30, "head": "Head", "thorax": "Chest", "orientation": "rotations_xyzw"},
+    "dart": {"fps": 30, "head": "head", "thorax": "spine3", "orientation": "local_matrices"},
+    "kimodo": {"fps": 30, "head": "head", "thorax": "spine3", "orientation": "global_rot_mats"},
+    "primal": {"fps": 30, "head": "head", "thorax": "spine3", "orientation": "axis_angle"}
+  },
+  "conventions": "Precision tiers and calibration thresholds are engineering conventions, not anatomical accuracy guarantees. Native segment rotations require anatomical calibration before clinical angles are interpreted."
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "method": "motionlcm",
+    "cache_reused": true,
+    "frames": 496
+  },
+  {
+    "method": "omnicontrol",
+    "cache_reused": true,
+    "frames": 976
+  },
+  {
+    "method": "ardy",
+    "cache_reused": true,
+    "frames": 1996
+  },
+  {
+    "method": "chois",
+    "cache_reused": true,
+    "frames": 398
+  },
+  {
+    "method": "closd",
+    "cache_reused": true,
+    "frames": 1998
+  },
+  {
+    "method": "dart",
+    "cache_reused": true,
+    "frames": 1998
+  },
+  {
+    "method": "primal",
+    "cache_reused": true,
+    "frames": 1998
+  },
+  {
+    "method": "kimodo",
+    "cache_reused": true,
+    "frames": 298
+  }
+]

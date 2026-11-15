@@ -32,13 +32,10 @@ def _stats(x):
 
 def canonical_joints(run):
     """Canonical Z-up joints, names and fps of a run directory or file (Kimodo posed_joints: Y-up SOMA77, 30 fps)."""
-    from motion import SOMA77_NAMES, Y_TO_Z
-    from biomech_sources import KIMODO_FPS
-    with np.load(Path(run)/'motion.npz' if Path(run).is_dir() else run, allow_pickle=False) as z:
-        if 'posed_joints' in z.files:
-            j = np.asarray(z['posed_joints'], float)
-            return (j[0] if j.ndim == 4 else j) @ Y_TO_Z.T, list(SOMA77_NAMES), KIMODO_FPS
-        return np.asarray(z['joints'], float), [str(n) for n in z['joint_names']], float(z['fps'])
+    from .k import load as load_k
+    from motion import Y_TO_Z
+    motion = load_k(run)
+    return motion.positions @ Y_TO_Z.T, motion.names, motion.fps
 
 
 def kinematic_summary(run, frames, reach_task=None):
@@ -122,8 +119,10 @@ def add_forced(out):
 
 def ergo_dim(run, work, f, masks, sel, src, method, prompt, object_free, frames):
     """RULA / REBA classes of one fit (f: fit_mod.fit result); adds the ergo_* arrays to frames, returns the summary."""
-    e = ergo.score(work/'model.osim', f['times'], f['labels'], f['coords'], masks, sel, src, ergo.neutral(method, run),
-                   ergo.object_free(prompt) if object_free is None else object_free, f['unmeasurable'])
+    from .k import load as load_k, evaluate as evaluate_k
+    k = evaluate_k(load_k(run, method))
+    e = ergo.score(work/'model.osim', f['times'], f['labels'], f['coords'], masks, sel, src, ('unknown', None, None),
+                   ergo.object_free(prompt) if object_free is None else object_free, f['unmeasurable'], k_result=k)
     frames.update({f'ergo_{k}': v for k, v in e.items() if k != 'source_mode'})
     summary = {'source_mode': e['source_mode'], 'frames': int(len(e['index']))}
     for m in ergo.RISK:
@@ -151,7 +150,7 @@ def add_dims(run, out, dims, object_free=None, source=None):
     step at floor_eval), without refitting: the same inputs evaluate would use, so the same result.
     object_free: as in evaluate (the receipt holds it only when ergo was evaluated)."""
     import opensim as osim
-    import biomech_sources
+    from .k import load as load_k
     osim.Logger.setLevelString('error')
     out = Path(out).resolve(); work = out/'work'; rec = json.loads((out/'evalkit.json').read_text()); r = rec['receipt']
     frames = dict(np.load(out/'frames.npz', allow_pickle=True))
@@ -163,7 +162,7 @@ def add_dims(run, out, dims, object_free=None, source=None):
         masks = {s: {k: frames[f'contact_{s}_{k}'] for k in LANDMARKS} for s in SIDES}
         variant = r['reference'] if isinstance(r['reference'], str) else None
         method = r['method'] or (variant.split('__')[0] if variant else None)
-        rec['ergo'] = ergo_dim(run, work, f, masks, sel, source or biomech_sources.load(run), method, r['prompt'],
+        rec['ergo'] = ergo_dim(run, work, f, masks, sel, source or load_k(run).legacy(), method, r['prompt'],
                                object_free, frames)
         r['method'] = method
         r['object_free'] = bool(ergo.object_free(r['prompt']) if object_free is None else object_free)
@@ -180,11 +179,11 @@ def foot_offset(run, work, mass, floor, source=None):
     """Fit (cached in work) and fit.foot_offset of one run: the per-clip input of the floor correction."""
     import opensim as osim
     import biomech
-    import biomech_sources
+    from .k import load as load_k
     osim.Logger.setLevelString('error')
     f = fit_mod.fit(run, work, mass, floor)
     kin = biomech.body_kinematics(osim.Model(str(Path(work)/'model.osim')), f['labels'], f['coords'])
-    return fit_mod.foot_offset(*(source or biomech_sources.load(run)), kin, f['times']), f, kin
+    return fit_mod.foot_offset(*(source or load_k(run).legacy()), kin, f['times']), f, kin
 
 
 def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dims=DIMS, source=None, object_free=None,
@@ -197,12 +196,12 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
     dimensions then use floor + this clip's foot offset - offset_reference. None: the input floor (no correction)."""
     import opensim as osim
     import biomech
-    import biomech_sources
+    from .k import load as load_k
     osim.Logger.setLevelString('error')
     start = time.time(); out = Path(out).resolve(); work = out/'work'
     variant = reference if isinstance(reference, str) else None
     offsets = reference_offsets(reference) if variant else reference
-    src = source or biomech_sources.load(run)
+    src = source or load_k(run).legacy()
     offset, f, kin = foot_offset(run, work, mass, floor, src)
     delta = 0. if offset_reference is None else offset['mean']-offset_reference
     floor_eval = floor+delta
@@ -216,7 +215,10 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
               'lowest_elevation_m': res['lowest_elevation'], 'state': res['state'],
               **{f'contact_{s}_{k}': res['masks'][s][k] for s in SIDES for k in LANDMARKS},
               **{f'elevation_{s}_{k}': res['elevation'][s][k] for s in SIDES for k in LANDMARKS}}
-    summary = {'ik': {**f['receipt']['ik_marker_error'], 'unmeasurable_share': float(f['unmeasurable'][sel].mean())}}
+    from .k import load as load_k, evaluate as evaluate_k
+    from .k.posture import summary as k_summary
+    summary = {'ik': {**f['receipt']['ik_marker_error'], 'unmeasurable_share': float(f['unmeasurable'][sel].mean())},
+               'k': k_summary(evaluate_k(load_k(run, method)))}
     if 'residual' in dims:
         positive = residual.judge(res) if SPEC['residual']['tau_bw'] else None
         if positive is not None:

@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "commands": [
+    {
+      "command": [
+        "/home/heinrich/.local/share/opensim-api/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "python/tests",
+        "-p",
+        "test_evalkit_k.py"
+      ],
+      "pythonpath": "utils",
+      "exit_code": 0,
+      "tests": 21,
+      "log": "/home/heinrich/MorionGen/develop_logs/test_runs/20261116_k_validation/tests_0.log"
+    },
+    {
+      "command": [
+        "/home/heinrich/.local/share/opensim-api/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "python/tests",
+        "-p",
+        "test_ergonomics.py"
+      ],
+      "pythonpath": "utils",
+      "exit_code": 0,
+      "tests": 8,
+      "log": "/home/heinrich/MorionGen/develop_logs/test_runs/20261116_k_validation/tests_1.log"
+    },
+    {
+      "command": [
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/envs/motiogen-dart/bin/python",
+        "-m",
+        "unittest",
+        "python.tests.test_motion_retarget",
+        "-k",
+        "bvh"
+      ],
+      "pythonpath": "utils:/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/envs/motiogen-smplsim/lib/python3.10/site-packages",
+      "exit_code": 0,
+      "tests": 2,
+      "log": "/home/heinrich/MorionGen/develop_logs/test_runs/20261116_k_validation/tests_2.log"
+    }
+  ]
+}

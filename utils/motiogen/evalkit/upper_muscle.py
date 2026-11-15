@@ -62,13 +62,18 @@ def prepare(run, work, mass, mode):
     joint the skeleton lacks (E3 uses the ARDY spine; SMPL-family and SOMA77 skeletons have no 'spine1' after the
     biomech_sources renaming) are left out of the IK."""
     work.mkdir(parents=True, exist_ok=True)
-    key = {'run': str(run), 'mass_kg': mass, 'calibration': 'first_second' if mode == 'e3' else 'upright', 'prepare': PREPARE}
+    from .k import load as load_k
+    from .k.config import implementation_key, digest
+    motion = load_k(run) if mode != 'e3' else None
+    key = {'run': str(run), 'mass_kg': mass, 'calibration': 'first_second' if mode == 'e3' else 'upright', 'prepare': PREPARE,
+           'k': implementation_key() if motion is not None else None,
+           'inputs': motion.provenance['inputs'] if motion is not None else None, 'model': digest(e3.FBLS)}
     path = work/'receipt.json'
     if path.exists() and (work/'ik/ik.mot').exists():
         old = json.loads(path.read_text())
         if old.get('key') == key:
             return old
-    points, names, fps = biomech_sources.load(run)
+    points, names, fps = motion.legacy() if motion is not None else biomech_sources.load(run)
     missing = [n for n, v in e3.MARKERS.items() if v[2] not in names]
     if missing:
         raise ValueError(f'limb markers without a generated joint: {missing}')
@@ -82,6 +87,8 @@ def prepare(run, work, mass, mode):
         calib = list(range(int(1.*fps)))
     else:
         calib, receipt['calibration'] = fit_mod.upright_frames(points, names, fps)
+        if not receipt['calibration']['qualified']:
+            raise CalibrationUnavailable('FBLS calibration unavailable: insufficient qualified upright observations')
     write_trc(points, names, fps, work/'calibration.trc', labels, calib)
     (work/'calib').mkdir(exist_ok=True)
     e3.inverse_kinematics(work/'scaled.osim', work/'calibration.trc', work/'calib/ik.mot', calib[0]/fps, calib[-1]/fps,
@@ -260,11 +267,11 @@ def lumbar_fbls(run, work, mass=75., mode='evalkit', floor=None, contact=None, t
     start = time.time(); work = Path(work).resolve()
     key = {'mode': mode, 'mass_kg': mass, 'floor_m': floor, 'contact': _digest(contact), 'truth': str(truth) if truth else None,
            'so_step': SO_STEP, 'protocol': PROTOCOL['protocol']}
+    receipt = prepare(run, work, mass, mode)
     if (work/'lumbar.json').exists():
         old = json.loads((work/'lumbar.json').read_text())
         if old.get('key') == key and old.get('prepare_key') == json.loads((work/'receipt.json').read_text()).get('key'):
             return old if old.get('classify') == CLASSIFY else reclassify(work, mass)
-    receipt = prepare(run, work, mass, mode)
     loads = dynamics(work, mass, mode, floor, contact, truth)
     if mode == 'e3':
         t0, t1 = e3.TRIM, (receipt['frames']-1)/receipt['fps']-e3.TRIM
@@ -281,6 +288,10 @@ def lumbar_fbls(run, work, mass=75., mode='evalkit', floor=None, contact=None, t
     return region
 
 
+class CalibrationUnavailable(ValueError):
+    pass
+
+
 REGIONS = {'lumbar': lumbar_fbls, 'neck': None, 'shoulder': None}
 
 
@@ -288,6 +299,9 @@ def evaluate(run, out, mass=75., mode='evalkit', floor=None, contact=None, truth
     """Every region of the protocol under out/<region>; reserved regions report what they need."""
     result = {'protocol': PROTOCOL['protocol']}
     for region, fn in REGIONS.items():
-        result[region] = (fn(run, Path(out)/region, mass, mode, floor, contact, truth) if fn else
-                          {'status': 'reserved', 'needs': PROTOCOL['regions'][region]['needs']})
+        try:
+            result[region] = (fn(run, Path(out)/region, mass, mode, floor, contact, truth) if fn else
+                              {'status': 'reserved', 'needs': PROTOCOL['regions'][region]['needs']})
+        except CalibrationUnavailable as error:
+            result[region] = {'status':'unreliable_kinematics','reason':str(error)}
     return result
