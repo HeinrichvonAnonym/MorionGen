@@ -57,7 +57,8 @@ def process(source,method,out,calibration=None,fit=False,mass=75.,floor=0.,predi
                         'position_fit_valid_fraction':float(np.mean(fitted['position_fit_valid'])),
                         'calibration_valid':fitted['calibration_valid'],
                         'time_mapping':{'source_time_origin_s':float(motion.times[0]),'fit_time_origin_s':float(fitted['times'][0]),'fit_clock':'relative_seconds'}}
-            np.savez_compressed(out/'fit_coordinates.npz',times=fitted['times'],labels=fitted['labels'],coordinates=fitted['coords'],valid=~fitted['unmeasurable'])
+            np.savez_compressed(out/'fit_coordinates.npz',times=fitted['times'],labels=fitted['labels'],coordinates=fitted['coords'],valid=~fitted['unmeasurable'],
+                                **{'arm_'+s+'_valid':v for s,v in fitted['arm_valid'].items()})
     np.savez_compressed(out/'k.npz',**arrays)
     (out/'k.json').write_text(json.dumps(rec,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
     return rec

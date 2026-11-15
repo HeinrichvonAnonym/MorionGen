@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
-PATH = ROOT / 'config/evalkit_k_v1.json'
+PATH = ROOT / 'config/evalkit_k_v2.json'
 CONFIG = json.loads(PATH.read_text())
 VERSION = CONFIG['version']
 

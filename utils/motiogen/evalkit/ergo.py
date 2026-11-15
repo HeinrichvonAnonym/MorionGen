@@ -172,7 +172,7 @@ def r3_inputs(base, neck, shoulder, locomoting, flight, both, mode, repeated=0):
 
 def score_union(inputs, method):
     variants = [inputs]
-    if inputs['upper_arm_flexion_deg'] >= CONV['upper_arm_bound_deg']:
+    if inputs.get('upper_arm_flexion_deg', -np.inf) >= CONV['upper_arm_bound_deg']:
         variants = [{**inputs, 'upper_arm_flexion_deg': 90.}, {**inputs, 'upper_arm_flexion_deg': 91.}]
     scores = set()
     for v in variants:
@@ -185,7 +185,7 @@ def frame_class(bounds, unmeasurable, risk):
     return np.select([unmeasurable, lo >= risk, hi >= risk], [0, 1, 2], 3)
 
 
-def score(model_path, times, labels, coords, masks, sel, source=None, zero=('unknown', None, None), free=True, unmeasurable=None, k_result=None):
+def score(model_path, times, labels, coords, masks, sel, source=None, zero=('unknown', None, None), free=True, unmeasurable=None, k_result=None, arm_valid=None):
     """Frame classes on every frame_stride-th scored frame. masks: height-only contact {side: {landmark: (T,) bool}}."""
     keep = np.flatnonzero(sel)[::int(CONV['frame_stride'])]
     dt = float(np.median(np.diff(times))); col = {l: i for i, l in enumerate(labels)}
@@ -210,6 +210,9 @@ def score(model_path, times, labels, coords, masks, sel, source=None, zero=('unk
                 inp = side_inputs(row, col, s, trunk[i], both, knee, known)
                 src = (None if neck is None else neck[i], None if shoulder is None else shoulder[i, 0 if s == 'l' else 1])
                 inputs = r3_inputs(inp, *src, locomoting[i], flight[i], both, mode)
+                if arm_valid is not None and not arm_valid[s][keep[i]]:
+                    for key in ('upper_arm_flexion_deg','arm_abducted_or_rotated','elbow_flexion_deg'):
+                        inputs.pop(key, None)
                 if k_result is not None:
                     from scipy.spatial.transform import Rotation
                     nk = k_result['metrics']['neck']

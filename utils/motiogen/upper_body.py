@@ -18,9 +18,14 @@ import opensim as osim
 import biomech
 from biomech import ROTATION, load, read_storage, segment_lengths
 
-MODELS = Path('/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/third_party_models')
-FBLS = MODELS/'fbls/FBLSmodel.osim'
-HYOID = MODELS/'mortensen2018/Mortensen2018.osim'
+if __package__:
+    from .model_resources import model_root, model_path
+else:
+    from model_resources import model_root, model_path
+
+MODELS = model_root()
+FBLS = model_path('fbls')
+HYOID = model_path('hyoid')
 
 # Generated joint frames: local x left, y up, z forward. OpenSim body axes: x forward, y up, z right.
 BODY_AXES = np.array([[0., 0, -1], [0, 1, 0], [1, 0, 0]])

@@ -122,7 +122,7 @@ def ergo_dim(run, work, f, masks, sel, src, method, prompt, object_free, frames)
     from .k import load as load_k, evaluate as evaluate_k
     k = evaluate_k(load_k(run, method))
     e = ergo.score(work/'model.osim', f['times'], f['labels'], f['coords'], masks, sel, src, ('unknown', None, None),
-                   ergo.object_free(prompt) if object_free is None else object_free, f['unmeasurable'], k_result=k)
+                   ergo.object_free(prompt) if object_free is None else object_free, f['unmeasurable'], k_result=k, arm_valid=f['arm_valid'])
     frames.update({f'ergo_{k}': v for k, v in e.items() if k != 'source_mode'})
     summary = {'source_mode': e['source_mode'], 'frames': int(len(e['index']))}
     for m in ergo.RISK:
@@ -211,13 +211,15 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
     res = residual.evaluate(kin, times, mass, floor_eval, ref)
     biomech.write_loads(times, res['grf'], floor_eval, work/'grf.mot', work/'grf.xml')
     frames = {'times': times, 'scored': sel, 'unmeasurable': f['unmeasurable'], 'ik_max_error_m': f['ik_max_error_m'],
+              **{'arm_'+s+'_fit_valid':v for s,v in f['arm_valid'].items()},
               'residual_bw': res['residual_bw'], 'residual_force': res['residual_force'], 'com': res['com'],
               'lowest_elevation_m': res['lowest_elevation'], 'state': res['state'],
               **{f'contact_{s}_{k}': res['masks'][s][k] for s in SIDES for k in LANDMARKS},
               **{f'elevation_{s}_{k}': res['elevation'][s][k] for s in SIDES for k in LANDMARKS}}
     from .k import load as load_k, evaluate as evaluate_k
     from .k.posture import summary as k_summary
-    summary = {'ik': {**f['receipt']['ik_marker_error'], 'unmeasurable_share': float(f['unmeasurable'][sel].mean())},
+    summary = {'ik': {**f['receipt']['ik_marker_error'], 'unmeasurable_share': float(f['unmeasurable'][sel].mean()),
+                      'arm_source_fidelity':f['receipt']['arm_quality']},
                'k': k_summary(evaluate_k(load_k(run, method)))}
     if 'residual' in dims:
         positive = residual.judge(res) if SPEC['residual']['tau_bw'] else None

@@ -1,0 +1,9 @@
+{
+  "data_root": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen",
+  "model_root": "third_party_models",
+  "models": {
+    "fbls": "fbls/FBLSmodel.osim",
+    "hyoid": "mortensen2018/Mortensen2018.osim"
+  },
+  "relocation": "MORIONGEN_DATA_ROOT overrides data_root using motiogen.config.data_root. Paths are resolved once when the model module is imported."
+}
