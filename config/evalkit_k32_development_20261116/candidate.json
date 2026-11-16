@@ -1,0 +1,209 @@
+{
+  "version": "k-3.2-candidate-arm-continuation",
+  "angle_tiers_deg": [
+    5,
+    10,
+    20
+  ],
+  "geometry_epsilon_m": 1e-06,
+  "rotation_tolerance": 0.002,
+  "calibration": {
+    "max_trunk_incline_deg": 20,
+    "max_thigh_incline_deg": 25,
+    "minimum_seconds": 0.5,
+    "native_bone_tolerance_deg": 5
+  },
+  "recovery": {
+    "max_gap_seconds": 0.1,
+    "promote_prediction_to_observation": false
+  },
+  "profiles": {
+    "motionlcm": {
+      "fps": 20,
+      "head": "head",
+      "thorax": "spine3",
+      "orientation": "positions_only"
+    },
+    "omnicontrol": {
+      "fps": 20,
+      "head": "head",
+      "thorax": "spine3",
+      "orientation": "positions_only"
+    },
+    "ardy": {
+      "fps": 20,
+      "head": "head",
+      "thorax": "Spine3",
+      "orientation": "global_rotations"
+    },
+    "chois": {
+      "fps": 30,
+      "head": "head",
+      "thorax": "spine3",
+      "orientation": "global_rotations"
+    },
+    "closd": {
+      "fps": 30,
+      "head": "Head",
+      "thorax": "Chest",
+      "orientation": "rotations_xyzw"
+    },
+    "dart": {
+      "fps": 30,
+      "head": "head",
+      "thorax": "spine3",
+      "orientation": "local_matrices"
+    },
+    "kimodo": {
+      "fps": 30,
+      "head": "head",
+      "thorax": "spine3",
+      "orientation": "global_rot_mats"
+    },
+    "primal": {
+      "fps": 30,
+      "head": "head",
+      "thorax": "spine3",
+      "orientation": "axis_angle"
+    }
+  },
+  "conventions": "Precision tiers and calibration thresholds are engineering conventions, not anatomical accuracy guarantees. Native segment rotations require anatomical calibration before clinical angles are interpreted.",
+  "previous_version": {
+    "config": "config/evalkit_k_v2.json",
+    "commit": "780dda7",
+    "holdout_usage": "config/evalkit_k_validation_20261116/final_usage.json",
+    "policy": "development only; old final holdout stays spent"
+  },
+  "arm_fit": {
+    "methods": [
+      "motionlcm",
+      "omnicontrol",
+      "kimodo"
+    ],
+    "shoulder_flexion_range_deg": [
+      -180,
+      180
+    ],
+    "registration": "joint_centres",
+    "direction_refinement": false,
+    "quality_angle_deg": 10,
+    "quality_position_m": 0.1,
+    "scope": "Engineering representation and source-fidelity settings; expanded shoulder coordinate range is not a validated muscle operating range. Other formats retain K1 fitting.",
+    "initialization_range_deg": [
+      -90,
+      90
+    ],
+    "initialization": "first observed frame in original model shoulder range, then expanded-range IK; model defaults preserved",
+    "selection": "compare joint-centre original/expanded ranges and original-range registered markers on final filtered source geometry; maximize angle-and-position valid share, then minimize arm joint RMSE"
+  },
+  "convention_registry": "config/evalkit_k3_20261116/conventions.json",
+  "fitting": {
+    "strategy": "direction_refinement",
+    "projection": false,
+    "methods": [
+      "motionlcm",
+      "omnicontrol",
+      "ardy",
+      "chois",
+      "closd",
+      "dart",
+      "kimodo",
+      "primal"
+    ],
+    "direction_weight": 1.0,
+    "position_weight": 0.05,
+    "continuity_weight": 0.002,
+    "max_nfev": 35,
+    "refinement_hz": 20,
+    "quality_angle_deg": 10.0,
+    "quality_position_m": 0.1,
+    "per_method": {
+      "ardy": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "interior_rescue": true,
+        "rescue_after_baseline": true,
+        "baseline_max_nfev": 35,
+        "max_nfev": 100,
+        "continue_arm_branch": true,
+        "accept_continued_arm": true
+      },
+      "chois": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "interior_rescue": true,
+        "rescue_after_baseline": true,
+        "baseline_max_nfev": 35,
+        "max_nfev": 100,
+        "continue_arm_branch": true,
+        "accept_continued_arm": true
+      },
+      "closd": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "interior_rescue": false,
+        "rescue_after_baseline": false,
+        "baseline_max_nfev": 35,
+        "max_nfev": 35,
+        "continue_arm_branch": false,
+        "accept_continued_arm": false
+      },
+      "dart": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "interior_rescue": true,
+        "rescue_after_baseline": true,
+        "baseline_max_nfev": 35,
+        "max_nfev": 100,
+        "continue_arm_branch": true,
+        "accept_continued_arm": true
+      },
+      "kimodo": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "interior_rescue": true,
+        "rescue_after_baseline": true,
+        "baseline_max_nfev": 35,
+        "max_nfev": 100,
+        "continue_arm_branch": true,
+        "accept_continued_arm": true
+      },
+      "motionlcm": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "interior_rescue": true,
+        "rescue_after_baseline": true,
+        "baseline_max_nfev": 35,
+        "max_nfev": 100,
+        "continue_arm_branch": true,
+        "accept_continued_arm": true
+      },
+      "omnicontrol": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "interior_rescue": true,
+        "rescue_after_baseline": true,
+        "baseline_max_nfev": 35,
+        "max_nfev": 100,
+        "continue_arm_branch": true,
+        "accept_continued_arm": true
+      },
+      "primal": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "interior_rescue": true,
+        "rescue_after_baseline": true,
+        "baseline_max_nfev": 35,
+        "max_nfev": 100,
+        "continue_arm_branch": true,
+        "accept_continued_arm": true
+      }
+    }
+  },
+  "reference_contract": "config/evalkit_k3_20261116/reference_translation_correction.json",
+  "selection": {
+    "status": "development candidate; fifteen-window validation only; full 82x8 regression required before promotion",
+    "evidence": "config/evalkit_k32_development_20261116/acceptance.json",
+    "scope": "arm branch continuation; original ranges; CLoSD retains K3.1 policy; no HYOID changes"
+  }
+}

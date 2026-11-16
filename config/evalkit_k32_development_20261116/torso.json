@@ -1,0 +1,506 @@
+[
+  {
+    "method": "ardy",
+    "id": "collaborate/MasticCultivation/MasticCultivation/CleanWind/S02/MCCWS02G01R01.bvh",
+    "window_key": "070",
+    "selection": "highest trunk D-R P95 in existing 82 development windows; diagnostic only",
+    "metrics": {
+      "S-R": {
+        "valid": 336,
+        "total": 336,
+        "coverage": 1.0,
+        "median_abs": 0.01632630623643272,
+        "p95_abs": 0.15919180145088507,
+        "signed_bias": -0.047759594060500794,
+        "within_5": 0.9970238095238095,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "T-S": {
+        "valid": 336,
+        "total": 336,
+        "coverage": 1.0,
+        "median_abs": 4.752458617927765,
+        "p95_abs": 8.386940753152542,
+        "signed_bias": 4.809583435328785,
+        "within_5": 0.5119047619047619,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "T-R": {
+        "valid": 336,
+        "total": 336,
+        "coverage": 1.0,
+        "median_abs": 4.750617831548331,
+        "p95_abs": 8.390944725454393,
+        "signed_bias": 4.761823841268285,
+        "within_5": 0.5059523809523809,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "D-T": {
+        "valid": 336,
+        "total": 336,
+        "coverage": 1.0,
+        "median_abs": 0.0,
+        "p95_abs": 0.0,
+        "signed_bias": 0.0,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "D-R": {
+        "valid": 336,
+        "total": 336,
+        "coverage": 1.0,
+        "median_abs": 4.750617831548331,
+        "p95_abs": 8.390944725454393,
+        "signed_bias": 4.761823841268285,
+        "within_5": 0.5059523809523809,
+        "within_10": 1.0,
+        "within_20": 1.0
+      }
+    }
+  },
+  {
+    "method": "chois",
+    "id": "collaborate/LAB/EAWS/S3/S3P07R1.bvh",
+    "window_key": "031",
+    "selection": "highest trunk D-R P95 in existing 82 development windows; diagnostic only",
+    "metrics": {
+      "S-R": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 0.0012093896358749134,
+        "p95_abs": 0.00434068490870061,
+        "signed_bias": 1.853462737773602e-05,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "T-S": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 16.848435769769793,
+        "p95_abs": 17.00638242900499,
+        "signed_bias": -16.859093713523297,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "T-R": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 16.848848213543214,
+        "p95_abs": 17.005881224152326,
+        "signed_bias": -16.85907517889592,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "D-T": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 0.0,
+        "p95_abs": 0.0,
+        "signed_bias": 0.0,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "D-R": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 16.848848213543214,
+        "p95_abs": 17.005881224152326,
+        "signed_bias": -16.85907517889592,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      }
+    }
+  },
+  {
+    "method": "closd",
+    "id": "collaborate/LAB/EAWS/S3/S3P07R1.bvh",
+    "window_key": "031",
+    "selection": "highest trunk D-R P95 in existing 82 development windows; diagnostic only",
+    "metrics": {
+      "S-R": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 0.0012093896358749134,
+        "p95_abs": 0.00434068490870061,
+        "signed_bias": 1.853462737773602e-05,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "T-S": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 19.70152450488036,
+        "p95_abs": 19.828567068788125,
+        "signed_bias": -19.70956649360504,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "T-R": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 19.701624871407375,
+        "p95_abs": 19.82636819272627,
+        "signed_bias": -19.709547958977662,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "D-T": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 0.0,
+        "p95_abs": 0.0,
+        "signed_bias": 0.0,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "D-R": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 19.701624871407375,
+        "p95_abs": 19.82636819272627,
+        "signed_bias": -19.709547958977662,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      }
+    }
+  },
+  {
+    "method": "dart",
+    "id": "collaborate/LAB/EAWS/S3/S3P07R1.bvh",
+    "window_key": "031",
+    "selection": "highest trunk D-R P95 in existing 82 development windows; diagnostic only",
+    "metrics": {
+      "S-R": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 0.0012093896358749134,
+        "p95_abs": 0.00434068490870061,
+        "signed_bias": 1.853462737773602e-05,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "T-S": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 16.448633511680733,
+        "p95_abs": 16.59714663450062,
+        "signed_bias": -16.457434457067613,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "T-R": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 16.449556679798498,
+        "p95_abs": 16.59723971450338,
+        "signed_bias": -16.457415922440237,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "D-T": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 0.0,
+        "p95_abs": 0.0,
+        "signed_bias": 0.0,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "D-R": {
+        "valid": 497,
+        "total": 497,
+        "coverage": 1.0,
+        "median_abs": 16.449556679798498,
+        "p95_abs": 16.59723971450338,
+        "signed_bias": -16.457415922440237,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      }
+    }
+  },
+  {
+    "method": "kimodo",
+    "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Body_blowing/GBBSS01G02R01.bvh",
+    "window_key": "010",
+    "selection": "highest trunk D-R P95 in existing 82 development windows; diagnostic only",
+    "metrics": {
+      "S-R": {
+        "valid": 221,
+        "total": 221,
+        "coverage": 1.0,
+        "median_abs": 0.003778144659861038,
+        "p95_abs": 0.06604744014135555,
+        "signed_bias": -0.0001579593974393817,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "T-S": {
+        "valid": 221,
+        "total": 221,
+        "coverage": 1.0,
+        "median_abs": 2.696071877932961,
+        "p95_abs": 5.021167128381881,
+        "signed_bias": 1.5319062118562659,
+        "within_5": 0.9457013574660633,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "T-R": {
+        "valid": 221,
+        "total": 221,
+        "coverage": 1.0,
+        "median_abs": 2.7061567708019973,
+        "p95_abs": 5.022515998951558,
+        "signed_bias": 1.5317482524588266,
+        "within_5": 0.9366515837104072,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "D-T": {
+        "valid": 221,
+        "total": 221,
+        "coverage": 1.0,
+        "median_abs": 0.0,
+        "p95_abs": 0.0,
+        "signed_bias": 0.0,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "D-R": {
+        "valid": 221,
+        "total": 221,
+        "coverage": 1.0,
+        "median_abs": 2.7061567708019973,
+        "p95_abs": 5.022515998951558,
+        "signed_bias": 1.5317482524588266,
+        "within_5": 0.9366515837104072,
+        "within_10": 1.0,
+        "within_20": 1.0
+      }
+    }
+  },
+  {
+    "method": "motionlcm",
+    "id": "collaborate/LAB/EAWS/S3/S3P07R1.bvh",
+    "window_key": "031",
+    "selection": "highest trunk D-R P95 in existing 82 development windows; diagnostic only",
+    "metrics": {
+      "S-R": {
+        "valid": 496,
+        "total": 496,
+        "coverage": 1.0,
+        "median_abs": 0.0016617262389857501,
+        "p95_abs": 0.00668432889501247,
+        "signed_bias": 5.867961937800642e-05,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "T-S": {
+        "valid": 496,
+        "total": 496,
+        "coverage": 1.0,
+        "median_abs": 16.849236652941087,
+        "p95_abs": 17.006809431088598,
+        "signed_bias": -16.859159453816766,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "T-R": {
+        "valid": 496,
+        "total": 496,
+        "coverage": 1.0,
+        "median_abs": 16.849191117076924,
+        "p95_abs": 17.006094719143675,
+        "signed_bias": -16.859100774197383,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "D-T": {
+        "valid": 496,
+        "total": 496,
+        "coverage": 1.0,
+        "median_abs": 0.0,
+        "p95_abs": 0.0,
+        "signed_bias": 0.0,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "D-R": {
+        "valid": 496,
+        "total": 496,
+        "coverage": 1.0,
+        "median_abs": 16.849191117076924,
+        "p95_abs": 17.006094719143675,
+        "signed_bias": -16.859100774197383,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      }
+    }
+  },
+  {
+    "method": "omnicontrol",
+    "id": "collaborate/LAB/EAWS/S3/S3P07R1.bvh",
+    "window_key": "031",
+    "selection": "highest trunk D-R P95 in existing 82 development windows; diagnostic only",
+    "metrics": {
+      "S-R": {
+        "valid": 491,
+        "total": 491,
+        "coverage": 1.0,
+        "median_abs": 0.0016726111969944668,
+        "p95_abs": 0.006691596557260482,
+        "signed_bias": 6.489321307792362e-05,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "T-S": {
+        "valid": 491,
+        "total": 491,
+        "coverage": 1.0,
+        "median_abs": 16.849805749761202,
+        "p95_abs": 17.0074892010806,
+        "signed_bias": -16.859461138020038,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "T-R": {
+        "valid": 491,
+        "total": 491,
+        "coverage": 1.0,
+        "median_abs": 16.850124352383858,
+        "p95_abs": 17.006722985667277,
+        "signed_bias": -16.859396244806955,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "D-T": {
+        "valid": 491,
+        "total": 491,
+        "coverage": 1.0,
+        "median_abs": 2.743602259158706e-06,
+        "p95_abs": 7.484960111270311e-06,
+        "signed_bias": 3.305243947322804e-07,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "D-R": {
+        "valid": 491,
+        "total": 491,
+        "coverage": 1.0,
+        "median_abs": 16.85012153192867,
+        "p95_abs": 17.006720604582675,
+        "signed_bias": -16.859395914282562,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      }
+    }
+  },
+  {
+    "method": "primal",
+    "id": "collaborate/LAB/EAWS/S3/S3P07R1.bvh",
+    "window_key": "031",
+    "selection": "highest trunk D-R P95 in existing 82 development windows; diagnostic only",
+    "metrics": {
+      "S-R": {
+        "valid": 491,
+        "total": 491,
+        "coverage": 1.0,
+        "median_abs": 0.039908666029617734,
+        "p95_abs": 0.1397898052879043,
+        "signed_bias": 0.020688650780536402,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "T-S": {
+        "valid": 491,
+        "total": 491,
+        "coverage": 1.0,
+        "median_abs": 16.849751471291547,
+        "p95_abs": 17.007309514091123,
+        "signed_bias": -16.859458135528392,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "T-R": {
+        "valid": 491,
+        "total": 491,
+        "coverage": 1.0,
+        "median_abs": 16.834155962053558,
+        "p95_abs": 17.01387134795116,
+        "signed_bias": -16.838769484747854,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      },
+      "D-T": {
+        "valid": 491,
+        "total": 491,
+        "coverage": 1.0,
+        "median_abs": 0.03430554014417453,
+        "p95_abs": 0.11232819254945525,
+        "signed_bias": -0.02182926132390443,
+        "within_5": 1.0,
+        "within_10": 1.0,
+        "within_20": 1.0
+      },
+      "D-R": {
+        "valid": 491,
+        "total": 491,
+        "coverage": 1.0,
+        "median_abs": 16.849718719164187,
+        "p95_abs": 17.00692178763829,
+        "signed_bias": -16.860598746071762,
+        "within_5": 0.0,
+        "within_10": 0.0,
+        "within_20": 1.0
+      }
+    }
+  }
+]

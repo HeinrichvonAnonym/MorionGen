@@ -8,7 +8,8 @@ from .geometry import unit
 def refine(model_path,motion,times,labels,data,settings):
     if settings.get('rescue_after_baseline',False):
         baseline=dict(settings,rescue_after_baseline=False,interior_rescue=False,
-                      max_nfev=settings['baseline_max_nfev'])
+                      max_nfev=settings['baseline_max_nfev'],
+                      continue_arm_branch=False,accept_continued_arm=False)
         initial,first=refine(model_path,motion,times,labels,data,baseline)
         rescue=dict(settings,rescue_after_baseline=False)
         result,second=refine(model_path,motion,times,labels,initial,rescue)
@@ -68,10 +69,23 @@ def refine(model_path,motion,times,labels,data,settings):
                 seeds.extend(lo+(hi-lo)*f for f in rng.uniform(.15,.85,(6,len(x0))))
             # Prefer the better observed-input seed; retry the other only for a large residual.
             seeds.sort(key=lambda x:float(residual(x)@residual(x)))
+            # Continue the preceding coordinate chart before considering a new
+            # branch. A small input residual accepts it; large residuals still
+            # trigger the ordinary multistart rescue. No reference is consulted.
+            if settings.get('continue_arm_branch',False) and group.endswith('arm') and group in previous:
+                seeds.insert(0,np.clip(previous[group],lo,hi))
             for seed_index,seed in enumerate(seeds):
                 if seed_index and min(v[0] for v in candidates)<.01:break
                 sol=least_squares(residual,seed,bounds=(lo,hi),max_nfev=settings['max_nfev'],ftol=1e-5,xtol=1e-5,gtol=1e-5)
                 candidates.append((float(sol.fun@sol.fun),sol.x))
+                if (seed_index==0 and settings.get('continue_arm_branch',False)
+                        and group.endswith('arm') and group in previous
+                        and settings.get('accept_continued_arm',False)
+                        and float(sol.fun@sol.fun)<.01):
+                    # Accept the already adequate continuation rather than a
+                    # marginally closer seed on a distant coordinate branch.
+                    candidates=[candidates[-1]]
+                    break
             best=min(candidates,key=lambda x:x[0])[1]
             previous[group]=best;out[i,columns]=np.rad2deg(best)
             errors.append(float(np.linalg.norm(residual(best)[:wanted.size])))

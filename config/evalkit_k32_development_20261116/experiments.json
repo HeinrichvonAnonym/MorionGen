@@ -1,0 +1,658 @@
+{
+  "branch": {
+    "config": {
+      "version": "k-3.1-development-interior-rescue",
+      "angle_tiers_deg": [
+        5,
+        10,
+        20
+      ],
+      "geometry_epsilon_m": 1e-06,
+      "rotation_tolerance": 0.002,
+      "calibration": {
+        "max_trunk_incline_deg": 20,
+        "max_thigh_incline_deg": 25,
+        "minimum_seconds": 0.5,
+        "native_bone_tolerance_deg": 5
+      },
+      "recovery": {
+        "max_gap_seconds": 0.1,
+        "promote_prediction_to_observation": false
+      },
+      "profiles": {
+        "motionlcm": {
+          "fps": 20,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "positions_only"
+        },
+        "omnicontrol": {
+          "fps": 20,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "positions_only"
+        },
+        "ardy": {
+          "fps": 20,
+          "head": "head",
+          "thorax": "Spine3",
+          "orientation": "global_rotations"
+        },
+        "chois": {
+          "fps": 30,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "global_rotations"
+        },
+        "closd": {
+          "fps": 30,
+          "head": "Head",
+          "thorax": "Chest",
+          "orientation": "rotations_xyzw"
+        },
+        "dart": {
+          "fps": 30,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "local_matrices"
+        },
+        "kimodo": {
+          "fps": 30,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "global_rot_mats"
+        },
+        "primal": {
+          "fps": 30,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "axis_angle"
+        }
+      },
+      "conventions": "Precision tiers and calibration thresholds are engineering conventions, not anatomical accuracy guarantees. Native segment rotations require anatomical calibration before clinical angles are interpreted.",
+      "previous_version": {
+        "config": "config/evalkit_k_v2.json",
+        "commit": "780dda7",
+        "holdout_usage": "config/evalkit_k_validation_20261116/final_usage.json",
+        "policy": "development only; old final holdout stays spent"
+      },
+      "arm_fit": {
+        "methods": [
+          "motionlcm",
+          "omnicontrol",
+          "kimodo"
+        ],
+        "shoulder_flexion_range_deg": [
+          -180,
+          180
+        ],
+        "registration": "joint_centres",
+        "direction_refinement": false,
+        "quality_angle_deg": 10,
+        "quality_position_m": 0.1,
+        "scope": "Engineering representation and source-fidelity settings; expanded shoulder coordinate range is not a validated muscle operating range. Other formats retain K1 fitting.",
+        "initialization_range_deg": [
+          -90,
+          90
+        ],
+        "initialization": "first observed frame in original model shoulder range, then expanded-range IK; model defaults preserved",
+        "selection": "compare joint-centre original/expanded ranges and original-range registered markers on final filtered source geometry; maximize angle-and-position valid share, then minimize arm joint RMSE"
+      },
+      "convention_registry": "config/evalkit_k3_20261116/conventions.json",
+      "fitting": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "methods": [
+          "motionlcm",
+          "omnicontrol",
+          "ardy",
+          "chois",
+          "closd",
+          "dart",
+          "kimodo",
+          "primal"
+        ],
+        "direction_weight": 1.0,
+        "position_weight": 0.05,
+        "continuity_weight": 0.002,
+        "max_nfev": 35,
+        "refinement_hz": 20,
+        "quality_angle_deg": 10.0,
+        "quality_position_m": 0.1,
+        "per_method": {
+          "ardy": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true
+          },
+          "chois": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true
+          },
+          "closd": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": false,
+            "rescue_after_baseline": false,
+            "baseline_max_nfev": 35,
+            "max_nfev": 35,
+            "continue_arm_branch": true
+          },
+          "dart": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true
+          },
+          "kimodo": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true
+          },
+          "motionlcm": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true
+          },
+          "omnicontrol": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true
+          },
+          "primal": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true
+          }
+        }
+      },
+      "reference_contract": "config/evalkit_k3_20261116/reference_translation_correction.json",
+      "selection": {
+        "baseline_commit": "2bbbd42",
+        "scope": "eight known failure windows plus eight preselected typical development windows; no new holdout",
+        "evidence": "config/evalkit_k3_rescue_20261116/acceptance.json",
+        "evidence_sha256": "1ac4d6bf9be615b53f375059a0654620ef76f31f3341b49011ee5766a9be4a7b",
+        "policy": "same coordinate ranges; CLoSD retains baseline because temporal error increases; other seven use two-pass interior rescue",
+        "default_compatibility": "explicit K3.1 only; K2 and K3 configurations retained"
+      }
+    },
+    "implementation": {
+      "config/evalkit_k_v2.json": "82cdab6f927abbad21c42fc66150c76459e38858962cac2eb80b77223f32cbce",
+      "utils/motiogen/evalkit/k/__init__.py": "3cf58663609b2c2287b1efb7b0db8df26749f3635c5d17f3d0cc42b7a89d198e",
+      "utils/motiogen/evalkit/k/arms.py": "aefa8c74ab9ca666fbc0ac28d3e2d763e67dada93d5609878363636f988d9c16",
+      "utils/motiogen/evalkit/k/body.py": "e6fde837b2afa04c028187d0a0e9272b34563e52617069fd0f7cf744d5350ddf",
+      "utils/motiogen/evalkit/k/bones.py": "60fd3b5bef58cc840e5fb553d2e9f243a65002aa075a4a4328f406db412a9863",
+      "utils/motiogen/evalkit/k/calibration.py": "84e95a25c2371ac290b008fb2b048d47dbd38343779a999bd478fd0422428304",
+      "utils/motiogen/evalkit/k/config.py": "24a5602a3549b9113917ed07141de0307c4e3a8e87773b4ebe8884a929052201",
+      "utils/motiogen/evalkit/k/export.py": "aab260a1eff27686c48af3f849ddb04c44d57d0fa50bf30afb6bc0b508b7938b",
+      "utils/motiogen/evalkit/k/fitting.py": "17acc67049d0d7d79a3794840995a05bf9f62530c4d77025dbb556296e2d12ec",
+      "utils/motiogen/evalkit/k/fitting3.py": "31085b864dd8e8bc21dab081b210923e1a9032c1770e8818960b857e52e392d7",
+      "utils/motiogen/evalkit/k/geometry.py": "c0db68ed560d488b99edffb74fabe5e36a05e2bb7fd67c8580a161f2c169ab3f",
+      "utils/motiogen/evalkit/k/motion.py": "3420f13aff718056e7978b3ca67d7e1044a3063c4399b5e65b00964b00a09d5d",
+      "utils/motiogen/evalkit/k/posture.py": "b15e24516e6f0254cf28e57916ead8a151a8176e0c06ba4be25d3c26df3b52e4",
+      "utils/motiogen/evalkit/k/reference.py": "5f49cdded809bca5447dbcbe14e043e051cb3c863f36b503606eb6e1541ead63",
+      "utils/motiogen/evalkit/k/reference_bvh.py": "1e3c9faa84ae9694b7542d761b77467b165efe6744119ee00f95355733132633",
+      "utils/motiogen/evalkit/k/refinement.py": "c3b0ff6f5eec7c55bad7aa0016c40794dfefb81fa7b756e47f4caf50fc9b8615",
+      "utils/motiogen/evalkit/k/scoring.py": "4fb8188823c6b2917e6b7303d0f9187b3bc8aa251ac697d2ed4c995373c70675",
+      "utils/motiogen/evalkit/k/validation.py": "4b86a85ae98c90150fe769e7aa90890ae23090f909a540c0e2c8ce1ee85bff7f",
+      "config/evalkit_k_calibration/ardy.json": "31dcf01f96f43a142d1346bf687d96c3adfe5a60639cb49f52418337fa3c8063",
+      "config/evalkit_k_calibration/chois.json": "02800f92c53540d07d1af1ff31b2def832f4299dcea7cf223e4bed3e1f3e6804",
+      "config/evalkit_k_calibration/closd.json": "5de072c4575a222704c46e7e1a62460faa407fd2a599854696e31b5c91d72744",
+      "config/evalkit_k_calibration/dart.json": "54a610c925db4dfdbcc9c17e5f9f9e4796fffa255808c2e784d68997ec3443ca",
+      "config/evalkit_k_calibration/kimodo.json": "89f00fe8cddabf2b9905b499d842112c52dc04a7936c62c0ead2a3eb17d40aab",
+      "config/evalkit_k_calibration/primal.json": "3851c0cc6e3c8a7a92a7b7928cfb7473d713d95f2e229f1e2897860809d201e6",
+      "utils/motion_retarget/bvh.py": "1e1467a84bd4f437117ba0180e683ca53d6799e5615b4054257fe731cfb81b76",
+      "utils/motiogen/motion.py": "15ddda16c474ccf5dae777092699701bff7e8228c32b31bcba3704232653c517",
+      "python/scripts/evalkit_k_humanml_codec.py": "7a132370781838960ab3d683b33e26527fcc8ad687236c8770ffe43c4f3f0e26",
+      "python/scripts/evalkit_k_validate.py": "d08a9bff41e203841d4b12dd25903742364a8b9f5fb92760afe33586ce6a8686",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/common/quaternion.py": "ae2e3d090eb39342bdcd0bdae7183bab3159bc100eea5725680dd25032f78c25",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/common/skeleton.py": "5b047d93ca883a84d972a8e743d33a68089a990e3553f18eb7752b3ce4000776",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/scripts/motion_process.py": "88e0299c8cd599166665a1923be9bbd3eb1667c7b7bb5a63ce325d3b35741edc",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/get_opt.py": "39f5b0e0904d9421feae2e5cc7fa624ce64681d1a9466c80b2185c486bcf8ece",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/metrics.py": "de7b8b46ad019aeddeba93e1586fdf8092b83d86128e0da92dd2f6ce03dac935",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/paramUtil.py": "fe0265f3dcd0d466690d816eae973fcece145f64551cef7e46fed7ef3de80d34",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/plot_script.py": "be14e1b2bff5c8173e9c1a234bec20831d28d2023d6c465467e07fe49fa6b9a9",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/utils.py": "053a866d9bf7233ad91cb387fd111c969ae29b3ad362597a069fadf9d703b1ab",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/word_vectorizer.py": "64dfc2eeaebb04f0c0f9a9b6526d5416edee248b4e1d10f617bcb07305188803"
+    },
+    "runner": "e82ccb45be80465cf7239df3acc262266f1ac7346dc4ac67bc1bdc6cdceb7a79",
+    "selection": [
+      {
+        "id": "collaborate/LAB/EAWS/S4/S4P19R1.bvh",
+        "method": "omnicontrol",
+        "window_key": "038"
+      },
+      {
+        "id": "collaborate/LAB/EAWS/S5/S5P16R2.bvh",
+        "method": "primal",
+        "window_key": "046"
+      },
+      {
+        "id": "collaborate/LAB/EAWS/S6/S6P18R2.bvh",
+        "method": "ardy",
+        "window_key": "051"
+      },
+      {
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R01.bvh",
+        "method": "chois",
+        "window_key": "000"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh",
+        "method": "dart",
+        "window_key": "073"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh",
+        "method": "ardy",
+        "window_key": "073"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh",
+        "method": "kimodo",
+        "window_key": "073"
+      },
+      {
+        "id": "collaborate/SlikWeaving/SlikWeaving/WeavingMediumSizeLoom/G01/SWMLS01G01R05.bvh",
+        "method": "closd",
+        "window_key": "081"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh",
+        "method": "kimodo",
+        "window_key": "074"
+      },
+      {
+        "id": "collaborate/LAB/EAWS/S7/S7P13R1.bvh",
+        "method": "motionlcm",
+        "window_key": "056"
+      },
+      {
+        "id": "collaborate/LAB/EAWS/S2/S2P09R1.bvh",
+        "method": "dart",
+        "window_key": "026"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/Wiping/S02/MCWIS02G01R03.bvh",
+        "method": "kimodo",
+        "window_key": "077"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/CleanWind/S02/MCCWS02G01R01.bvh",
+        "method": "kimodo",
+        "window_key": "070"
+      },
+      {
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R03.bvh",
+        "method": "closd",
+        "window_key": "006"
+      },
+      {
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Beak_cutting/Trimming/GBBCS01G02R05.bvh",
+        "method": "kimodo",
+        "window_key": "008"
+      }
+    ],
+    "scope": "development ablation; original R acceptance; unchanged K3.1 settings except arm seed ordering"
+  },
+  "continue": {
+    "config": {
+      "version": "k-3.1-development-interior-rescue",
+      "angle_tiers_deg": [
+        5,
+        10,
+        20
+      ],
+      "geometry_epsilon_m": 1e-06,
+      "rotation_tolerance": 0.002,
+      "calibration": {
+        "max_trunk_incline_deg": 20,
+        "max_thigh_incline_deg": 25,
+        "minimum_seconds": 0.5,
+        "native_bone_tolerance_deg": 5
+      },
+      "recovery": {
+        "max_gap_seconds": 0.1,
+        "promote_prediction_to_observation": false
+      },
+      "profiles": {
+        "motionlcm": {
+          "fps": 20,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "positions_only"
+        },
+        "omnicontrol": {
+          "fps": 20,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "positions_only"
+        },
+        "ardy": {
+          "fps": 20,
+          "head": "head",
+          "thorax": "Spine3",
+          "orientation": "global_rotations"
+        },
+        "chois": {
+          "fps": 30,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "global_rotations"
+        },
+        "closd": {
+          "fps": 30,
+          "head": "Head",
+          "thorax": "Chest",
+          "orientation": "rotations_xyzw"
+        },
+        "dart": {
+          "fps": 30,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "local_matrices"
+        },
+        "kimodo": {
+          "fps": 30,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "global_rot_mats"
+        },
+        "primal": {
+          "fps": 30,
+          "head": "head",
+          "thorax": "spine3",
+          "orientation": "axis_angle"
+        }
+      },
+      "conventions": "Precision tiers and calibration thresholds are engineering conventions, not anatomical accuracy guarantees. Native segment rotations require anatomical calibration before clinical angles are interpreted.",
+      "previous_version": {
+        "config": "config/evalkit_k_v2.json",
+        "commit": "780dda7",
+        "holdout_usage": "config/evalkit_k_validation_20261116/final_usage.json",
+        "policy": "development only; old final holdout stays spent"
+      },
+      "arm_fit": {
+        "methods": [
+          "motionlcm",
+          "omnicontrol",
+          "kimodo"
+        ],
+        "shoulder_flexion_range_deg": [
+          -180,
+          180
+        ],
+        "registration": "joint_centres",
+        "direction_refinement": false,
+        "quality_angle_deg": 10,
+        "quality_position_m": 0.1,
+        "scope": "Engineering representation and source-fidelity settings; expanded shoulder coordinate range is not a validated muscle operating range. Other formats retain K1 fitting.",
+        "initialization_range_deg": [
+          -90,
+          90
+        ],
+        "initialization": "first observed frame in original model shoulder range, then expanded-range IK; model defaults preserved",
+        "selection": "compare joint-centre original/expanded ranges and original-range registered markers on final filtered source geometry; maximize angle-and-position valid share, then minimize arm joint RMSE"
+      },
+      "convention_registry": "config/evalkit_k3_20261116/conventions.json",
+      "fitting": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "methods": [
+          "motionlcm",
+          "omnicontrol",
+          "ardy",
+          "chois",
+          "closd",
+          "dart",
+          "kimodo",
+          "primal"
+        ],
+        "direction_weight": 1.0,
+        "position_weight": 0.05,
+        "continuity_weight": 0.002,
+        "max_nfev": 35,
+        "refinement_hz": 20,
+        "quality_angle_deg": 10.0,
+        "quality_position_m": 0.1,
+        "per_method": {
+          "ardy": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true,
+            "accept_continued_arm": true
+          },
+          "chois": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true,
+            "accept_continued_arm": true
+          },
+          "closd": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": false,
+            "rescue_after_baseline": false,
+            "baseline_max_nfev": 35,
+            "max_nfev": 35,
+            "continue_arm_branch": true,
+            "accept_continued_arm": true
+          },
+          "dart": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true,
+            "accept_continued_arm": true
+          },
+          "kimodo": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true,
+            "accept_continued_arm": true
+          },
+          "motionlcm": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true,
+            "accept_continued_arm": true
+          },
+          "omnicontrol": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true,
+            "accept_continued_arm": true
+          },
+          "primal": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100,
+            "continue_arm_branch": true,
+            "accept_continued_arm": true
+          }
+        }
+      },
+      "reference_contract": "config/evalkit_k3_20261116/reference_translation_correction.json",
+      "selection": {
+        "baseline_commit": "2bbbd42",
+        "scope": "eight known failure windows plus eight preselected typical development windows; no new holdout",
+        "evidence": "config/evalkit_k3_rescue_20261116/acceptance.json",
+        "evidence_sha256": "1ac4d6bf9be615b53f375059a0654620ef76f31f3341b49011ee5766a9be4a7b",
+        "policy": "same coordinate ranges; CLoSD retains baseline because temporal error increases; other seven use two-pass interior rescue",
+        "default_compatibility": "explicit K3.1 only; K2 and K3 configurations retained"
+      }
+    },
+    "implementation": {
+      "config/evalkit_k_v2.json": "82cdab6f927abbad21c42fc66150c76459e38858962cac2eb80b77223f32cbce",
+      "utils/motiogen/evalkit/k/__init__.py": "3cf58663609b2c2287b1efb7b0db8df26749f3635c5d17f3d0cc42b7a89d198e",
+      "utils/motiogen/evalkit/k/arms.py": "aefa8c74ab9ca666fbc0ac28d3e2d763e67dada93d5609878363636f988d9c16",
+      "utils/motiogen/evalkit/k/body.py": "e6fde837b2afa04c028187d0a0e9272b34563e52617069fd0f7cf744d5350ddf",
+      "utils/motiogen/evalkit/k/bones.py": "60fd3b5bef58cc840e5fb553d2e9f243a65002aa075a4a4328f406db412a9863",
+      "utils/motiogen/evalkit/k/calibration.py": "84e95a25c2371ac290b008fb2b048d47dbd38343779a999bd478fd0422428304",
+      "utils/motiogen/evalkit/k/config.py": "24a5602a3549b9113917ed07141de0307c4e3a8e87773b4ebe8884a929052201",
+      "utils/motiogen/evalkit/k/export.py": "aab260a1eff27686c48af3f849ddb04c44d57d0fa50bf30afb6bc0b508b7938b",
+      "utils/motiogen/evalkit/k/fitting.py": "17acc67049d0d7d79a3794840995a05bf9f62530c4d77025dbb556296e2d12ec",
+      "utils/motiogen/evalkit/k/fitting3.py": "31085b864dd8e8bc21dab081b210923e1a9032c1770e8818960b857e52e392d7",
+      "utils/motiogen/evalkit/k/geometry.py": "c0db68ed560d488b99edffb74fabe5e36a05e2bb7fd67c8580a161f2c169ab3f",
+      "utils/motiogen/evalkit/k/motion.py": "3420f13aff718056e7978b3ca67d7e1044a3063c4399b5e65b00964b00a09d5d",
+      "utils/motiogen/evalkit/k/posture.py": "b15e24516e6f0254cf28e57916ead8a151a8176e0c06ba4be25d3c26df3b52e4",
+      "utils/motiogen/evalkit/k/reference.py": "5f49cdded809bca5447dbcbe14e043e051cb3c863f36b503606eb6e1541ead63",
+      "utils/motiogen/evalkit/k/reference_bvh.py": "1e3c9faa84ae9694b7542d761b77467b165efe6744119ee00f95355733132633",
+      "utils/motiogen/evalkit/k/refinement.py": "d228dc854fd72ca6d6a2949ccbf3e4f8fb6f36a62809bf7e9903fb5abd20d8d7",
+      "utils/motiogen/evalkit/k/scoring.py": "4fb8188823c6b2917e6b7303d0f9187b3bc8aa251ac697d2ed4c995373c70675",
+      "utils/motiogen/evalkit/k/validation.py": "4b86a85ae98c90150fe769e7aa90890ae23090f909a540c0e2c8ce1ee85bff7f",
+      "config/evalkit_k_calibration/ardy.json": "31dcf01f96f43a142d1346bf687d96c3adfe5a60639cb49f52418337fa3c8063",
+      "config/evalkit_k_calibration/chois.json": "02800f92c53540d07d1af1ff31b2def832f4299dcea7cf223e4bed3e1f3e6804",
+      "config/evalkit_k_calibration/closd.json": "5de072c4575a222704c46e7e1a62460faa407fd2a599854696e31b5c91d72744",
+      "config/evalkit_k_calibration/dart.json": "54a610c925db4dfdbcc9c17e5f9f9e4796fffa255808c2e784d68997ec3443ca",
+      "config/evalkit_k_calibration/kimodo.json": "89f00fe8cddabf2b9905b499d842112c52dc04a7936c62c0ead2a3eb17d40aab",
+      "config/evalkit_k_calibration/primal.json": "3851c0cc6e3c8a7a92a7b7928cfb7473d713d95f2e229f1e2897860809d201e6",
+      "utils/motion_retarget/bvh.py": "1e1467a84bd4f437117ba0180e683ca53d6799e5615b4054257fe731cfb81b76",
+      "utils/motiogen/motion.py": "15ddda16c474ccf5dae777092699701bff7e8228c32b31bcba3704232653c517",
+      "python/scripts/evalkit_k_humanml_codec.py": "7a132370781838960ab3d683b33e26527fcc8ad687236c8770ffe43c4f3f0e26",
+      "python/scripts/evalkit_k_validate.py": "d08a9bff41e203841d4b12dd25903742364a8b9f5fb92760afe33586ce6a8686",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/common/quaternion.py": "ae2e3d090eb39342bdcd0bdae7183bab3159bc100eea5725680dd25032f78c25",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/common/skeleton.py": "5b047d93ca883a84d972a8e743d33a68089a990e3553f18eb7752b3ce4000776",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/scripts/motion_process.py": "88e0299c8cd599166665a1923be9bbd3eb1667c7b7bb5a63ce325d3b35741edc",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/get_opt.py": "39f5b0e0904d9421feae2e5cc7fa624ce64681d1a9466c80b2185c486bcf8ece",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/metrics.py": "de7b8b46ad019aeddeba93e1586fdf8092b83d86128e0da92dd2f6ce03dac935",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/paramUtil.py": "fe0265f3dcd0d466690d816eae973fcece145f64551cef7e46fed7ef3de80d34",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/plot_script.py": "be14e1b2bff5c8173e9c1a234bec20831d28d2023d6c465467e07fe49fa6b9a9",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/utils.py": "053a866d9bf7233ad91cb387fd111c969ae29b3ad362597a069fadf9d703b1ab",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/word_vectorizer.py": "64dfc2eeaebb04f0c0f9a9b6526d5416edee248b4e1d10f617bcb07305188803"
+    },
+    "runner": "7dca1f8522608d90ad518df669378a5ed36ede49d1c5dce35a06fc1df05636bd",
+    "selection": [
+      {
+        "id": "collaborate/LAB/EAWS/S4/S4P19R1.bvh",
+        "method": "omnicontrol",
+        "window_key": "038"
+      },
+      {
+        "id": "collaborate/LAB/EAWS/S5/S5P16R2.bvh",
+        "method": "primal",
+        "window_key": "046"
+      },
+      {
+        "id": "collaborate/LAB/EAWS/S6/S6P18R2.bvh",
+        "method": "ardy",
+        "window_key": "051"
+      },
+      {
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R01.bvh",
+        "method": "chois",
+        "window_key": "000"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh",
+        "method": "dart",
+        "window_key": "073"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh",
+        "method": "ardy",
+        "window_key": "073"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh",
+        "method": "kimodo",
+        "window_key": "073"
+      },
+      {
+        "id": "collaborate/SlikWeaving/SlikWeaving/WeavingMediumSizeLoom/G01/SWMLS01G01R05.bvh",
+        "method": "closd",
+        "window_key": "081"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh",
+        "method": "kimodo",
+        "window_key": "074"
+      },
+      {
+        "id": "collaborate/LAB/EAWS/S7/S7P13R1.bvh",
+        "method": "motionlcm",
+        "window_key": "056"
+      },
+      {
+        "id": "collaborate/LAB/EAWS/S2/S2P09R1.bvh",
+        "method": "dart",
+        "window_key": "026"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/Wiping/S02/MCWIS02G01R03.bvh",
+        "method": "kimodo",
+        "window_key": "077"
+      },
+      {
+        "id": "collaborate/MasticCultivation/MasticCultivation/CleanWind/S02/MCCWS02G01R01.bvh",
+        "method": "kimodo",
+        "window_key": "070"
+      },
+      {
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R03.bvh",
+        "method": "closd",
+        "window_key": "006"
+      },
+      {
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Beak_cutting/Trimming/GBBCS01G02R05.bvh",
+        "method": "kimodo",
+        "window_key": "008"
+      }
+    ],
+    "scope": "same fixed fifteen development probes; accept continued arm below existing .01 squared objective threshold; no reference in fitting"
+  }
+}

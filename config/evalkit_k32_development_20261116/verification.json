@@ -1,0 +1,24 @@
+{
+  "status": "targeted_development_validation_complete; full regression pending",
+  "tests": 55,
+  "windows": 15,
+  "regions": 90,
+  "protected_files_unchanged": 35,
+  "new_holdout_runs": 0,
+  "old_configs_and_plans_git_diff": "empty",
+  "runtime": {
+    "status": "passed",
+    "coordinate_max_difference": 0.0,
+    "position_max_difference_m": 0.0,
+    "scope": "complete Wiping window; production two passes versus immutable cached K3 first pass plus continuation; source-only fit"
+  },
+  "degradation_and_scoring_counts_unchanged": true,
+  "free_gib": 830.3566589355469,
+  "runtime_source_sha256": "6e39e64f5f3b194a91c39ff5f9058d4861b5737fd101c6cb7c9fcb4641e6809e",
+  "phase_sources": {
+    "develop_logs/test_runs/20261116_k32/refinement_phase1.py": "c3b0ff6f5eec7c55bad7aa0016c40794dfefb81fa7b756e47f4caf50fc9b8615",
+    "develop_logs/test_runs/20261116_k32/continuation_phase2_runner.py": "7dca1f8522608d90ad518df669378a5ed36ede49d1c5dce35a06fc1df05636bd",
+    "develop_logs/test_runs/20261116_k32/refinement_phase2.py": "d228dc854fd72ca6d6a2949ccbf3e4f8fb6f36a62809bf7e9903fb5abd20d8d7"
+  },
+  "figure_sha256": "11ad587a63f087d99de1f05f94bd3d1e842ead3c3ccb7e0579a4e3b6af8584d4"
+}
