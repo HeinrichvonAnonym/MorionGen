@@ -37,6 +37,8 @@ def refine(model_path,motion,times,labels,data,settings):
                         [n+'_'+s for n in ['acromial','elbow','radius_hand']],[side+'_'+n for n in ['shoulder','elbow','wrist']]),
                        (side+'_leg',[n+'_'+s for n in ['hip_flexion','hip_adduction','hip_rotation','knee_angle','ankle_angle','subtalar_angle']],
                         [n+'_'+s for n in ['hip','walker_knee','ankle','mtp']],[side+'_'+n for n in ['hip','knee','ankle','foot']])])
+    from .constraints import coordinate_contract
+    constraint_receipt=coordinate_contract(model,state,[n for _,coords,_,_ in groups for n in coords])
     diagnostics={};previous={}
     def directions(a,group):
         if group=='torso':return unit(np.stack([.5*(a[2]+a[3]-a[0]-a[1]),a[3]-a[2]]))
@@ -92,5 +94,11 @@ def refine(model_path,motion,times,labels,data,settings):
         diagnostics[group]={'optimized_frames':len(errors),'missing_frames':failures,'direction_residual_p95':float(np.percentile(errors,95)) if errors else None}
     # Interpolate the optimized coordinates continuously; no post-hoc angle copying.
     refined=PchipInterpolator(query,out,axis=0)(times)
+    coupling={'status':'legacy_preserved; dependent coordinates may retain pre-refinement values'}
+    if settings.get('enforce_coordinate_couplers',False):
+        from .constraints import synchronize_couplers
+        refined,coupling=synchronize_couplers(model_path,model,labels,refined)
     return refined,{'strategy':'input_bone_directions_with_weak_position_and_continuity','sample_frames':len(index),
-                    'groups':diagnostics,'settings':settings,'anatomical_scope':'joint-centre directions; unobserved axial twist retains seed prior'}
+                    'groups':diagnostics,'settings':settings,'model_constraint_contract':constraint_receipt,
+                    'coordinate_coupling':coupling,
+                    'anatomical_scope':'joint-centre directions; unobserved axial twist retains seed prior'}

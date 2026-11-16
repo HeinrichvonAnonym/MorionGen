@@ -53,7 +53,7 @@ def target_template(method):
     return cal['names'][:count],np.asarray(cal['neutral_joints'])[:count],cal['parents'][:count]
 
 
-def retarget(reference,method):
+def retarget(reference,method,policy='legacy'):
     """Source/reference world is Y-up. Outputs target FK and explicit retarget losses."""
     reference=resample(reference,CONFIG['profiles'][method]['fps'])
     names,rest,parents=target_template(method)
@@ -67,6 +67,12 @@ def retarget(reference,method):
     indices={n:i for i,n in enumerate(sn)}
     rotation_indices={n:i for i,n in enumerate(rn)}
     source_for=[target_alias.get(n,n) for n in names]
+    if policy not in ('legacy','topology_v2'):
+        raise ValueError('Unknown retarget policy: '+policy)
+    mapping_receipt={}
+    if policy!='legacy':
+        from .retargeting import spine_mapping
+        source_for,mapping_receipt=spine_mapping(reference,names,rest,parents,source_for,sn)
     r=np.broadcast_to(np.eye(3),(len(reference.times),len(names),3,3)).copy()
     supported=np.zeros(len(names),bool);bases=np.broadcast_to(np.eye(3),(len(names),3,3)).copy()
     for j,name in enumerate(source_for):
@@ -105,6 +111,7 @@ def retarget(reference,method):
     if reference.provenance.get('scope') == 'isolated_head_thorax_on_template_body':
         supported &= np.asarray([s in ('head','spine3') for s in source_for])
     return Motion(p,names,reference.times,method,r,names,{'retarget_bases':bases.tolist(),
+        'retarget_policy':policy,'spine_mapping':mapping_receipt,
         'source_observed_joint_mask':supported.tolist(),'prior_joints':[n for n,v in zip(names,supported) if not v],
         'position_median_error_m':discrepancies,'shape':'fixed_target_template',
         'precision_scope':'target_rig_conversion; anatomical transfer accuracy separately measured'}),parents
@@ -132,6 +139,8 @@ def serialize(motion,parents,out):
     # The predictor receives only validity metadata, never reference rotations or retarget bases.
     provenance = {'prior_joints':list(motion.provenance['prior_joints']), 'shape':'fixed_target_template',
                   'origin':'controlled_format_degradation', 'reference_scope':motion.provenance.get('precision_scope')}
+    if motion.provenance.get('retarget_policy','legacy')!='legacy':
+        provenance['retarget_policy']=motion.provenance['retarget_policy']
     if method=='chois':
         rename={'left_wrist':'left_wrist_body','right_wrist':'right_wrist_body'}
         provenance['prior_joints']=[rename.get(n,n) for n in provenance['prior_joints']]+['left_wrist','right_wrist']

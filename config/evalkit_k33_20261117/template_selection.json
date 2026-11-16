@@ -1,0 +1,161 @@
+{
+  "motionlcm": {
+    "template": "config/evalkit_k_calibration/primal.json",
+    "sha256": "3851c0cc6e3c8a7a92a7b7928cfb7473d713d95f2e229f1e2897860809d201e6",
+    "asset_metadata": {
+      "source_path": "/home/heinrich/TactileLab/data/GRAB/smplx/models/smplx/SMPLX_NEUTRAL.npz",
+      "sha256": "376021446ddc86e99acacd795182bbef903e61d33b76b9d8b359c2b0865bd992",
+      "shape": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gender": "neutral"
+    },
+    "selection_status": "project controlled-degradation template choice; raw asset metadata retained from previous audit, not reverified this round"
+  },
+  "omnicontrol": {
+    "template": "config/evalkit_k_calibration/primal.json",
+    "sha256": "3851c0cc6e3c8a7a92a7b7928cfb7473d713d95f2e229f1e2897860809d201e6",
+    "asset_metadata": {
+      "source_path": "/home/heinrich/TactileLab/data/GRAB/smplx/models/smplx/SMPLX_NEUTRAL.npz",
+      "sha256": "376021446ddc86e99acacd795182bbef903e61d33b76b9d8b359c2b0865bd992",
+      "shape": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gender": "neutral"
+    },
+    "selection_status": "project controlled-degradation template choice; raw asset metadata retained from previous audit, not reverified this round"
+  },
+  "chois": {
+    "template": "config/evalkit_k_calibration/primal.json",
+    "sha256": "3851c0cc6e3c8a7a92a7b7928cfb7473d713d95f2e229f1e2897860809d201e6",
+    "asset_metadata": {
+      "source_path": "/home/heinrich/TactileLab/data/GRAB/smplx/models/smplx/SMPLX_NEUTRAL.npz",
+      "sha256": "376021446ddc86e99acacd795182bbef903e61d33b76b9d8b359c2b0865bd992",
+      "shape": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gender": "neutral"
+    },
+    "selection_status": "project controlled-degradation template choice; raw asset metadata retained from previous audit, not reverified this round"
+  },
+  "ardy": {
+    "template": "config/evalkit_k_calibration/ardy.json",
+    "sha256": "31dcf01f96f43a142d1346bf687d96c3adfe5a60639cb49f52418337fa3c8063",
+    "asset_metadata": {
+      "source_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/baselines/ardy/ardy/assets/skeletons/cskel27/joints.p",
+      "sha256": "5e1d60cb1935c2ea50c6978848697d83efde5621cbbc287891ddae3ba55dde61"
+    },
+    "selection_status": "project controlled-degradation template choice; raw asset metadata retained from previous audit, not reverified this round"
+  },
+  "dart": {
+    "template": "config/evalkit_k_calibration/dart.json",
+    "sha256": "54a610c925db4dfdbcc9c17e5f9f9e4796fffa255808c2e784d68997ec3443ca",
+    "asset_metadata": {
+      "sha256": "86d345a3c9a322d9c185fed038e727cc5d5f12ac1ecf847322a2a6eee904b3bf",
+      "betas": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gender": "male"
+    },
+    "selection_status": "project controlled-degradation template choice; raw asset metadata retained from previous audit, not reverified this round"
+  },
+  "kimodo": {
+    "template": "config/evalkit_k_calibration/kimodo.json",
+    "sha256": "89f00fe8cddabf2b9905b499d842112c52dc04a7936c62c0ead2a3eb17d40aab",
+    "asset_metadata": {
+      "source_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/baselines/ardy/ardy/assets/skeletons/somaskel77/joints.p",
+      "sha256": "dc5fd8e39e0ff312f5d0f536a87ac22ac58445e13443fcb8ab54e6817cb97ce7"
+    },
+    "selection_status": "project controlled-degradation template choice; raw asset metadata retained from previous audit, not reverified this round"
+  },
+  "closd": {
+    "template": "config/evalkit_k_calibration/closd.json",
+    "sha256": "5de072c4575a222704c46e7e1a62460faa407fd2a599854696e31b5c91d72744",
+    "asset_metadata": {
+      "sha256": "4924f235e63f7c5d5b690acedf736419c2edb846a2d69fc0956169615fa75688"
+    },
+    "selection_status": "project controlled-degradation template choice; raw asset metadata retained from previous audit, not reverified this round"
+  },
+  "primal": {
+    "template": "config/evalkit_k_calibration/primal.json",
+    "sha256": "3851c0cc6e3c8a7a92a7b7928cfb7473d713d95f2e229f1e2897860809d201e6",
+    "asset_metadata": {
+      "source_path": "/home/heinrich/TactileLab/data/GRAB/smplx/models/smplx/SMPLX_NEUTRAL.npz",
+      "sha256": "376021446ddc86e99acacd795182bbef903e61d33b76b9d8b359c2b0865bd992",
+      "shape": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gender": "neutral"
+    },
+    "selection_status": "project controlled-degradation template choice; raw asset metadata retained from previous audit, not reverified this round"
+  }
+}

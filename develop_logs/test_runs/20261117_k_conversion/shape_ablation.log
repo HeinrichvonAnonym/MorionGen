@@ -1,0 +1,8 @@
+ardy {'target_shape': 6.972, 'source_lengths_only': 7.199, 'source_local_vectors': 0.335}
+chois {'target_shape': 14.128, 'source_lengths_only': 8.312, 'source_local_vectors': 0.13}
+closd {'target_shape': 17.026, 'source_lengths_only': 12.915, 'source_local_vectors': 0.13}
+dart {'target_shape': 13.474, 'source_lengths_only': 7.494, 'source_local_vectors': 0.13}
+kimodo {'target_shape': 5.023, 'source_lengths_only': 4.159, 'source_local_vectors': 0.324}
+motionlcm {'target_shape': 14.128, 'source_lengths_only': 8.312, 'source_local_vectors': 0.129}
+omnicontrol {'target_shape': 14.128, 'source_lengths_only': 8.312, 'source_local_vectors': 0.129}
+primal {'target_shape': 14.128, 'source_lengths_only': 8.312, 'source_local_vectors': 0.129}

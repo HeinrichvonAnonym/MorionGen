@@ -1,0 +1,11 @@
+{
+  "version": "topology_v2",
+  "default_compatibility": "retarget default remains legacy; explicitly select topology_v2 for corrected controlled inputs",
+  "scope": "source/target spine node counts and monotone arc-length correspondence; fixed target rest geometry and native head/thorax frame contract retained",
+  "source_given": "native hierarchy, positions, rotations and target asset offsets",
+  "project_derived": "node correspondence by normalized cumulative chain length when counts differ; a declared correspondence hypothesis, not an upstream anatomical joint definition",
+  "confirmed_fix": "four-node ARDY maps to four distinct source spine nodes; legacy repeated the proximal source node",
+  "limitations": "fixed target shape changes pelvis-to-shoulder geometry; corrected structural mapping does not guarantee lower end-to-end error; ARDY worsening retained",
+  "constraint_policy": "authored ranges and locks retained; no expanded-range or unlock diagnostic promoted; runtime receipt exposes ineffective locked variables; new explicit runtime config enforces model identity couplers after interpolation",
+  "no_reference_leak": "only policy identifier is added to serialized provenance; reference-derived mapping/calibration arrays remain in experiment receipts"
+}

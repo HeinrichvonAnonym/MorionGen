@@ -1,0 +1,587 @@
+[
+  {
+    "method": "kimodo",
+    "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh",
+    "frames": 497,
+    "regions": {
+      "pelvis": {
+        "D": {
+          "mean_metric_p95_deg": 0.3354407397084998,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.262836663320376,
+          "maximum_step_deg": 0.4195100637210487
+        },
+        "K3": {
+          "mean_metric_p95_deg": 0.3399139715520533,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.326778565959011,
+          "maximum_step_deg": 0.4382721564222578,
+          "input_direction_coverage": 1.0
+        },
+        "new": {
+          "mean_metric_p95_deg": 0.3389777221022342,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.2817917672588006,
+          "maximum_step_deg": 0.43828652747011176,
+          "input_direction_coverage": 1.0
+        },
+        "fit_deviation_p95_deg": 0.026410292038113424
+      },
+      "torso": {
+        "D": {
+          "mean_metric_p95_deg": 3.4740862443415352,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.2915795705515833,
+          "maximum_step_deg": 0.6164098835673641
+        },
+        "K3": {
+          "mean_metric_p95_deg": 1.1969670170471205,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 8.031347421752113,
+          "maximum_step_deg": 0.616081337998903,
+          "input_direction_coverage": 1.0
+        },
+        "new": {
+          "mean_metric_p95_deg": 1.1900320187569875,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 8.357788670595436,
+          "maximum_step_deg": 0.6179653974422727,
+          "input_direction_coverage": 1.0
+        },
+        "fit_deviation_p95_deg": 2.4934567448721863
+      },
+      "left_arm": {
+        "D": {
+          "mean_metric_p95_deg": 0.3157225507628658,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 15.35409903064273,
+          "maximum_step_deg": 2.1640916323171098
+        },
+        "K3": {
+          "mean_metric_p95_deg": 0.5052307293083358,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 19.97629054143448,
+          "maximum_step_deg": 2.2090708399820045,
+          "input_direction_coverage": 1.0
+        },
+        "new": {
+          "mean_metric_p95_deg": 0.5051030583786587,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 19.79873353434444,
+          "maximum_step_deg": 2.209073176266756,
+          "input_direction_coverage": 1.0
+        },
+        "fit_deviation_p95_deg": 0.23905911538863156
+      },
+      "right_arm": {
+        "D": {
+          "mean_metric_p95_deg": 0.07671997812578293,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.2370741031298493,
+          "maximum_step_deg": 0.9790178053644354
+        },
+        "K3": {
+          "mean_metric_p95_deg": 0.07871138751526274,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.346966376535691,
+          "maximum_step_deg": 1.020202734176351,
+          "input_direction_coverage": 1.0
+        },
+        "new": {
+          "mean_metric_p95_deg": 0.07877372840218583,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.347776546368276,
+          "maximum_step_deg": 1.020248066405486,
+          "input_direction_coverage": 1.0
+        },
+        "fit_deviation_p95_deg": 0.042445242545770145
+      },
+      "left_leg": {
+        "D": {
+          "mean_metric_p95_deg": 0.6117433693917388,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 7.38814089121241,
+          "maximum_step_deg": 2.030164360122839
+        },
+        "K3": {
+          "mean_metric_p95_deg": 26.17413809392774,
+          "within10": 0.56579476861167,
+          "velocity_error_p95_deg_s": 74.42015085998148,
+          "maximum_step_deg": 18.812966165101336,
+          "input_direction_coverage": 0.0
+        },
+        "new": {
+          "mean_metric_p95_deg": 27.677050069751026,
+          "within10": 0.3263581488933602,
+          "velocity_error_p95_deg_s": 72.32286133611208,
+          "maximum_step_deg": 24.844155053916907,
+          "input_direction_coverage": 0.0
+        },
+        "fit_deviation_p95_deg": 27.806816680031158
+      },
+      "right_leg": {
+        "D": {
+          "mean_metric_p95_deg": 0.5945231860311333,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.995120163421415,
+          "maximum_step_deg": 2.815914013420766
+        },
+        "K3": {
+          "mean_metric_p95_deg": 18.770799176639528,
+          "within10": 0.45030181086519117,
+          "velocity_error_p95_deg_s": 31.48583956244828,
+          "maximum_step_deg": 3.0551915467257373,
+          "input_direction_coverage": 0.13883299798792756
+        },
+        "new": {
+          "mean_metric_p95_deg": 18.792732861756708,
+          "within10": 0.44989939637826964,
+          "velocity_error_p95_deg_s": 31.557191693007987,
+          "maximum_step_deg": 3.0577466807976634,
+          "input_direction_coverage": 0.13883299798792756
+        },
+        "fit_deviation_p95_deg": 19.117353428784618
+      }
+    },
+    "world_position_p95_m": {
+      "K3": 0.3431406325631074,
+      "new": 0.3384851820897457
+    },
+    "reference": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/references/074/original.npz",
+    "reference_sha256": "2b400dbb91cf71f8940a36208a1c31f5cac4f02f41cefcc52dd1a0d421052e1d",
+    "probe": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k33_locks_20261117/unlock_subtalar/probe.npz",
+    "variant": "unlock_subtalar",
+    "ranges": {},
+    "diagnostics": {
+      "strategy": "input_bone_directions_with_weak_position_and_continuity",
+      "sample_frames": 101,
+      "groups": {
+        "pelvis": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 2.3868721658282763e-05
+        },
+        "torso": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 0.05518788845104119
+        },
+        "left_arm": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 0.00011641984915080442
+        },
+        "left_leg": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 1.1826340703706046
+        },
+        "right_arm": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 8.734633855237945e-05
+        },
+        "right_leg": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 0.4663986598881157
+        }
+      },
+      "settings": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "methods": [
+          "motionlcm",
+          "omnicontrol",
+          "ardy",
+          "chois",
+          "closd",
+          "dart",
+          "kimodo",
+          "primal"
+        ],
+        "direction_weight": 1.0,
+        "position_weight": 0.05,
+        "continuity_weight": 0.002,
+        "max_nfev": 100,
+        "refinement_hz": 20,
+        "quality_angle_deg": 10.0,
+        "quality_position_m": 0.1,
+        "per_method": {
+          "ardy": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "chois": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "closd": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": false,
+            "rescue_after_baseline": false,
+            "baseline_max_nfev": 35,
+            "max_nfev": 35
+          },
+          "dart": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "kimodo": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "motionlcm": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "omnicontrol": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "primal": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          }
+        },
+        "interior_rescue": true,
+        "rescue_after_baseline": false,
+        "baseline_max_nfev": 35
+      },
+      "anatomical_scope": "joint-centre directions; unobserved axial twist retains seed prior"
+    },
+    "scope": "left subtalar explicitly unlocked; MTP remains locked; other coordinates unchanged except documented expansion diagnostic; no muscle validity claim"
+  },
+  {
+    "method": "kimodo",
+    "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh",
+    "frames": 497,
+    "regions": {
+      "pelvis": {
+        "D": {
+          "mean_metric_p95_deg": 0.3354407397084998,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.262836663320376,
+          "maximum_step_deg": 0.4195100637210487
+        },
+        "K3": {
+          "mean_metric_p95_deg": 0.3399139715520533,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.326778565959011,
+          "maximum_step_deg": 0.4382721564222578,
+          "input_direction_coverage": 1.0
+        },
+        "new": {
+          "mean_metric_p95_deg": 0.3389777221022342,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.2817917672588006,
+          "maximum_step_deg": 0.43828652747011176,
+          "input_direction_coverage": 1.0
+        },
+        "fit_deviation_p95_deg": 0.026410292038113424
+      },
+      "torso": {
+        "D": {
+          "mean_metric_p95_deg": 3.4740862443415352,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.2915795705515833,
+          "maximum_step_deg": 0.6164098835673641
+        },
+        "K3": {
+          "mean_metric_p95_deg": 1.1969670170471205,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 8.031347421752113,
+          "maximum_step_deg": 0.616081337998903,
+          "input_direction_coverage": 1.0
+        },
+        "new": {
+          "mean_metric_p95_deg": 1.1900320187569875,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 8.357788670595436,
+          "maximum_step_deg": 0.6179653974422727,
+          "input_direction_coverage": 1.0
+        },
+        "fit_deviation_p95_deg": 2.4934567448721863
+      },
+      "left_arm": {
+        "D": {
+          "mean_metric_p95_deg": 0.3157225507628658,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 15.35409903064273,
+          "maximum_step_deg": 2.1640916323171098
+        },
+        "K3": {
+          "mean_metric_p95_deg": 0.5052307293083358,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 19.97629054143448,
+          "maximum_step_deg": 2.2090708399820045,
+          "input_direction_coverage": 1.0
+        },
+        "new": {
+          "mean_metric_p95_deg": 0.5051030583786587,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 19.79873353434444,
+          "maximum_step_deg": 2.209073176266756,
+          "input_direction_coverage": 1.0
+        },
+        "fit_deviation_p95_deg": 0.23905911538863156
+      },
+      "right_arm": {
+        "D": {
+          "mean_metric_p95_deg": 0.07671997812578293,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.2370741031298493,
+          "maximum_step_deg": 0.9790178053644354
+        },
+        "K3": {
+          "mean_metric_p95_deg": 0.07871138751526274,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.346966376535691,
+          "maximum_step_deg": 1.020202734176351,
+          "input_direction_coverage": 1.0
+        },
+        "new": {
+          "mean_metric_p95_deg": 0.07877372840218583,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.347776546368276,
+          "maximum_step_deg": 1.020248066405486,
+          "input_direction_coverage": 1.0
+        },
+        "fit_deviation_p95_deg": 0.042445242545770145
+      },
+      "left_leg": {
+        "D": {
+          "mean_metric_p95_deg": 0.6117433693917388,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 7.38814089121241,
+          "maximum_step_deg": 2.030164360122839
+        },
+        "K3": {
+          "mean_metric_p95_deg": 26.17413809392774,
+          "within10": 0.56579476861167,
+          "velocity_error_p95_deg_s": 74.42015085998148,
+          "maximum_step_deg": 18.812966165101336,
+          "input_direction_coverage": 0.0
+        },
+        "new": {
+          "mean_metric_p95_deg": 9.445545115130134,
+          "within10": 0.9319919517102616,
+          "velocity_error_p95_deg_s": 38.506211801771805,
+          "maximum_step_deg": 21.093294824058162,
+          "input_direction_coverage": 0.5915492957746479
+        },
+        "fit_deviation_p95_deg": 9.92315016488042
+      },
+      "right_leg": {
+        "D": {
+          "mean_metric_p95_deg": 0.5945231860311333,
+          "within10": 1.0,
+          "velocity_error_p95_deg_s": 3.995120163421415,
+          "maximum_step_deg": 2.815914013420766
+        },
+        "K3": {
+          "mean_metric_p95_deg": 18.770799176639528,
+          "within10": 0.45030181086519117,
+          "velocity_error_p95_deg_s": 31.48583956244828,
+          "maximum_step_deg": 3.0551915467257373,
+          "input_direction_coverage": 0.13883299798792756
+        },
+        "new": {
+          "mean_metric_p95_deg": 18.792732861756708,
+          "within10": 0.44989939637826964,
+          "velocity_error_p95_deg_s": 31.557191693007987,
+          "maximum_step_deg": 3.0577466807976634,
+          "input_direction_coverage": 0.13883299798792756
+        },
+        "fit_deviation_p95_deg": 19.117353428784618
+      }
+    },
+    "world_position_p95_m": {
+      "K3": 0.3431406325631074,
+      "new": 0.2453553934440705
+    },
+    "reference": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/references/074/original.npz",
+    "reference_sha256": "2b400dbb91cf71f8940a36208a1c31f5cac4f02f41cefcc52dd1a0d421052e1d",
+    "probe": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k33_locks_20261117/expanded_and_unlocked/probe.npz",
+    "variant": "expanded_and_unlocked",
+    "ranges": {
+      "knee_angle_l": [
+        0,
+        175
+      ],
+      "hip_adduction_l": [
+        -90,
+        90
+      ],
+      "hip_flexion_l": [
+        -90,
+        175
+      ],
+      "hip_rotation_l": [
+        -90,
+        90
+      ],
+      "ankle_angle_l": [
+        -90,
+        90
+      ]
+    },
+    "diagnostics": {
+      "strategy": "input_bone_directions_with_weak_position_and_continuity",
+      "sample_frames": 101,
+      "groups": {
+        "pelvis": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 2.3868721658282763e-05
+        },
+        "torso": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 0.05518788845104119
+        },
+        "left_arm": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 0.00011641984915080442
+        },
+        "left_leg": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 0.5174396359282891
+        },
+        "right_arm": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 8.734633855237945e-05
+        },
+        "right_leg": {
+          "optimized_frames": 101,
+          "missing_frames": 0,
+          "direction_residual_p95": 0.4663986598881157
+        }
+      },
+      "settings": {
+        "strategy": "direction_refinement",
+        "projection": false,
+        "methods": [
+          "motionlcm",
+          "omnicontrol",
+          "ardy",
+          "chois",
+          "closd",
+          "dart",
+          "kimodo",
+          "primal"
+        ],
+        "direction_weight": 1.0,
+        "position_weight": 0.05,
+        "continuity_weight": 0.002,
+        "max_nfev": 100,
+        "refinement_hz": 20,
+        "quality_angle_deg": 10.0,
+        "quality_position_m": 0.1,
+        "per_method": {
+          "ardy": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "chois": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "closd": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": false,
+            "rescue_after_baseline": false,
+            "baseline_max_nfev": 35,
+            "max_nfev": 35
+          },
+          "dart": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "kimodo": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "motionlcm": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "omnicontrol": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          },
+          "primal": {
+            "strategy": "direction_refinement",
+            "projection": false,
+            "interior_rescue": true,
+            "rescue_after_baseline": true,
+            "baseline_max_nfev": 35,
+            "max_nfev": 100
+          }
+        },
+        "interior_rescue": true,
+        "rescue_after_baseline": false,
+        "baseline_max_nfev": 35
+      },
+      "anatomical_scope": "joint-centre directions; unobserved axial twist retains seed prior"
+    },
+    "scope": "left subtalar explicitly unlocked; MTP remains locked; other coordinates unchanged except documented expansion diagnostic; no muscle validity claim"
+  }
+]

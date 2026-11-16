@@ -1,0 +1,2629 @@
+{
+  "scope": "knee coordinate type 1 stored degrees, dependent beta type 3 stored radians; compare after native-unit conversion",
+  "records": [
+    {
+      "max_difference_deg": 4.8022687629620755,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/050/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.79122710763463,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/050/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.348375638564159,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/050/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.528444446326656,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/050/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.207662352215662,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/050/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.485824640450973,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/050/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.07258289460304,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/050/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.081892373743665,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/050/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.803548936829856,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/010/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.8116498372809517,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/010/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.1429709428519224,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/010/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.480160017761392,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/010/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.000584843276684,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/010/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.6854948194499226,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/010/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.805335954166272,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/010/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.8427804311476796,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/010/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.6256873099533475,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/059/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.632410167747519,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/059/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.2929510708486465,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/059/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.7260851929297787,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/059/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.7867509038034635,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/059/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.084234746969849,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/059/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.607121906943964,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/059/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.722973468928698,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/059/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.526305784874928,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/044/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.56974397723825,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/044/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.006438964713938,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/044/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.736352027839988,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/044/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.0167917293883795,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/044/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.77636851441148,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/044/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.824044522596662,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/044/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.782665272518667,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/044/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.658543571854405,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/003/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.651572590862838,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/003/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.212648458878547,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/003/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.48903131333381,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/003/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.3464118284113633,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/003/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.115028532597206,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/003/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.66132362470527,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/003/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.65908986809393,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/003/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.0299109482847815,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/065/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.8878743875020367,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/065/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.971446255567268,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/065/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.2808171966168036,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/065/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 0.9057377867179157,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/065/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.734182187303404,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/065/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.862682904800274,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/065/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.028438394283398,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/065/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.036326140651816,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/080/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.069676575391188,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/080/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 16.03632978190396,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/080/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.755489197637736,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/080/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.48008790182191,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/080/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.7043773654770584,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/080/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.898790699227423,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/080/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.005651330921337,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/080/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.443669572147133,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/062/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.43023548844684,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/062/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.867380535971076,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/062/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.171411368031036,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/062/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.70026601811888,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/062/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.675496401032645,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/062/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.423031562059213,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/062/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.420096575663372,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/062/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 15.620951309940844,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/002/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 15.089910578051732,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/002/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 14.932922453963734,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/002/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 20.002185545865274,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/002/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 25.477134955933423,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/002/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 26.68089207518327,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/002/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 15.739624968717228,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/002/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 15.963185933643015,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/002/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.408567224647614,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/038/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.415359432311638,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/038/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 16.084780240456766,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/038/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.777314626914551,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/038/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.041053066534456,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/038/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.0675865396073316,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/038/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 14.873378686202232,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/038/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 14.882253431074462,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/038/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.701427259048989,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/020/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.724317719178462,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/020/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.898759401995742,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/020/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.448343017152001,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/020/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.1151377792437414,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/020/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.9019549981505985,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/020/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.68666454015329,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/020/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.670413395562566,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/020/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.799698761539389,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/041/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.7458172251085506,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/041/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.3911626675602564,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/041/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.6691545715079306,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/041/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.2035274833658003,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/041/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.187465095514587,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/041/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.142348300929721,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/041/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.0594793083346663,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/041/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.646718197272529,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/046/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.665066638724785,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/046/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.922083557380683,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/046/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.200244449864917,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/046/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.109949911269337,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/046/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.817046712284742,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/046/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.647997487934497,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/046/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.625808891822192,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/046/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.061140926644326,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/034/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.05639175400261,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/034/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.65983163539389,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/034/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.812264131508358,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/034/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.7480492972835464,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/034/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.2057717480141947,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/034/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.055127546797234,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/034/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.059971246293472,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/034/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.025979518398624,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/053/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.0969946657863514,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/053/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.4474136287294743,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/053/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.9507547937736813,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/053/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.25790975143242,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/053/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.931744026298158,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/053/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.0421452500769655,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/053/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.0914674072848074,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/053/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.427979075398196,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/048/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.462711084863414,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/048/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.879339133765783,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/048/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.0789489265878505,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/048/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.3078151692787199,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/048/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 0.9703565446880805,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/048/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.4330705689440766,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/048/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.3567181039665748,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/048/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.84637739291771,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/057/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.840988723897032,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/057/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.905219773700738,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/057/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.801300131814376,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/057/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.163443438967625,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/057/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.839395409202664,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/057/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.833180324029305,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/057/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.827482833794196,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/057/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.6294657904355585,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/014/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.661980241147731,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/014/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.757819782287262,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/014/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.7407430824729153,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/014/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.2997382283103607,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/014/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.1153394718098952,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/014/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.054193836783619,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/014/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.0971178101222,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/014/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.555600238384285,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/040/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.561781219279902,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/040/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.980834678118434,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/040/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.708084344864653,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/040/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 0.8077454087538346,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/040/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.5288135145084278,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/040/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.565701983375726,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/040/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.560811415890756,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/040/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.902838929371706,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/075/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.914502851968495,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/075/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.684163112717561,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/075/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.584571835215076,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/075/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 152.8154660447462,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/075/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.487206128512468,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/075/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.896722104069128,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/075/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.890924740536872,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/075/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.56372914008054,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/071/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.567265936537646,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/071/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.622504694725327,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/071/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.831875192565036,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/071/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.358746134233416,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/071/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.132168304047769,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/071/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.643336284205791,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/071/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.696651606502918,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/071/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.088833463754078,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/037/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.00990659290915,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/037/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.080010786922797,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/037/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.861055996989304,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/037/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.838992051730444,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/037/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.512964257217784,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/037/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.059415153590413,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/037/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.060205886968689,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/037/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.314667668746227,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/012/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.4267173966659037,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/012/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.394670686501206,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/012/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.4329056452058615,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/012/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.7569252008301466,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/012/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.821771681088052,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/012/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.604619078898169,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/012/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.618707021467804,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/012/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.275508274250539,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/051/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.250610533340964,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/051/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.650754280925717,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/051/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.02879056777205,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/051/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.670240858482483,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/051/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.505919188430063,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/051/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.238616576331278,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/051/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.25269320945113,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/051/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.466741460006818,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/018/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.45812175120943,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/018/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.5261677649108325,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/018/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.349448478976013,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/018/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.331457214359854,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/018/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.6321550877637736,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/018/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.364250609588467,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/018/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.6734403006939225,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/018/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.73766640529637,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/052/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.743285567531965,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/052/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.3188065012059,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/052/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.028777093346594,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/052/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.9278203531984435,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/052/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.492288961090855,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/052/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.69956846437332,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/052/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.737118679995174,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/052/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 27.44818503121312,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/000/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 27.180979567987315,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/000/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 26.236714093195097,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/000/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 26.700708288578962,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/000/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 23.802727488605374,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/000/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 21.710528302469534,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/000/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 27.467009793172714,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/000/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 27.43901854205828,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/000/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.453144569848472,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/031/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.42336887985524,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/031/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.507432498932419,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/031/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.120669559364664,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/031/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.072169425167965,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/031/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.704757942892162,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/031/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.353619622643647,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/031/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.395544583162849,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/031/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.408149378503477,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/032/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.442468306717902,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/032/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.041251898318572,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/032/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.530999416372817,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/032/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.371362582890803,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/032/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.818677732117874,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/032/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.39925710771306,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/032/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.274905834822,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/032/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.258222271897841,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/027/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.216037307730534,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/027/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.268124370931513,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/027/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.161125645798908,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/027/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.613676653022367,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/027/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.931367521762384,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/027/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.358804258554626,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/027/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.324660486284191,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/027/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 23.107909812528074,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/073/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 23.403034977017832,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/073/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 22.65314309025932,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/073/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 21.07972727767431,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/073/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 20.45878121217011,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/073/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 18.64418439354955,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/073/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 21.431635573711933,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/073/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.3836007953437,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/073/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.748387337494613,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/054/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.76487892067944,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/054/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.197225926451937,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/054/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.298754358481512,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/054/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.438941049347426,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/054/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.1732932277251975,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/054/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.73047373211503,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/054/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.716154691011894,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/054/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.619167730359517,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/030/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.670041765983942,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/030/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.5848104409827113,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/030/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.1576499528456767,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/030/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.7874633651629548,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/030/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.3058826702029864,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/030/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.4520810835628906,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/030/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.5964344098136447,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/030/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.649720735682033,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/072/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.637082390837861,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/072/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.521541019131226,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/072/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.44904515783394,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/072/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.088121925209344,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/072/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.492453020067173,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/072/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.613711847521923,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/072/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.777683470189016,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/072/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.4313800358305,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/069/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.381288158483892,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/069/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.804653188732567,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/069/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.01660808567638,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/069/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 118.84338992877385,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/069/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 117.49195101478578,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/069/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.394493712728737,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/069/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.390952119766624,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/069/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.3549885399582555,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/068/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.3659261216285685,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/068/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.824125804530006,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/068/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.764747168571985,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/068/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.482242906901478,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/068/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.802111632289772,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/068/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.4054359587524585,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/068/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.351836583263663,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/068/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.238791527130266,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/076/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.23732642018859,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/076/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.540189492026682,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/076/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.313582008144786,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/076/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.450025586996606,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/076/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.208072726699456,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/076/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.190397145599277,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/076/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.159380879401196,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/076/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 17.57837006668663,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/081/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 17.562995390783367,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/081/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 14.502299771528289,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/081/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.204503469536318,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/081/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.508319899312314,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/081/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.3512988896730045,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/081/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.155590990747415,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/081/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 12.583819218321345,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/081/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.539246066131817,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/009/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.606279701712664,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/009/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.863748285856381,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/009/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.069777217753577,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/009/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.1228098235501425,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/009/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.6808730860217427,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/009/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.593409516887291,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/009/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.619653455020872,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/009/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.8845620568701213,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/074/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.884619628537978,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/074/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.4863117542930624,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/074/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.219776968372113,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/074/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.249137483409621,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/074/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.966507732639401,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/074/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.8470419431901886,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/074/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.1378094700250612,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/074/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.3996013273839636,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/058/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.38848576166708,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/058/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.871542678326902,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/058/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.6397559936088695,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/058/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.419696900206358,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/058/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.6351290996417442,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/058/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.3730738686873,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/058/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.3793289035810896,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/058/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.427052506191338,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/019/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.475705391781901,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/019/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.22456078149921,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/019/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.208242434107154,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/019/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.359738797742812,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/019/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.243097453663948,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/019/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.255011493888083,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/019/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.259318156354435,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/019/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.6355581584644923,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/013/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.694657282735115,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/013/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.6996974068126973,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/013/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.7455244726198496,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/013/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.6772561760470424,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/013/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.6143376179274942,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/013/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.964358176268271,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/013/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.9982352814768523,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/013/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 14.42839397569984,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/063/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 14.42320860658056,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/063/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 15.60462923240456,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/063/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 124.31702503379512,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/063/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.959155029012808,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/063/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.518076468378142,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/063/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 14.433694049107402,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/063/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 14.428832639432343,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/063/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.029669706289676,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/055/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.006456804641797,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/055/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.959543291380244,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/055/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.370303512988619,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/055/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.0855414196799344,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/055/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.099123060874366,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/055/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.903743516787712,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/055/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.693428277622447,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/055/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.983682274503947,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/029/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.967429866805829,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/029/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.809918288891073,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/029/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.606424247052096,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/029/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.5392318273637158,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/029/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.60819986624317,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/029/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.984041368896392,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/029/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.973936852358176,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/029/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.616070597989298,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/033/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.592358393803819,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/033/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.228025755705879,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/033/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.727201613783319,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/033/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.361744371693658,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/033/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.799473514046917,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/033/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.0739310106794075,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/033/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.982687281416511,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/033/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.799534282489576,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/001/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.481677520230967,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/001/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.21248037152031,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/001/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.884419451752155,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/001/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.323516465196043,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/001/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.028641022543011,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/001/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.834224840655143,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/001/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.780790805924127,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/001/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.372616941177519,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/061/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.364732690010383,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/061/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.218305017998711,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/061/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.657612416695606,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/061/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.702817420804859,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/061/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.839345255718068,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/061/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.357048393482765,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/061/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.355330561625715,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/061/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.86995362141821,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/023/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.971005263786406,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/023/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.92368261095669,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/023/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.30448479358605,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/023/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.7091259400405139,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/023/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.109430636727104,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/023/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.994822071372723,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/023/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.91728664153584,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/023/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.594564568827772,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/024/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.530438016300466,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/024/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.4602389973327226,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/024/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.1498609322718796,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/024/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.279917112614752,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/024/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.3460517359166717,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/024/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.3849304317670557,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/024/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.417408015360026,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/024/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.782713928930668,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/056/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.7802280209278867,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/056/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.755365173268222,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/056/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.491133488367457,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/056/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.848301975406102,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/056/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 0.6596515116786791,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/056/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.716842823957087,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/056/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.677914245343973,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/056/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.173538290295648,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/026/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.212542383280642,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/026/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.939627188278367,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/026/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.854744636945985,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/026/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.7003028357097385,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/026/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.2263644230798443,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/026/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.096185531437802,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/026/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.088374387387324,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/026/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.388506563520195,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/039/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.386807339328366,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/039/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 16.04198157475458,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/039/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.678748317718673,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/039/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.094373432645709,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/039/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.1323194904991944,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/039/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 14.820901278736466,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/039/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 14.80331757719095,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/039/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.4453193166478546,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/025/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.45472241103492,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/025/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.5857107486457456,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/025/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.1702667425840905,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/025/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.9974726813652999,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/025/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.050465242577878,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/025/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.4388987422261774,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/025/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.4254180886579877,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/025/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.636169693570501,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/028/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.681732254459876,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/028/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 17.596848893306188,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/028/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.20595733107368,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/028/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.561669341170287,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/028/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.9707605268368074,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/028/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 15.532874695582045,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/028/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 15.517012502468246,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/028/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.392021535214353,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/007/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.370734211111323,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/007/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.877888044077853,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/007/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.233535426083721,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/007/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.535857048523981,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/007/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.885400711423884,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/007/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.375715383196397,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/007/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.374603548586729,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/007/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.126067477283963,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/049/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.13551633363485,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/049/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.670923830263742,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/049/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.23328950488948,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/049/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.8134127552606714,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/049/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.8249656604185924,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/049/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.115599289317633,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/049/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.117768382849244,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/049/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.245453121237569,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/043/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.287179051640348,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/043/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.579680346350452,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/043/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.652427186371297,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/043/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.3168274763045593,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/043/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.8289816706373312,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/043/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.215814505348082,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/043/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.254709144745876,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/043/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.729619160070525,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/035/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.7827921104925757,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/035/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.4934448190878378,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/035/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.0132581113116625,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/035/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.2092825833303715,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/035/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.3210389263939306,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/035/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.297180502027113,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/035/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.4707063833906138,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/035/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.663994446395156,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/066/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.686952764323573,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/066/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.123434572560123,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/066/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.199021785335095,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/066/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.1284200172481444,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/066/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.323823784842974,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/066/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.666035747473114,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/066/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.65361673172438,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/066/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.047922750166581,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/004/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.927685652789085,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/004/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.403718162511156,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/004/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.742956344674731,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/004/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.999935138071069,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/004/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.404657404646866,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/004/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.890729495842567,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/004/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.885524841773426,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/004/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.723023604551656,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/067/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.747999783382288,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/067/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.903745649007974,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/067/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.702232496691011,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/067/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.190190004751006,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/067/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.529148116886091,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/067/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.891051261750163,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/067/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.894844430174616,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/067/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.3032066475234076,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/042/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.3097805267717,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/042/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.575849764965052,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/042/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.4423103060249995,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/042/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 0.5921182306100675,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/042/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.7367477250104753,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/042/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.0917272637778086,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/042/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.109309623817526,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/042/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.2852106747290835,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/079/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.311005965562691,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/079/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.6389375946205735,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/079/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.785639616440006,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/079/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.571381556370178,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/079/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.895206747013768,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/079/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.076726661130571,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/079/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.103719740299835,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/079/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 20.581005007484034,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/077/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 20.5778165025113,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/077/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 23.483625199407825,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/077/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 22.842927472326643,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/077/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 20.444706760778548,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/077/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 20.6236099640312,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/077/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 23.082246842199968,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/077/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 0.040042492019326914,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/077/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.444352759245339,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/015/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.930980639387586,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/015/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.987273001422261,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/015/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.554559203989692,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/015/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.615770492490758,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/015/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.455203728187996,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/015/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.504584676261196,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/015/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.49669712990375,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/015/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.4830724804610815,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/011/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.4638741802213677,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/011/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.2981107880475817,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/011/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.2217542245332393,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/011/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.414786959368746,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/011/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.5833508731856831,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/011/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.3710781316498126,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/011/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.3442705674980435,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/011/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.834078165467073,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/078/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.8524427297197255,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/078/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.502513388117733,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/078/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.059574842783116,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/078/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.4388891423088697,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/078/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.212964482171812,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/078/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.388370067591586,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/078/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.44692454931397,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/078/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.505269250298326,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/070/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.513913626517129,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/070/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.6346705772612395,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/070/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.383171030603861,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/070/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.037883300213849,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/070/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.448261707014533,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/070/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.063339356806409,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/070/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.157725265091978,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/070/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.954495762398317,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/016/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.94156504315852,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/016/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.566280540387336,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/016/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.545040095695049,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/016/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.5933270779288735,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/016/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.958184444977333,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/016/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.437247626212777,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/016/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.441100805108993,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/016/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.566647319237847,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/060/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.537070751370704,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/060/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.963950815713616,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/060/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.00016692906474,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/060/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.9401106903784555,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/060/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.343143350500984,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/060/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.479679301490194,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/060/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.49285628455526,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/060/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.11374246910807,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/017/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.071243110644424,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/017/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.879148996954026,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/017/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.417361251980038,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/017/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.348060980127377,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/017/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.2445295108231464,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/017/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.073495646177264,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/017/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.080361541518123,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/017/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.928152830948443,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/047/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.9191100194208435,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/047/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.7269552419160545,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/047/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.212203068941466,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/047/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 3.651561514056682,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/047/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.118426864411301,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/047/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.580731775389557,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/047/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.631106953275222,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/047/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.813332228921356,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/006/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.785953956758014,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/006/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.641750069852979,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/006/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.151881561591723,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/006/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.583691653822431,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/006/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.513635845251853,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/006/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.853638445865208,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/006/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.886938743407164,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/006/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 19.268299394253187,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/064/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 19.262753337250935,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/064/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 20.13329923893192,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/064/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 17.918549197466497,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/064/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 13.026432229996054,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/064/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 11.821999529931471,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/064/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 134.99709556421632,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/064/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 136.95841651546058,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/064/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.785134675997584,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/022/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.790995263660522,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/022/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 115.0204715247965,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/022/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.588836150492249,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/022/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.419186628590941,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/022/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 115.02088381221843,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/022/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.789893519385902,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/022/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 10.793428678044764,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/022/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.058315451949505,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/045/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.0424326544454745,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/045/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.613557610023194,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/045/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.941359442431157,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/045/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.4417941657869005,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/045/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 1.6312175301109828,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/045/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.321786922517892,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/045/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.409348245512524,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/045/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.732213915568463,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/008/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.85928645994375,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/008/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.987908837328021,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/008/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.951534009759669,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/008/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.680988597633401,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/008/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.446150179254485,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/008/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.78734626081175,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/008/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.943222977417848,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/008/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.549050346049514,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/021/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.632099907926928,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/021/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.985892466188005,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/021/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 7.656353190690624,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/021/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.431893071355832,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/021/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 5.157758625629849,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/021/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.098857429772448,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/021/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.149622852736151,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/021/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.00493184261698,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/005/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.055548845601853,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/005/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.577556843554364,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/005/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.31670674182944,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/005/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 6.559831037535747,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/005/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 4.748468309096305,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/005/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 8.991187969648076,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/005/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 9.017080884128756,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/005/primal/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.687195316312573,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/036/motionlcm/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.668586072552559,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/036/omnicontrol/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.706243975882143,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/036/dart/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.087912752967173,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/036/closd/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 0.900357474744937,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/036/ardy/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 0.526590177421667,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/036/kimodo/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.510165068185627,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/036/chois/kinematics.npz"
+    },
+    {
+      "max_difference_deg": 2.479380022564831,
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k31_full_20261116/036/primal/kinematics.npz"
+    }
+  ]
+}
