@@ -77,6 +77,16 @@ class BoneTests(unittest.TestCase):
         result=support(p,p,names,prior=['left_elbow'])
         self.assertFalse(result['left_arm']['angle_valid'].any())
         self.assertTrue(result['right_arm']['angle_valid'].all())
+    def test_head_landmark_length_and_direction_evidence_stay_separate(self):
+        from motiogen.evalkit.k.scoring import source_head_geometry
+        r=np.repeat(np.array([[[0.,0,0],[0.,1,0],[0.,1.2,0],[0.,1.4,0]]]),3,axis=0)
+        d=r.copy();d[:,3,1]+=.2
+        q=source_head_geometry(r,d,lengths(r,[-1,0,1,2]))
+        self.assertAlmostEqual(q['spaces']['raw']['head']['world']['p95_abs'],.2)
+        self.assertAlmostEqual(q['spaces']['normalized']['head']['world']['p95_abs'],0.)
+        self.assertAlmostEqual(q['spaces']['raw']['neck_head_direction']['p95_abs'],0.)
+        masked=source_head_geometry(r,d,lengths(r,[-1,0,1,2]),['head'])
+        self.assertEqual(masked['spaces']['raw']['neck_head_direction']['valid'],0)
     def test_extra_hand_prior_does_not_mask_observed_body_wrist(self):
         from motiogen.evalkit.k.fitting3 import support
         from motiogen.evalkit.k.export import target_template

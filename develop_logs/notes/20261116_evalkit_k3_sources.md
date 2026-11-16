@@ -31,6 +31,8 @@ Han 的原始标记与模型估计结果分离遵循 B3D 的输入／处理阶�
 
 Kimodo 原生 SOMA77 骨架资产与之前复用的 ARDY SOMA77 资产哈希相同，且与冻结标定资源一致。[资产核查](/home/heinrich/MorionGen/config/evalkit_k3_20261116/source_asset_checks.json)确认了这处复用的依据。CHOIS 当前真实样例走的是逐输入逆 FK 回推，保留为估计来源；DART 真实样例的上身骨方向一致性 P95 为 3.73°，其余五种原生旋转样例为约 0.052°或更低。这些量检验模型坐标与输入几何的匹配，解剖轴精度仍需独立证据。
 
+上述资产复用与当前评价骨架分开理解：ARDY 的适配骨架为 27 个节点，Kimodo 为 77 个节点。Kimodo 的 `neck→Neck2→head` 含一个原 BVH 未对应的中间节点；冻结退化器令该节点继承父旋转，而直接子节点标定没有跨过该节点。因此颈头连线保留目标静止几何的方向假设，头部独立旋转则走另一个明确映射。这项差异在新增头部几何 D−R 评分中单列，统一骨长只改变长度。[节点与静止几何证据](/home/heinrich/MorionGen/config/evalkit_k3_20261116/head_chain_contract.json)
+
 受控退化的体型选择也单独登记：MotionLCM、OmniControl 和 CHOIS 的测试夹具复用 PRIMAL 的 SMPL22 静止几何。这是项目实验约定；真实生成输出按各自实际关节位置和资源核查。统一骨长评分用于分离该体型选择与方向误差，真实输出保真度另表报告。
 
 受控降采样也使用项目约定：[export.py](/home/heinrich/MorionGen/utils/motiogen/evalkit/k/export.py) 在较长窗口降采样前执行四阶 Butterworth 双向滤波，截止频率为 `min(6 Hz, 0.4 × 目标采样率)`，旋转矩阵滤波后通过 SVD 恢复正交性，再插值到目标时钟。此设置沿用冻结的退化构造，属于 D−R 的一部分；原始参考保留原生采样。源记录首帧跳变及高角速度片段单列检查，以显示滤波和时间分辨率对峰值的影响。

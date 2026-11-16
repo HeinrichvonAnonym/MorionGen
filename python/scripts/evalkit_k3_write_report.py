@@ -144,6 +144,13 @@ def main():
     for m in METHODS:
         h=methods[m]['head_thorax'];n=h['neck']
         lines.append(f'| {m} | '+ ' / '.join(fmt(h[k]['p95_deg']) for k in ['head','thorax','neck'])+f' | {n["valid_frames"]} / {n["total_frames"]} |')
+    lines+=['', '头部位置与颈头连线另走源姿态几何通路。下表比较退化读回 D 与原始 R；当前全身 OpenSim 拟合没有独立头部位置输出，故该表标记为读取通路验收。颈头连线提供空间方向，头部绕连线的转动仍由独立旋转观测决定。长度归一使用原窗口的骨盆中点—肩中点—颈节点—头节点链，并保留各自根运动。',
+        '', '| 格式 | 颈头连线方向 D−R P95 / ° | 头位置 D−R P95：原几何 / 统一骨长且去根 / cm | 连线有效覆盖 |',
+        '| --- | ---: | ---: | ---: |']
+    for m in METHODS:
+        h=methods[m]['source_head_geometry'];d=h['raw']['neck_head_direction']
+        lines.append(f'| {m} | {fmt(d["p95_abs"])} | {fmt(h["raw"]["head_position"]["world"]*100)} / {fmt(h["normalized"]["head_position"]["root_relative"]*100)} | {pct(d["coverage"])} |')
+    lines+=['', 'Kimodo 的颈头连线还包含目标骨架的中间节点假设：`neck→Neck2→head` 中的 Neck2 在受控原始 BVH 中没有对应观测，冻结退化器采用父旋转先验；直接子节点标定未跨过这一节点。该路线的头部独立旋转与颈头连线因此具有不同误差，长度归一也保留方向差异。[头部链条定义核查](/home/heinrich/MorionGen/config/evalkit_k3_20261116/head_chain_contract.json)记录节点、静止几何和适用边界。本轮保持冻结输入，将其作为降级链中的局限列出。']
     fast=figures['fast_head'];jump=figures['source_jump'];interval=jump['peak_interval_s']
     lines+=['',f'时序检查按原始窗口的头部角速度选择案例。持续高角速度示例 `{Path(fast["id"]).stem}` 的角速度 P95 为 {fast["original_head_p95_deg_s"]:.1f}°/s；六路旋转曲线和读回误差分别绘制。另一个极端峰值来自 `{Path(jump["id"]).stem}` 的窗口首个时间间隔：{interval[1]-interval[0]:.4f} 秒内头部世界旋转变化约 {jump["original_head_peak_deg_s"]*(interval[1]-interval[0]):.1f}°，根位置同时变化 {jump["root_displacement_in_peak_interval_m"]*100:.1f} cm。原始 BVH 前两帧也含有这次变化，属于源记录边界突变；历史窗口和评分掩码继续保留。',
       '', '![高角速度窗口的头颈旋转读回](/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/head_fast_turn.png)',

@@ -109,6 +109,15 @@ def build(rows,expected):
             delta=record_score(r,selected)-record_score(r,'legacy_raw')
             if delta>1:entry['regressions'].append({'id':r['id'],'body_pose_delta_deg':delta})
         entry['head_thorax']={}
+        head_rows=[r for r in paired if 'source_head_geometry' in r]
+        entry['source_head_geometry']={space:{metric:{key:participant_mean(head_rows,
+            lambda r:r['source_head_geometry']['spaces'][space][metric][key])
+            for key in ['median_abs','p95_abs','within_5','within_10','within_20','coverage']}
+            for metric in ['neck_head_direction','neck_head_incline']} for space in ['raw','normalized']}
+        for space in ['raw','normalized']:
+            entry['source_head_geometry'][space]['head_position']={kind:participant_mean(head_rows,
+                lambda r:r['source_head_geometry']['spaces'][space]['head'][kind]['p95_abs'])
+                for kind in ['world','root_relative']}
         for part in ['head','thorax','neck']:
             eligible=[r for r in paired if r['head_thorax'][part]['status']=='computed']
             entry['head_thorax'][part]={'records':len(eligible),'total_records':len(paired),

@@ -65,7 +65,8 @@ def main():
     assert chosen['selection']['summary_sha256']==digest(cfg/'results_summary.json')
     assert all(len(r['folds'])==10 for r in summary['methods'].values())
     tests=ROOT/'develop_logs/test_runs/20261116_k3/tests_final.log';log=tests.read_text()
-    count=int(re.search(r'Ran (\d+) tests',log)[1]);assert count>=53 and log.rstrip().endswith('OK')
+    count=int(re.search(r'Ran (\d+) tests',log)[1]);assert count>=54 and log.rstrip().endswith('OK')
+    assert all('source_head_geometry' in r and Path(r['head_position_arrays']).exists() for r in rows if r['status']=='computed')
     plans=subprocess.check_output(['git','diff',preservation['commit'],'--','plans'],cwd=ROOT,text=True)
     assert not plans
     visual=ROOT/'develop_logs/notes/20261116_k3_figures/visual_review.json'

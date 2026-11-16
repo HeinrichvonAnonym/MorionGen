@@ -1,0 +1,57 @@
+{
+  "scope": "source/target endpoint correspondence; geometric neck-head line is distinct from independent head rotation",
+  "formats": {
+    "ardy": {
+      "calibration": "/home/heinrich/MorionGen/config/evalkit_k_calibration/ardy.json",
+      "sha256": "31dcf01f96f43a142d1346bf687d96c3adfe5a60639cb49f52418337fa3c8063",
+      "nodes": 27,
+      "head_to_neck_chain": [
+        "head",
+        "neck"
+      ],
+      "neutral_neck_head_vector_m": [
+        0.0,
+        0.12816978830025128,
+        0.022599670092587305
+      ],
+      "neutral_vector_incline_deg": 9.999947238416047
+    },
+    "kimodo": {
+      "calibration": "/home/heinrich/MorionGen/config/evalkit_k_calibration/kimodo.json",
+      "sha256": "89f00fe8cddabf2b9905b499d842112c52dc04a7936c62c0ead2a3eb17d40aab",
+      "nodes": 77,
+      "head_to_neck_chain": [
+        "head",
+        "Neck2",
+        "neck"
+      ],
+      "neutral_neck_head_vector_m": [
+        -7.448566005045093e-08,
+        0.13838312585832369,
+        0.042562940744173425
+      ],
+      "neutral_vector_incline_deg": 17.096494569312743
+    },
+    "primal": {
+      "calibration": "/home/heinrich/MorionGen/config/evalkit_k_calibration/primal.json",
+      "sha256": "3851c0cc6e3c8a7a92a7b7928cfb7473d713d95f2e229f1e2897860809d201e6",
+      "nodes": 55,
+      "head_to_neck_chain": [
+        "head",
+        "neck"
+      ],
+      "neutral_neck_head_vector_m": [
+        0.024783488363027573,
+        0.1604517698287964,
+        0.020737262442708015
+      ],
+      "neutral_vector_incline_deg": 11.387024673327268
+    }
+  },
+  "kimodo_controlled_fixture": "Neck2 is absent from the BVH observation mapping and inherits its parent rotation; the direct-child rest alignment has no matched child for neck. Head position therefore retains a target-chain direction assumption. Independent head rotation is mapped separately.",
+  "evidence": [
+    "utils/motiogen/evalkit/k/export.py:retarget",
+    "config/evalkit_k_calibration/kimodo.json"
+  ],
+  "action": "retain frozen fixtures and report D-R head-line loss independently; no anatomical or HYOID extension"
+}

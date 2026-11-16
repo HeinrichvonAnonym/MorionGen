@@ -37,6 +37,44 @@ def region(name):
     return side+('_arm' if 'elbow' in name or 'arm_' in name else '_leg')
 
 
+def head_chain(points,names):
+    """Position-supported head chain; each endpoint retains its geometric meaning."""
+    from .export import ALIASES
+    p={ALIASES.get(n,n):points[:,i] for i,n in enumerate(names)}
+    missing=np.full((len(points),3),np.nan)
+    get=lambda n:p.get(n,missing)
+    return np.stack([.5*(get('left_hip')+get('right_hip')),
+        .5*(get('left_shoulder')+get('right_shoulder')),get('neck'),get('head')],1)
+
+
+def source_head_geometry(reference,readback,reference_lengths,prior=()):
+    """R versus source K positions, kept separate from the OpenSim body fitter.
+
+    Positions describe joint landmarks. The neck-to-head line supplies a direction,
+    and never supplies independent axial head rotation or an anatomical neck angle.
+    """
+    parents=[-1,0,1,2];spaces={'raw':(reference,readback),
+        'normalized':(normalize(reference,reference_lengths,parents),normalize(readback,reference_lengths,parents))}
+    result={'scope':'D-R of source K position pathway; full-body OpenSim head-position fit unavailable; no independent head rotation inferred',
+        'reference_lengths_m':[None if not np.isfinite(v) else float(v) for v in reference_lengths],
+        'prior_joints':list(prior),'spaces':{}}
+    observed=not bool(set(prior)&{'left_hip','right_hip','left_shoulder','right_shoulder','neck','head'})
+    for space,(r,d) in spaces.items():
+        out={}
+        for j,name in [(2,'neck'),(3,'head')]:
+            valid=np.isfinite(r[:,j]).all(1)&np.isfinite(d[:,j]).all(1)&observed
+            diff=d[:,j]-r[:,j];centred=diff-(d[:,0]-r[:,0])
+            out[name]={'world':stats(np.where(valid,np.linalg.norm(diff,axis=-1),np.nan),False),
+                'root_relative':stats(np.where(valid,np.linalg.norm(centred,axis=-1),np.nan),False)}
+        a=unit(reference[:,3]-reference[:,2]);b=unit(readback[:,3]-readback[:,2])
+        valid=np.isfinite(a).all(1)&np.isfinite(b).all(1)&observed
+        out['neck_head_direction']=stats(np.where(valid,np.degrees(np.arccos(np.clip((a*b).sum(-1),-1,1))),np.nan))
+        incline=lambda v:np.degrees(np.arccos(np.clip(v[:,1],-1,1)))
+        out['neck_head_incline']=stats(np.where(valid,incline(b)-incline(a),np.nan))
+        result['spaces'][space]=out
+    return result
+
+
 def contact(points,times,floor=0.):
     result={}
     for side in ['left','right']:

@@ -7,7 +7,7 @@ import numpy as np
 ROOT=Path(__file__).resolve().parents[2];sys.path[:0]=[str(ROOT/'utils'),str(ROOT/'utils/motiogen')]
 from motiogen.evalkit.k.bones import common,lengths
 from motiogen.evalkit.k.export import ALIASES
-from motiogen.evalkit.k.scoring import compare
+from motiogen.evalkit.k.scoring import compare,head_chain,source_head_geometry
 from motiogen.evalkit.k.config import digest
 from motiogen.evalkit.k import load
 from motiogen.evalkit.k.fitting3 import support
@@ -33,6 +33,16 @@ def one(path):
     with np.load(row['arrays']) as z:old_arrays={k:z[k] for k in z.files}
     with np.load(row['reference']) as z:
         reference_lengths=lengths(common(z['points'],[ALIASES.get(n,n) for n in z['names']]))
+        native_head=head_chain(z['points'],list(z['names']));native_times=z['times']
+    from evalkit_k3_experiment import interp
+    head_query=old_arrays['times']+row['source_clock_offset_s']
+    head_lengths=lengths(native_head,[-1,0,1,2])
+    head_reference=interp(native_times,native_head,np.clip(head_query,native_times[0],native_times[-1]))
+    head_readback=interp(motion.times,head_chain(motion.positions,motion.names),head_query)
+    head_score=source_head_geometry(head_reference,head_readback,head_lengths,motion.provenance.get('degradation',{}).get('prior_joints',[]))
+    head_path=path.with_name('head_position_geometry.npz')
+    np.savez_compressed(head_path,times=head_query,reference=head_reference,readback=head_readback,reference_lengths=head_lengths,
+        names=['pelvis_mid','shoulder_mid','neck','head'])
     times=old_arrays['times'];supports={};qualities={};full_times={}
     for variant in variants:
         receipt=json.loads((path.parent/variant/'k3_receipt.json').read_text());settings=receipt['evidence']['config']['fitting']
@@ -76,6 +86,7 @@ def one(path):
     updated={**row,'scores':scores,'arrays':str(array_path),'initial_scoring_result':str(path),
         'identity_scope':'original frozen fitting and initial scoring; scoring_identity identifies the current length convention',
         'scoring_identity':identity,'scoring_arrays_sha256':digest(array_path),'length_scope_check':check,
+        'source_head_geometry':head_score,'head_position_arrays':str(head_path),
         'observation_name_mapping':{'aliases':motion.legacy_aliases(),'prior_joints_in_fitting_view':prior,
             'scope':'body-wrist observation remains separate from an extra hand-point prior'}}
     dest.write_text(json.dumps(updated,allow_nan=False)+'\n');return check
