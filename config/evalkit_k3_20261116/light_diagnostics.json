@@ -1,0 +1,262 @@
+{
+  "source": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/light.jsonl",
+  "sha256": "d9792f256380284d24175ea6b8701469631f315c8a4144a519c637f8e288c02c",
+  "datasets": {
+    "andy": {
+      "registered_rows": 120,
+      "computed_rows": 120,
+      "participants": 8,
+      "original_recordings": 120,
+      "failures": [],
+      "direct_marker_frames": {
+        "head": {
+          "valid_frames": 1128234,
+          "total_frames": 1653677
+        },
+        "thorax": {
+          "valid_frames": 774194,
+          "total_frames": 1653677
+        }
+      },
+      "coverage_scope": "direct geometric marker frames before redundant-marker recovery; each region counted separately; historical recovered-reference scores reported separately"
+    },
+    "collaborate": {
+      "registered_rows": 1291,
+      "computed_rows": 1284,
+      "participants": 16,
+      "original_recordings": 1291,
+      "failures": [
+        {
+          "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R101.bvh",
+          "reason": "ValueError: unobservable_or_precision_limited_geometry"
+        },
+        {
+          "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R106.bvh",
+          "reason": "ValueError: unobservable_or_precision_limited_geometry"
+        },
+        {
+          "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R22.bvh",
+          "reason": "ValueError: unobservable_or_precision_limited_geometry"
+        },
+        {
+          "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R34.bvh",
+          "reason": "ValueError: unobservable_or_precision_limited_geometry"
+        },
+        {
+          "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R40.bvh",
+          "reason": "ValueError: unobservable_or_precision_limited_geometry"
+        },
+        {
+          "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R74.bvh",
+          "reason": "ValueError: unobservable_or_precision_limited_geometry"
+        },
+        {
+          "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R98.bvh",
+          "reason": "ValueError: unobservable_or_precision_limited_geometry"
+        }
+      ],
+      "conversion_probe": {
+        "ardy": {
+          "status_counts": {
+            "computed": 1284
+          },
+          "rotation_valid_share": {
+            "count": 1284,
+            "minimum": 1.0,
+            "median": 1.0,
+            "maximum": 1.0
+          }
+        },
+        "chois": {
+          "status_counts": {
+            "computed": 1284
+          },
+          "rotation_valid_share": {
+            "count": 1284,
+            "minimum": 1.0,
+            "median": 1.0,
+            "maximum": 1.0
+          }
+        },
+        "closd": {
+          "status_counts": {
+            "computed": 1284
+          },
+          "rotation_valid_share": {
+            "count": 1284,
+            "minimum": 1.0,
+            "median": 1.0,
+            "maximum": 1.0
+          }
+        },
+        "dart": {
+          "status_counts": {
+            "computed": 1284
+          },
+          "rotation_valid_share": {
+            "count": 1284,
+            "minimum": 1.0,
+            "median": 1.0,
+            "maximum": 1.0
+          }
+        },
+        "kimodo": {
+          "status_counts": {
+            "computed": 1284
+          },
+          "rotation_valid_share": {
+            "count": 1284,
+            "minimum": 1.0,
+            "median": 1.0,
+            "maximum": 1.0
+          }
+        },
+        "motionlcm": {
+          "status_counts": {
+            "computed": 1284
+          },
+          "rotation_valid_share": {
+            "count": 1284,
+            "minimum": 1.0,
+            "median": 1.0,
+            "maximum": 1.0
+          }
+        },
+        "omnicontrol": {
+          "status_counts": {
+            "computed": 1284
+          },
+          "rotation_valid_share": {
+            "count": 1284,
+            "minimum": 1.0,
+            "median": 1.0,
+            "maximum": 1.0
+          }
+        },
+        "primal": {
+          "status_counts": {
+            "computed": 1284
+          },
+          "rotation_valid_share": {
+            "count": 1284,
+            "minimum": 1.0,
+            "median": 1.0,
+            "maximum": 1.0
+          }
+        }
+      },
+      "conversion_scope": "at most 240 source poses; conversion probe uses three poses on a synthetic clock, verifying topology and proper rotations",
+      "edge_length_m": {
+        "shoulder_mid": {
+          "count": 1284,
+          "minimum": 0.3969531413054684,
+          "median": 0.4885970556600732,
+          "maximum": 0.5624419509349449
+        },
+        "left_hip": {
+          "count": 1284,
+          "minimum": 0.07999999999999968,
+          "median": 0.08,
+          "maximum": 0.14500000000000005
+        },
+        "left_knee": {
+          "count": 1284,
+          "minimum": 0.4161081784151808,
+          "median": 0.45011109739708705,
+          "maximum": 0.5024255270943148
+        },
+        "left_ankle": {
+          "count": 1284,
+          "minimum": 0.37953932094580134,
+          "median": 0.410487515035488,
+          "maximum": 0.45811078384600384
+        },
+        "left_foot": {
+          "count": 1284,
+          "minimum": 0.1457737973711314,
+          "median": 0.14577379737113252,
+          "maximum": 0.14577470631430087
+        },
+        "right_hip": {
+          "count": 1284,
+          "minimum": 0.07999999999999952,
+          "median": 0.08,
+          "maximum": 0.14500000000000002
+        },
+        "right_knee": {
+          "count": 1284,
+          "minimum": 0.4161081784151808,
+          "median": 0.45011109739708705,
+          "maximum": 0.5024255270943148
+        },
+        "right_ankle": {
+          "count": 1284,
+          "minimum": 0.37953932094580134,
+          "median": 0.410487515035488,
+          "maximum": 0.45811078384600384
+        },
+        "right_foot": {
+          "count": 1284,
+          "minimum": 0.14577379737113194,
+          "median": 0.14577379737113252,
+          "maximum": 0.14577379737143098
+        },
+        "left_shoulder": {
+          "count": 1284,
+          "minimum": 0.11406590470494234,
+          "median": 0.17847725686093435,
+          "maximum": 0.22990581879158
+        },
+        "left_elbow": {
+          "count": 1284,
+          "minimum": 0.25195803731772476,
+          "median": 0.3246166970443757,
+          "maximum": 0.385634974368249
+        },
+        "left_wrist": {
+          "count": 1284,
+          "minimum": 0.1998403176763888,
+          "median": 0.25727854554937146,
+          "maximum": 0.30553928299974786
+        },
+        "right_shoulder": {
+          "count": 1284,
+          "minimum": 0.11406590470494232,
+          "median": 0.17847725686093435,
+          "maximum": 0.22990581879158
+        },
+        "right_elbow": {
+          "count": 1284,
+          "minimum": 0.25195803731772476,
+          "median": 0.3246166970443757,
+          "maximum": 0.385634974368249
+        },
+        "right_wrist": {
+          "count": 1284,
+          "minimum": 0.1998403176763888,
+          "median": 0.25727854554937146,
+          "maximum": 0.30553928299974786
+        }
+      },
+      "sampled_source_frames": 254402
+    },
+    "han": {
+      "registered_rows": 259,
+      "computed_rows": 259,
+      "participants": 7,
+      "original_recordings": 178,
+      "failures": [],
+      "direct_marker_frames": {
+        "head": {
+          "valid_frames": 368706,
+          "total_frames": 368733
+        },
+        "thorax": {
+          "valid_frames": 368485,
+          "total_frames": 368733
+        }
+      },
+      "coverage_scope": "direct geometric marker frames before redundant-marker recovery; each region counted separately; historical recovered-reference scores reported separately"
+    }
+  }
+}

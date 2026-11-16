@@ -12,6 +12,7 @@ from motiogen.evalkit.k.scoring import angles
 from evalkit_k3_report import record_score
 plt.rcParams.update({'font.family':'Noto Sans CJK JP','axes.unicode_minus':False,'font.size':10})
 COLORS={'R':'#15293c','D':'#2279b5','P':'#9c68bb','K2':'#8a949d','K3':'#cf5629'}
+STYLES={'R':'-','D':'--','P':':','K2':'-','K3':'-'}
 
 
 def overlay(row,variant,path,reason):
@@ -28,21 +29,50 @@ def overlay(row,variant,path,reason):
         for key,p in data.items():
             xy=np.stack([p[index,:, [0,2]].T@horizontal,p[index,:,1]],1)
             for j,parent in enumerate(PARENTS):
-                if parent>=0:ax.plot(xy[[parent,j],0],xy[[parent,j],1],color=COLORS[key],lw=2 if key in ['R','K3'] else 1,alpha=.85)
+                if parent>=0:ax.plot(xy[[parent,j],0],xy[[parent,j],1],color=COLORS[key],ls=STYLES[key],lw=2 if key in ['R','K3'] else 1,alpha=.85)
             ax.scatter(xy[:,0],xy[:,1],s=9,color=COLORS[key],label=key)
         ax.set_aspect('equal');ax.grid(alpha=.2);ax.set_xlabel('水平主投影 / m');ax.set_ylabel('高度 / m')
-        ax.set_title(('统一骨长、各自去根平移' if normalized else '原始几何、世界位置')+f'\nt={t[index]:.2f} s');ax.legend(ncol=3,fontsize=8)
+        ax.set_title(('统一骨长、各自去根平移' if normalized else '原始几何、世界位置')+f'\nt={t[index]:.2f} s')
     for ax,metric,title in [(axes[0,2],'trunk_incline','躯干倾斜'),(axes[1,0],'left_elbow_flexion','左肘几何屈曲'),(axes[1,1],'left_knee_flexion','左膝几何屈曲')]:
-        for key,v in values.items():ax.plot(t,v[metric],color=COLORS[key],label=key,lw=1.5,alpha=.9)
+        for key,v in values.items():ax.plot(t,v[metric],color=COLORS[key],ls=STYLES[key],label=key,lw=1.5,alpha=.9)
         ax.set_title(title);ax.set_xlabel('相对时间 / s');ax.set_ylabel('角度 / °');ax.grid(alpha=.2)
     ax=axes[1,2];j=NAMES.index('left_wrist')
     for key in ['D','P','K2','K3']:
         p=normalize(curves[key],a['reference_lengths']);r=normalize(curves['R'],a['reference_lengths'])
-        delta=(p[:,j]-p[:,0])-(r[:,j]-r[:,0]);ax.plot(t,np.linalg.norm(delta,axis=1)*100,color=COLORS[key],label=key)
+        delta=(p[:,j]-p[:,0])-(r[:,j]-r[:,0]);ax.plot(t,np.linalg.norm(delta,axis=1)*100,color=COLORS[key],ls=STYLES[key],label=key)
     ax.set_title('统一骨长后的左手位置误差');ax.set_xlabel('相对时间 / s');ax.set_ylabel('去根平移距离 / cm');ax.grid(alpha=.2)
-    fig.suptitle(f'{row["method"]} · {Path(row["id"]).stem} · {reason}\nR 原始参考；D 退化读回；P 拟合输入投影；K2 基准拟合；K3 {variant}',fontsize=13)
+    axes[0,2].legend(ncol=5,fontsize=8,loc='lower right')
+    projection='开启' if variant.endswith('projected') else '关闭，P=D'
+    fig.suptitle(f'{row["method"]} · {Path(row["id"]).stem} · {reason}\nR 原始参考；D 退化读回；P 投影视图（{projection}）；K2 基准拟合；K3 {variant}',fontsize=13)
     fig.savefig(path,dpi=140);plt.close(fig)
     return {'id':row['id'],'method':row['method'],'variant':variant,'reason':reason,'frame_s':float(t[index]),'path':str(path),'frame_rule':'largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement'}
+
+
+def overview(summary,path):
+    methods=['motionlcm','omnicontrol','ardy','chois','closd','dart','kimodo','primal']
+    fig,axes=plt.subplots(1,2,figsize=(14,6),layout='constrained');y=np.arange(len(methods))
+    base=[summary[m]['variants']['legacy_raw']['body_pose_score'] for m in methods]
+    selected=[summary[m]['variants'][summary[m]['selected']]['body_pose_score'] for m in methods]
+    ax=axes[0]
+    for i,(b,s) in enumerate(zip(base,selected)):
+        ax.plot([b,s],[i,i],color='#b7c2cb',lw=3)
+        ax.annotate(f'{b:.2f} → {s:.2f}',(max(b,s)+.2,i),va='center',fontsize=9)
+    ax.scatter(base,y,color=COLORS['K2'],label='原拟合，同一批修正输入',s=40,zorder=3)
+    ax.scatter(selected,y,color=COLORS['K3'],label='K3 选定设置',s=40,zorder=3)
+    ax.set_yticks(y,methods);ax.invert_yaxis();ax.set_xlim(0,max(base+selected)*1.45)
+    ax.set_xlabel('原始参考端到端角度 P95 汇总 / °');ax.grid(axis='x',alpha=.2);ax.legend(loc='lower right',fontsize=9)
+    ax.set_title('同一参考与评分窗口上的优化变化')
+    matrix=[]
+    for m in methods:
+        r=summary[m]['variants'][summary[m]['selected']]['regions']
+        matrix.append([float(np.mean([v[stage] for v in r.values()])) for stage in ['degradation','fit_deviation','end_to_end']])
+    matrix=np.asarray(matrix);ax=axes[1];im=ax.imshow(matrix,cmap='Blues',aspect='auto',vmin=0)
+    for i in range(len(methods)):
+        for j in range(3):ax.text(j,i,f'{matrix[i,j]:.2f}°',ha='center',va='center',color='white' if matrix[i,j]>.6*matrix.max() else '#162b40')
+    ax.set_yticks(y,methods);ax.set_xticks(range(3),['降级 D−R','拟合 F−D','端到端 F−R']);ax.set_title('三种误差独立统计，P95 不作加法分解')
+    fig.colorbar(im,ax=ax,label='角度 P95 汇总 / °',shrink=.85)
+    fig.suptitle('八种格式：原始参考验收与误差来源\n各记录角度 P95 → 六部位等权 → 按人等权；开发资料，LAB 与工业迁移合并展示',fontsize=13)
+    fig.savefig(path,dpi=150);plt.close(fig)
 
 
 def main():
@@ -64,7 +94,10 @@ def main():
     for i,(row,reason) in enumerate(chosen):
         v='optimized_raw' if a.preview else summary[row['method']]['selected']
         receipts.append(overlay(row,v,a.dest/f'{i:02d}_{row["method"]}_{row["window_key"]}.png',reason))
-    (a.dest/'index.json').write_text(json.dumps({'preview':a.preview,'source_task_labels':'https://zenodo.org/records/6472155','figures':receipts},ensure_ascii=False,indent=2)+'\n')
+    overview_path=None
+    if not a.preview:
+        overview_path=a.dest/'overview.png';overview(summary,overview_path)
+    (a.dest/'index.json').write_text(json.dumps({'preview':a.preview,'source_task_labels':'https://zenodo.org/records/6472155','overview':str(overview_path) if overview_path else None,'figures':receipts},ensure_ascii=False,indent=2)+'\n')
     print('figures',len(receipts))
 
 if __name__=='__main__':main()

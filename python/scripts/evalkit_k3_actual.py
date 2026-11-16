@@ -5,7 +5,7 @@ from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor
 import numpy as np
 ROOT=Path(__file__).resolve().parents[2];sys.path[:0]=[str(ROOT/'utils'),str(ROOT/'utils/motiogen'),str(ROOT/'python/scripts')]
-from evalkit_k3_experiment import VARIANTS,interp
+from evalkit_k3_experiment import VARIANTS,interp,experiment_settings
 from evalkit_k_regression import sample_path
 
 
@@ -21,7 +21,7 @@ def one(task):
             from motiogen.evalkit.k.bones import common
             from motiogen.evalkit.k.scoring import compare
             from motiogen.evalkit.k.config import digest
-            config=json.loads((ROOT/'config/evalkit_k3_20261116/experiment_config.json').read_text());source=sample_path(path);motion=load(source,method,config=config)
+            config=experiment_settings();source=sample_path(path);motion=load(source,method,config=config)
             data={};receipts={};failures={}
             for v in VARIANTS:
                 c=copy.deepcopy(config);c['fitting'].update(strategy='direction_refinement' if v.startswith('optimized') else 'legacy',projection=v.endswith('projected'),

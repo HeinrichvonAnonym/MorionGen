@@ -64,6 +64,18 @@ def build(rows,expected):
             output['regions']={reg:{stage:participant_mean(paired,lambda r:region_score(r,variant,reg,stage))
                 for stage in ['degradation','fit_deviation','end_to_end','projection','fit_after_projection']}
                 for reg in ['pelvis','torso','left_arm','right_arm','left_leg','right_leg']}
+            output['region_precision']={}
+            for reg in ['pelvis','torso','left_arm','right_arm','left_leg','right_leg']:
+                metrics=[metric for metric in paired[0]['scores'][variant]['raw']['angles'] if region(metric)==reg]
+                output['region_precision'][reg]={stat:participant_mean(paired,
+                    lambda r:float(np.mean([r['scores'][variant]['raw']['angles'][metric]['end_to_end'][stat]
+                        for metric in metrics if r['scores'][variant]['raw']['angles'][metric]['end_to_end'][stat] is not None])))
+                    for stat in ['median_abs','p95_abs','signed_bias','within_5','within_10','within_20','coverage']}
+                output['region_precision'][reg]['metric_frames']={key:sum(
+                    r['scores'][variant]['raw']['angles'][metric]['end_to_end'][key]
+                    for r in paired for metric in metrics) for key in ['valid','total']}
+                output['region_precision'][reg]['scope']='participant-balanced means over explicitly listed geometric angles; frame counts include each metric separately'
+                output['region_precision'][reg]['metrics']=metrics
             for metric in paired[0]['scores'][variant]['raw']['angles']:
                 output['angles'][metric]={stage:{stat:participant_mean(paired,lambda r:r['scores'][variant]['raw']['angles'][metric][stage][stat]) for stat in ['median_abs','p95_abs','signed_bias','within_5','within_10','within_20','coverage']}
                     for stage in ['degradation','fit_deviation','end_to_end','projection','fit_after_projection','supported_end_to_end']}

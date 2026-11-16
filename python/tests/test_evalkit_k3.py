@@ -96,4 +96,30 @@ class BoneTests(unittest.TestCase):
         self.assertNotEqual(m.content_key(),original)
         m.positions[1,1,1]=0.;self.assertEqual(m.content_key(),original)
         m.provenance['degradation']={'prior_joints':['b']};self.assertNotEqual(m.content_key(),original)
+    def test_ablation_keeps_registered_config_after_runtime_selection(self):
+        import tempfile,json
+        from unittest.mock import patch
+        sys.path.insert(0,str(ROOT/'python/scripts'))
+        import evalkit_k3_experiment as experiment
+        with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs') as folder:
+            path=Path(folder);config=path/'config/evalkit_k3_20261116';config.mkdir(parents=True)
+            registered={'fitting':{'strategy':'legacy','projection':False}}
+            (config/'experiment_config.json').write_text(json.dumps(registered))
+            selected={'fitting':{'per_method':{'motionlcm':{'strategy':'direction_refinement'}}}}
+            (path/'config/evalkit_k_v3.json').write_text(json.dumps(selected))
+            with patch.object(experiment,'ROOT',path):
+                self.assertEqual(experiment.experiment_settings(),registered)
+                (config/'experiment_config.json').write_text(json.dumps(selected))
+                with self.assertRaisesRegex(ValueError,'unselected experiment'):experiment.experiment_settings()
+    def test_experiment_resume_detects_native_sidecar_change(self):
+        import tempfile
+        sys.path.insert(0,str(ROOT/'python/scripts'))
+        from evalkit_k3_experiment import source_hashes
+        with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs') as folder:
+            path=Path(folder);(path/'motion.npz').write_bytes(b'positions')
+            native=path/'native_physics.npz';native.write_bytes(b'rotation1')
+            first=source_hashes(path);native.write_bytes(b'rotation2')
+            second=source_hashes(path)
+            self.assertNotEqual(first,second)
+            self.assertEqual(first[str((path/'motion.npz').resolve())],second[str((path/'motion.npz').resolve())])
 if __name__=='__main__':unittest.main()

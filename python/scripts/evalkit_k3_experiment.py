@@ -9,6 +9,23 @@ from motiogen.evalkit.k.config import digest
 VARIANTS=['legacy_raw','legacy_projected','optimized_raw','optimized_projected']
 
 
+def experiment_settings():
+    """A later runtime selection must never collapse the four ablation cells."""
+    config=json.loads((ROOT/'config/evalkit_k3_20261116/experiment_config.json').read_text())
+    if config['fitting'].get('per_method'):
+        raise ValueError('A four-cell ablation requires the unselected experiment configuration')
+    return config
+
+
+def source_hashes(source):
+    """Include every native sidecar used by K before reusing an outer result."""
+    source=Path(source);file=source if source.suffix=='.npz' else source/'motion.npz'
+    candidates={file,Path(str(file).replace('_canonical.npz','.npz')),
+        file.parent/'k_provenance.json',file.parent/'raw/native_prediction.npz',
+        file.parent/'native_physics.npz',file.parent/'smplx_params.npz'}
+    return {str(p.resolve()):digest(p) for p in sorted(candidates) if p.exists()}
+
+
 def interp(t,p,q):
     out=np.stack([np.interp(q,t,v) for v in p.reshape(len(t),-1).T],1).reshape(len(q),*p.shape[1:])
     out[(q<t[0]-1e-8)|(q>t[-1]+1e-8)]=np.nan
@@ -48,10 +65,11 @@ def one(task):
     row,out=task
     if shutil.disk_usage(out).free<80*1024**3:return {**row,'status':'disk_reserve_stop'}
     key=row['window_key']+'/'+row['method'];work=out/'fits'/key;work.mkdir(parents=True,exist_ok=True)
-    target=work/'result.json';config=json.loads((ROOT/'config/evalkit_k_v3.json').read_text())
+    target=work/'result.json';config=experiment_settings()
     # Resume only against exactly the same implementation and input receipts.
     from motiogen.evalkit.k.config import implementation_key
-    identity={'implementation':implementation_key(),'config':config,'script':digest(__file__),'reference_sha256':digest(row['reference'])}
+    identity={'implementation':implementation_key(),'config':config,'script':digest(__file__),
+              'reference_sha256':digest(row['reference']),'inputs':source_hashes(row['source'])}
     if target.exists():
         old=json.loads(target.read_text())
         if old.get('identity')==identity and old.get('status')=='computed':return old
