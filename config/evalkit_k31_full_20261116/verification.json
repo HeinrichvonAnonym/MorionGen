@@ -1,0 +1,42 @@
+{
+  "status": "regression_complete_with_recorded_limits",
+  "computed": 656,
+  "new_second_stage_fits": 574,
+  "unchanged_closd_rescored": 82,
+  "tests": 54,
+  "input_and_reference_hash_checks": "passed in full summarizer",
+  "degradation_metrics_unchanged": true,
+  "scoring_counts_unchanged": true,
+  "closd_metrics_exactly_unchanged": true,
+  "protected_files_unchanged": 35,
+  "new_holdout_runs": 0,
+  "runtime_and_config_unchanged_from_c0018cf": true,
+  "plots_reviewed": 13,
+  "visual_scope": "layout and source/degradation/fitted curves; Kimodo interior spikes, boundary transients and residual leg/arm failures retained",
+  "figure_sha256": {
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/00_ardy_074.png": "20449926ff2a7505f184fd245509a136b7abe6e05b1a7262fd238507becf6b22",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/01_chois_074.png": "decb14f4525d2be5fcf7d3f337d436c782c525acc0266b780b11484038fe3851",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/02_closd_081.png": "00ea6e384b3cbefdb014e67596c2dde52924fdc03e506c8dfb96ffa7f5824ad8",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/03_dart_074.png": "68fd9f6a97ee4481f2b7eb58d7ba575f4508cbb5b389f90d053be9bc37fe24d9",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/04_kimodo_074.png": "97d9caa29035fd65865e14a5cd3b23870e848cf9e0cf0b6aa9160ddbb3a744e2",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/05_motionlcm_074.png": "afb1f5611c9b974e071aa442fb17d60aca2bb1dc62f7b536244b352959dba3bf",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/06_omnicontrol_074.png": "2e5f1410a3bd762a49931fb2cf8bb6ee5a5b73fcae0ee8124ca08d677c6b7530",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/07_primal_074.png": "fcb6d14dc28ad04848f069c64a29e2a8368ac7cffc632ae9860f185945fb295a",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/08_kimodo_077.png": "610643f4aa6b7251272de063abf3efdc66dfa0356e8f54fb7cb258cb1a969f18",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/09_kimodo_070.png": "ba22fbded5926d8e9cce56f014bc99fa4a064b16f4b8d270c3c9f87b19d54a7d",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/10_ardy_073.png": "bc5018880300e18b4652a13de4a1356f5c708e1032a8c09d362bc3868e477caa",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/11_dart_073.png": "fc670bd87ae5582f9c0c72e47406414f4d6d41ed30f002974d4b9e6eeba0cfc4",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261116_k31_full/12_kimodo_073.png": "337bf5e9a00a6ddb255434ccf147790b24810493f6d251831cb731c40fb9b5ba"
+  },
+  "summary_sha256": "5a4b97f2380c0ac984f33d31f819efb6c444c4d6e793ac2a3e7387b989c2e35f",
+  "report_sha256": "6137e83ba3983f6da53ca6f9181e65cc655d1b69a7aa945e7f5633f3e3176670",
+  "flags": {
+    "local_regressions": 0,
+    "temporal_regressions": 1,
+    "step_regressions": 4,
+    "coverage_drops": 5,
+    "position_regressions": 4
+  },
+  "tests_log_sha256": "e409187a4efa22469814fc8570701f656ca336b69a7f15999bfd448b31192588",
+  "free_gib": 830.4296569824219
+}
