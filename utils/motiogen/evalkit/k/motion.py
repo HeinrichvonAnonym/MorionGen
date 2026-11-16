@@ -60,7 +60,11 @@ class Motion:
         return self.positions, names, self.fps
 
 
-def load(source, method=None):
+def load(source, method=None, config=None):
+    from .config import resolve_config, ROOT
+    settings = resolve_config(config)
+    if isinstance(source, Motion):
+        return source
     src = Path(source)
     file = src if src.suffix == '.npz' else src/'motion.npz'
     used = []
@@ -74,9 +78,9 @@ def load(source, method=None):
     if 'posed_joints' in m: method = 'kimodo'
     if 'pose' in m or 'factorial' in str(src): method = 'primal'
     if not method:
-        candidates = [n for n in CONFIG['profiles'] if n in str(src).lower()]
+        candidates = [n for n in settings['profiles'] if n in str(src).lower()]
         method = candidates[0] if len(candidates)==1 else 'unknown'
-    fps = float(m.get('fps', CONFIG['profiles'].get(method,{}).get('fps',30)))
+    fps = float(m.get('fps', settings['profiles'].get(method,{}).get('fps',30)))
     r = None; rn = []; native_y = method == 'kimodo'
     if method == 'kimodo':
         p = np.asarray(m['posed_joints']); p = p[0] if p.ndim==4 else p
@@ -125,4 +129,10 @@ def load(source, method=None):
     bases,receipt=model_basis(motion,src if src.is_dir() else src.parent)
     motion.provenance['calibration']=receipt
     if bases is not None:motion.provenance['model_bases']={k:v.tolist() for k,v in bases.items()}
+    registry = settings.get('convention_registry')
+    if registry:
+        path = ROOT/registry
+        motion.provenance['convention'] = {'version': settings['version'], 'registry': registry,
+            'sha256': digest(path), 'anatomical_scope': 'source model convention; project assumptions retained explicitly'}
+        motion.provenance['inputs'][str(path)] = digest(path)
     return motion

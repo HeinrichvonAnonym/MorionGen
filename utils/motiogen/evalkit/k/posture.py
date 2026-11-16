@@ -4,13 +4,15 @@ from .geometry import frame, valid_rotation
 from .body import evaluate_body
 
 
-def evaluate(motion, anatomical_bases=None):
+def evaluate(motion, anatomical_bases=None, config=None):
     """Native segment pose is distinct from anatomically calibrated neck angles."""
+    from .config import resolve_config
+    settings = resolve_config(config)
     model_assumption = anatomical_bases is None and 'model_bases' in motion.provenance
     if model_assumption: anatomical_bases=motion.provenance['model_bases']
     n = len(motion.times); idx = {x:i for i,x in enumerate(motion.names)}
-    profile = CONFIG['profiles'].get(motion.method,{})
-    result = {'version':VERSION,'method':motion.method,'times':motion.times,'metrics':{},'body':evaluate_body(motion)}
+    profile = settings['profiles'].get(motion.method,{})
+    result = {'version':settings['version'],'method':motion.method,'times':motion.times,'metrics':{},'body':evaluate_body(motion)}
     for region,key in [('head','head'),('thorax','thorax')]:
         name = profile.get(key)
         r = np.full((n,3,3),np.nan)

@@ -8,6 +8,16 @@ CONFIG = json.loads(PATH.read_text())
 VERSION = CONFIG['version']
 
 
+def resolve_config(config=None):
+    """Explicit per-call configuration; never mutate module globals in workers."""
+    if config is None:
+        return CONFIG
+    if isinstance(config, dict):
+        return config
+    path = Path(config)
+    return json.loads((path if path.is_absolute() else ROOT/path).read_text())
+
+
 def digest(path):
     h = hashlib.sha256()
     with Path(path).open('rb') as f:

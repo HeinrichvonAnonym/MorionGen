@@ -1,0 +1,76 @@
+{
+  "records": 1670,
+  "by_dataset": {
+    "andy": {
+      "computed": 120
+    },
+    "collaborate": {
+      "computed": 1284,
+      "failed": 7
+    },
+    "han": {
+      "computed": 259
+    }
+  },
+  "failures": [
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R101.bvh",
+      "dataset": "collaborate",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R101.bvh",
+      "status": "failed",
+      "reason": "ValueError: unobservable_or_precision_limited_geometry"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R106.bvh",
+      "dataset": "collaborate",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R106.bvh",
+      "status": "failed",
+      "reason": "ValueError: unobservable_or_precision_limited_geometry"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R22.bvh",
+      "dataset": "collaborate",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R22.bvh",
+      "status": "failed",
+      "reason": "ValueError: unobservable_or_precision_limited_geometry"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R34.bvh",
+      "dataset": "collaborate",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R34.bvh",
+      "status": "failed",
+      "reason": "ValueError: unobservable_or_precision_limited_geometry"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R40.bvh",
+      "dataset": "collaborate",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R40.bvh",
+      "status": "failed",
+      "reason": "ValueError: unobservable_or_precision_limited_geometry"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R74.bvh",
+      "dataset": "collaborate",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R74.bvh",
+      "status": "failed",
+      "reason": "ValueError: unobservable_or_precision_limited_geometry"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R98.bvh",
+      "dataset": "collaborate",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R98.bvh",
+      "status": "failed",
+      "reason": "ValueError: unobservable_or_precision_limited_geometry"
+    }
+  ],
+  "raw": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_20261116/light.jsonl",
+  "sha256": "b9894b4f58266a0575d4b6ba7f7c4dc2ecd983d4f41d826554bca94584ffab61",
+  "scope": "all registered development records; optical all frames, BVH at most 240 sampled frames, format topology probe on 3 sampled poses; full time precision measured in selected windows"
+}
