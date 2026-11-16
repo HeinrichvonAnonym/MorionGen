@@ -38,6 +38,7 @@ def main():
           'head_thorax_anatomy':field('neutral model axes reused as segment convention; no independently supplied anatomical calibration found in registered assets','project_assumption'),
           'sources':sources}
     records['chois']['rest_recovery']=field('unknown sequence: median inverse FK offsets from current input, followed by bone-direction consistency gate','estimated_from_motion')
+    records['chois']['fitting_observation_names']=field('rename body wrists and extra hand points together with their observation flags; an extra hand-point prior leaves the observed body wrist available','deterministic_conversion')
     for method in ['motionlcm','omnicontrol','chois']:
         records[method]['controlled_fixture_shape']=field('controlled exporter reuses the PRIMAL SMPL22 rest asset; this is an experimental fixture, not this generator\'s supplied subject shape','project_convention')
     for method in ['motionlcm','omnicontrol']:
@@ -66,7 +67,7 @@ def main():
     records['collaborate']['translation']={'value':'animated position channels replace OFFSET on their axes; unanimated axes use OFFSET',
         'classification':'deterministic_conversion','sources':['https://raw.githubusercontent.com/blender/blender-addons/main/io_anim_bvh/import_bvh.py#L523',
         'https://bvhsdk.readthedocs.io/en/latest/_modules/bvhsdk/anim.html#Joints.getLocalTranslation']}
-    result={'version':'k3-conventions-2-bvh-absolute-channels','records':records,
+    result={'version':'k3-conventions-3-bvh-and-observation-names','records':records,
       'decisions':['Retain documented world/rotation conversions; do not estimate known axes from evaluated motion.',
                    'Retain uncertain anatomical correspondence as project assumption, not promoted by low controlled round-trip error.',
                    'Source rest basis and marker geometry give representation references, not independent per-vertebra anatomy.',

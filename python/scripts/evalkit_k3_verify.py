@@ -36,6 +36,9 @@ def main():
     for row in rows:
         if row['status']!='computed':continue
         if digest(row['reference'])!=row['identity']['reference_sha256']:identity_failures.append(row['id']+':reference')
+        for p,h in row['scoring_identity']['source_inputs'].items():
+            if p in inputs:assert inputs[p]==h
+            inputs[p]=h
         for variant in row['scores']:
             cell_counts[variant]=cell_counts.get(variant,0)+1
             receipt=read(a.out/'fits'/row['window_key']/row['method']/variant/'k3_receipt.json')
@@ -55,14 +58,14 @@ def main():
     scoring=read(cfg/'scoring_revision.json')
     assert scoring['completed']==summary['completed'] and scoring['windows']==82
     assert scoring['all_formats_share_original_window_lengths']
-    assert all(r.get('raw_metrics_identical') for r in scoring['records'] if r['status']=='rescored')
+    assert all(r.get('unfiltered_raw_metrics_identical') for r in scoring['records'] if r['status']=='rescored')
     actual=read(a.out/'actual_summary.json');assert len(actual)==8
     assert all(r['status']=='computed' and len(r['scores'])==4 for r in actual)
     chosen=read(ROOT/'config/evalkit_k_v3.json')
     assert chosen['selection']['summary_sha256']==digest(cfg/'results_summary.json')
     assert all(len(r['folds'])==10 for r in summary['methods'].values())
     tests=ROOT/'develop_logs/test_runs/20261116_k3/tests_final.log';log=tests.read_text()
-    count=int(re.search(r'Ran (\d+) tests',log)[1]);assert count>=52 and log.rstrip().endswith('OK')
+    count=int(re.search(r'Ran (\d+) tests',log)[1]);assert count>=53 and log.rstrip().endswith('OK')
     plans=subprocess.check_output(['git','diff',preservation['commit'],'--','plans'],cwd=ROOT,text=True)
     assert not plans
     visual=ROOT/'develop_logs/notes/20261116_k3_figures/visual_review.json'
@@ -79,7 +82,8 @@ def main():
         'corrected_input_parity':{'formats':len(parity),'maximum_difference':max(r['coordinate_max_abs_difference'] for r in parity)},
         'downstream_formats':len(downstream),'normalization_records':normalization['count'],
         'normalization_max_angle_change_deg':normalization['maximum_angle_change_deg'],
-        'original_window_lengths':{'common_to_all_formats':True,'maximum_length_correction_m':scoring['maximum_length_change_m'],'raw_scoring_unchanged':True},
+        'original_window_lengths':{'common_to_all_formats':True,'maximum_length_correction_m':scoring['maximum_length_change_m'],'unfiltered_raw_scoring_unchanged':True},
+        'observation_name_correction':{'format':'chois','records_with_support_change':scoring['support_changed_records']},
         'actual_fidelity_formats':len(actual),'tests':{'passed':count,'log':str(tests),'sha256':digest(tests)},
         'visual_review':review,'resource':{'max_cpu_workers':3,'numeric_threads_per_worker':1,'free_gib':free/1024**3,
             'corrected_output_gib':size/1024**3,'minimum_reserve_gib':80,

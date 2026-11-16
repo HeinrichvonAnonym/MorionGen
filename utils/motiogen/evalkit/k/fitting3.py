@@ -82,7 +82,7 @@ def fit_configured(run,work,mass,floor,config):
         cache.write_text(json.dumps(receipt,indent=2)+'\n')
         np.savez_compressed(work/'kinematics.npz',times=times,labels=labels,coordinates=coords,names=names,fitted=fitted,source=source,projected=projected)
     angle_limit=settings['quality_angle_deg'];position_limit=settings['quality_position_m']
-    prior=motion.provenance.get('degradation',{}).get('prior_joints',[])
+    prior=motion.legacy_prior_joints()
     quality=support(source,fitted,names,angle_limit,position_limit,prior)
     valid_cal=bool(receipt['calibration']['qualified']);angle_masks={k:v['angle_valid'] for k,v in quality.items()}
     spatial_masks={k:v['position_valid']&valid_cal for k,v in quality.items()}
@@ -105,6 +105,7 @@ def fit_configured(run,work,mass,floor,config):
         'position_valid_share':float(q['position_valid'].mean()),'elbow_p95_deg':float(np.nanpercentile(abs(q['elbow_bias_deg']),95)),
         'wrist_position_p95_m':float(np.nanpercentile(q['position_error_m'][:,2],95))} for s,q in arms.items()}
     receipt['arm_quality_scope']='final observed-input geometry fidelity; calibration and spatial gates apply to downstream arm_valid'
+    receipt['observation_name_mapping']={'aliases':motion.legacy_aliases(),'prior_joints_in_fitting_view':prior}
     cache.write_text(json.dumps(receipt,indent=2)+'\n')
     np.savez_compressed(work/'arm_quality.npz',times=times,**{s+'_'+k:v for s,q in arms.items() for k,v in q.items()})
     np.savez_compressed(work/'region_quality.npz',times=times,**{k+'_'+n:v for k,q in quality.items() for n,v in q.items()})

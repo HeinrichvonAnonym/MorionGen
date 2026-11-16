@@ -73,4 +73,6 @@ CoLLaboratE 的动画平移通道直接提供对应轴的局部位置；未动�
 
 `region_angle_valid` 表示对输入方向的保真；`region_registered_valid` 还要求合格直立标定；`region_position_valid` 检查配准位置。原始参考精度由验证中的 F−R 单独确定。下游力学支持取配准角度与位置条件的交集，下肢肌肉主结果再与残差条件相交，强制全帧结果单列。
 
+CHOIS 的 body wrist 与额外 hand point 分开保留。`Motion.legacy_aliases()` 同时用于拟合节点名和 `legacy_prior_joints()` 的观测标记；额外手点为先验时，已观测的 body wrist 继续支持手臂几何。对应 body wrist 本身为先验时，该侧手臂支持仍为 false。冻结拟合的轨迹保留，新的观测标记与原始窗口骨长评分由 `evalkit_k3_rescore.py` 单独生成，并检查未经掩码筛选的原始误差完全一致。
+
 缓存同时记录输入文件与内存视图、来源约定、投影策略、拟合参数、模型和实现哈希。四组消融固定读取 `config/evalkit_k3_20261116/experiment_config.json`，最终运行配置中的逐格式策略不会覆盖消融分组。开发名单、冻结检出及已使用留出的历史均独立保存；HYOID 保持原状。

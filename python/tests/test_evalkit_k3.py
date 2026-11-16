@@ -77,6 +77,20 @@ class BoneTests(unittest.TestCase):
         result=support(p,p,names,prior=['left_elbow'])
         self.assertFalse(result['left_arm']['angle_valid'].any())
         self.assertTrue(result['right_arm']['angle_valid'].all())
+    def test_extra_hand_prior_does_not_mask_observed_body_wrist(self):
+        from motiogen.evalkit.k.fitting3 import support
+        from motiogen.evalkit.k.export import target_template
+        names,rest,_=target_template('chois');names=names.copy()
+        names[20:]=['left_wrist_body','right_wrist_body'];names+=['left_wrist','right_wrist']
+        p=np.repeat(np.concatenate([rest,rest[[20,21]]])[None],3,axis=0)
+        m=Motion(p,names,np.arange(3)/30,'chois',provenance={'degradation':{'prior_joints':['left_wrist','right_wrist']}})
+        points,legacy_names,_=m.legacy()
+        self.assertEqual(legacy_names[20:24],['left_wrist','right_wrist','left_hand_point','right_hand_point'])
+        q=support(points,points,legacy_names,prior=m.legacy_prior_joints())
+        self.assertTrue(q['left_arm']['angle_valid'].all());self.assertTrue(q['right_arm']['angle_valid'].all())
+        m.provenance['degradation']['prior_joints'].append('left_wrist_body')
+        q=support(points,points,legacy_names,prior=m.legacy_prior_joints())
+        self.assertFalse(q['left_arm']['angle_valid'].any());self.assertTrue(q['right_arm']['angle_valid'].all())
     def test_support_thresholds_are_explicit(self):
         from motiogen.evalkit.k.fitting3 import support
         from motiogen.evalkit.k.export import target_template

@@ -59,15 +59,22 @@ class Motion:
             a=np.ascontiguousarray(value);h.update(str((a.shape,a.dtype.str)).encode());h.update(a.tobytes())
         return h.hexdigest()
 
+    def legacy_aliases(self):
+        rename={}
+        if 'left_wrist_body' in self.names:
+            rename.update(left_wrist='left_hand_point',right_wrist='right_hand_point',
+                          left_wrist_body='left_wrist',right_wrist_body='right_wrist')
+        if 'Spine' not in self.names:rename.update(spine1='Spine',spine3='Spine3')
+        return rename
+
+    def legacy_prior_joints(self):
+        rename=self.legacy_aliases()
+        return [rename.get(n,n) for n in self.provenance.get('degradation',{}).get('prior_joints',[])]
+
     def legacy(self):
         if not np.allclose(np.diff(self.times), 1/self.fps, rtol=1e-3, atol=1e-6):
             raise ValueError('Full-body fitting requires an explicitly resampled uniform clock')
-        names = self.names.copy()
-        if 'left_wrist_body' in names:
-            rename = {'left_wrist':'left_hand_point','right_wrist':'right_hand_point','left_wrist_body':'left_wrist','right_wrist_body':'right_wrist'}
-            names = [rename.get(n,n) for n in names]
-        if 'Spine' not in names:
-            names = [{'spine1':'Spine','spine3':'Spine3'}.get(n,n) for n in names]
+        rename=self.legacy_aliases();names=[rename.get(n,n) for n in self.names]
         return self.positions, names, self.fps
 
 
