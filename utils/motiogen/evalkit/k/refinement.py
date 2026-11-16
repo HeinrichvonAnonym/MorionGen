@@ -6,6 +6,15 @@ from .geometry import unit
 
 
 def refine(model_path,motion,times,labels,data,settings):
+    if settings.get('rescue_after_baseline',False):
+        baseline=dict(settings,rescue_after_baseline=False,interior_rescue=False,
+                      max_nfev=settings['baseline_max_nfev'])
+        initial,first=refine(model_path,motion,times,labels,data,baseline)
+        rescue=dict(settings,rescue_after_baseline=False)
+        result,second=refine(model_path,motion,times,labels,initial,rescue)
+        second['baseline_pass']=first
+        second['strategy']='baseline_then_input_only_interior_rescue'
+        return result,second
     import opensim as osim
     import biomech
     model=osim.Model(str(model_path));state=model.initSystem();cs=model.getCoordinateSet()
@@ -51,6 +60,12 @@ def refine(model_path,motion,times,labels,data,settings):
             candidates=[(float(initial@initial),x0)]
             seeds=[x0]
             if group in previous:seeds.append(np.clip(previous[group],lo,hi))
+            # Opt-in development rescue: interior starts avoid a boundary seed's
+            # tiny trust region. All ranking uses the observed input only.
+            rescue=settings.get('interior_rescue',False) and group.endswith(('arm','leg'))
+            if rescue and float(initial@initial)>.01:
+                rng=np.random.default_rng(1729)
+                seeds.extend(lo+(hi-lo)*f for f in rng.uniform(.15,.85,(6,len(x0))))
             # Prefer the better observed-input seed; retry the other only for a large residual.
             seeds.sort(key=lambda x:float(residual(x)@residual(x)))
             for seed_index,seed in enumerate(seeds):

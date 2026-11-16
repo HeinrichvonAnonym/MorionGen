@@ -80,3 +80,7 @@ CHOIS 的 body wrist 与额外 hand point 分开保留。`Motion.legacy_aliases(
 缓存同时记录输入文件与内存视图、来源约定、投影策略、拟合参数、模型和实现哈希。四组消融固定读取 `config/evalkit_k3_20261116/experiment_config.json`，最终运行配置中的逐格式策略不会覆盖消融分组。开发名单、冻结检出及已使用留出的历史均独立保存；HYOID 保持原状。
 
 本轮八路最终配置均选择方向优化与原输入，开发结果和局部失败见[阶段报告](/home/heinrich/MorionGen/develop_logs/notes/20261116_evalkit_k3_alignment.md)。受控输入的固定骨长使投影接近恒等变换，少数结果仍存在非线性求解敏感性；真实输出的随帧骨长变化及投影位移另表保存。逐部位保真掩码继续约束下游支持范围，完整固定评分窗口用于原始参考验收。
+
+## K3.1 局部求解救援
+
+显式配置 `config/evalkit_k_v3_1.json` 在七路格式上先执行原 K3，再按输入残差启动确定性内部多初值搜索；两个阶段使用同一模型范围。CLoSD 保留原 K3，原因是本轮候选的完整窗口角速度误差增加。典型开发动作及已知失败窗口的验收、时序限制见[开发报告](/home/heinrich/MorionGen/develop_logs/notes/20261116_evalkit_k3_rescue.md)。Kimodo 跪姿继续保留部分支持状态；当前默认入口及 K3 配置均保持原值。

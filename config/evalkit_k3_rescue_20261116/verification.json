@@ -1,0 +1,18 @@
+{
+  "status": "passed_with_documented_limits",
+  "protected_files_unchanged": 35,
+  "new_holdout_runs": 0,
+  "frozen_commit": "2bbbd42",
+  "tests_passed": 54,
+  "tail_windows": 8,
+  "typical_windows": 8,
+  "full_tail_ablation_cells": 24,
+  "runtime_composition": "exact coordinate and position equality, full Kimodo window",
+  "visual_review": "all eight temporal overlays inspected; CLoSD boundary transient and Kimodo late-window change retained",
+  "figure_sha256": "ea4cc475692736f38e2446f6cce47113119e9e0dbc5a22a5260ca8a418abf114",
+  "free_gib": 831.9807662963867,
+  "code_sha256": {
+    "utils/motiogen/evalkit/k/refinement.py": "ba751124fd5685cde7b94805128360d98e52dd2c094c641805466728c78bfe27",
+    "python/scripts/evalkit_k3_rescue_accept.py": "ab75f4e38bcf58b635fdca4044cc7e21fef51fb6e0346584f0fe4dabe021075f"
+  }
+}
