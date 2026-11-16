@@ -111,6 +111,16 @@ def load(source, method=None, config=None):
                 q = q.copy(); q[~good] = [0,0,0,1]
                 r = Rotation.from_quat(q.reshape(-1,4)).as_matrix().reshape(*q.shape[:-1],3,3); r[~good] = np.nan
                 rn = [str(n) for n in a['body_names']]
+    native_position_file=native_y and not (method=='primal' and 'joint_names' in m)
+    position_contract={'units':'m','axes':'Y-up' if native_position_file else 'right-handed Z-up',
+                       'origin':'source_native_format' if native_position_file else 'project_canonical_archive',
+                       'declared_metadata':{k:meta[k] for k in ['axes','units'] if k in meta}}
+    if settings.get('convention_registry'):
+        if meta.get('units') not in (None,'m'):
+            raise ValueError('K3 selected format expects metres; declared units require a separate conversion config')
+        expected={'Y-up','right-handed Y-up'} if native_position_file else {'Z-up','right-handed Z-up'}
+        if meta.get('axes') is not None and meta['axes'] not in expected:
+            raise ValueError('K3 selected format and declared position axes disagree')
     if not native_y:
         p = np.asarray(p) @ Y_TO_Z
         if r is not None: r = np.einsum('ij,tkjl->tkil',Y_TO_Z.T,r)
@@ -119,14 +129,15 @@ def load(source, method=None, config=None):
     times = np.asarray(m.get('times',m.get('timestamps',np.arange(len(p))/fps)),float)
     motion = Motion(p,names,times,method,r,rn,{'inputs':{str(x.resolve()):digest(x) for x in used},
                   'orientation_source':'native' if r is not None else 'unavailable',
-                  'anatomical_calibration':'native_segment_axes_only', 'axes':'right-handed Y-up','units':'m'})
+                  'anatomical_calibration':'native_segment_axes_only', 'axes':'right-handed Y-up','units':'m',
+                  'source_position_contract':position_contract})
     sidecar = file.parent/'k_provenance.json'
     if sidecar.exists():
         declared = json.loads(sidecar.read_text())
         motion.provenance['degradation'] = declared
         motion.provenance['inputs'][str(sidecar.resolve())] = digest(sidecar)
     from .calibration import model_basis
-    bases,receipt=model_basis(motion,src if src.is_dir() else src.parent)
+    bases,receipt=model_basis(motion,src if src.is_dir() else src.parent,config=settings)
     motion.provenance['calibration']=receipt
     if bases is not None:motion.provenance['model_bases']={k:v.tolist() for k,v in bases.items()}
     registry = settings.get('convention_registry')

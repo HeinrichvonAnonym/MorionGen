@@ -150,12 +150,23 @@ def resolve(row):
     return source, ref, float(floor), bool(free)
 
 
+def k_config_key(row):
+    """Opt-in K3 receipt also hashes native sidecars and the selected implementation."""
+    if not row.get('k_config'):
+        return {}
+    from evalkit.k import load
+    from evalkit.k.config import resolve_config, implementation_key
+    config=resolve_config(row['k_config'])
+    return {'k_config':config,'k_inputs':load(resolve(row)[0],row['method'],config=config).provenance['inputs'],
+            'k_implementation':implementation_key()}
+
+
 def key(row, dims, offset_reference=None):
     from evalkit.fit import PREPARE
     from evalkit.spec import SPEC
     source = resolve(row)[0]
     return {'input_sha256': sha256(input_file(source)), 'dims': list(dims), 'spec_version': SPEC['version'], 'fit_prepare': PREPARE,
-            'contact_margin_m': SPEC['residual']['contact_margin_m'], 'offset_reference_m': offset_reference}
+            'contact_margin_m': SPEC['residual']['contact_margin_m'], 'offset_reference_m': offset_reference, **k_config_key(row)}
 
 
 def offset_job(task):
@@ -167,11 +178,11 @@ def offset_job(task):
         from evalkit import run
         from evalkit.fit import PREPARE
         source, _, floor, _ = resolve(row)
-        k = {'input_sha256': sha256(input_file(source)), 'fit_prepare': PREPARE, 'floor_m': floor, 'mass_kg': row.get('mass_kg', 75.)}
+        k = {'input_sha256': sha256(input_file(source)), 'fit_prepare': PREPARE, 'floor_m': floor, 'mass_kg': row.get('mass_kg', 75.), **k_config_key(row)}
         path = out/'foot_offset.json'
         if path.exists() and json.loads(path.read_text()).get('key') == k:
             return row['id'], 'skip'
-        d = run.foot_offset(source, out/'work', k['mass_kg'], floor)[0]
+        d = run.foot_offset(source, out/'work', k['mass_kg'], floor, k_config=row.get('k_config'))[0]
         path.write_text(json.dumps({'key': k, 'foot_offset_m': d}))
         return row['id'], 'ok'
     except Exception as e:
@@ -227,7 +238,7 @@ def job(task):
                 (out/'evalkit.json').write_text(json.dumps(rec, indent=1))
                 return row['id'], 'ok_added_' + '_'.join(sorted(added))
         run.evaluate(source, out, floor, ref, row.get('mass_kg', 75.), method=row['method'], dims=dims, object_free=free,
-                     reach_task=row.get('reach_task'), offset_reference=offset_reference)
+                     reach_task=row.get('reach_task'), offset_reference=offset_reference, k_config=row.get('k_config'))
         rec = json.loads((out/'evalkit.json').read_text())
         rec['batch'] = k; rec['row'] = row
         (out/'evalkit.json').write_text(json.dumps(rec, indent=1))

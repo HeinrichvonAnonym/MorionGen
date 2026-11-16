@@ -48,4 +48,46 @@ class BoneTests(unittest.TestCase):
         scores,_=compare(reference,degraded,{'a':degraded,'b':degraded},fits,np.arange(3)/30,{'a':{},'b':{}})
         for v in fits:
             self.assertEqual(scores[v]['raw']['angles']['left_elbow_flexion']['end_to_end']['valid'],2)
+    def test_independent_closd_upright_and_world_handedness(self):
+        from motiogen.evalkit.k.calibration import UPRIGHT
+        from motiogen.motion import Y_TO_Z
+        # The upstream upright start is a 120-degree cyclic x/y/z permutation.
+        expected=Rotation.from_rotvec(np.ones(3)*(2*np.pi/3)/np.sqrt(3)).as_matrix()
+        np.testing.assert_allclose(UPRIGHT,expected,atol=1e-12)
+        self.assertAlmostEqual(np.linalg.det(Y_TO_Z),1.)
+        np.testing.assert_allclose(np.array([0.,1.,0.])@Y_TO_Z.T,[0,0,1])
+    def test_prior_body_points_cannot_gain_support(self):
+        from motiogen.evalkit.k.fitting3 import support
+        from motiogen.evalkit.k.export import target_template
+        names,rest,_=target_template('primal');p=np.repeat(rest[None],3,axis=0)
+        result=support(p,p,names,prior=['left_elbow'])
+        self.assertFalse(result['left_arm']['angle_valid'].any())
+        self.assertTrue(result['right_arm']['angle_valid'].all())
+    def test_support_thresholds_are_explicit(self):
+        from motiogen.evalkit.k.fitting3 import support
+        from motiogen.evalkit.k.export import target_template
+        names,rest,_=target_template('primal');p=np.repeat(rest[None],3,axis=0);q=p.copy();q[:,:,0]+=.05
+        loose=support(p,q,names,position_limit=.1);strict=support(p,q,names,position_limit=.01)
+        self.assertTrue(loose['left_arm']['position_valid'].all())
+        self.assertFalse(strict['left_arm']['position_valid'].any())
+        np.testing.assert_array_equal(loose['left_arm']['angle_valid'],strict['left_arm']['angle_valid'])
+    def test_declared_source_axes_must_match_selected_format(self):
+        import tempfile,json
+        from motiogen.evalkit.k.motion import load
+        with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs') as folder:
+            path=Path(folder)/'motion.npz'
+            np.savez(path,joints=np.zeros((3,2,3)),joint_names=['a','b'],fps=20.,
+                     metadata_json=json.dumps({'baseline':'motionlcm','axes':'Y-up','units':'m'}))
+            with self.assertRaisesRegex(ValueError,'axes disagree'):load(path,config='config/evalkit_k_v3.json')
+            np.savez(path,joints=np.zeros((3,2,3)),joint_names=['a','b'],fps=20.,
+                     metadata_json=json.dumps({'baseline':'motionlcm','units':'cm'}))
+            with self.assertRaisesRegex(ValueError,'expects metres'):load(path,config='config/evalkit_k_v3.json')
+    def test_k3_muscle_primary_respects_spatial_support(self):
+        from motiogen.evalkit.run import muscle_split
+        frames={'times':np.array([0.,1.,2.]),'muscle_times':np.array([0.,1.,2.]),
+            'muscle_effort':np.array([1.,5.,9.]),'residual_positive':np.array([False,False,True]),'residual_bw':np.array([0.,0.,2.])}
+        self.assertEqual(muscle_split(frames)['primary_frames'],2)
+        frames['k_force_eligible']=np.array([True,False,True]);r=muscle_split(frames)
+        self.assertEqual(r['primary_frames'],1);self.assertEqual(r['primary_muscle_effort_sum_a2_mean'],1.)
+        self.assertEqual(r['forced_frames'],3);self.assertEqual(r['forced_muscle_effort_sum_a2_mean'],5.)
 if __name__=='__main__':unittest.main()

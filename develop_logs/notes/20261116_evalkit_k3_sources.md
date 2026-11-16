@@ -22,3 +22,9 @@ CoLLaboratE 发布页确认 BVH 格式及站立、坐姿、跪姿等任务定义
 Han 的原始标记与模型估计结果分离遵循 B3D 的输入／处理阶段结构。[Nimble 官方说明](https://nimblephysics.org/docs/working-with-addbiomechanics-data.html)
 
 已保存 K2 独立检出与冻结文件哈希。HYOID 及旧配置、留出使用记录保持原值。全量几何核查和八路拟合另附结果，不把本表的来源审计作为精度验收。
+
+八份真实样例进一步区分了上游约定与交付文件：MotionLCM、OmniControl、ARDY、CHOIS、CLoSD、DART 的公共归档均明确声明米制、右手 Z-up；PRIMAL 和 Kimodo 的原生文件沿用各自格式约定，再进入 K 的右手 Y-up 内部坐标。公共归档声明属于项目适配层，不能倒推为发布者对原始模型的全部定义。[逐样例契约与上游版本](/home/heinrich/MorionGen/config/evalkit_k3_20261116/source_contract_checks.json)保存这两个层次及输入哈希。K3 对文件中明确声明的轴或单位冲突给出错误，缺少声明的旧文件继续使用登记的格式契约。
+
+Kimodo 原生 SOMA77 骨架资产与之前复用的 ARDY SOMA77 资产哈希相同，且与冻结标定资源一致。[资产核查](/home/heinrich/MorionGen/config/evalkit_k3_20261116/source_asset_checks.json)确认了这处复用的依据。CHOIS 当前真实样例走的是逐输入逆 FK 回推，保留为估计来源；DART 真实样例的上身骨方向一致性 P95 为 3.73°，其余五种原生旋转样例为约 0.052°或更低。这些量检验模型坐标与输入几何的匹配，解剖轴精度仍需独立证据。
+
+全量轻量检查中的 7 条丝织记录具有异常根平移，源文件幅值从约 601,289 米到 (6.30\times10^{35}) 米。将这些世界坐标转为 float32 又会损失肢体尺度的差异。先在原生局部层级去掉根平移，再进行双精度 FK，可保留有限的局部姿态；世界轨迹、地面和接触依据继续受限。这 7 条保持在全量登记中，固定拟合名单维持原值。[逐条诊断](/home/heinrich/MorionGen/config/evalkit_k3_20261116/excluded_source_quality.json)记录原始根范围、浮点误差和局部姿态状态。

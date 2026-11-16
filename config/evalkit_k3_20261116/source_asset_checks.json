@@ -1,0 +1,17 @@
+{
+  "kimodo_native": {
+    "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/kimodo/kimodo/assets/skeletons/somaskel77/joints.p",
+    "sha256": "dc5fd8e39e0ff312f5d0f536a87ac22ac58445e13443fcb8ab54e6817cb97ce7"
+  },
+  "ardy_soma77": {
+    "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/ardy/ardy/assets/skeletons/somaskel77/joints.p",
+    "sha256": "dc5fd8e39e0ff312f5d0f536a87ac22ac58445e13443fcb8ab54e6817cb97ce7"
+  },
+  "ardy_cskel27": {
+    "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/ardy/ardy/assets/skeletons/cskel27/joints.p",
+    "sha256": "5e1d60cb1935c2ea50c6978848697d83efde5621cbbc287891ddae3ba55dde61"
+  },
+  "kimodo_same_as_reused_asset": true,
+  "kimodo_matches_frozen_calibration": true,
+  "ardy_matches_frozen_calibration": true
+}

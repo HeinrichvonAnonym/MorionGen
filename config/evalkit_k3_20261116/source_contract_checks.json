@@ -1,0 +1,314 @@
+{
+  "scope": "registered actual versions only; schema metadata belongs to project adapters when canonicalized",
+  "classification_policy": {
+    "source": "来源明确给出",
+    "conversion": "按来源公式确定性转换",
+    "estimation": "从几何或动作估计",
+    "project": "项目自行约定",
+    "unknown": "尚未确定"
+  },
+  "handedness_scope": "canonical schema explicitly declares right handed; algebraic basis transforms have determinant +1; this does not define anatomical segment axes",
+  "records": {
+    "motionlcm": {
+      "sample": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_motionlcm_demo_ab0c550d/motion.npz",
+      "upstream_revision": "81c06368c17b056713deef2e9f6483f3172eea42",
+      "source_file_sha256": "ed6ad469ec9d359a2a96b9b239c17c6acd99b484665e33a9e72ff270f00c0983",
+      "native_definition": {
+        "value": "HumanML22 positions; reconstructed root quaternion wxyz; independent terminal head rotation absent",
+        "classification": "source_code"
+      },
+      "delivered_position_contract": {
+        "units": "m",
+        "axes": "right-handed Z-up",
+        "origin": "project_canonical_archive",
+        "declared_metadata": {
+          "axes": "right-handed Z-up",
+          "units": "m"
+        }
+      },
+      "internal_position_contract": {
+        "axes": "right-handed Y-up",
+        "units": "m",
+        "classification": "项目自行约定"
+      },
+      "world_conversion": {
+        "value": "left multiply rotations and rotate position vectors by the same proper Y/Z basis transform; preserve local axes",
+        "classification": "按来源公式确定性转换"
+      },
+      "source_asset_basis": {
+        "status": "source_orientation_unavailable",
+        "rest_geometry": null,
+        "bone_direction_p95_deg": null,
+        "anatomical_correspondence": "尚未确定"
+      },
+      "native_rotation": false,
+      "input_sha256": {
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_motionlcm_demo_ab0c550d/motion.npz": "93c2713cc7e7357a5c772561e8f8e46aea349e935e2c2b068331f028f4442145",
+        "/home/heinrich/MorionGen/config/evalkit_k3_20261116/conventions.json": "a430305ae9a818377f388fe8dace2004b6b2237baa5d3d5e02fd94b019363bea"
+      }
+    },
+    "omnicontrol": {
+      "sample": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_omnicontrol_demo_5d316f25/motion.npz",
+      "upstream_revision": "76336a6e78f074f3ba7059643414b91a1eced9f2",
+      "source_file_sha256": "88e0299c8cd599166665a1923be9bbd3eb1667c7b7bb5a63ce325d3b35741edc",
+      "native_definition": {
+        "value": "HumanML263 RIC decoding; root quaternion wxyz; rotation features derived from retained positions in controlled export",
+        "classification": "source_code"
+      },
+      "delivered_position_contract": {
+        "units": "m",
+        "axes": "right-handed Z-up",
+        "origin": "project_canonical_archive",
+        "declared_metadata": {
+          "axes": "right-handed Z-up",
+          "units": "m"
+        }
+      },
+      "internal_position_contract": {
+        "axes": "right-handed Y-up",
+        "units": "m",
+        "classification": "项目自行约定"
+      },
+      "world_conversion": {
+        "value": "left multiply rotations and rotate position vectors by the same proper Y/Z basis transform; preserve local axes",
+        "classification": "按来源公式确定性转换"
+      },
+      "source_asset_basis": {
+        "status": "source_orientation_unavailable",
+        "rest_geometry": null,
+        "bone_direction_p95_deg": null,
+        "anatomical_correspondence": "尚未确定"
+      },
+      "native_rotation": false,
+      "input_sha256": {
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_omnicontrol_demo_5d316f25/motion.npz": "5bf4699d1903fb6e10bf6931c166b35062e13512e65d405ba167180a36bfc487",
+        "/home/heinrich/MorionGen/config/evalkit_k3_20261116/conventions.json": "a430305ae9a818377f388fe8dace2004b6b2237baa5d3d5e02fd94b019363bea"
+      }
+    },
+    "ardy": {
+      "sample": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_033337_ardy_demo_892762b0/motion.npz",
+      "upstream_revision": "693f74d13b3d04a0a22ce127ee79c929dd89756b",
+      "source_file_sha256": "646a495330548dbaca4911bf02fef33bec8b09e90da939161fc4258a7db843d4",
+      "native_definition": {
+        "value": "SOMA/cskel27 local and global matrices, world acts on neutral offsets",
+        "classification": "source_code"
+      },
+      "delivered_position_contract": {
+        "units": "m",
+        "axes": "right-handed Z-up",
+        "origin": "project_canonical_archive",
+        "declared_metadata": {
+          "axes": "right-handed Z-up",
+          "units": "m"
+        }
+      },
+      "internal_position_contract": {
+        "axes": "right-handed Y-up",
+        "units": "m",
+        "classification": "项目自行约定"
+      },
+      "world_conversion": {
+        "value": "left multiply rotations and rotate position vectors by the same proper Y/Z basis transform; preserve local axes",
+        "classification": "按来源公式确定性转换"
+      },
+      "source_asset_basis": {
+        "status": "model_rest_convention_supported",
+        "rest_geometry": "source_model_asset",
+        "bone_direction_p95_deg": 3.889685520297381e-05,
+        "anatomical_correspondence": "尚未确定"
+      },
+      "native_rotation": true,
+      "input_sha256": {
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_033337_ardy_demo_892762b0/motion.npz": "d2cf131ba187ff12999a3d3f531ac03baaf1a584ff3ac50b65ba28107b158f36",
+        "/home/heinrich/MorionGen/config/evalkit_k3_20261116/conventions.json": "a430305ae9a818377f388fe8dace2004b6b2237baa5d3d5e02fd94b019363bea"
+      }
+    },
+    "chois": {
+      "sample": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_030212_chois_demo_99afcd3a/motion.npz",
+      "upstream_revision": "8ec585aa0200fd2a890ffb12897bcf69ae719463",
+      "source_file_sha256": "2792f6d962a7354a76b110ece0cda9162f686e2c9bcb42b6c77c06fd5afc9618",
+      "native_definition": {
+        "value": "SMPL body22 global matrices plus two extra hand positions",
+        "classification": "source_code"
+      },
+      "delivered_position_contract": {
+        "units": "m",
+        "axes": "right-handed Z-up",
+        "origin": "project_canonical_archive",
+        "declared_metadata": {
+          "axes": "right-handed Z-up",
+          "units": "m"
+        }
+      },
+      "internal_position_contract": {
+        "axes": "right-handed Y-up",
+        "units": "m",
+        "classification": "项目自行约定"
+      },
+      "world_conversion": {
+        "value": "left multiply rotations and rotate position vectors by the same proper Y/Z basis transform; preserve local axes",
+        "classification": "按来源公式确定性转换"
+      },
+      "source_asset_basis": {
+        "status": "model_rest_convention_supported",
+        "rest_geometry": "per_run_inverse_fk",
+        "bone_direction_p95_deg": 4.634661282976956e-05,
+        "anatomical_correspondence": "尚未确定"
+      },
+      "native_rotation": true,
+      "input_sha256": {
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_030212_chois_demo_99afcd3a/motion.npz": "4a25a104f39db3b940ccb3437113aaeecfd69726fb8229561beaa4b2e15e6817",
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_030212_chois_demo_99afcd3a/raw/native_prediction.npz": "5c69653a2d30db406d467f52af1d770d8433ccec3ad6ebb3c0339dea5711f337",
+        "/home/heinrich/MorionGen/config/evalkit_k3_20261116/conventions.json": "a430305ae9a818377f388fe8dace2004b6b2237baa5d3d5e02fd94b019363bea"
+      }
+    },
+    "closd": {
+      "sample": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024631_closd_demo_228a80ac/motion.npz",
+      "upstream_revision": "d8950bdb78312fcd2844f336b3fc079e7368c87f",
+      "source_file_sha256": "7ca65bf74197e50804d24ea5b20edb3c57747662e5b85fe41d954faeff45c8cc",
+      "native_definition": {
+        "value": "Isaac rigid-body world xyzw; upright-start rest frame differs from SMPL neutral",
+        "classification": "source_code"
+      },
+      "delivered_position_contract": {
+        "units": "m",
+        "axes": "right-handed Z-up",
+        "origin": "project_canonical_archive",
+        "declared_metadata": {
+          "axes": "right-handed Z-up",
+          "units": "m"
+        }
+      },
+      "internal_position_contract": {
+        "axes": "right-handed Y-up",
+        "units": "m",
+        "classification": "项目自行约定"
+      },
+      "world_conversion": {
+        "value": "left multiply rotations and rotate position vectors by the same proper Y/Z basis transform; preserve local axes",
+        "classification": "按来源公式确定性转换"
+      },
+      "source_asset_basis": {
+        "status": "model_rest_convention_supported",
+        "rest_geometry": "source_model_asset",
+        "bone_direction_p95_deg": 0.051839420202183586,
+        "anatomical_correspondence": "尚未确定"
+      },
+      "native_rotation": true,
+      "input_sha256": {
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024631_closd_demo_228a80ac/motion.npz": "31699779ab2d3ad830e5fc7426f85c72562fd66472d254bd87403f8a6c20e38f",
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024631_closd_demo_228a80ac/native_physics.npz": "251bf2625e833bb17882c48b4f3b371972fb2ce0842641ccd5dd1428feeb0ae7",
+        "/home/heinrich/MorionGen/config/evalkit_k3_20261116/conventions.json": "a430305ae9a818377f388fe8dace2004b6b2237baa5d3d5e02fd94b019363bea"
+      }
+    },
+    "dart": {
+      "sample": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024521_dart_demo_61174897/motion.npz",
+      "upstream_revision": "bb67ae1ed6ce051080468bf15bc6e54a6c3f8417",
+      "source_file_sha256": "ec20124b489cf9f084fd13186190ba9376139f3366e3d33e4194c9906d8899dd",
+      "native_definition": {
+        "value": "SMPL-X global root and 21 local rotation matrices; FK parent multiplication",
+        "classification": "source_code"
+      },
+      "delivered_position_contract": {
+        "units": "m",
+        "axes": "right-handed Z-up",
+        "origin": "project_canonical_archive",
+        "declared_metadata": {
+          "axes": "right-handed Z-up",
+          "units": "m"
+        }
+      },
+      "internal_position_contract": {
+        "axes": "right-handed Y-up",
+        "units": "m",
+        "classification": "项目自行约定"
+      },
+      "world_conversion": {
+        "value": "left multiply rotations and rotate position vectors by the same proper Y/Z basis transform; preserve local axes",
+        "classification": "按来源公式确定性转换"
+      },
+      "source_asset_basis": {
+        "status": "model_rest_convention_supported",
+        "rest_geometry": "source_model_asset",
+        "bone_direction_p95_deg": 3.7315801484396682,
+        "anatomical_correspondence": "尚未确定"
+      },
+      "native_rotation": true,
+      "input_sha256": {
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024521_dart_demo_61174897/motion.npz": "076f8c35b08ec01cca57234a869d29a7fa8f0307687b30a7f26034b49549c648",
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024521_dart_demo_61174897/smplx_params.npz": "84caf9ac4ec6fee46471149692e0e590cd2d3a3563d97eb075be6101ce970376",
+        "/home/heinrich/MorionGen/config/evalkit_k3_20261116/conventions.json": "a430305ae9a818377f388fe8dace2004b6b2237baa5d3d5e02fd94b019363bea"
+      }
+    },
+    "primal": {
+      "sample": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024734_primal_demo_0b5f7d4b/factorial/ground1_reproject0_inertialize1.npz",
+      "upstream_revision": "4aa889d3bbe20a6c1ba181425c58e4aadf636128",
+      "source_file_sha256": "7d96b5763643c75ba2bfb80d26b8028d4c8ac2b21eeb8c9049df6569d9e42c20",
+      "native_definition": {
+        "value": "SMPL-X translation plus root and body axis-angle; two controlled history frames excluded",
+        "classification": "source_code"
+      },
+      "delivered_position_contract": {
+        "units": "m",
+        "axes": "Y-up",
+        "origin": "source_native_format",
+        "declared_metadata": {}
+      },
+      "internal_position_contract": {
+        "axes": "right-handed Y-up",
+        "units": "m",
+        "classification": "项目自行约定"
+      },
+      "world_conversion": {
+        "value": "left multiply rotations and rotate position vectors by the same proper Y/Z basis transform; preserve local axes",
+        "classification": "按来源公式确定性转换"
+      },
+      "source_asset_basis": {
+        "status": "model_rest_convention_supported",
+        "rest_geometry": "source_model_asset",
+        "bone_direction_p95_deg": 4.190932469075981e-05,
+        "anatomical_correspondence": "尚未确定"
+      },
+      "native_rotation": true,
+      "input_sha256": {
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024734_primal_demo_0b5f7d4b/factorial/ground1_reproject0_inertialize1.npz": "706e0f918c40c6c4421c88f4cf3e2c1b4fcd89799ce58c5389a1161a53bf6c8c",
+        "/home/heinrich/MorionGen/config/evalkit_k3_20261116/conventions.json": "a430305ae9a818377f388fe8dace2004b6b2237baa5d3d5e02fd94b019363bea"
+      }
+    },
+    "kimodo": {
+      "sample": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/benchmarks/kimodo-stratified-20261008/generated_raw/content/constraints_notext/end-effectors/feet_posrot/0014/motion.npz",
+      "upstream_revision": "58e781898b3d7e328a676a75d3e338c45dce3ad9",
+      "source_file_sha256": "93abc68cecbfe3ac4193550cf5dbf2abfdb2d108e8b7677352b9e892cfa32403",
+      "native_definition": {
+        "value": "SOMA77 local/global matrices with neutral-offset FK; per-asset names and parents",
+        "classification": "source_code"
+      },
+      "delivered_position_contract": {
+        "units": "m",
+        "axes": "Y-up",
+        "origin": "source_native_format",
+        "declared_metadata": {}
+      },
+      "internal_position_contract": {
+        "axes": "right-handed Y-up",
+        "units": "m",
+        "classification": "项目自行约定"
+      },
+      "world_conversion": {
+        "value": "left multiply rotations and rotate position vectors by the same proper Y/Z basis transform; preserve local axes",
+        "classification": "按来源公式确定性转换"
+      },
+      "source_asset_basis": {
+        "status": "model_rest_convention_supported",
+        "rest_geometry": "source_model_asset",
+        "bone_direction_p95_deg": 4.047127882869148e-05,
+        "anatomical_correspondence": "尚未确定"
+      },
+      "native_rotation": true,
+      "input_sha256": {
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/benchmarks/kimodo-stratified-20261008/generated_raw/content/constraints_notext/end-effectors/feet_posrot/0014/motion.npz": "7ced4f5cdd63c7ca93e5177dffa8a71860aebcec976a57b9fd9fec779a950999",
+        "/home/heinrich/MorionGen/config/evalkit_k3_20261116/conventions.json": "a430305ae9a818377f388fe8dace2004b6b2237baa5d3d5e02fd94b019363bea"
+      }
+    }
+  }
+}
