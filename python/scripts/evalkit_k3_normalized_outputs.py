@@ -42,7 +42,8 @@ def one(row):
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,required=True);ap.add_argument('--workers',type=int,default=3);a=ap.parse_args()
     if shutil.disk_usage(a.out).free<80*1024**3:raise ValueError('80 GiB reserve required')
-    paths=list((a.out/'fits').glob('*/*/result.json'));rows=[json.loads(p.read_text()) for p in paths];rows=[r for r in rows if r['status']=='computed']
+    paths=json.loads((ROOT/'config/evalkit_k3_20261116/results_summary.json').read_text())['result_paths']
+    rows=[json.loads(Path(p).read_text()) for p in paths];rows=[r for r in rows if r['status']=='computed']
     with ProcessPoolExecutor(max_workers=a.workers) as pool:results=list(pool.map(one,rows))
     result={'scope':'scorer-only reference lengths; normalized artifacts do not enter fitting','records':results,
         'count':len(results),'maximum_angle_change_deg':max(r['angle_invariance_max_deg'] for r in results),

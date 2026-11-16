@@ -50,7 +50,8 @@ def process(source,method,out,calibration=None,fit=False,mass=75.,floor=0.,predi
     if fit:
         from motiogen.evalkit.k.fitting import fit as fit_body
         try:
-            fitted=fit_body(source,out/'fit',mass,floor,config=settings)
+            # Keep the explicitly selected format and decoded native sidecars.
+            fitted=fit_body(motion,out/'fit',mass,floor,config=settings)
         except (ValueError,RuntimeError) as error:
             rec['fit']={'status':'unavailable','reason':str(error)}
         else:

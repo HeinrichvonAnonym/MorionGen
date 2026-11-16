@@ -79,6 +79,11 @@ def build(rows,expected):
             for metric in paired[0]['scores'][variant]['raw']['angles']:
                 output['angles'][metric]={stage:{stat:participant_mean(paired,lambda r:r['scores'][variant]['raw']['angles'][metric][stage][stat]) for stat in ['median_abs','p95_abs','signed_bias','within_5','within_10','within_20','coverage']}
                     for stage in ['degradation','fit_deviation','end_to_end','projection','fit_after_projection','supported_end_to_end']}
+            output['directions']={}
+            for bone in paired[0]['scores'][variant]['raw']['directions']:
+                output['directions'][bone]={stage:{stat:participant_mean(paired,lambda r:r['scores'][variant]['raw']['directions'][bone][stage][stat])
+                    for stat in ['median_abs','p95_abs','within_5','within_10','within_20','coverage']}
+                    for stage in ['degradation','fit_deviation','end_to_end','projection','fit_after_projection']}
             for joint in ['left_wrist','right_wrist','left_foot','right_foot','pelvis_mid']:
                 output['positions'][joint]={space:{stage:participant_mean(paired,lambda r:r['scores'][variant][space]['positions'][joint][stage]['world']['p95_abs']) for stage in ['degradation','fit_deviation','end_to_end','projection','fit_after_projection']}
                                             for space in ['raw','normalized']}
@@ -118,10 +123,11 @@ def build(rows,expected):
 
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,required=True);ap.add_argument('--partial',action='store_true');a=ap.parse_args()
-    exports=json.loads((a.out/'exports.json').read_text());paths=list((a.out/'fits').glob('*/*/result.json'));rows=[json.loads(p.read_text()) for p in paths]
+    ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,required=True);ap.add_argument('--partial',action='store_true')
+    ap.add_argument('--score-file',default='result_original_lengths.json',choices=['result_original_lengths.json','result.json']);a=ap.parse_args()
+    exports=json.loads((a.out/'exports.json').read_text());paths=list((a.out/'fits').glob('*/*/'+a.score_file));rows=[json.loads(p.read_text()) for p in paths]
     if not a.partial and len(rows)!=len(exports):raise ValueError(f'Incomplete: {len(rows)}/{len(exports)}')
-    result=build(rows,len(exports));result['partial']=a.partial;result['result_paths']=[str(p) for p in paths]
+    result=build(rows,len(exports));result['partial']=a.partial;result['result_paths']=[str(p) for p in paths];result['score_file']=a.score_file
     dest=ROOT/'config/evalkit_k3_20261116'/('partial_summary.json' if a.partial else 'results_summary.json');dest.write_text(json.dumps(result,indent=2,allow_nan=False)+'\n')
     print('records',len(rows),'expected',len(exports))
     for m,r in result['methods'].items():print(m,r['paired_records'],r['selected'],r['selection_scores'])

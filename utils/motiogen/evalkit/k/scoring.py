@@ -50,10 +50,12 @@ def contact(points,times,floor=0.):
     return result
 
 
-def compare(reference,degraded,projected,fits,times,supports,floor=0.):
+def compare(reference,degraded,projected,fits,times,supports,floor=0.,reference_lengths=None):
     """All arguments common-tree positions, all variants share physical times and masks."""
     raw={'R':reference,'D':degraded,**{f'P:{k}':v for k,v in projected.items()},**{f'F:{k}':v for k,v in fits.items()}}
-    target=lengths(reference);norm={k:normalize(v,target) for k,v in raw.items()}
+    target=lengths(reference) if reference_lengths is None else np.asarray(reference_lengths,float)
+    if target.shape!=(len(NAMES),):raise ValueError('Reference lengths must follow the common evaluation skeleton')
+    norm={k:normalize(v,target) for k,v in raw.items()}
     result={};arrays={'times':times,'names':NAMES,'reference_lengths':target,**raw}
     for variant in fits:
         result[variant]={'raw':{},'normalized':{},'coverage':{},'contact':{k:contact(raw[k],times,floor) for k in ['R','D','P:'+variant,'F:'+variant]}}

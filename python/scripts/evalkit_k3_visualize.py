@@ -77,8 +77,10 @@ def overview(summary,path):
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,required=True);ap.add_argument('--dest',type=Path,required=True);ap.add_argument('--preview',action='store_true');a=ap.parse_args();a.dest.mkdir(parents=True,exist_ok=True)
-    rows=[json.loads(p.read_text()) for p in (a.out/'fits').glob('*/*/result.json')];rows=[r for r in rows if r['status']=='computed' and len(r['scores'])==4]
-    summary={} if a.preview else json.loads((ROOT/'config/evalkit_k3_20261116/results_summary.json').read_text())['methods']
+    aggregate={} if a.preview else json.loads((ROOT/'config/evalkit_k3_20261116/results_summary.json').read_text())
+    paths=(a.out/'fits').glob('*/*/result.json') if a.preview else [Path(p) for p in aggregate['result_paths']]
+    rows=[json.loads(p.read_text()) for p in paths];rows=[r for r in rows if r['status']=='computed' and len(r['scores'])==4]
+    summary={} if a.preview else aggregate['methods']
     chosen=[]
     for method in sorted({r['method'] for r in rows}):
         pool=sorted([r for r in rows if r['method']==method],key=lambda r:record_score(r,'legacy_raw'))

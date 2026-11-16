@@ -56,6 +56,20 @@ class BoneTests(unittest.TestCase):
         np.testing.assert_allclose(UPRIGHT,expected,atol=1e-12)
         self.assertAlmostEqual(np.linalg.det(Y_TO_Z),1.)
         np.testing.assert_allclose(np.array([0.,1.,0.])@Y_TO_Z.T,[0,0,1])
+    def test_scoring_uses_original_window_lengths_independent_of_query_clock(self):
+        from motiogen.evalkit.k.bones import common
+        from motiogen.evalkit.k.export import target_template
+        from motiogen.evalkit.k.scoring import compare
+        names,rest,_=target_template('primal');reference=common(np.repeat(rest[None],3,axis=0),names)
+        yaw=np.array([[0.,0.,1.],[0.,1.,0.],[-1.,0.,0.]])
+        degraded=(reference-reference[:,:1])@yaw.T+reference[:,:1]
+        args=(reference,degraded,{'a':degraded},{'a':degraded},np.arange(3)/30,{'a':{}})
+        before,_=compare(*args);after,arrays=compare(*args,reference_lengths=2*lengths(reference))
+        self.assertEqual(before['a']['raw'],after['a']['raw'])
+        first=before['a']['normalized']['positions']['left_wrist']['end_to_end']['world']['p95_abs']
+        second=after['a']['normalized']['positions']['left_wrist']['end_to_end']['world']['p95_abs']
+        self.assertAlmostEqual(second,2*first)
+        np.testing.assert_array_equal(arrays['reference_lengths'],2*lengths(reference))
     def test_prior_body_points_cannot_gain_support(self):
         from motiogen.evalkit.k.fitting3 import support
         from motiogen.evalkit.k.export import target_template
@@ -122,4 +136,21 @@ class BoneTests(unittest.TestCase):
             second=source_hashes(path)
             self.assertNotEqual(first,second)
             self.assertEqual(first[str((path/'motion.npz').resolve())],second[str((path/'motion.npz').resolve())])
+    def test_cli_fit_keeps_explicit_method_for_generic_legacy_filename(self):
+        import tempfile
+        from unittest.mock import patch
+        from motiogen.evalkit.k.export import target_template
+        from motiogen.motion import Y_TO_Z
+        sys.path.insert(0,str(ROOT/'python/scripts'))
+        from evalkit_k import process
+        names,rest,_=target_template('motionlcm');seen=[]
+        def check_view(value,*args,**kwargs):
+            self.assertIsInstance(value,Motion);seen.append(value.method)
+            raise ValueError('test intercept before IK')
+        with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs') as folder:
+            path=Path(folder);source=path/'generic.npz'
+            np.savez(source,joints=np.repeat((rest@Y_TO_Z.T)[None],3,axis=0),joint_names=names,fps=20.)
+            with patch('motiogen.evalkit.k.fitting.fit',side_effect=check_view):
+                result=process(source,'motionlcm',path/'output',fit=True,config='config/evalkit_k_v3.json')
+            self.assertEqual(seen,['motionlcm']);self.assertEqual(result['fit']['reason'],'test intercept before IK')
 if __name__=='__main__':unittest.main()

@@ -58,7 +58,8 @@ def aggregate(rows):
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,required=True);ap.add_argument('--workers',type=int,default=3);a=ap.parse_args()
-    controlled=[json.loads(p.read_text()) for p in (a.out/'fits').glob('*/*/result.json')]
+    paths=json.loads((ROOT/'config/evalkit_k3_20261116/results_summary.json').read_text())['result_paths']
+    controlled=[json.loads(Path(p).read_text()) for p in paths]
     controlled=[r for r in controlled if r['status']=='computed']
     actual=[r for r in json.loads((a.out/'actual_summary.json').read_text()) if r['status']=='computed']
     with ProcessPoolExecutor(max_workers=a.workers) as pool:

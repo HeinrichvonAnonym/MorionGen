@@ -1,8 +1,8 @@
-# K v1：运动读取、姿态与可测性
+# Evalkit K：运动读取、姿态、可测性与版本
 
-内部统一为米、右手 Y-up，保留输入秒时钟。Andy 原始 Z-up 通过正交旋转转换；头胸段统一采用解剖右侧、上方、后方三轴，前屈为该坐标下负 X 旋转。`load(source, method)` 返回 `Motion`，`evaluate(motion)` 返回头、胸、颈以及位置支持的躯干、膝、肘、大腿和颈头连线指标。完整三维旋转与一条骨方向分别表达；颈头连线不能提供头部的独立轴向旋转。
+内部统一为米、右手 Y-up，保留输入秒时钟。Andy 的 Z-up 导入约定通过正交旋转转换；头胸标记框架由项目按右侧、上方、后方三轴构建，前屈在此约定下为负 X 旋转，人体解剖对应另记证据。`load(source, method)` 返回 `Motion`，`evaluate(motion)` 返回头、胸、颈以及位置支持的躯干、膝、肘、大腿和颈头连线指标。完整三维旋转与一条骨方向分别表达；颈头连线描述单轴方向，头部独立轴向旋转需要额外观测。
 
-八个格式入口和帧率在 `config/evalkit_k_v1.json`；模型中立几何及历史来源哈希在 `config/evalkit_k_calibration/`。读取器按实际字段识别可用旋转：CLoSD 旧记录缺少刚体四元数、DART 旧记录缺少参数时保留位置指标。PRIMAL 原生 Y-up 与公共 Z-up 文件分别处理。
+默认配置为 `config/evalkit_k_v2.json`；K1 的八格式定义保留在 `config/evalkit_k_v1.json`，K3 由 `config/evalkit_k_v3.json` 显式选择。模型中立几何及历史来源哈希在 `config/evalkit_k_calibration/`。读取器按实际字段识别可用旋转：CLoSD 旧记录缺少刚体四元数、DART 旧记录缺少参数时保留位置指标。PRIMAL 原生 Y-up 与公共 Z-up 文件分别处理。
 
 ## 输出状态
 
@@ -52,3 +52,25 @@ FBLS/HYOID 的资源位置统一由 `motiogen.model_resources` 读取 `config/bi
 三个目标格式同时计算关节中心原范围、关节中心扩展范围、注册标记原范围候选，以最终滤波坐标中角度和位置共同合格的帧比例择优，再以手臂位置 RMSE 区分。候选失败单独保存，有效候选可继续；全部失败时返回拟合不可用。`receipt.arm_selection` 给出规则、候选分数及所选模型，`arm_candidates/` 保留各候选路径。该选择只使用当前输入几何，全身标定有效性仍独立判断。
 
 原范围候选保留原 IK 初始化；仅扩展范围候选使用首帧连续初始化。注册标记候选用于保留某些直臂姿态的稳定解，同样接受最终源几何检验。全部手臂统计基于 100 Hz 最终坐标，绘图可另行抽样。
+
+## K3：显式约定、两种骨长视图与全身方向拟合
+
+`load(..., config=...)`、`evaluate(..., config=...)` 与 `k.fitting.fit(..., config=...)` 使用独立配置。CLI 加 `--config config/evalkit_k_v3.json`；统一 evalkit 的 `evaluate()` 传 `k_config`，批量 manifest 每行可指定 `k_config`。无显式配置的既有入口继续使用 K2。CLI 把已按 `--method` 解码的 `Motion` 传给拟合器，通用旧文件名也能保留所选格式。
+
+| 文件 | 职责 |
+| --- | --- |
+| `motion.py`、`calibration.py` | 原生字段、确定性轴转换、模型资产及估计来源 |
+| `reference_bvh.py` | CoLLaboratE 参考的平移通道语义；独立于拟合器 |
+| `bones.py` | 公共评价骨架；输入骨长投影与评分骨长归一 |
+| `fitting3.py`、`refinement.py` | 拟合视图、全身方向优化、逐部位支持和缓存 |
+| `scoring.py` | 原始参考下的 D−R、F−D、F−R；投影 P−D 与 F−P |
+
+CoLLaboratE 的动画平移通道直接提供对应轴的局部位置；未动画的轴采用 OFFSET。K3 显式使用 `absolute_channels` 和双精度 FK。共享 BVH 读取器保留原 `offset_plus_channel` 默认行为，使旧结果可在原检出复现。米制比例及 Y-up 的依据、共用胸段静止基底等项目假设记录在 K3 的来源证据表中。
+
+`Motion.positions` 保留原始输入。拟合前投影仅使用当前输入逐段长度中位数；头胸旋转继续取原始字段。参考骨长只进入评分器调用的 `bones.normalize`，拟合器的接口不接收参考。结果保留 `source`、`projected`、`fitted` 三份几何；独立的评分产物再保存 R、D、P、F 的统一骨长视图。公共根定义为双髋中点，另报去根平移的位置差异。
+
+方向优化以输入骨段方向为主，保留较弱的位置、连续性和初值项，20 Hz 求解后插值到 100 Hz；最终坐标经 OpenSim FK 评分。距下关节等模型既有锁定继续保留。轴向转动和解剖关节角的解释仍取决于可观测性及段定义。
+
+`region_angle_valid` 表示对输入方向的保真；`region_registered_valid` 还要求合格直立标定；`region_position_valid` 检查配准位置。原始参考精度由验证中的 F−R 单独确定。下游力学支持取配准角度与位置条件的交集，下肢肌肉主结果再与残差条件相交，强制全帧结果单列。
+
+缓存同时记录输入文件与内存视图、来源约定、投影策略、拟合参数、模型和实现哈希。四组消融固定读取 `config/evalkit_k3_20261116/experiment_config.json`，最终运行配置中的逐格式策略不会覆盖消融分组。开发名单、冻结检出及已使用留出的历史均独立保存；HYOID 保持原状。

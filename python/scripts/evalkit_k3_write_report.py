@@ -19,13 +19,14 @@ def main():
     if summary.get('partial'):raise ValueError('A partial experiment cannot become the completed report')
     actual={r['method']:r for r in json.loads((a.out/'actual_summary.json').read_text())}
     spatial=json.loads((cfg/'spatial_effects_summary.json').read_text())
+    revision=json.loads((cfg/'scoring_revision.json').read_text())
     selection=json.loads((cfg/'selection.json').read_text())['records'];rows=[json.loads(Path(p).read_text()) for p in summary['result_paths']]
     lines=['# Evalkit K3：来源约定、统一骨长对照与姿态优化','',
       '本轮检验的是：原始动作经过八种格式退化，再由 evalkit 拟合后，姿态信息保留到什么程度；骨长变化和姿态拟合各自带来了什么误差。验收参考始终来自退化前的原始 BVH。Andy/Han 的独立光学证据限定在头胸，身体模板保留先验属性。',
       '', '首要发现是原始参考的读取约定：CoLLaboratE 的平移通道已提供局部位置，原实现再次加上 OFFSET，使典型站立记录的关节点垂直跨度从约 1.53 米变为 3.06 米。K3 已按独立导入器支持的通道语义修正，并重新生成全部受控输入。此前较大的位置差异包含读取误差，原先主要归为骨长差异的解释需要修正。',
-      '', '本报告中的求解改善均比较修正后同一批输入上的原拟合与方向优化。旧冻结结果、原留出使用记录及此次被替代的 166 个结果文件全部保留；参考修正与求解改善分别登记。[来源修正证据](/home/heinrich/MorionGen/config/evalkit_k3_20261116/reference_translation_correction.json)',
+      '', '本报告中的求解改善均比较修正后同一批输入上的原拟合与方向优化。旧冻结结果、原留出使用记录及此次被替代的 166 个结果文件全部保留；参考修正与求解改善分别登记。旧 CoLLaboratE 数值继续归属原读取约定，K3 的验收采用修正后的开发对照。[来源修正证据](/home/heinrich/MorionGen/config/evalkit_k3_20261116/reference_translation_correction.json)',
       '',f'已登记全量轻量检查 1,670 条开发资料；固定 {len(selection)} 个原始动作窗口、{len({r["group_id"] for r in selection})} 个参与者组，覆盖八种格式与四种拟合设置。本轮完成 {summary["completed"]}/{summary["expected_exports"]} 个窗口×格式结果，失败 {summary["failed"]} 个。每个结果保留各设置的成功／失败状态。',
-      '', '配置选择以按人聚合的端到端姿态角 P95 为主。每条记录先计算各角度 P95，再按骨盆、躯干、左右臂、左右腿六个部位等权汇总，最后按人等权。表中的“角度 P95 汇总”采用这一口径，区别于把所有帧混合后取一次 P95。',
+      '', '配置选择以按人聚合的端到端几何角 P95 为主，包括骨盆线与躯干倾斜、抬臂、肘膝屈曲、髋躯干夹角及足部链条角。每条记录先计算各角度 P95，再按骨盆、躯干、左右臂、左右腿六个部位等权汇总，最后按人等权。表中的“角度 P95 汇总”采用这一口径，区别于把所有帧混合后取一次 P95。三维骨方向和独立段旋转另列，保留对朝向变化的检查。',
       '', '| 格式 | 配对窗口 | 选定设置 | K2 角度 P95 汇总 → K3 / ° | 留人折基准 → 选型 / ° | 工业迁移基准 → K3 / ° |',
       '| --- | ---: | --- | ---: | ---: | ---: |']
     for m in METHODS:
@@ -43,8 +44,17 @@ def main():
             parts.append(' / '.join(fmt(float(np.mean([v['regions'][r][s] for r in regs]))) for s in ['degradation','fit_deviation','end_to_end']))
         lines.append('| '+m+' | '+' | '.join(parts)+' |')
     lines+=['','双侧在上表等权汇总；逐侧、骨盆、足部及每条记录的中位数、P95、系统偏差和 5°／10°／20°覆盖均保存在结果中。三个工程精度档用于解释表示误差，生物力学解释还依赖各指标的观测与轴定义。范数、P95 和旋转距离分别统计；误差向量可能相互抵消，因而不将三个 P95 相加。',
-      '', '## 骨长：评分归一与输入投影分别回答问题','',
-      '评分端把 R、D、F 按各自骨方向重建到原始窗口的共同分段中位长度，左右侧分别保留，公共评价骨架以双髋中点为根，保持各自根运动；另报去根平移的位置误差。参考骨长只进入评分器。输入投影则只使用 D 的逐段长度中位数，按原生层级建立固定骨长视图，头胸原生旋转继续来自原输入。',
+      '', '三维骨方向的夹角保留世界朝向差异，补充仅由屈曲量或倾斜量构成的几何角。下表为端到端方向 P95 汇总，左右取较大值；一条骨方向提供两个姿态分量，绕该骨自身的轴向转动由独立段旋转证据限定。',
+      '', '| 格式 | 躯干 / ° | 上臂 / ° | 前臂 / ° | 大腿 / ° | 小腿 / ° | 足部 / ° |',
+      '| --- | ---: | ---: | ---: | ---: | ---: | ---: |']
+    for m in METHODS:
+        e=methods[m];d=e['variants'][e['selected']]['directions']
+        values=[d['shoulder_mid']['end_to_end']['p95_abs']]
+        values += [max(d[s+'_'+joint]['end_to_end']['p95_abs'] for s in ['left','right']) for joint in ['elbow','wrist','knee','ankle','foot']]
+        lines.append('| '+m+' | '+' | '.join(fmt(x) for x in values)+' |')
+    lines+=['', '## 骨长：评分归一与输入投影分别回答问题','',
+      '评分端把 R、D、F 按各自骨方向重建到原始采样窗口的共同分段中位长度，左右侧分别保留，同一窗口的八种格式共用同一组骨长。公共评价骨架以双髋中点为根，保持各自根运动；另报去根平移的位置误差。参考骨长只进入评分器。输入投影则只使用 D 的逐段长度中位数，按原生层级建立固定骨长视图，头胸原生旋转继续来自原输入。',
+      '', f'评分复查将骨长统计范围从各格式的重采样参考窗口统一为原始采样窗口，最大分段长度修正为 {revision["maximum_length_change_m"]*1000:.3f} 毫米。原四组拟合及初始评分文件保留，{revision["completed"]} 组重评分的原始几何指标与支持掩码逐项一致，配置选择依据保持原值。[评分修订记录](/home/heinrich/MorionGen/config/evalkit_k3_20261116/scoring_revision.json)',
       '', '| 格式 | 原拟合：投影关 → 开，° | 优化拟合：投影关 → 开，° | 投影造成的手部世界位移 P95 / cm |',
       '| --- | ---: | ---: | ---: |']
     for m in METHODS:
@@ -153,7 +163,7 @@ def main():
       '- 原始／退化／投影／拟合叠加图：`develop_logs/notes/20261116_k3_figures`，同时保留典型、高基准误差、退化及任务覆盖案例。',
       f'- 大产物目录：`{a.out}`。CPU 工作进程最多 3 个、数值库单线程；磁盘余量底线 80 GiB。',
       '', '单条入口：`python python/scripts/evalkit_k.py --source INPUT --method METHOD --out OUTPUT --fit --config config/evalkit_k_v3.json`。统一 evalkit Python 入口传 `k_config`；批处理 manifest 每行可指定 `"k_config":"config/evalkit_k_v3.json"`。既有 K2 默认入口和历史结果保留。',
-      '', '复跑顺序：`evalkit_k3_audit.py light/prepare` → 冻结检出的 `evalkit_k3_experiment.py` → `evalkit_k3_report.py` → `evalkit_k3_select.py` → `evalkit_k3_actual.py` / `evalkit_k3_regression.py`。复跑已有实验应使用其冻结检出和独立产物目录，避免把当前实现写入旧缓存。','']
+      '', '复跑顺序：`evalkit_k3_audit.py light/prepare` → 冻结检出的 `evalkit_k3_experiment.py` → `evalkit_k3_rescore.py` → `evalkit_k3_report.py` → `evalkit_k3_select.py` → `evalkit_k3_actual.py` / `evalkit_k3_regression.py`。`evalkit_k3_finish.py` 串行执行拟合完成后的重评分、选型、归一检查、空间变化、回归与绘图。复跑已有实验应使用其冻结检出和独立产物目录，避免把当前实现写入旧缓存。','']
     target=ROOT/'develop_logs/notes/20261116_evalkit_k3_alignment.md';target.write_text('\n'.join(lines));print(target)
 
 if __name__=='__main__':main()

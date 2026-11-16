@@ -18,6 +18,7 @@ def main():
         status.write_text(json.dumps({'status':'waiting_for_experiment','updated':time.time()}))
         time.sleep(20)
     commands=[
+        ('rescore',['evalkit_k3_rescore.py','--out',str(a.out),'--workers','3']),
         ('summary',['evalkit_k3_report.py','--out',str(a.out)]),
         ('selection',['evalkit_k3_select.py']),
         ('normalization',['evalkit_k3_normalized_outputs.py','--out',str(a.out),'--workers','3']),
