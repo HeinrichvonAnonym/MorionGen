@@ -8,7 +8,7 @@ ROOT=Path(__file__).resolve().parents[2]
 
 
 def one(task):
-    mode,row,out,core=task
+    mode,row,out,core=task;core=core.resolve()
     sys.path[:0]=[str(core/'utils'),str(core/'utils/motiogen')]
     method=row['method'];folder=out/mode/method;folder.mkdir(parents=True,exist_ok=True)
     started=time.monotonic()

@@ -1,6 +1,6 @@
 # Evalkit K：运动读取、姿态、可测性与版本
 
-内部统一为米、右手 Y-up，保留输入秒时钟。Andy 的 Z-up 导入约定通过正交旋转转换；头胸标记框架由项目按右侧、上方、后方三轴构建，前屈在此约定下为负 X 旋转，人体解剖对应另记证据。`load(source, method)` 返回 `Motion`，`evaluate(motion)` 返回头、胸、颈以及位置支持的躯干、膝、肘、大腿和颈头连线指标。完整三维旋转与一条骨方向分别表达；颈头连线描述单轴方向，头部独立轴向旋转需要额外观测。
+内部统一为米、右手 Y-up，保留输入秒时钟。Andy 的 Z-up 导入约定通过正交旋转转换；头胸标记框架由项目按右侧、上方、后方三轴构建，前屈在此约定下为负 X 旋转，人体解剖对应另记证据。`load(source, method)` 返回 `Motion`，`evaluate(motion)` 返回头、胸、颈以及位置支持的躯干、膝、肘、大腿和颈头连线指标。完整三维旋转与一条骨方向分别表达；颈头连线的空间方向提供两个自由度，头部绕该连线的独立转动需要额外观测。
 
 默认配置为 `config/evalkit_k_v2.json`；K1 的八格式定义保留在 `config/evalkit_k_v1.json`，K3 由 `config/evalkit_k_v3.json` 显式选择。模型中立几何及历史来源哈希在 `config/evalkit_k_calibration/`。读取器按实际字段识别可用旋转：CLoSD 旧记录缺少刚体四元数、DART 旧记录缺少参数时保留位置指标。PRIMAL 原生 Y-up 与公共 Z-up 文件分别处理。
 
@@ -78,3 +78,5 @@ CoLLaboratE 的动画平移通道直接提供对应轴的局部位置；未动�
 CHOIS 的 body wrist 与额外 hand point 分开保留。`Motion.legacy_aliases()` 同时用于拟合节点名和 `legacy_prior_joints()` 的观测标记；额外手点为先验时，已观测的 body wrist 继续支持手臂几何。对应 body wrist 本身为先验时，该侧手臂支持仍为 false。冻结拟合的轨迹保留，新的观测标记与原始窗口骨长评分由 `evalkit_k3_rescore.py` 单独生成，并检查未经掩码筛选的原始误差完全一致。
 
 缓存同时记录输入文件与内存视图、来源约定、投影策略、拟合参数、模型和实现哈希。四组消融固定读取 `config/evalkit_k3_20261116/experiment_config.json`，最终运行配置中的逐格式策略不会覆盖消融分组。开发名单、冻结检出及已使用留出的历史均独立保存；HYOID 保持原状。
+
+本轮八路最终配置均选择方向优化与原输入，开发结果和局部失败见[阶段报告](/home/heinrich/MorionGen/develop_logs/notes/20261116_evalkit_k3_alignment.md)。受控输入的固定骨长使投影接近恒等变换，少数结果仍存在非线性求解敏感性；真实输出的随帧骨长变化及投影位移另表保存。逐部位保真掩码继续约束下游支持范围，完整固定评分窗口用于原始参考验收。

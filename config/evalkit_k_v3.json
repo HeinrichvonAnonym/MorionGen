@@ -1,5 +1,5 @@
 {
-  "version": "k-3-corrected-bvh-development",
+  "version": "k-3-corrected-bvh-development-selected",
   "angle_tiers_deg": [
     5,
     10,
@@ -116,7 +116,48 @@
     "max_nfev": 35,
     "refinement_hz": 20,
     "quality_angle_deg": 10.0,
-    "quality_position_m": 0.1
+    "quality_position_m": 0.1,
+    "per_method": {
+      "ardy": {
+        "strategy": "direction_refinement",
+        "projection": false
+      },
+      "chois": {
+        "strategy": "direction_refinement",
+        "projection": false
+      },
+      "closd": {
+        "strategy": "direction_refinement",
+        "projection": false
+      },
+      "dart": {
+        "strategy": "direction_refinement",
+        "projection": false
+      },
+      "kimodo": {
+        "strategy": "direction_refinement",
+        "projection": false
+      },
+      "motionlcm": {
+        "strategy": "direction_refinement",
+        "projection": false
+      },
+      "omnicontrol": {
+        "strategy": "direction_refinement",
+        "projection": false
+      },
+      "primal": {
+        "strategy": "direction_refinement",
+        "projection": false
+      }
+    }
   },
-  "reference_contract": "config/evalkit_k3_20261116/reference_translation_correction.json"
+  "reference_contract": "config/evalkit_k3_20261116/reference_translation_correction.json",
+  "selection": {
+    "scope": "development selection, no new final holdout",
+    "rule": "config/evalkit_k3_20261116/selection_rule.json",
+    "summary_sha256": "cf757b3791353a461c42a4893f97d81da97d6f5084df4cc4861f145d20a2efc1",
+    "experiment_commit": "147afeebd1656080abd658a9c7be6803f826642d",
+    "default_compatibility": "K2 remains default; choose this config explicitly"
+  }
 }

@@ -7,7 +7,7 @@ ROOT=Path(__file__).resolve().parents[2]
 
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,required=True);ap.add_argument('--wait-pid',type=int)
-    ap.add_argument('--experiment-log',type=Path,required=True);a=ap.parse_args()
+    ap.add_argument('--experiment-log',type=Path,required=True);ap.add_argument('--start-at',default='rescore');a=ap.parse_args()
     logs=ROOT/'develop_logs/test_runs/20261116_k3';status=a.out/'postprocess_status.json'
     while a.wait_pid:
         with a.experiment_log.open('rb') as f:
@@ -26,10 +26,19 @@ def main():
         ('parity_corrected',['evalkit_k3_regression.py','parity','--out',str(a.out),'--core-root',str(a.out/'k2_checkout'),'--workers','3']),
         ('head_reuse_corrected',['evalkit_k3_head_reuse.py','--out',str(a.out)]),
         ('downstream',['evalkit_k3_regression.py','downstream','--out',str(a.out),'--workers','3']),
+        ('tails',['evalkit_k3_tails.py']),
         ('figures',['evalkit_k3_visualize.py','--out',str(a.out),'--dest',str(ROOT/'develop_logs/notes/20261116_k3_figures')]),
         ('report',['evalkit_k3_write_report.py','--out',str(a.out)]),
     ]
-    results=[]
+    stages=[stage for stage,_ in commands]
+    if a.start_at not in stages:raise ValueError('Unknown stage: '+a.start_at)
+    start=stages.index(a.start_at);results=[]
+    if start:
+        previous=json.loads(status.read_text())['completed']
+        results=previous[:start]
+        if [r['stage'] for r in results]!=stages[:start] or any(r['returncode'] for r in results):
+            raise ValueError('Earlier stages must have completed successfully before resuming')
+    commands=commands[start:]
     for stage,args in commands:
         status.write_text(json.dumps({'status':'running','stage':stage,'completed':results,'updated':time.time()},indent=2))
         with (logs/(stage+'.log')).open('w') as log:

@@ -1,0 +1,2347 @@
+{
+  "preview": false,
+  "source_task_labels": "https://zenodo.org/records/6472155",
+  "overview": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/overview.png",
+  "figures": [
+    {
+      "id": "collaborate/LAB/EAWS/S6/S6P18R2.bvh",
+      "method": "ardy",
+      "variant": "optimized_raw",
+      "reason": "典型基准误差",
+      "focus_region": null,
+      "frame_s": 0.06,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/00_ardy_051.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/Gathering/S01/MCGAS01G01R05.bvh",
+      "method": "ardy",
+      "variant": "optimized_raw",
+      "reason": "最高基准误差",
+      "focus_region": null,
+      "frame_s": 0.66,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/01_ardy_075.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P21R3.bvh",
+      "method": "ardy",
+      "variant": "optimized_raw",
+      "reason": "最大退化／最小改善",
+      "focus_region": null,
+      "frame_s": 4.1,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/02_ardy_063.png",
+      "frame_rule": "largest within-record increase in trunk/left-right elbow/knee error; visualization only"
+    },
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R01.bvh",
+      "method": "chois",
+      "variant": "optimized_raw",
+      "reason": "典型基准误差",
+      "focus_region": null,
+      "frame_s": 5.0,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/03_chois_000.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh",
+      "method": "chois",
+      "variant": "optimized_raw",
+      "reason": "最高基准误差",
+      "focus_region": null,
+      "frame_s": 0.18,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/04_chois_074.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P21R3.bvh",
+      "method": "chois",
+      "variant": "optimized_raw",
+      "reason": "最大退化／最小改善",
+      "focus_region": null,
+      "frame_s": 4.18,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/05_chois_063.png",
+      "frame_rule": "largest within-record increase in trunk/left-right elbow/knee error; visualization only"
+    },
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R03.bvh",
+      "method": "closd",
+      "variant": "optimized_raw",
+      "reason": "典型基准误差",
+      "focus_region": null,
+      "frame_s": 4.78,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/06_closd_006.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/WeavingMediumSizeLoom/G01/SWMLS01G01R05.bvh",
+      "method": "closd",
+      "variant": "optimized_raw",
+      "reason": "最高基准误差",
+      "focus_region": null,
+      "frame_s": 0.01,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/07_closd_081.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S9/S9P16R3.bvh",
+      "method": "closd",
+      "variant": "optimized_raw",
+      "reason": "最大退化／最小改善",
+      "focus_region": null,
+      "frame_s": 0.67,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/08_closd_068.png",
+      "frame_rule": "largest within-record increase in trunk/left-right elbow/knee error; visualization only"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S2/S2P09R1.bvh",
+      "method": "dart",
+      "variant": "optimized_raw",
+      "reason": "典型基准误差",
+      "focus_region": null,
+      "frame_s": 0.13,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/09_dart_026.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S10/S10P25R3.bvh",
+      "method": "dart",
+      "variant": "optimized_raw",
+      "reason": "最高基准误差",
+      "focus_region": null,
+      "frame_s": 5.0,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/10_dart_022.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P21R3.bvh",
+      "method": "dart",
+      "variant": "optimized_raw",
+      "reason": "最大退化／最小改善",
+      "focus_region": null,
+      "frame_s": 4.13,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/11_dart_063.png",
+      "frame_rule": "largest within-record increase in trunk/left-right elbow/knee error; visualization only"
+    },
+    {
+      "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Beak_cutting/Trimming/GBBCS01G02R05.bvh",
+      "method": "kimodo",
+      "variant": "optimized_raw",
+      "reason": "典型基准误差",
+      "focus_region": null,
+      "frame_s": 4.99,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/12_kimodo_008.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S9/S9P27R3.bvh",
+      "method": "kimodo",
+      "variant": "optimized_raw",
+      "reason": "最高基准误差",
+      "focus_region": null,
+      "frame_s": 4.39,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/13_kimodo_069.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S7/S7P16R3.bvh",
+      "method": "kimodo",
+      "variant": "optimized_raw",
+      "reason": "最大退化／最小改善",
+      "focus_region": null,
+      "frame_s": 2.7800000000000002,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/14_kimodo_057.png",
+      "frame_rule": "largest within-record increase in trunk/left-right elbow/knee error; visualization only"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S7/S7P13R1.bvh",
+      "method": "motionlcm",
+      "variant": "optimized_raw",
+      "reason": "典型基准误差",
+      "focus_region": null,
+      "frame_s": 0.76,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/15_motionlcm_056.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh",
+      "method": "motionlcm",
+      "variant": "optimized_raw",
+      "reason": "最高基准误差",
+      "focus_region": null,
+      "frame_s": 0.19,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/16_motionlcm_074.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P21R3.bvh",
+      "method": "motionlcm",
+      "variant": "optimized_raw",
+      "reason": "最大退化／最小改善",
+      "focus_region": null,
+      "frame_s": 4.47,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/17_motionlcm_063.png",
+      "frame_rule": "largest within-record increase in trunk/left-right elbow/knee error; visualization only"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S4/S4P19R1.bvh",
+      "method": "omnicontrol",
+      "variant": "optimized_raw",
+      "reason": "典型基准误差",
+      "focus_region": null,
+      "frame_s": 0.5,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/18_omnicontrol_038.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh",
+      "method": "omnicontrol",
+      "variant": "optimized_raw",
+      "reason": "最高基准误差",
+      "focus_region": null,
+      "frame_s": 0.18,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/19_omnicontrol_074.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P21R3.bvh",
+      "method": "omnicontrol",
+      "variant": "optimized_raw",
+      "reason": "最大退化／最小改善",
+      "focus_region": null,
+      "frame_s": 4.55,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/20_omnicontrol_063.png",
+      "frame_rule": "largest within-record increase in trunk/left-right elbow/knee error; visualization only"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S5/S5P16R2.bvh",
+      "method": "primal",
+      "variant": "optimized_raw",
+      "reason": "典型基准误差",
+      "focus_region": null,
+      "frame_s": 0.07,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/21_primal_046.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh",
+      "method": "primal",
+      "variant": "optimized_raw",
+      "reason": "最高基准误差",
+      "focus_region": null,
+      "frame_s": 0.11,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/22_primal_074.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P21R3.bvh",
+      "method": "primal",
+      "variant": "optimized_raw",
+      "reason": "最大退化／最小改善",
+      "focus_region": null,
+      "frame_s": 1.59,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/23_primal_063.png",
+      "frame_rule": "largest within-record increase in trunk/left-right elbow/knee error; visualization only"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S10/S10P07R1.bvh",
+      "method": "motionlcm",
+      "variant": "optimized_raw",
+      "reason": "深弯腰任务",
+      "focus_region": null,
+      "frame_s": 1.3900000000000001,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/24_motionlcm_020.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S2/S2P19R2.bvh",
+      "method": "motionlcm",
+      "variant": "optimized_raw",
+      "reason": "座椅任务",
+      "focus_region": null,
+      "frame_s": 0.26,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/25_motionlcm_028.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S1/S1P13R3.bvh",
+      "method": "motionlcm",
+      "variant": "optimized_raw",
+      "reason": "举手过头任务",
+      "focus_region": null,
+      "frame_s": 0.53,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/26_motionlcm_015.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S1/S1P24R3.bvh",
+      "method": "motionlcm",
+      "variant": "optimized_raw",
+      "reason": "跪姿任务",
+      "focus_region": null,
+      "frame_s": 4.3100000000000005,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/27_motionlcm_017.png",
+      "frame_rule": "largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh",
+      "method": "ardy",
+      "variant": "optimized_raw",
+      "reason": "局部高误差：right_arm",
+      "focus_region": "right_arm",
+      "frame_s": 0.01,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/tail_ardy_073.png",
+      "frame_rule": "largest final sum of errors in the explicitly focused region; visualization only"
+    },
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R05.bvh",
+      "method": "chois",
+      "variant": "optimized_raw",
+      "reason": "局部高误差：left_arm",
+      "focus_region": "left_arm",
+      "frame_s": 2.05,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/tail_chois_001.png",
+      "frame_rule": "largest final sum of errors in the explicitly focused region; visualization only"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/WeavingMediumSizeLoom/G01/SWMLS01G01R05.bvh",
+      "method": "closd",
+      "variant": "optimized_raw",
+      "reason": "局部高误差：left_arm",
+      "focus_region": "left_arm",
+      "frame_s": 0.02,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/tail_closd_081.png",
+      "frame_rule": "largest final sum of errors in the explicitly focused region; visualization only"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R26.bvh",
+      "method": "dart",
+      "variant": "optimized_raw",
+      "reason": "局部高误差：right_arm",
+      "focus_region": "right_arm",
+      "frame_s": 0.86,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/tail_dart_080.png",
+      "frame_rule": "largest final sum of errors in the explicitly focused region; visualization only"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S9/S9P27R3.bvh",
+      "method": "kimodo",
+      "variant": "optimized_raw",
+      "reason": "局部高误差：right_leg",
+      "focus_region": "right_leg",
+      "frame_s": 4.32,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/tail_kimodo_069.png",
+      "frame_rule": "largest final sum of errors in the explicitly focused region; visualization only"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh",
+      "method": "motionlcm",
+      "variant": "optimized_raw",
+      "reason": "局部高误差：left_arm",
+      "focus_region": "left_arm",
+      "frame_s": 0.02,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/tail_motionlcm_073.png",
+      "frame_rule": "largest final sum of errors in the explicitly focused region; visualization only"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/Wiping/S02/MCWIS02G01R03.bvh",
+      "method": "omnicontrol",
+      "variant": "optimized_raw",
+      "reason": "局部高误差：left_arm",
+      "focus_region": "left_arm",
+      "frame_s": 0.04,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/tail_omnicontrol_077.png",
+      "frame_rule": "largest final sum of errors in the explicitly focused region; visualization only"
+    },
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R05.bvh",
+      "method": "primal",
+      "variant": "optimized_raw",
+      "reason": "局部高误差：left_arm",
+      "focus_region": "left_arm",
+      "frame_s": 1.99,
+      "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/tail_primal_001.png",
+      "frame_rule": "largest final sum of errors in the explicitly focused region; visualization only"
+    }
+  ],
+  "fast_head": {
+    "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/head_fast_turn.png",
+    "window_key": "080",
+    "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R26.bvh",
+    "selection": "maximum original native-window head angular speed p95; independent of fitting error",
+    "original_head_peak_deg_s": 2494.3690964613584,
+    "original_head_p95_deg_s": 160.22961318099928,
+    "peak_interval_s": [
+      0.0,
+      0.0111111
+    ],
+    "source_window_s": [
+      0.0,
+      4.7222175
+    ],
+    "root_displacement_in_peak_interval_m": 1.2456052134002973,
+    "scope": "native K orientations under the controlled segment convention, not anatomical neck validation",
+    "checks": [
+      {
+        "method": "ardy",
+        "head": {
+          "valid": 95,
+          "maximum_error_deg": 2.90474528980228
+        },
+        "neck": {
+          "valid": 95,
+          "maximum_error_deg": 2.9367866399065337
+        }
+      },
+      {
+        "method": "chois",
+        "head": {
+          "valid": 142,
+          "maximum_error_deg": 7.302491258411089
+        },
+        "neck": {
+          "valid": 142,
+          "maximum_error_deg": 7.367158811956903
+        }
+      },
+      {
+        "method": "closd",
+        "head": {
+          "valid": 142,
+          "maximum_error_deg": 7.302491258411103
+        },
+        "neck": {
+          "valid": 142,
+          "maximum_error_deg": 7.367158811956907
+        }
+      },
+      {
+        "method": "dart",
+        "head": {
+          "valid": 142,
+          "maximum_error_deg": 7.302491258411089
+        },
+        "neck": {
+          "valid": 142,
+          "maximum_error_deg": 7.367158811956905
+        }
+      },
+      {
+        "method": "kimodo",
+        "head": {
+          "valid": 142,
+          "maximum_error_deg": 7.302491258411091
+        },
+        "neck": {
+          "valid": 142,
+          "maximum_error_deg": 7.367158811956905
+        }
+      },
+      {
+        "method": "primal",
+        "head": {
+          "valid": 140,
+          "maximum_error_deg": 2.9047452898022867
+        },
+        "neck": {
+          "valid": 140,
+          "maximum_error_deg": 2.936786639906538
+        }
+      }
+    ],
+    "candidates": [
+      {
+        "p95": 21.13220303925627,
+        "peak": 29.006769964735064,
+        "peak_interval_index": 48,
+        "peak_interval_s": [
+          0.5333328,
+          0.5444439
+        ],
+        "window_key": "050",
+        "id": "collaborate/LAB/EAWS/S6/S6P13R3.bvh"
+      },
+      {
+        "p95": 59.84726343419794,
+        "peak": 69.66849665014303,
+        "peak_interval_index": 23,
+        "peak_interval_s": [
+          0.2555553,
+          0.2666664
+        ],
+        "window_key": "010",
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Body_blowing/GBBSS01G02R01.bvh"
+      },
+      {
+        "p95": 65.37082284902168,
+        "peak": 2282.3262601113456,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "059",
+        "id": "collaborate/LAB/EAWS/S8/S8P05R1.bvh"
+      },
+      {
+        "p95": 65.18079410835001,
+        "peak": 79.05981566234561,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "044",
+        "id": "collaborate/LAB/EAWS/S5/S5P09R2.bvh"
+      },
+      {
+        "p95": 85.4674276083134,
+        "peak": 92.66462965233846,
+        "peak_interval_index": 97,
+        "peak_interval_s": [
+          1.0777767,
+          1.0888878
+        ],
+        "window_key": "003",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P02R05.bvh"
+      },
+      {
+        "p95": 1.3546098189240436,
+        "peak": 6615.8667480739905,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "065",
+        "id": "collaborate/LAB/EAWS/S9/S9P01R1.bvh"
+      },
+      {
+        "p95": 160.22961318099928,
+        "peak": 2494.3690964613584,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "080",
+        "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R26.bvh"
+      },
+      {
+        "p95": 3.4102070268117166,
+        "peak": 7.421662658068901,
+        "peak_interval_index": 141,
+        "peak_interval_s": [
+          1.5666651,
+          1.5777762
+        ],
+        "window_key": "062",
+        "id": "collaborate/LAB/EAWS/S8/S8P16R3.bvh"
+      },
+      {
+        "p95": 130.76263574554548,
+        "peak": 146.23801769768843,
+        "peak_interval_index": 251,
+        "peak_interval_s": [
+          2.7888861,
+          2.7999972
+        ],
+        "window_key": "002",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P02R04.bvh"
+      },
+      {
+        "p95": 8.363059074043141,
+        "peak": 12.839369222712897,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "038",
+        "id": "collaborate/LAB/EAWS/S4/S4P19R1.bvh"
+      },
+      {
+        "p95": 8.7918753107882,
+        "peak": 10.31220657829097,
+        "peak_interval_index": 18,
+        "peak_interval_s": [
+          0.1999998,
+          0.21111090000000002
+        ],
+        "window_key": "020",
+        "id": "collaborate/LAB/EAWS/S10/S10P07R1.bvh"
+      },
+      {
+        "p95": 3.117960708882816,
+        "peak": 12441.785364206215,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "041",
+        "id": "collaborate/LAB/EAWS/S5/S5P01R1.bvh"
+      },
+      {
+        "p95": 10.083371277000346,
+        "peak": 15.892161129200726,
+        "peak_interval_index": 259,
+        "peak_interval_s": [
+          2.8777749,
+          2.8888860000000003
+        ],
+        "window_key": "046",
+        "id": "collaborate/LAB/EAWS/S5/S5P16R2.bvh"
+      },
+      {
+        "p95": 1.544996515561274,
+        "peak": 2.1783967854235047,
+        "peak_interval_index": 190,
+        "peak_interval_s": [
+          2.111109,
+          2.1222201000000003
+        ],
+        "window_key": "034",
+        "id": "collaborate/LAB/EAWS/S3/S3P15R3.bvh"
+      },
+      {
+        "p95": 1.586419843870944,
+        "peak": 14027.376602048558,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "053",
+        "id": "collaborate/LAB/EAWS/S7/S7P01R1.bvh"
+      },
+      {
+        "p95": 3.642865842447941,
+        "peak": 8.68728285717733,
+        "peak_interval_index": 492,
+        "peak_interval_s": [
+          4.92,
+          4.93
+        ],
+        "window_key": "048",
+        "id": "collaborate/LAB/EAWS/S6/S6P01R3.bvh"
+      },
+      {
+        "p95": 2.3699809652058166,
+        "peak": 3.3903259707932714,
+        "peak_interval_index": 27,
+        "peak_interval_s": [
+          0.29999970000000004,
+          0.3111108
+        ],
+        "window_key": "057",
+        "id": "collaborate/LAB/EAWS/S7/S7P16R3.bvh"
+      },
+      {
+        "p95": 37.16498523896353,
+        "peak": 43.503691582416586,
+        "peak_interval_index": 380,
+        "peak_interval_s": [
+          4.222218,
+          4.2333291
+        ],
+        "window_key": "014",
+        "id": "collaborate/LAB/EAWS/S1/S1P04R3.bvh"
+      },
+      {
+        "p95": 3.105489799330309,
+        "peak": 4.073123735196916,
+        "peak_interval_index": 207,
+        "peak_interval_s": [
+          2.2999977,
+          2.3111088
+        ],
+        "window_key": "040",
+        "id": "collaborate/LAB/EAWS/S4/S4P21R3.bvh"
+      },
+      {
+        "p95": 35.51877864312437,
+        "peak": 38.86328344673069,
+        "peak_interval_index": 49,
+        "peak_interval_s": [
+          0.5444439,
+          0.555555
+        ],
+        "window_key": "075",
+        "id": "collaborate/MasticCultivation/MasticCultivation/Gathering/S01/MCGAS01G01R05.bvh"
+      },
+      {
+        "p95": 114.59489003865126,
+        "peak": 210.696069071575,
+        "peak_interval_index": 67,
+        "peak_interval_s": [
+          0.7444437,
+          0.7555548
+        ],
+        "window_key": "071",
+        "id": "collaborate/MasticCultivation/MasticCultivation/Dusting/S01/MCDUS01G01R03.bvh"
+      },
+      {
+        "p95": 15.412365809205511,
+        "peak": 28.800774859141722,
+        "peak_interval_index": 3,
+        "peak_interval_s": [
+          0.0333333,
+          0.0444444
+        ],
+        "window_key": "037",
+        "id": "collaborate/LAB/EAWS/S4/S4P12R1.bvh"
+      },
+      {
+        "p95": 42.365376921631366,
+        "peak": 84.97668916820186,
+        "peak_interval_index": 10,
+        "peak_interval_s": [
+          0.111111,
+          0.1222221
+        ],
+        "window_key": "012",
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Leg_and_foot_laying/Foot_laying/GBLFS01G01R01.bvh"
+      },
+      {
+        "p95": 15.88502600108922,
+        "peak": 18.313164489838243,
+        "peak_interval_index": 13,
+        "peak_interval_s": [
+          0.1444443,
+          0.1555554
+        ],
+        "window_key": "051",
+        "id": "collaborate/LAB/EAWS/S6/S6P18R2.bvh"
+      },
+      {
+        "p95": 18.971162366807683,
+        "peak": 3689.321470744842,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "018",
+        "id": "collaborate/LAB/EAWS/S10/S10P01R1.bvh"
+      },
+      {
+        "p95": 9.547918275177437,
+        "peak": 11.954439407570888,
+        "peak_interval_index": 107,
+        "peak_interval_s": [
+          1.1888877,
+          1.1999988000000001
+        ],
+        "window_key": "052",
+        "id": "collaborate/LAB/EAWS/S6/S6P24R1.bvh"
+      },
+      {
+        "p95": 17.213905065974835,
+        "peak": 25.858438014063278,
+        "peak_interval_index": 149,
+        "peak_interval_s": [
+          1.6555539000000001,
+          1.666665
+        ],
+        "window_key": "000",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R01.bvh"
+      },
+      {
+        "p95": 5.76890380985695,
+        "peak": 8.441029491764658,
+        "peak_interval_index": 116,
+        "peak_interval_s": [
+          1.2888876,
+          1.2999987
+        ],
+        "window_key": "031",
+        "id": "collaborate/LAB/EAWS/S3/S3P07R1.bvh"
+      },
+      {
+        "p95": 68.25974908877407,
+        "peak": 100.75274116404115,
+        "peak_interval_index": 449,
+        "peak_interval_s": [
+          4.9888839,
+          4.999995
+        ],
+        "window_key": "032",
+        "id": "collaborate/LAB/EAWS/S3/S3P08R2.bvh"
+      },
+      {
+        "p95": 7.586053072912136,
+        "peak": 9.83931855782605,
+        "peak_interval_index": 295,
+        "peak_interval_s": [
+          3.2777745,
+          3.2888856
+        ],
+        "window_key": "027",
+        "id": "collaborate/LAB/EAWS/S2/S2P14R2.bvh"
+      },
+      {
+        "p95": 49.97851245370861,
+        "peak": 6927.102761034418,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "073",
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh"
+      },
+      {
+        "p95": 5.052201242196758,
+        "peak": 6.020546080998982,
+        "peak_interval_index": 32,
+        "peak_interval_s": [
+          0.3555552,
+          0.3666663
+        ],
+        "window_key": "054",
+        "id": "collaborate/LAB/EAWS/S7/S7P08R1.bvh"
+      },
+      {
+        "p95": 1.5581432386983085,
+        "peak": 9839.99873070161,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "030",
+        "id": "collaborate/LAB/EAWS/S3/S3P01R1.bvh"
+      },
+      {
+        "p95": 61.34973489957343,
+        "peak": 153.9823639383125,
+        "peak_interval_index": 269,
+        "peak_interval_s": [
+          2.9888859,
+          2.999997
+        ],
+        "window_key": "072",
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S01/MCEAS01G01R04.bvh"
+      },
+      {
+        "p95": 9.555152024703178,
+        "peak": 11.934132962246204,
+        "peak_interval_index": 103,
+        "peak_interval_s": [
+          1.1444433,
+          1.1555544
+        ],
+        "window_key": "069",
+        "id": "collaborate/LAB/EAWS/S9/S9P27R3.bvh"
+      },
+      {
+        "p95": 3.184048095524756,
+        "peak": 4.322722144511917,
+        "peak_interval_index": 44,
+        "peak_interval_s": [
+          0.4888884,
+          0.49999950000000004
+        ],
+        "window_key": "068",
+        "id": "collaborate/LAB/EAWS/S9/S9P16R3.bvh"
+      },
+      {
+        "p95": 56.219188486042285,
+        "peak": 7765.062744881718,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "076",
+        "id": "collaborate/MasticCultivation/MasticCultivation/ScrappingOld/S02/MCSOS02G01R03.bvh"
+      },
+      {
+        "p95": 51.96706944472418,
+        "peak": 9085.099830210263,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "081",
+        "id": "collaborate/SlikWeaving/SlikWeaving/WeavingMediumSizeLoom/G01/SWMLS01G01R05.bvh"
+      },
+      {
+        "p95": 50.23165189702603,
+        "peak": 54.17178602187305,
+        "peak_interval_index": 407,
+        "peak_interval_s": [
+          4.522217700000001,
+          4.5333288000000005
+        ],
+        "window_key": "009",
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Blocking/GBBSS01G01R04.bvh"
+      },
+      {
+        "p95": 57.85164137071149,
+        "peak": 88.07635641586626,
+        "peak_interval_index": 3,
+        "peak_interval_s": [
+          0.0333333,
+          0.0444444
+        ],
+        "window_key": "074",
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh"
+      },
+      {
+        "p95": 7.628742276369812,
+        "peak": 8.779405594106127,
+        "peak_interval_index": 264,
+        "peak_interval_s": [
+          2.9333304,
+          2.9444415
+        ],
+        "window_key": "058",
+        "id": "collaborate/LAB/EAWS/S7/S7P21R1.bvh"
+      },
+      {
+        "p95": 3.4868711722899453,
+        "peak": 5.58220127421695,
+        "peak_interval_index": 136,
+        "peak_interval_s": [
+          1.5111096,
+          1.5222207
+        ],
+        "window_key": "019",
+        "id": "collaborate/LAB/EAWS/S10/S10P01R3.bvh"
+      },
+      {
+        "p95": 4.085811403681759,
+        "peak": 7728.829873134114,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "013",
+        "id": "collaborate/LAB/EAWS/S1/S1P01R1.bvh"
+      },
+      {
+        "p95": 8.596765911326438,
+        "peak": 15.063007194320928,
+        "peak_interval_index": 435,
+        "peak_interval_s": [
+          4.8333285,
+          4.8444396
+        ],
+        "window_key": "063",
+        "id": "collaborate/LAB/EAWS/S8/S8P21R3.bvh"
+      },
+      {
+        "p95": 133.6642636748463,
+        "peak": 149.94560867033996,
+        "peak_interval_index": 414,
+        "peak_interval_s": [
+          4.5999954,
+          4.6111065
+        ],
+        "window_key": "055",
+        "id": "collaborate/LAB/EAWS/S7/S7P09R3.bvh"
+      },
+      {
+        "p95": 7.536121269178665,
+        "peak": 9.242142792178914,
+        "peak_interval_index": 187,
+        "peak_interval_s": [
+          2.0777757,
+          2.0888868
+        ],
+        "window_key": "029",
+        "id": "collaborate/LAB/EAWS/S2/S2P21R3.bvh"
+      },
+      {
+        "p95": 7.2342092848590225,
+        "peak": 9.104517760076778,
+        "peak_interval_index": 80,
+        "peak_interval_s": [
+          0.888888,
+          0.8999991
+        ],
+        "window_key": "033",
+        "id": "collaborate/LAB/EAWS/S3/S3P13R1.bvh"
+      },
+      {
+        "p95": 17.531013446425316,
+        "peak": 22.90493862705309,
+        "peak_interval_index": 189,
+        "peak_interval_s": [
+          2.0999979,
+          2.111109
+        ],
+        "window_key": "001",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R05.bvh"
+      },
+      {
+        "p95": 2.664889175216741,
+        "peak": 3.969024390097575,
+        "peak_interval_index": 217,
+        "peak_interval_s": [
+          2.4111087,
+          2.4222198
+        ],
+        "window_key": "061",
+        "id": "collaborate/LAB/EAWS/S8/S8P15R1.bvh"
+      },
+      {
+        "p95": 5.572826489996835,
+        "peak": 7.472281476040732,
+        "peak_interval_index": 314,
+        "peak_interval_s": [
+          3.4888854,
+          3.4999965
+        ],
+        "window_key": "023",
+        "id": "collaborate/LAB/EAWS/S10/S10P27R3.bvh"
+      },
+      {
+        "p95": 5.467362393342366,
+        "peak": 12005.752468515184,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "024",
+        "id": "collaborate/LAB/EAWS/S2/S2P01R1.bvh"
+      },
+      {
+        "p95": 3.7418747137978814,
+        "peak": 7.963092799202597,
+        "peak_interval_index": 70,
+        "peak_interval_s": [
+          0.777777,
+          0.7888881
+        ],
+        "window_key": "056",
+        "id": "collaborate/LAB/EAWS/S7/S7P13R1.bvh"
+      },
+      {
+        "p95": 18.264102437722546,
+        "peak": 38.34420423111921,
+        "peak_interval_index": 351,
+        "peak_interval_s": [
+          3.8999961,
+          3.9111072
+        ],
+        "window_key": "026",
+        "id": "collaborate/LAB/EAWS/S2/S2P09R1.bvh"
+      },
+      {
+        "p95": 6.001778171035507,
+        "peak": 7.320132095962886,
+        "peak_interval_index": 45,
+        "peak_interval_s": [
+          0.49999950000000004,
+          0.5111106
+        ],
+        "window_key": "039",
+        "id": "collaborate/LAB/EAWS/S4/S4P19R3.bvh"
+      },
+      {
+        "p95": 2.4332142768076475,
+        "peak": 3.590556446349246,
+        "peak_interval_index": 340,
+        "peak_interval_s": [
+          3.777774,
+          3.7888851
+        ],
+        "window_key": "025",
+        "id": "collaborate/LAB/EAWS/S2/S2P01R2.bvh"
+      },
+      {
+        "p95": 8.584379291630402,
+        "peak": 11.048447048886414,
+        "peak_interval_index": 85,
+        "peak_interval_s": [
+          0.9444435,
+          0.9555546
+        ],
+        "window_key": "028",
+        "id": "collaborate/LAB/EAWS/S2/S2P19R2.bvh"
+      },
+      {
+        "p95": 6.581841236674473,
+        "peak": 11.333821546404959,
+        "peak_interval_index": 339,
+        "peak_interval_s": [
+          3.7666629,
+          3.777774
+        ],
+        "window_key": "007",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R06.bvh"
+      },
+      {
+        "p95": 8.519458470234206,
+        "peak": 9.9292437496063,
+        "peak_interval_index": 27,
+        "peak_interval_s": [
+          0.29999970000000004,
+          0.3111108
+        ],
+        "window_key": "049",
+        "id": "collaborate/LAB/EAWS/S6/S6P07R3.bvh"
+      },
+      {
+        "p95": 47.823212944501535,
+        "peak": 58.642241318863086,
+        "peak_interval_index": 56,
+        "peak_interval_s": [
+          0.6222216,
+          0.6333327
+        ],
+        "window_key": "043",
+        "id": "collaborate/LAB/EAWS/S5/S5P06R3.bvh"
+      },
+      {
+        "p95": 2.1971653353781835,
+        "peak": 10843.106399185104,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "035",
+        "id": "collaborate/LAB/EAWS/S4/S4P01R1.bvh"
+      },
+      {
+        "p95": 5.162865087818848,
+        "peak": 6.450274743521749,
+        "peak_interval_index": 43,
+        "peak_interval_s": [
+          0.4777773,
+          0.4888884
+        ],
+        "window_key": "066",
+        "id": "collaborate/LAB/EAWS/S9/S9P08R3.bvh"
+      },
+      {
+        "p95": 12.56408709353632,
+        "peak": 15.946767584820652,
+        "peak_interval_index": 428,
+        "peak_interval_s": [
+          4.7555508,
+          4.7666619
+        ],
+        "window_key": "004",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R01.bvh"
+      },
+      {
+        "p95": 3.5870785301194354,
+        "peak": 6.6005848456052965,
+        "peak_interval_index": 44,
+        "peak_interval_s": [
+          0.4888884,
+          0.49999950000000004
+        ],
+        "window_key": "067",
+        "id": "collaborate/LAB/EAWS/S9/S9P13R1.bvh"
+      },
+      {
+        "p95": 2.856321081662184,
+        "peak": 5.672399640188294,
+        "peak_interval_index": 229,
+        "peak_interval_s": [
+          2.5444419000000003,
+          2.555553
+        ],
+        "window_key": "042",
+        "id": "collaborate/LAB/EAWS/S5/S5P01R3.bvh"
+      },
+      {
+        "p95": 45.367085239834125,
+        "peak": 66.87821701349121,
+        "peak_interval_index": 344,
+        "peak_interval_s": [
+          3.8222184,
+          3.8333295
+        ],
+        "window_key": "079",
+        "id": "collaborate/SlikWeaving/SlikWeaving/Beam_preparation/G03/SWPBS01G03R01.bvh"
+      },
+      {
+        "p95": 50.22863797483979,
+        "peak": 4767.717724535301,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "077",
+        "id": "collaborate/MasticCultivation/MasticCultivation/Wiping/S02/MCWIS02G01R03.bvh"
+      },
+      {
+        "p95": 5.225253832761429,
+        "peak": 9.280445972619768,
+        "peak_interval_index": 100,
+        "peak_interval_s": [
+          1.11111,
+          1.1222211
+        ],
+        "window_key": "015",
+        "id": "collaborate/LAB/EAWS/S1/S1P13R3.bvh"
+      },
+      {
+        "p95": 30.175172580639735,
+        "peak": 33.68668457212634,
+        "peak_interval_index": 126,
+        "peak_interval_s": [
+          1.3999986,
+          1.4111097000000001
+        ],
+        "window_key": "011",
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Body_blowing/GBBSS01G02R04.bvh"
+      },
+      {
+        "p95": 8.087916502756995,
+        "peak": 10.388170916545594,
+        "peak_interval_index": 400,
+        "peak_interval_s": [
+          4.44444,
+          4.4555511
+        ],
+        "window_key": "078",
+        "id": "collaborate/SlikWeaving/SlikWeaving/Beam_preparation/G01/SWPBS01G01R01.bvh"
+      },
+      {
+        "p95": 83.03554447268412,
+        "peak": 5398.4251191452195,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "070",
+        "id": "collaborate/MasticCultivation/MasticCultivation/CleanWind/S02/MCCWS02G01R01.bvh"
+      },
+      {
+        "p95": 23.742945521992244,
+        "peak": 56.10948312932658,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "016",
+        "id": "collaborate/LAB/EAWS/S1/S1P14R2.bvh"
+      },
+      {
+        "p95": 16.834430211241127,
+        "peak": 33.05539204864316,
+        "peak_interval_index": 357,
+        "peak_interval_s": [
+          3.9666627,
+          3.9777738
+        ],
+        "window_key": "060",
+        "id": "collaborate/LAB/EAWS/S8/S8P05R3.bvh"
+      },
+      {
+        "p95": 29.422386433731273,
+        "peak": 50.67094210775894,
+        "peak_interval_index": 6,
+        "peak_interval_s": [
+          0.0666666,
+          0.0777777
+        ],
+        "window_key": "017",
+        "id": "collaborate/LAB/EAWS/S1/S1P24R3.bvh"
+      },
+      {
+        "p95": 5.111627517275846,
+        "peak": 9416.212742645735,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "047",
+        "id": "collaborate/LAB/EAWS/S6/S6P01R1.bvh"
+      },
+      {
+        "p95": 42.168823357775636,
+        "peak": 67.2878994636308,
+        "peak_interval_index": 204,
+        "peak_interval_s": [
+          2.2666644000000002,
+          2.2777755
+        ],
+        "window_key": "006",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R03.bvh"
+      },
+      {
+        "p95": 38.6998520297163,
+        "peak": 52.02591635894239,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "064",
+        "id": "collaborate/LAB/EAWS/S8/S8P24R3.bvh"
+      },
+      {
+        "p95": 5.417553600570766,
+        "peak": 8.262893959135724,
+        "peak_interval_index": 150,
+        "peak_interval_s": [
+          1.666665,
+          1.6777761
+        ],
+        "window_key": "022",
+        "id": "collaborate/LAB/EAWS/S10/S10P25R3.bvh"
+      },
+      {
+        "p95": 15.691134727691574,
+        "peak": 27.971224697591822,
+        "peak_interval_index": 3,
+        "peak_interval_s": [
+          0.0333333,
+          0.0444444
+        ],
+        "window_key": "045",
+        "id": "collaborate/LAB/EAWS/S5/S5P13R2.bvh"
+      },
+      {
+        "p95": 52.14012571650196,
+        "peak": 77.7068994017989,
+        "peak_interval_index": 34,
+        "peak_interval_s": [
+          0.3777774,
+          0.3888885
+        ],
+        "window_key": "008",
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Beak_cutting/Trimming/GBBCS01G02R05.bvh"
+      },
+      {
+        "p95": 16.489402955756816,
+        "peak": 27.715071965215223,
+        "peak_interval_index": 9,
+        "peak_interval_s": [
+          0.0999999,
+          0.111111
+        ],
+        "window_key": "021",
+        "id": "collaborate/LAB/EAWS/S10/S10P13R2.bvh"
+      },
+      {
+        "p95": 11.600282963383643,
+        "peak": 16.78420216128365,
+        "peak_interval_index": 279,
+        "peak_interval_s": [
+          3.0999969000000003,
+          3.111108
+        ],
+        "window_key": "005",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R02.bvh"
+      },
+      {
+        "p95": 9.004930025705097,
+        "peak": 19.08847186742226,
+        "peak_interval_index": 164,
+        "peak_interval_s": [
+          1.8222204,
+          1.8333315000000001
+        ],
+        "window_key": "036",
+        "id": "collaborate/LAB/EAWS/S4/S4P01R2.bvh"
+      }
+    ]
+  },
+  "source_jump": {
+    "path": "/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/head_source_jump.png",
+    "window_key": "053",
+    "id": "collaborate/LAB/EAWS/S7/S7P01R1.bvh",
+    "selection": "maximum original native-window head angular speed peak; independent of fitting error",
+    "original_head_peak_deg_s": 14027.376602048558,
+    "original_head_p95_deg_s": 1.586419843870944,
+    "peak_interval_s": [
+      0.0,
+      0.0111111
+    ],
+    "source_window_s": [
+      0.0,
+      4.999995
+    ],
+    "root_displacement_in_peak_interval_m": 0.42916013387662183,
+    "scope": "native K orientations under the controlled segment convention, not anatomical neck validation",
+    "checks": [
+      {
+        "method": "ardy",
+        "head": {
+          "valid": 100,
+          "maximum_error_deg": 2.128361154894814
+        },
+        "neck": {
+          "valid": 100,
+          "maximum_error_deg": 1.1237772860080464
+        }
+      },
+      {
+        "method": "chois",
+        "head": {
+          "valid": 150,
+          "maximum_error_deg": 12.567397010429316
+        },
+        "neck": {
+          "valid": 150,
+          "maximum_error_deg": 6.367315068808418
+        }
+      },
+      {
+        "method": "closd",
+        "head": {
+          "valid": 150,
+          "maximum_error_deg": 12.567397010429314
+        },
+        "neck": {
+          "valid": 150,
+          "maximum_error_deg": 6.367315068808417
+        }
+      },
+      {
+        "method": "dart",
+        "head": {
+          "valid": 150,
+          "maximum_error_deg": 12.567397010429323
+        },
+        "neck": {
+          "valid": 150,
+          "maximum_error_deg": 6.367315068808424
+        }
+      },
+      {
+        "method": "kimodo",
+        "head": {
+          "valid": 150,
+          "maximum_error_deg": 12.567397010429316
+        },
+        "neck": {
+          "valid": 150,
+          "maximum_error_deg": 6.367315068808421
+        }
+      },
+      {
+        "method": "primal",
+        "head": {
+          "valid": 148,
+          "maximum_error_deg": 2.128361154894846
+        },
+        "neck": {
+          "valid": 148,
+          "maximum_error_deg": 1.1237772860080484
+        }
+      }
+    ],
+    "candidates": [
+      {
+        "p95": 21.13220303925627,
+        "peak": 29.006769964735064,
+        "peak_interval_index": 48,
+        "peak_interval_s": [
+          0.5333328,
+          0.5444439
+        ],
+        "window_key": "050",
+        "id": "collaborate/LAB/EAWS/S6/S6P13R3.bvh"
+      },
+      {
+        "p95": 59.84726343419794,
+        "peak": 69.66849665014303,
+        "peak_interval_index": 23,
+        "peak_interval_s": [
+          0.2555553,
+          0.2666664
+        ],
+        "window_key": "010",
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Body_blowing/GBBSS01G02R01.bvh"
+      },
+      {
+        "p95": 65.37082284902168,
+        "peak": 2282.3262601113456,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "059",
+        "id": "collaborate/LAB/EAWS/S8/S8P05R1.bvh"
+      },
+      {
+        "p95": 65.18079410835001,
+        "peak": 79.05981566234561,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "044",
+        "id": "collaborate/LAB/EAWS/S5/S5P09R2.bvh"
+      },
+      {
+        "p95": 85.4674276083134,
+        "peak": 92.66462965233846,
+        "peak_interval_index": 97,
+        "peak_interval_s": [
+          1.0777767,
+          1.0888878
+        ],
+        "window_key": "003",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P02R05.bvh"
+      },
+      {
+        "p95": 1.3546098189240436,
+        "peak": 6615.8667480739905,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "065",
+        "id": "collaborate/LAB/EAWS/S9/S9P01R1.bvh"
+      },
+      {
+        "p95": 160.22961318099928,
+        "peak": 2494.3690964613584,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "080",
+        "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R26.bvh"
+      },
+      {
+        "p95": 3.4102070268117166,
+        "peak": 7.421662658068901,
+        "peak_interval_index": 141,
+        "peak_interval_s": [
+          1.5666651,
+          1.5777762
+        ],
+        "window_key": "062",
+        "id": "collaborate/LAB/EAWS/S8/S8P16R3.bvh"
+      },
+      {
+        "p95": 130.76263574554548,
+        "peak": 146.23801769768843,
+        "peak_interval_index": 251,
+        "peak_interval_s": [
+          2.7888861,
+          2.7999972
+        ],
+        "window_key": "002",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P02R04.bvh"
+      },
+      {
+        "p95": 8.363059074043141,
+        "peak": 12.839369222712897,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "038",
+        "id": "collaborate/LAB/EAWS/S4/S4P19R1.bvh"
+      },
+      {
+        "p95": 8.7918753107882,
+        "peak": 10.31220657829097,
+        "peak_interval_index": 18,
+        "peak_interval_s": [
+          0.1999998,
+          0.21111090000000002
+        ],
+        "window_key": "020",
+        "id": "collaborate/LAB/EAWS/S10/S10P07R1.bvh"
+      },
+      {
+        "p95": 3.117960708882816,
+        "peak": 12441.785364206215,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "041",
+        "id": "collaborate/LAB/EAWS/S5/S5P01R1.bvh"
+      },
+      {
+        "p95": 10.083371277000346,
+        "peak": 15.892161129200726,
+        "peak_interval_index": 259,
+        "peak_interval_s": [
+          2.8777749,
+          2.8888860000000003
+        ],
+        "window_key": "046",
+        "id": "collaborate/LAB/EAWS/S5/S5P16R2.bvh"
+      },
+      {
+        "p95": 1.544996515561274,
+        "peak": 2.1783967854235047,
+        "peak_interval_index": 190,
+        "peak_interval_s": [
+          2.111109,
+          2.1222201000000003
+        ],
+        "window_key": "034",
+        "id": "collaborate/LAB/EAWS/S3/S3P15R3.bvh"
+      },
+      {
+        "p95": 1.586419843870944,
+        "peak": 14027.376602048558,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "053",
+        "id": "collaborate/LAB/EAWS/S7/S7P01R1.bvh"
+      },
+      {
+        "p95": 3.642865842447941,
+        "peak": 8.68728285717733,
+        "peak_interval_index": 492,
+        "peak_interval_s": [
+          4.92,
+          4.93
+        ],
+        "window_key": "048",
+        "id": "collaborate/LAB/EAWS/S6/S6P01R3.bvh"
+      },
+      {
+        "p95": 2.3699809652058166,
+        "peak": 3.3903259707932714,
+        "peak_interval_index": 27,
+        "peak_interval_s": [
+          0.29999970000000004,
+          0.3111108
+        ],
+        "window_key": "057",
+        "id": "collaborate/LAB/EAWS/S7/S7P16R3.bvh"
+      },
+      {
+        "p95": 37.16498523896353,
+        "peak": 43.503691582416586,
+        "peak_interval_index": 380,
+        "peak_interval_s": [
+          4.222218,
+          4.2333291
+        ],
+        "window_key": "014",
+        "id": "collaborate/LAB/EAWS/S1/S1P04R3.bvh"
+      },
+      {
+        "p95": 3.105489799330309,
+        "peak": 4.073123735196916,
+        "peak_interval_index": 207,
+        "peak_interval_s": [
+          2.2999977,
+          2.3111088
+        ],
+        "window_key": "040",
+        "id": "collaborate/LAB/EAWS/S4/S4P21R3.bvh"
+      },
+      {
+        "p95": 35.51877864312437,
+        "peak": 38.86328344673069,
+        "peak_interval_index": 49,
+        "peak_interval_s": [
+          0.5444439,
+          0.555555
+        ],
+        "window_key": "075",
+        "id": "collaborate/MasticCultivation/MasticCultivation/Gathering/S01/MCGAS01G01R05.bvh"
+      },
+      {
+        "p95": 114.59489003865126,
+        "peak": 210.696069071575,
+        "peak_interval_index": 67,
+        "peak_interval_s": [
+          0.7444437,
+          0.7555548
+        ],
+        "window_key": "071",
+        "id": "collaborate/MasticCultivation/MasticCultivation/Dusting/S01/MCDUS01G01R03.bvh"
+      },
+      {
+        "p95": 15.412365809205511,
+        "peak": 28.800774859141722,
+        "peak_interval_index": 3,
+        "peak_interval_s": [
+          0.0333333,
+          0.0444444
+        ],
+        "window_key": "037",
+        "id": "collaborate/LAB/EAWS/S4/S4P12R1.bvh"
+      },
+      {
+        "p95": 42.365376921631366,
+        "peak": 84.97668916820186,
+        "peak_interval_index": 10,
+        "peak_interval_s": [
+          0.111111,
+          0.1222221
+        ],
+        "window_key": "012",
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Leg_and_foot_laying/Foot_laying/GBLFS01G01R01.bvh"
+      },
+      {
+        "p95": 15.88502600108922,
+        "peak": 18.313164489838243,
+        "peak_interval_index": 13,
+        "peak_interval_s": [
+          0.1444443,
+          0.1555554
+        ],
+        "window_key": "051",
+        "id": "collaborate/LAB/EAWS/S6/S6P18R2.bvh"
+      },
+      {
+        "p95": 18.971162366807683,
+        "peak": 3689.321470744842,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "018",
+        "id": "collaborate/LAB/EAWS/S10/S10P01R1.bvh"
+      },
+      {
+        "p95": 9.547918275177437,
+        "peak": 11.954439407570888,
+        "peak_interval_index": 107,
+        "peak_interval_s": [
+          1.1888877,
+          1.1999988000000001
+        ],
+        "window_key": "052",
+        "id": "collaborate/LAB/EAWS/S6/S6P24R1.bvh"
+      },
+      {
+        "p95": 17.213905065974835,
+        "peak": 25.858438014063278,
+        "peak_interval_index": 149,
+        "peak_interval_s": [
+          1.6555539000000001,
+          1.666665
+        ],
+        "window_key": "000",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R01.bvh"
+      },
+      {
+        "p95": 5.76890380985695,
+        "peak": 8.441029491764658,
+        "peak_interval_index": 116,
+        "peak_interval_s": [
+          1.2888876,
+          1.2999987
+        ],
+        "window_key": "031",
+        "id": "collaborate/LAB/EAWS/S3/S3P07R1.bvh"
+      },
+      {
+        "p95": 68.25974908877407,
+        "peak": 100.75274116404115,
+        "peak_interval_index": 449,
+        "peak_interval_s": [
+          4.9888839,
+          4.999995
+        ],
+        "window_key": "032",
+        "id": "collaborate/LAB/EAWS/S3/S3P08R2.bvh"
+      },
+      {
+        "p95": 7.586053072912136,
+        "peak": 9.83931855782605,
+        "peak_interval_index": 295,
+        "peak_interval_s": [
+          3.2777745,
+          3.2888856
+        ],
+        "window_key": "027",
+        "id": "collaborate/LAB/EAWS/S2/S2P14R2.bvh"
+      },
+      {
+        "p95": 49.97851245370861,
+        "peak": 6927.102761034418,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "073",
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh"
+      },
+      {
+        "p95": 5.052201242196758,
+        "peak": 6.020546080998982,
+        "peak_interval_index": 32,
+        "peak_interval_s": [
+          0.3555552,
+          0.3666663
+        ],
+        "window_key": "054",
+        "id": "collaborate/LAB/EAWS/S7/S7P08R1.bvh"
+      },
+      {
+        "p95": 1.5581432386983085,
+        "peak": 9839.99873070161,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "030",
+        "id": "collaborate/LAB/EAWS/S3/S3P01R1.bvh"
+      },
+      {
+        "p95": 61.34973489957343,
+        "peak": 153.9823639383125,
+        "peak_interval_index": 269,
+        "peak_interval_s": [
+          2.9888859,
+          2.999997
+        ],
+        "window_key": "072",
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S01/MCEAS01G01R04.bvh"
+      },
+      {
+        "p95": 9.555152024703178,
+        "peak": 11.934132962246204,
+        "peak_interval_index": 103,
+        "peak_interval_s": [
+          1.1444433,
+          1.1555544
+        ],
+        "window_key": "069",
+        "id": "collaborate/LAB/EAWS/S9/S9P27R3.bvh"
+      },
+      {
+        "p95": 3.184048095524756,
+        "peak": 4.322722144511917,
+        "peak_interval_index": 44,
+        "peak_interval_s": [
+          0.4888884,
+          0.49999950000000004
+        ],
+        "window_key": "068",
+        "id": "collaborate/LAB/EAWS/S9/S9P16R3.bvh"
+      },
+      {
+        "p95": 56.219188486042285,
+        "peak": 7765.062744881718,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "076",
+        "id": "collaborate/MasticCultivation/MasticCultivation/ScrappingOld/S02/MCSOS02G01R03.bvh"
+      },
+      {
+        "p95": 51.96706944472418,
+        "peak": 9085.099830210263,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "081",
+        "id": "collaborate/SlikWeaving/SlikWeaving/WeavingMediumSizeLoom/G01/SWMLS01G01R05.bvh"
+      },
+      {
+        "p95": 50.23165189702603,
+        "peak": 54.17178602187305,
+        "peak_interval_index": 407,
+        "peak_interval_s": [
+          4.522217700000001,
+          4.5333288000000005
+        ],
+        "window_key": "009",
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Blocking/GBBSS01G01R04.bvh"
+      },
+      {
+        "p95": 57.85164137071149,
+        "peak": 88.07635641586626,
+        "peak_interval_index": 3,
+        "peak_interval_s": [
+          0.0333333,
+          0.0444444
+        ],
+        "window_key": "074",
+        "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh"
+      },
+      {
+        "p95": 7.628742276369812,
+        "peak": 8.779405594106127,
+        "peak_interval_index": 264,
+        "peak_interval_s": [
+          2.9333304,
+          2.9444415
+        ],
+        "window_key": "058",
+        "id": "collaborate/LAB/EAWS/S7/S7P21R1.bvh"
+      },
+      {
+        "p95": 3.4868711722899453,
+        "peak": 5.58220127421695,
+        "peak_interval_index": 136,
+        "peak_interval_s": [
+          1.5111096,
+          1.5222207
+        ],
+        "window_key": "019",
+        "id": "collaborate/LAB/EAWS/S10/S10P01R3.bvh"
+      },
+      {
+        "p95": 4.085811403681759,
+        "peak": 7728.829873134114,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "013",
+        "id": "collaborate/LAB/EAWS/S1/S1P01R1.bvh"
+      },
+      {
+        "p95": 8.596765911326438,
+        "peak": 15.063007194320928,
+        "peak_interval_index": 435,
+        "peak_interval_s": [
+          4.8333285,
+          4.8444396
+        ],
+        "window_key": "063",
+        "id": "collaborate/LAB/EAWS/S8/S8P21R3.bvh"
+      },
+      {
+        "p95": 133.6642636748463,
+        "peak": 149.94560867033996,
+        "peak_interval_index": 414,
+        "peak_interval_s": [
+          4.5999954,
+          4.6111065
+        ],
+        "window_key": "055",
+        "id": "collaborate/LAB/EAWS/S7/S7P09R3.bvh"
+      },
+      {
+        "p95": 7.536121269178665,
+        "peak": 9.242142792178914,
+        "peak_interval_index": 187,
+        "peak_interval_s": [
+          2.0777757,
+          2.0888868
+        ],
+        "window_key": "029",
+        "id": "collaborate/LAB/EAWS/S2/S2P21R3.bvh"
+      },
+      {
+        "p95": 7.2342092848590225,
+        "peak": 9.104517760076778,
+        "peak_interval_index": 80,
+        "peak_interval_s": [
+          0.888888,
+          0.8999991
+        ],
+        "window_key": "033",
+        "id": "collaborate/LAB/EAWS/S3/S3P13R1.bvh"
+      },
+      {
+        "p95": 17.531013446425316,
+        "peak": 22.90493862705309,
+        "peak_interval_index": 189,
+        "peak_interval_s": [
+          2.0999979,
+          2.111109
+        ],
+        "window_key": "001",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R05.bvh"
+      },
+      {
+        "p95": 2.664889175216741,
+        "peak": 3.969024390097575,
+        "peak_interval_index": 217,
+        "peak_interval_s": [
+          2.4111087,
+          2.4222198
+        ],
+        "window_key": "061",
+        "id": "collaborate/LAB/EAWS/S8/S8P15R1.bvh"
+      },
+      {
+        "p95": 5.572826489996835,
+        "peak": 7.472281476040732,
+        "peak_interval_index": 314,
+        "peak_interval_s": [
+          3.4888854,
+          3.4999965
+        ],
+        "window_key": "023",
+        "id": "collaborate/LAB/EAWS/S10/S10P27R3.bvh"
+      },
+      {
+        "p95": 5.467362393342366,
+        "peak": 12005.752468515184,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "024",
+        "id": "collaborate/LAB/EAWS/S2/S2P01R1.bvh"
+      },
+      {
+        "p95": 3.7418747137978814,
+        "peak": 7.963092799202597,
+        "peak_interval_index": 70,
+        "peak_interval_s": [
+          0.777777,
+          0.7888881
+        ],
+        "window_key": "056",
+        "id": "collaborate/LAB/EAWS/S7/S7P13R1.bvh"
+      },
+      {
+        "p95": 18.264102437722546,
+        "peak": 38.34420423111921,
+        "peak_interval_index": 351,
+        "peak_interval_s": [
+          3.8999961,
+          3.9111072
+        ],
+        "window_key": "026",
+        "id": "collaborate/LAB/EAWS/S2/S2P09R1.bvh"
+      },
+      {
+        "p95": 6.001778171035507,
+        "peak": 7.320132095962886,
+        "peak_interval_index": 45,
+        "peak_interval_s": [
+          0.49999950000000004,
+          0.5111106
+        ],
+        "window_key": "039",
+        "id": "collaborate/LAB/EAWS/S4/S4P19R3.bvh"
+      },
+      {
+        "p95": 2.4332142768076475,
+        "peak": 3.590556446349246,
+        "peak_interval_index": 340,
+        "peak_interval_s": [
+          3.777774,
+          3.7888851
+        ],
+        "window_key": "025",
+        "id": "collaborate/LAB/EAWS/S2/S2P01R2.bvh"
+      },
+      {
+        "p95": 8.584379291630402,
+        "peak": 11.048447048886414,
+        "peak_interval_index": 85,
+        "peak_interval_s": [
+          0.9444435,
+          0.9555546
+        ],
+        "window_key": "028",
+        "id": "collaborate/LAB/EAWS/S2/S2P19R2.bvh"
+      },
+      {
+        "p95": 6.581841236674473,
+        "peak": 11.333821546404959,
+        "peak_interval_index": 339,
+        "peak_interval_s": [
+          3.7666629,
+          3.777774
+        ],
+        "window_key": "007",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R06.bvh"
+      },
+      {
+        "p95": 8.519458470234206,
+        "peak": 9.9292437496063,
+        "peak_interval_index": 27,
+        "peak_interval_s": [
+          0.29999970000000004,
+          0.3111108
+        ],
+        "window_key": "049",
+        "id": "collaborate/LAB/EAWS/S6/S6P07R3.bvh"
+      },
+      {
+        "p95": 47.823212944501535,
+        "peak": 58.642241318863086,
+        "peak_interval_index": 56,
+        "peak_interval_s": [
+          0.6222216,
+          0.6333327
+        ],
+        "window_key": "043",
+        "id": "collaborate/LAB/EAWS/S5/S5P06R3.bvh"
+      },
+      {
+        "p95": 2.1971653353781835,
+        "peak": 10843.106399185104,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "035",
+        "id": "collaborate/LAB/EAWS/S4/S4P01R1.bvh"
+      },
+      {
+        "p95": 5.162865087818848,
+        "peak": 6.450274743521749,
+        "peak_interval_index": 43,
+        "peak_interval_s": [
+          0.4777773,
+          0.4888884
+        ],
+        "window_key": "066",
+        "id": "collaborate/LAB/EAWS/S9/S9P08R3.bvh"
+      },
+      {
+        "p95": 12.56408709353632,
+        "peak": 15.946767584820652,
+        "peak_interval_index": 428,
+        "peak_interval_s": [
+          4.7555508,
+          4.7666619
+        ],
+        "window_key": "004",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R01.bvh"
+      },
+      {
+        "p95": 3.5870785301194354,
+        "peak": 6.6005848456052965,
+        "peak_interval_index": 44,
+        "peak_interval_s": [
+          0.4888884,
+          0.49999950000000004
+        ],
+        "window_key": "067",
+        "id": "collaborate/LAB/EAWS/S9/S9P13R1.bvh"
+      },
+      {
+        "p95": 2.856321081662184,
+        "peak": 5.672399640188294,
+        "peak_interval_index": 229,
+        "peak_interval_s": [
+          2.5444419000000003,
+          2.555553
+        ],
+        "window_key": "042",
+        "id": "collaborate/LAB/EAWS/S5/S5P01R3.bvh"
+      },
+      {
+        "p95": 45.367085239834125,
+        "peak": 66.87821701349121,
+        "peak_interval_index": 344,
+        "peak_interval_s": [
+          3.8222184,
+          3.8333295
+        ],
+        "window_key": "079",
+        "id": "collaborate/SlikWeaving/SlikWeaving/Beam_preparation/G03/SWPBS01G03R01.bvh"
+      },
+      {
+        "p95": 50.22863797483979,
+        "peak": 4767.717724535301,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "077",
+        "id": "collaborate/MasticCultivation/MasticCultivation/Wiping/S02/MCWIS02G01R03.bvh"
+      },
+      {
+        "p95": 5.225253832761429,
+        "peak": 9.280445972619768,
+        "peak_interval_index": 100,
+        "peak_interval_s": [
+          1.11111,
+          1.1222211
+        ],
+        "window_key": "015",
+        "id": "collaborate/LAB/EAWS/S1/S1P13R3.bvh"
+      },
+      {
+        "p95": 30.175172580639735,
+        "peak": 33.68668457212634,
+        "peak_interval_index": 126,
+        "peak_interval_s": [
+          1.3999986,
+          1.4111097000000001
+        ],
+        "window_key": "011",
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Body_blowing/GBBSS01G02R04.bvh"
+      },
+      {
+        "p95": 8.087916502756995,
+        "peak": 10.388170916545594,
+        "peak_interval_index": 400,
+        "peak_interval_s": [
+          4.44444,
+          4.4555511
+        ],
+        "window_key": "078",
+        "id": "collaborate/SlikWeaving/SlikWeaving/Beam_preparation/G01/SWPBS01G01R01.bvh"
+      },
+      {
+        "p95": 83.03554447268412,
+        "peak": 5398.4251191452195,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "070",
+        "id": "collaborate/MasticCultivation/MasticCultivation/CleanWind/S02/MCCWS02G01R01.bvh"
+      },
+      {
+        "p95": 23.742945521992244,
+        "peak": 56.10948312932658,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "016",
+        "id": "collaborate/LAB/EAWS/S1/S1P14R2.bvh"
+      },
+      {
+        "p95": 16.834430211241127,
+        "peak": 33.05539204864316,
+        "peak_interval_index": 357,
+        "peak_interval_s": [
+          3.9666627,
+          3.9777738
+        ],
+        "window_key": "060",
+        "id": "collaborate/LAB/EAWS/S8/S8P05R3.bvh"
+      },
+      {
+        "p95": 29.422386433731273,
+        "peak": 50.67094210775894,
+        "peak_interval_index": 6,
+        "peak_interval_s": [
+          0.0666666,
+          0.0777777
+        ],
+        "window_key": "017",
+        "id": "collaborate/LAB/EAWS/S1/S1P24R3.bvh"
+      },
+      {
+        "p95": 5.111627517275846,
+        "peak": 9416.212742645735,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "047",
+        "id": "collaborate/LAB/EAWS/S6/S6P01R1.bvh"
+      },
+      {
+        "p95": 42.168823357775636,
+        "peak": 67.2878994636308,
+        "peak_interval_index": 204,
+        "peak_interval_s": [
+          2.2666644000000002,
+          2.2777755
+        ],
+        "window_key": "006",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R03.bvh"
+      },
+      {
+        "p95": 38.6998520297163,
+        "peak": 52.02591635894239,
+        "peak_interval_index": 0,
+        "peak_interval_s": [
+          0.0,
+          0.0111111
+        ],
+        "window_key": "064",
+        "id": "collaborate/LAB/EAWS/S8/S8P24R3.bvh"
+      },
+      {
+        "p95": 5.417553600570766,
+        "peak": 8.262893959135724,
+        "peak_interval_index": 150,
+        "peak_interval_s": [
+          1.666665,
+          1.6777761
+        ],
+        "window_key": "022",
+        "id": "collaborate/LAB/EAWS/S10/S10P25R3.bvh"
+      },
+      {
+        "p95": 15.691134727691574,
+        "peak": 27.971224697591822,
+        "peak_interval_index": 3,
+        "peak_interval_s": [
+          0.0333333,
+          0.0444444
+        ],
+        "window_key": "045",
+        "id": "collaborate/LAB/EAWS/S5/S5P13R2.bvh"
+      },
+      {
+        "p95": 52.14012571650196,
+        "peak": 77.7068994017989,
+        "peak_interval_index": 34,
+        "peak_interval_s": [
+          0.3777774,
+          0.3888885
+        ],
+        "window_key": "008",
+        "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Beak_cutting/Trimming/GBBCS01G02R05.bvh"
+      },
+      {
+        "p95": 16.489402955756816,
+        "peak": 27.715071965215223,
+        "peak_interval_index": 9,
+        "peak_interval_s": [
+          0.0999999,
+          0.111111
+        ],
+        "window_key": "021",
+        "id": "collaborate/LAB/EAWS/S10/S10P13R2.bvh"
+      },
+      {
+        "p95": 11.600282963383643,
+        "peak": 16.78420216128365,
+        "peak_interval_index": 279,
+        "peak_interval_s": [
+          3.0999969000000003,
+          3.111108
+        ],
+        "window_key": "005",
+        "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R02.bvh"
+      },
+      {
+        "p95": 9.004930025705097,
+        "peak": 19.08847186742226,
+        "peak_interval_index": 164,
+        "peak_interval_s": [
+          1.8222204,
+          1.8333315000000001
+        ],
+        "window_key": "036",
+        "id": "collaborate/LAB/EAWS/S4/S4P01R2.bvh"
+      }
+    ]
+  }
+}

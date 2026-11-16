@@ -1,0 +1,171 @@
+{
+  "scope": "reused actual-output fidelity versus fresh selected-config runtime; not exact coordinate equality",
+  "limits": {
+    "time_s": 1e-12,
+    "source_m": 1e-12,
+    "fitted_position_m": 0.0001,
+    "reported_angle_p95_deg": 0.005
+  },
+  "records": [
+    {
+      "method": "ardy",
+      "variant": "optimized_raw",
+      "frozen_actual": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/actual/ardy/optimized_raw/kinematics.npz",
+      "current_runtime": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/downstream/ardy/work/kinematics.npz",
+      "file_sha256": [
+        "515354995436dc3e26b40bc74dfe97947aec085796df9e777af339c539e4e09f",
+        "7e2579cd896ec7adc62ec06a6a4183b7ea856287b2ed0a4d9a5de3ea32eb21fd"
+      ],
+      "maximum_time_difference_s": 3.552713678800501e-15,
+      "maximum_source_difference_m": 4.440892098500626e-15,
+      "maximum_fitted_position_difference_m": 3.644817029311297e-09,
+      "maximum_coordinate_difference": {
+        "name": "lumbar_extension",
+        "difference": 1.9687161874060166e-06,
+        "unit": "deg"
+      },
+      "maximum_fidelity_p95_difference_deg": 9.887907026495668e-08,
+      "status": "consistent_at_report_precision"
+    },
+    {
+      "method": "chois",
+      "variant": "optimized_raw",
+      "frozen_actual": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/actual/chois/optimized_raw/kinematics.npz",
+      "current_runtime": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/downstream/chois/work/kinematics.npz",
+      "file_sha256": [
+        "c85c44f2ce8c2488a0f30b8784ea12433fb768bd4ff51926a739e26bb4c25edf",
+        "2bee6709627288947d7f0ce1c65cfec28a836eb93a53675e0cc3fcb71b14a454"
+      ],
+      "maximum_time_difference_s": 4.440892098500626e-16,
+      "maximum_source_difference_m": 9.992007221626409e-16,
+      "maximum_fitted_position_difference_m": 1.2126811599924695e-08,
+      "maximum_coordinate_difference": {
+        "name": "lumbar_extension",
+        "difference": 3.019423079564376e-06,
+        "unit": "deg"
+      },
+      "maximum_fidelity_p95_difference_deg": 5.743733395568995e-07,
+      "status": "consistent_at_report_precision"
+    },
+    {
+      "method": "closd",
+      "variant": "optimized_raw",
+      "frozen_actual": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/actual/closd/optimized_raw/kinematics.npz",
+      "current_runtime": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/downstream/closd/work/kinematics.npz",
+      "file_sha256": [
+        "3bd0352b125246c662d282e8bc8232ab80e3c813d56715d44feba9f37aa6a129",
+        "80c113eb77763795c8b6fa123a249151f6d5a8a0f49c1be3437c55a636757b37"
+      ],
+      "maximum_time_difference_s": 3.552713678800501e-15,
+      "maximum_source_difference_m": 6.5503158452884236e-15,
+      "maximum_fitted_position_difference_m": 9.967070983090733e-09,
+      "maximum_coordinate_difference": {
+        "name": "lumbar_extension",
+        "difference": 2.563254185572461e-06,
+        "unit": "deg"
+      },
+      "maximum_fidelity_p95_difference_deg": 3.1080013229711767e-07,
+      "status": "consistent_at_report_precision"
+    },
+    {
+      "method": "dart",
+      "variant": "optimized_raw",
+      "frozen_actual": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/actual/dart/optimized_raw/kinematics.npz",
+      "current_runtime": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/downstream/dart/work/kinematics.npz",
+      "file_sha256": [
+        "6218cd069ea11db1d79f576b74b620604606bd08a93833b6541893b0f8bcaa6b",
+        "59261a021294a8a3ebae021e9117f39bb7ab7761ca8ab6a03a54e1813fc0d3de"
+      ],
+      "maximum_time_difference_s": 3.552713678800501e-15,
+      "maximum_source_difference_m": 1.2434497875801753e-14,
+      "maximum_fitted_position_difference_m": 3.131668373309082e-08,
+      "maximum_coordinate_difference": {
+        "name": "lumbar_extension",
+        "difference": 1.1888146017435819e-05,
+        "unit": "deg"
+      },
+      "maximum_fidelity_p95_difference_deg": 9.247772223552886e-07,
+      "status": "consistent_at_report_precision"
+    },
+    {
+      "method": "kimodo",
+      "variant": "optimized_raw",
+      "frozen_actual": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/actual/kimodo/optimized_raw/kinematics.npz",
+      "current_runtime": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/downstream/kimodo/work/kinematics.npz",
+      "file_sha256": [
+        "2633770d79407f36b04f212a8300f0bf25f19d1732341c59a02bd68b4664b81e",
+        "ab28a65b77002d92ad5ba2dfcff8de92395fa8d9f1ef3bdb479ed6f864da5f43"
+      ],
+      "maximum_time_difference_s": 4.440892098500626e-16,
+      "maximum_source_difference_m": 4.440892098500626e-16,
+      "maximum_fitted_position_difference_m": 7.589104691099128e-09,
+      "maximum_coordinate_difference": {
+        "name": "lumbar_extension",
+        "difference": 2.20983008958342e-06,
+        "unit": "deg"
+      },
+      "maximum_fidelity_p95_difference_deg": 5.648522627410557e-07,
+      "status": "consistent_at_report_precision"
+    },
+    {
+      "method": "motionlcm",
+      "variant": "optimized_raw",
+      "frozen_actual": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/actual/motionlcm/optimized_raw/kinematics.npz",
+      "current_runtime": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/downstream/motionlcm/work/kinematics.npz",
+      "file_sha256": [
+        "186fbc513d18a5798640d09e05c35396c4909699efdac89674b05cc3ed941faa",
+        "45e50ee8f75b72821f4ab6b55f3ddf7bc07698efc106f8420432103e7e6ce44a"
+      ],
+      "maximum_time_difference_s": 8.881784197001252e-16,
+      "maximum_source_difference_m": 6.661338147750939e-16,
+      "maximum_fitted_position_difference_m": 2.7310173792400314e-09,
+      "maximum_coordinate_difference": {
+        "name": "lumbar_extension",
+        "difference": 6.210846961174354e-07,
+        "unit": "deg"
+      },
+      "maximum_fidelity_p95_difference_deg": 1.1686309786540505e-07,
+      "status": "consistent_at_report_precision"
+    },
+    {
+      "method": "omnicontrol",
+      "variant": "optimized_raw",
+      "frozen_actual": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/actual/omnicontrol/optimized_raw/kinematics.npz",
+      "current_runtime": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/downstream/omnicontrol/work/kinematics.npz",
+      "file_sha256": [
+        "81c1854b789277be295598ac73b1af57c0fe71ed2c9308194fa1737b036534dd",
+        "64d72a7971958369140968a9e1add3c27ed56e20514d84db88516632b5db2c11"
+      ],
+      "maximum_time_difference_s": 8.881784197001252e-16,
+      "maximum_source_difference_m": 5.10702591327572e-15,
+      "maximum_fitted_position_difference_m": 2.599310216106091e-05,
+      "maximum_coordinate_difference": {
+        "name": "arm_rot_l",
+        "difference": 0.16596528422051726,
+        "unit": "deg"
+      },
+      "maximum_fidelity_p95_difference_deg": 9.083813155008613e-07,
+      "status": "consistent_at_report_precision"
+    },
+    {
+      "method": "primal",
+      "variant": "optimized_raw",
+      "frozen_actual": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/actual/primal/optimized_raw/kinematics.npz",
+      "current_runtime": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/downstream/primal/work/kinematics.npz",
+      "file_sha256": [
+        "4621888f0143e1f0a6bfc657800ed882a297fb81f228e9b9cd7629d136265d77",
+        "c002e498c49ebae6fba2456cbf2617fbcd1b3c885e7172a59a5d3f0c50f362c0"
+      ],
+      "maximum_time_difference_s": 3.552713678800501e-15,
+      "maximum_source_difference_m": 5.995204332975845e-15,
+      "maximum_fitted_position_difference_m": 2.5251449764197535e-08,
+      "maximum_coordinate_difference": {
+        "name": "knee_angle_l",
+        "difference": 4.953270460461567e-06,
+        "unit": "deg"
+      },
+      "maximum_fidelity_p95_difference_deg": 4.795208070618173e-07,
+      "status": "consistent_at_report_precision"
+    }
+  ]
+}

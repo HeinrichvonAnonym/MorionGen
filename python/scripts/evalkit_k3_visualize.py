@@ -15,11 +15,21 @@ COLORS={'R':'#15293c','D':'#2279b5','P':'#9c68bb','K2':'#8a949d','K3':'#cf5629'}
 STYLES={'R':'-','D':'--','P':':','K2':'-','K3':'-'}
 
 
-def overlay(row,variant,path,reason):
+def overlay(row,variant,path,reason,focus=None):
     with np.load(row['arrays']) as z:a={k:z[k] for k in z.files}
     t=a['times'];curves={'R':a['R'],'D':a['D'],'P':a['P:'+variant],'K2':a['F:legacy_raw'],'K3':a['F:'+variant]}
     values={k:angles(p) for k,p in curves.items()}
-    error=sum(abs(values['K2'][n]-values['R'][n]) for n in ['trunk_incline','left_elbow_flexion','right_elbow_flexion','left_knee_flexion','right_knee_flexion'])
+    metrics=['trunk_incline','left_elbow_flexion','right_elbow_flexion','left_knee_flexion','right_knee_flexion']
+    error=sum(abs(values['K2'][n]-values['R'][n]) for n in metrics)
+    frame_rule='largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement'
+    if reason=='最大退化／最小改善':
+        error=sum(abs(values['K3'][n]-values['R'][n])-abs(values['K2'][n]-values['R'][n]) for n in metrics)
+        frame_rule='largest within-record increase in trunk/left-right elbow/knee error; visualization only'
+    if focus:
+        from motiogen.evalkit.k.scoring import region
+        selected_metrics=[m for m in values['R'] if region(m)==focus]
+        error=sum(abs(values['K3'][n]-values['R'][n]) for n in selected_metrics)
+        frame_rule='largest final sum of errors in the explicitly focused region; visualization only'
     index=int(np.nanargmax(error))
     fig,axes=plt.subplots(2,3,figsize=(15,9),layout='constrained')
     for ax,normalized in zip(axes[0,:2],[False,True]):
@@ -33,19 +43,29 @@ def overlay(row,variant,path,reason):
             ax.scatter(xy[:,0],xy[:,1],s=9,color=COLORS[key],label=key)
         ax.set_aspect('equal');ax.grid(alpha=.2);ax.set_xlabel('水平主投影 / m');ax.set_ylabel('高度 / m')
         ax.set_title(('统一骨长、各自去根平移' if normalized else '原始几何、世界位置')+f'\nt={t[index]:.2f} s')
-    for ax,metric,title in [(axes[0,2],'trunk_incline','躯干倾斜'),(axes[1,0],'left_elbow_flexion','左肘几何屈曲'),(axes[1,1],'left_knee_flexion','左膝几何屈曲')]:
+    metrics=[('trunk_incline','躯干倾斜'),('left_elbow_flexion','左肘几何屈曲'),('left_knee_flexion','左膝几何屈曲')]
+    side='right' if focus and focus.startswith('right') else 'left';side_cn='右' if side=='right' else '左'
+    if focus and focus.endswith('arm'):
+        metrics=[metrics[0],(side+'_upper_arm_elevation',side_cn+'上臂抬举'),(side+'_elbow_flexion',side_cn+'肘几何屈曲')]
+    elif focus and focus.endswith('leg'):
+        worst=max(selected_metrics,key=lambda m:row['scores'][variant]['raw']['angles'][m]['end_to_end']['p95_abs'])
+        leg_titles={'hip_trunk_angle':'大腿向上轴与躯干夹角','ankle_chain_angle':'踝部链条夹角',
+                    'foot_incline':'足部倾斜','knee_flexion':'膝几何屈曲','thigh_incline':'大腿倾斜'}
+        title=side_cn+leg_titles.get(worst.removeprefix(side+'_'),worst)
+        metrics=[metrics[0],(side+'_knee_flexion',side_cn+'膝几何屈曲'),(worst,title)]
+    for ax,(metric,title) in zip([axes[0,2],axes[1,0],axes[1,1]],metrics):
         for key,v in values.items():ax.plot(t,v[metric],color=COLORS[key],ls=STYLES[key],label=key,lw=1.5,alpha=.9)
         ax.set_title(title);ax.set_xlabel('相对时间 / s');ax.set_ylabel('角度 / °');ax.grid(alpha=.2)
-    ax=axes[1,2];j=NAMES.index('left_wrist')
+    ax=axes[1,2];endpoint='foot' if focus and focus.endswith('leg') else 'wrist';j=NAMES.index(side+'_'+endpoint)
     for key in ['D','P','K2','K3']:
         p=normalize(curves[key],a['reference_lengths']);r=normalize(curves['R'],a['reference_lengths'])
         delta=(p[:,j]-p[:,0])-(r[:,j]-r[:,0]);ax.plot(t,np.linalg.norm(delta,axis=1)*100,color=COLORS[key],ls=STYLES[key],label=key)
-    ax.set_title('统一骨长后的左手位置误差');ax.set_xlabel('相对时间 / s');ax.set_ylabel('去根平移距离 / cm');ax.grid(alpha=.2)
+    ax.set_title('统一骨长后的'+side_cn+('足' if endpoint=='foot' else '手')+'位置误差');ax.set_xlabel('相对时间 / s');ax.set_ylabel('去根平移距离 / cm');ax.grid(alpha=.2)
     axes[0,2].legend(ncol=5,fontsize=8,loc='lower right')
     projection='开启' if variant.endswith('projected') else '关闭，P=D'
     fig.suptitle(f'{row["method"]} · {Path(row["id"]).stem} · {reason}\nR 原始参考；D 退化读回；P 投影视图（{projection}）；K2 基准拟合；K3 {variant}',fontsize=13)
     fig.savefig(path,dpi=140);plt.close(fig)
-    return {'id':row['id'],'method':row['method'],'variant':variant,'reason':reason,'frame_s':float(t[index]),'path':str(path),'frame_rule':'largest baseline sum of trunk/left-right elbow/knee errors; independent of improvement'}
+    return {'id':row['id'],'method':row['method'],'variant':variant,'reason':reason,'focus_region':focus,'frame_s':float(t[index]),'path':str(path),'frame_rule':frame_rule}
 
 
 def overview(summary,path):
@@ -59,7 +79,7 @@ def overview(summary,path):
         ax.annotate(f'{b:.2f} → {s:.2f}',(max(b,s)+.2,i),va='center',fontsize=9)
     ax.scatter(base,y,color=COLORS['K2'],label='原拟合，同一批修正输入',s=40,zorder=3)
     ax.scatter(selected,y,color=COLORS['K3'],label='K3 选定设置',s=40,zorder=3)
-    ax.set_yticks(y,methods);ax.invert_yaxis();ax.set_xlim(0,max(base+selected)*1.45)
+    ax.set_yticks(y,methods);ax.set_ylim(len(methods)+.6,-.5);ax.set_xlim(0,max(base+selected)*1.45)
     ax.set_xlabel('原始参考端到端角度 P95 汇总 / °');ax.grid(axis='x',alpha=.2);ax.legend(loc='lower right',fontsize=9)
     ax.set_title('同一参考与评分窗口上的优化变化')
     matrix=[]
@@ -164,6 +184,13 @@ def main():
     for i,(row,reason) in enumerate(chosen):
         v='optimized_raw' if a.preview else summary[row['method']]['selected']
         receipts.append(overlay(row,v,a.dest/f'{i:02d}_{row["method"]}_{row["window_key"]}.png',reason))
+    tails=ROOT/'config/evalkit_k3_20261116/tail_diagnostics.json'
+    if not a.preview and tails.exists():
+        for method,entry in json.loads(tails.read_text())['methods'].items():
+            focus=max(entry['regions'],key=lambda reg:entry['regions'][reg]['highest_remaining_error']['regions'][reg]['selected'])
+            case=entry['regions'][focus]['highest_remaining_error']
+            row=next(r for r in rows if r['method']==method and r['id']==case['id'])
+            receipts.append(overlay(row,summary[method]['selected'],a.dest/f'tail_{method}_{row["window_key"]}.png','局部高误差：'+focus,focus))
     overview_path=None
     if not a.preview:
         overview_path=a.dest/'overview.png';overview(summary,overview_path)

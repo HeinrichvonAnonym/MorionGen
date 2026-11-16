@@ -6,7 +6,7 @@
     "comparison_frames": 501,
     "core_checkout": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_20261116/k2_checkout",
     "method": "motionlcm",
-    "seconds": 22.301165629003663
+    "seconds": 22.074613985983888
   },
   {
     "status": "passed",
@@ -15,7 +15,7 @@
     "comparison_frames": 496,
     "core_checkout": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_20261116/k2_checkout",
     "method": "omnicontrol",
-    "seconds": 22.296677197999088
+    "seconds": 21.763307663000887
   },
   {
     "status": "passed",
@@ -24,7 +24,7 @@
     "comparison_frames": 501,
     "core_checkout": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_20261116/k2_checkout",
     "method": "ardy",
-    "seconds": 7.213829754007747
+    "seconds": 8.008819399983622
   },
   {
     "status": "passed",
@@ -33,7 +33,7 @@
     "comparison_frames": 501,
     "core_checkout": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_20261116/k2_checkout",
     "method": "chois",
-    "seconds": 9.326931108982535
+    "seconds": 9.6103735989891
   },
   {
     "status": "passed",
@@ -42,7 +42,7 @@
     "comparison_frames": 501,
     "core_checkout": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_20261116/k2_checkout",
     "method": "closd",
-    "seconds": 9.770257800002582
+    "seconds": 10.088317874004133
   },
   {
     "status": "passed",
@@ -51,7 +51,7 @@
     "comparison_frames": 501,
     "core_checkout": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_20261116/k2_checkout",
     "method": "dart",
-    "seconds": 10.15501890098676
+    "seconds": 10.428278271021554
   },
   {
     "status": "passed",
@@ -60,7 +60,7 @@
     "comparison_frames": 501,
     "core_checkout": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_20261116/k2_checkout",
     "method": "kimodo",
-    "seconds": 29.00440760399215
+    "seconds": 29.684830231999513
   },
   {
     "status": "passed",
@@ -69,6 +69,6 @@
     "comparison_frames": 494,
     "core_checkout": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_20261116/k2_checkout",
     "method": "primal",
-    "seconds": 8.970945796987507
+    "seconds": 9.322403893020237
   }
 ]
