@@ -48,6 +48,17 @@ class Motion:
     def fps(self):
         return float(1/np.median(np.diff(self.times)))
 
+    def content_key(self):
+        """Hash a decoded in-memory view as well as its file provenance."""
+        import hashlib
+        h=hashlib.sha256()
+        h.update(json.dumps({'method':self.method,'names':self.names,'rotation_names':self.rotation_names,
+            'prior_joints':self.provenance.get('degradation',{}).get('prior_joints',[])},sort_keys=True).encode())
+        for value in [self.positions,self.times,self.rotations]:
+            if value is None:h.update(b'none');continue
+            a=np.ascontiguousarray(value);h.update(str((a.shape,a.dtype.str)).encode());h.update(a.tobytes())
+        return h.hexdigest()
+
     def legacy(self):
         if not np.allclose(np.diff(self.times), 1/self.fps, rtol=1e-3, atol=1e-6):
             raise ValueError('Full-body fitting requires an explicitly resampled uniform clock')
@@ -81,18 +92,23 @@ def load(source, method=None, config=None):
         candidates = [n for n in settings['profiles'] if n in str(src).lower()]
         method = candidates[0] if len(candidates)==1 else 'unknown'
     fps = float(m.get('fps', settings['profiles'].get(method,{}).get('fps',30)))
-    r = None; rn = []; native_y = method == 'kimodo'
+    r = None; rn = []; native_y = method == 'kimodo';orientation_note=None
     if method == 'kimodo':
         p = np.asarray(m['posed_joints']); p = p[0] if p.ndim==4 else p
         names = list(SOMA77_NAMES); r = m.get('global_rot_mats'); rn = names
     elif method == 'primal':
         native = Path(str(file).replace('_canonical.npz','.npz'))
-        a = m if 'pose' in m else read(native)
-        pose = a['pose'][0]
+        a = m if 'pose' in m else read(native) if native.exists() else {}
         p = m['joints'] if 'joint_names' in m else a['joints'][0]
         names = list(HUMANML_NAMES)
-        local = Rotation.from_rotvec(pose[:,3:].reshape(-1,3)).as_matrix().reshape(-1,22,3,3)
-        r = chain(local,PARENTS); rn = names
+        if 'pose' in a:
+            pose = a['pose'][0]
+            local = Rotation.from_rotvec(pose[:,3:].reshape(-1,3)).as_matrix().reshape(-1,22,3,3)
+            r = chain(local,PARENTS); rn = names
+        elif settings.get('convention_registry') and 'joint_names' in m:
+            orientation_note='legacy_canonical_positions_without_native_pose; independent head orientation unavailable'
+        else:
+            raise ValueError('PRIMAL native pose is required by the selected legacy config')
         if 'joint_names' in m:
             p = np.asarray(p) @ Y_TO_Z
         native_y = True
@@ -131,6 +147,7 @@ def load(source, method=None, config=None):
                   'orientation_source':'native' if r is not None else 'unavailable',
                   'anatomical_calibration':'native_segment_axes_only', 'axes':'right-handed Y-up','units':'m',
                   'source_position_contract':position_contract})
+    if orientation_note:motion.provenance['orientation_limitation']=orientation_note
     sidecar = file.parent/'k_provenance.json'
     if sidecar.exists():
         declared = json.loads(sidecar.read_text())

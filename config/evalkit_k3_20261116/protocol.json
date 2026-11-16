@@ -1,5 +1,5 @@
 {
-  "version": "k3-development-four-cell-v1",
+  "version": "k3-development-four-cell-v2-corrected-bvh",
   "windows": 82,
   "exports": 656,
   "variants": [
@@ -32,13 +32,18 @@
   "pilot": {
     "completed_formats": 8,
     "four_cells_each": true,
-    "superseded_due_to_pre_freeze_code_changes": true
+    "superseded_due_to_pre_freeze_code_changes": true,
+    "status": "superseded_reference_before_translation_correction"
   },
   "tests": {
-    "passed": 39,
-    "log": "develop_logs/test_runs/20261116_k3/tests_freeze.log"
+    "passed": 48,
+    "log": "develop_logs/test_runs/20261116_k3/tests_corrected.log"
   },
   "cpu_workers": 3,
   "threads_per_worker": 1,
-  "minimum_free_disk_gib": 80
+  "minimum_free_disk_gib": 80,
+  "reference_translation": "absolute_channels",
+  "reference_correction": "reference_translation_correction.json",
+  "reference_precision": "float64 FK; eligibility retains common float32 0.1mm position resolution contract",
+  "superseded": "superseded_reference_v1"
 }

@@ -1,0 +1,2154 @@
+{
+  "selection": "4 per group: hash first then farthest standardized original geometry; historical 22 override same recording windows",
+  "features": [
+    "trunk_p90",
+    "left_knee_p90",
+    "right_knee_p90",
+    "left_arm_elevation_p90",
+    "right_arm_elevation_p90",
+    "joint_speed_p90"
+  ],
+  "standardization_std": [
+    22.392270611860862,
+    42.912624476169995,
+    42.71969367017695,
+    32.654027269420666,
+    32.347490783346714,
+    0.32126798140845936
+  ],
+  "light_sha256": "b9894b4f58266a0575d4b6ba7f7c4dc2ecd983d4f41d826554bca94584ffab61",
+  "records": [
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R01.bvh",
+      "dataset": "collaborate",
+      "subset": "AirplaneRiveting",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/AirplaneRiveting/S01",
+      "recording_id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R01.bvh",
+      "status": "included",
+      "frames": 2412,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "AirplaneRiveting.zip",
+        "member": "AirplaneRiveting/S01/PLNS01P01R01.bvh",
+        "bytes": 7392415,
+        "crc32": "ad93427f"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        10.894431050000001,
+        15.894431050000001
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "000"
+    },
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R05.bvh",
+      "dataset": "collaborate",
+      "subset": "AirplaneRiveting",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/AirplaneRiveting/S01",
+      "recording_id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R05.bvh",
+      "status": "included",
+      "frames": 1013,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "AirplaneRiveting.zip",
+        "member": "AirplaneRiveting/S01/PLNS01P01R05.bvh",
+        "bytes": 3185844,
+        "crc32": "f16a4d08"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        3.1222166000000007,
+        8.122216600000002
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "001"
+    },
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P02R04.bvh",
+      "dataset": "collaborate",
+      "subset": "AirplaneRiveting",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/AirplaneRiveting/S01",
+      "recording_id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P02R04.bvh",
+      "status": "included",
+      "frames": 1017,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "AirplaneRiveting.zip",
+        "member": "AirplaneRiveting/S01/PLNS01P02R04.bvh",
+        "bytes": 3232044,
+        "crc32": "31a4517e"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        3.1444388000000005,
+        8.1444388
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "002"
+    },
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P02R05.bvh",
+      "dataset": "collaborate",
+      "subset": "AirplaneRiveting",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/AirplaneRiveting/S01",
+      "recording_id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P02R05.bvh",
+      "status": "included",
+      "frames": 331,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "AirplaneRiveting.zip",
+        "member": "AirplaneRiveting/S01/PLNS01P02R05.bvh",
+        "bytes": 1077959,
+        "crc32": "81f73369"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        3.6666630000000002
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "003"
+    },
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R01.bvh",
+      "dataset": "collaborate",
+      "subset": "AirplaneRiveting",
+      "subject": "S02",
+      "partition": "development",
+      "group_id": "collaborate/AirplaneRiveting/S02",
+      "recording_id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R01.bvh",
+      "status": "included",
+      "frames": 5262,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "AirplaneRiveting.zip",
+        "member": "AirplaneRiveting/S02/PLNS02P03R01.bvh",
+        "bytes": 16620735,
+        "crc32": "2e6c2d40"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        26.7221955,
+        31.7221905
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "004"
+    },
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R02.bvh",
+      "dataset": "collaborate",
+      "subset": "AirplaneRiveting",
+      "subject": "S02",
+      "partition": "development",
+      "group_id": "collaborate/AirplaneRiveting/S02",
+      "recording_id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R02.bvh",
+      "status": "included",
+      "frames": 889,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "AirplaneRiveting.zip",
+        "member": "AirplaneRiveting/S02/PLNS02P03R02.bvh",
+        "bytes": 2817759,
+        "crc32": "ff90bfbb"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.4333284000000006,
+        7.433328400000001
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "005"
+    },
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R03.bvh",
+      "dataset": "collaborate",
+      "subset": "AirplaneRiveting",
+      "subject": "S02",
+      "partition": "development",
+      "group_id": "collaborate/AirplaneRiveting/S02",
+      "recording_id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R03.bvh",
+      "status": "included",
+      "frames": 11059,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "AirplaneRiveting.zip",
+        "member": "AirplaneRiveting/S02/PLNS02P03R03.bvh",
+        "bytes": 34658045,
+        "crc32": "13e645c5"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        58.9332719,
+        63.9332719
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "006"
+    },
+    {
+      "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R06.bvh",
+      "dataset": "collaborate",
+      "subset": "AirplaneRiveting",
+      "subject": "S02",
+      "partition": "development",
+      "group_id": "collaborate/AirplaneRiveting/S02",
+      "recording_id": "collaborate/AirplaneRiveting/AirplaneRiveting/S02/PLNS02P03R06.bvh",
+      "status": "included",
+      "frames": 2944,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "AirplaneRiveting.zip",
+        "member": "AirplaneRiveting/S02/PLNS02P03R06.bvh",
+        "bytes": 9194262,
+        "crc32": "ce950c04"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        13.849983650000002,
+        18.849983650000002
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "007"
+    },
+    {
+      "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Beak_cutting/Trimming/GBBCS01G02R05.bvh",
+      "dataset": "collaborate",
+      "subset": "Glassblowing_Process",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/Glassblowing_Process/S01",
+      "recording_id": "collaborate/Glassblowing_Process/Glassblowing_Process/Beak_cutting/Trimming/GBBCS01G02R05.bvh",
+      "status": "included",
+      "frames": 2028,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "Glassblowing_Process.zip",
+        "member": "Glassblowing_Process/Beak_cutting/Trimming/GBBCS01G02R05.bvh",
+        "bytes": 6171790,
+        "crc32": "d9407d6e"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        8.76109985,
+        13.76109985
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "008"
+    },
+    {
+      "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Blocking/GBBSS01G01R04.bvh",
+      "dataset": "collaborate",
+      "subset": "Glassblowing_Process",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/Glassblowing_Process/S01",
+      "recording_id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Blocking/GBBSS01G01R04.bvh",
+      "status": "included",
+      "frames": 919,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "Glassblowing_Process.zip",
+        "member": "Glassblowing_Process/Blowing_and_shaping/Blocking/GBBSS01G01R04.bvh",
+        "bytes": 2917232,
+        "crc32": "83a8e0e4"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.5999974,
+        7.5999924000000005
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "009"
+    },
+    {
+      "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Body_blowing/GBBSS01G02R01.bvh",
+      "dataset": "collaborate",
+      "subset": "Glassblowing_Process",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/Glassblowing_Process/S01",
+      "recording_id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Body_blowing/GBBSS01G02R01.bvh",
+      "status": "included",
+      "frames": 202,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "Glassblowing_Process.zip",
+        "member": "Glassblowing_Process/Blowing_and_shaping/Body_blowing/GBBSS01G02R01.bvh",
+        "bytes": 621939,
+        "crc32": "f33ef1f3"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        2.2333311
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "010"
+    },
+    {
+      "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Body_blowing/GBBSS01G02R04.bvh",
+      "dataset": "collaborate",
+      "subset": "Glassblowing_Process",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/Glassblowing_Process/S01",
+      "recording_id": "collaborate/Glassblowing_Process/Glassblowing_Process/Blowing_and_shaping/Body_blowing/GBBSS01G02R04.bvh",
+      "status": "included",
+      "frames": 143,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "Glassblowing_Process.zip",
+        "member": "Glassblowing_Process/Blowing_and_shaping/Body_blowing/GBBSS01G02R04.bvh",
+        "bytes": 438729,
+        "crc32": "bb49f1d1"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        1.5777762
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "011"
+    },
+    {
+      "id": "collaborate/Glassblowing_Process/Glassblowing_Process/Leg_and_foot_laying/Foot_laying/GBLFS01G01R01.bvh",
+      "dataset": "collaborate",
+      "subset": "Glassblowing_Process",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/Glassblowing_Process/S01",
+      "recording_id": "collaborate/Glassblowing_Process/Glassblowing_Process/Leg_and_foot_laying/Foot_laying/GBLFS01G01R01.bvh",
+      "status": "included",
+      "frames": 666,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "Glassblowing_Process.zip",
+        "member": "Glassblowing_Process/Leg_and_foot_laying/Foot_laying/GBLFS01G01R01.bvh",
+        "bytes": 2008203,
+        "crc32": "6c271141"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.19444075,
+        6.19444075
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "012"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S1/S1P01R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S1",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S1",
+      "recording_id": "collaborate/LAB/EAWS/S1/S1P01R1.bvh",
+      "status": "included",
+      "frames": 1075,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S1/S1P01R1.bvh",
+        "bytes": 3218947,
+        "crc32": "9697bb42"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.999995
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "013"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S1/S1P04R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S1",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S1",
+      "recording_id": "collaborate/LAB/EAWS/S1/S1P04R3.bvh",
+      "status": "included",
+      "frames": 576,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S1/S1P04R3.bvh",
+        "bytes": 1682058,
+        "crc32": "b9520974"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.6888882000000001,
+        5.6888832
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "014"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S1/S1P13R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S1",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S1",
+      "recording_id": "collaborate/LAB/EAWS/S1/S1P13R3.bvh",
+      "status": "included",
+      "frames": 928,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S1/S1P13R3.bvh",
+        "bytes": 2788703,
+        "crc32": "8880189f"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.6499948500000006,
+        7.649994850000001
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "015"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S1/S1P14R2.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S1",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S1",
+      "recording_id": "collaborate/LAB/EAWS/S1/S1P14R2.bvh",
+      "status": "included",
+      "frames": 1008,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S1/S1P14R2.bvh",
+        "bytes": 2969013,
+        "crc32": "0b3e709b"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        3.0944388500000004,
+        8.09443885
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "016"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S1/S1P24R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S1",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S1",
+      "recording_id": "collaborate/LAB/EAWS/S1/S1P24R3.bvh",
+      "status": "included",
+      "frames": 855,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S1/S1P24R3.bvh",
+        "bytes": 2621046,
+        "crc32": "21c3bf14"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.2444397,
+        7.2444397
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "017"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S10/S10P01R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S10",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S10",
+      "recording_id": "collaborate/LAB/EAWS/S10/S10P01R1.bvh",
+      "status": "included",
+      "frames": 591,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S10/S10P01R1.bvh",
+        "bytes": 1769571,
+        "crc32": "1f0d1ad3"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.999995
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "018"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S10/S10P01R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S10",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S10",
+      "recording_id": "collaborate/LAB/EAWS/S10/S10P01R3.bvh",
+      "status": "included",
+      "frames": 607,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S10/S10P01R3.bvh",
+        "bytes": 1821862,
+        "crc32": "d775b255"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.8666633000000004,
+        5.866663300000001
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "019"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S10/S10P06R2.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S10",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S10",
+      "recording_id": "collaborate/LAB/EAWS/S10/S10P06R2.bvh",
+      "status": "included",
+      "frames": 679,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S10/S10P06R2.bvh",
+        "bytes": 2031429,
+        "crc32": "f0988b95"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.2666629,
+        6.2666629
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "020"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S10/S10P13R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S10",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S10",
+      "recording_id": "collaborate/LAB/EAWS/S10/S10P13R1.bvh",
+      "status": "included",
+      "frames": 716,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S10/S10P13R1.bvh",
+        "bytes": 2165654,
+        "crc32": "dd828371"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.47221825,
+        6.47221825
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "021"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S10/S10P25R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S10",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S10",
+      "recording_id": "collaborate/LAB/EAWS/S10/S10P25R3.bvh",
+      "status": "included",
+      "frames": 736,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S10/S10P25R3.bvh",
+        "bytes": 2224278,
+        "crc32": "b7fdf0df"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.5833292500000002,
+        6.58332925
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "022"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S10/S10P27R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S10",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S10",
+      "recording_id": "collaborate/LAB/EAWS/S10/S10P27R3.bvh",
+      "status": "included",
+      "frames": 664,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S10/S10P27R3.bvh",
+        "bytes": 1975929,
+        "crc32": "75400924"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.1777766,
+        6.1777716
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "023"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S2/S2P01R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S2",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S2",
+      "recording_id": "collaborate/LAB/EAWS/S2/S2P01R1.bvh",
+      "status": "included",
+      "frames": 748,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S2/S2P01R1.bvh",
+        "bytes": 2289170,
+        "crc32": "df907848"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.999995
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "024"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S2/S2P01R2.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S2",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S2",
+      "recording_id": "collaborate/LAB/EAWS/S2/S2P01R2.bvh",
+      "status": "included",
+      "frames": 654,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S2/S2P01R2.bvh",
+        "bytes": 2002367,
+        "crc32": "55726b4f"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.12777415,
+        6.1277741500000005
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "025"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S2/S2P09R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S2",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S2",
+      "recording_id": "collaborate/LAB/EAWS/S2/S2P09R1.bvh",
+      "status": "included",
+      "frames": 875,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S2/S2P09R1.bvh",
+        "bytes": 2584560,
+        "crc32": "243c07db"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.3555507,
+        7.3555507
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "026"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S2/S2P14R2.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S2",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S2",
+      "recording_id": "collaborate/LAB/EAWS/S2/S2P14R2.bvh",
+      "status": "included",
+      "frames": 925,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S2/S2P14R2.bvh",
+        "bytes": 2788027,
+        "crc32": "844ed8fc"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.6333282000000002,
+        7.6333282
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "027"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S2/S2P19R2.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S2",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S2",
+      "recording_id": "collaborate/LAB/EAWS/S2/S2P19R2.bvh",
+      "status": "included",
+      "frames": 872,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S2/S2P19R2.bvh",
+        "bytes": 2682220,
+        "crc32": "37a2b02a"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.3333310000000003,
+        7.3333260000000005
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "028"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S2/S2P21R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S2",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S2",
+      "recording_id": "collaborate/LAB/EAWS/S2/S2P21R3.bvh",
+      "status": "included",
+      "frames": 628,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S2/S2P21R3.bvh",
+        "bytes": 1979658,
+        "crc32": "7ecd5ce4"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.9833298500000001,
+        5.9833298500000005
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "029"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S3/S3P01R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S3",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S3",
+      "recording_id": "collaborate/LAB/EAWS/S3/S3P01R1.bvh",
+      "status": "included",
+      "frames": 656,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S3/S3P01R1.bvh",
+        "bytes": 1989718,
+        "crc32": "bb3b2ddc"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.999995
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "030"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S3/S3P07R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S3",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S3",
+      "recording_id": "collaborate/LAB/EAWS/S3/S3P07R1.bvh",
+      "status": "included",
+      "frames": 921,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S3/S3P07R1.bvh",
+        "bytes": 2818754,
+        "crc32": "8fd7c00c"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.6111085000000003,
+        7.6111035000000005
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "031"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S3/S3P08R2.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S3",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S3",
+      "recording_id": "collaborate/LAB/EAWS/S3/S3P08R2.bvh",
+      "status": "included",
+      "frames": 686,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S3/S3P08R2.bvh",
+        "bytes": 2097994,
+        "crc32": "e05a823f"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.3055517500000002,
+        6.30555175
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "032"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S3/S3P13R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S3",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S3",
+      "recording_id": "collaborate/LAB/EAWS/S3/S3P13R1.bvh",
+      "status": "included",
+      "frames": 880,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S3/S3P13R1.bvh",
+        "bytes": 2783408,
+        "crc32": "469a8239"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.3833284500000005,
+        7.3833284500000005
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "033"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S3/S3P15R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S3",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S3",
+      "recording_id": "collaborate/LAB/EAWS/S3/S3P15R3.bvh",
+      "status": "included",
+      "frames": 602,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S3/S3P15R3.bvh",
+        "bytes": 1822200,
+        "crc32": "d7aa19ac"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.8388855500000001,
+        5.8388855500000005
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "034"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S4/S4P01R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S4",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S4",
+      "recording_id": "collaborate/LAB/EAWS/S4/S4P01R1.bvh",
+      "status": "included",
+      "frames": 613,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S4/S4P01R1.bvh",
+        "bytes": 1918917,
+        "crc32": "329f1480"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.999995
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "035"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S4/S4P01R2.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S4",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S4",
+      "recording_id": "collaborate/LAB/EAWS/S4/S4P01R2.bvh",
+      "status": "included",
+      "frames": 606,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S4/S4P01R2.bvh",
+        "bytes": 1889248,
+        "crc32": "38b0b519"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.86110775,
+        5.86110775
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "036"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S4/S4P12R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S4",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S4",
+      "recording_id": "collaborate/LAB/EAWS/S4/S4P12R1.bvh",
+      "status": "included",
+      "frames": 924,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S4/S4P12R1.bvh",
+        "bytes": 2829352,
+        "crc32": "9c050fda"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.62777265,
+        7.62777265
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "037"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S4/S4P19R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S4",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S4",
+      "recording_id": "collaborate/LAB/EAWS/S4/S4P19R1.bvh",
+      "status": "included",
+      "frames": 849,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S4/S4P19R1.bvh",
+        "bytes": 2627483,
+        "crc32": "93dfe84d"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.2111089,
+        7.2111039
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "038"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S4/S4P19R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S4",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S4",
+      "recording_id": "collaborate/LAB/EAWS/S4/S4P19R3.bvh",
+      "status": "included",
+      "frames": 830,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S4/S4P19R3.bvh",
+        "bytes": 2573886,
+        "crc32": "c805b38f"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.1055509500000005,
+        7.1055509500000005
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "039"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S4/S4P21R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S4",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S4",
+      "recording_id": "collaborate/LAB/EAWS/S4/S4P21R3.bvh",
+      "status": "included",
+      "frames": 670,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S4/S4P21R3.bvh",
+        "bytes": 2033532,
+        "crc32": "3bdbf623"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.2166629500000004,
+        6.21666295
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "040"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S5/S5P01R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S5",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S5",
+      "recording_id": "collaborate/LAB/EAWS/S5/S5P01R1.bvh",
+      "status": "included",
+      "frames": 619,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S5/S5P01R1.bvh",
+        "bytes": 1878449,
+        "crc32": "d5e7cffc"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.999995
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "041"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S5/S5P01R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S5",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S5",
+      "recording_id": "collaborate/LAB/EAWS/S5/S5P01R3.bvh",
+      "status": "included",
+      "frames": 610,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S5/S5P01R3.bvh",
+        "bytes": 1854004,
+        "crc32": "fec9097c"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.8833299500000003,
+        5.88332995
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "042"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S5/S5P06R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S5",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S5",
+      "recording_id": "collaborate/LAB/EAWS/S5/S5P06R3.bvh",
+      "status": "included",
+      "frames": 987,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S5/S5P06R3.bvh",
+        "bytes": 3063999,
+        "crc32": "e66835c1"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.9777748,
+        7.9777698
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "043"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S5/S5P09R2.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S5",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S5",
+      "recording_id": "collaborate/LAB/EAWS/S5/S5P09R2.bvh",
+      "status": "included",
+      "frames": 948,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S5/S5P09R2.bvh",
+        "bytes": 2974719,
+        "crc32": "23dfe41c"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.76110585,
+        7.76110585
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "044"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S5/S5P13R2.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S5",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S5",
+      "recording_id": "collaborate/LAB/EAWS/S5/S5P13R2.bvh",
+      "status": "included",
+      "frames": 767,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S5/S5P13R2.bvh",
+        "bytes": 2392482,
+        "crc32": "eb9883d5"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.7555513000000005,
+        6.7555513000000005
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "045"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S5/S5P16R2.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S5",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S5",
+      "recording_id": "collaborate/LAB/EAWS/S5/S5P16R2.bvh",
+      "status": "included",
+      "frames": 880,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S5/S5P16R2.bvh",
+        "bytes": 2676831,
+        "crc32": "3a63d6e3"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.3833284500000005,
+        7.3833284500000005
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "046"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S6/S6P01R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S6",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S6",
+      "recording_id": "collaborate/LAB/EAWS/S6/S6P01R1.bvh",
+      "status": "included",
+      "frames": 610,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S6/S6P01R1.bvh",
+        "bytes": 1805409,
+        "crc32": "e97b8e82"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.999995
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "047"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S6/S6P01R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S6",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S6",
+      "recording_id": "collaborate/LAB/EAWS/S6/S6P01R3.bvh",
+      "status": "included",
+      "frames": 670,
+      "dt": 0.01,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S6/S6P01R3.bvh",
+        "bytes": 2040264,
+        "crc32": "6aa0ced2"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.8450000000000002,
+        5.845000000000001
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "048"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S6/S6P07R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S6",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S6",
+      "recording_id": "collaborate/LAB/EAWS/S6/S6P07R3.bvh",
+      "status": "included",
+      "frames": 1026,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S6/S6P07R3.bvh",
+        "bytes": 3043730,
+        "crc32": "998afa38"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        3.1944387500000007,
+        8.19443875
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "049"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S6/S6P13R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S6",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S6",
+      "recording_id": "collaborate/LAB/EAWS/S6/S6P13R3.bvh",
+      "status": "included",
+      "frames": 826,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S6/S6P13R3.bvh",
+        "bytes": 2511899,
+        "crc32": "2b482eec"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.0833287500000006,
+        7.083328750000001
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "050"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S6/S6P18R2.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S6",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S6",
+      "recording_id": "collaborate/LAB/EAWS/S6/S6P18R2.bvh",
+      "status": "included",
+      "frames": 1091,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S6/S6P18R2.bvh",
+        "bytes": 3241427,
+        "crc32": "76a0382e"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        3.5555495000000006,
+        8.555549500000001
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "051"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S6/S6P24R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S6",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S6",
+      "recording_id": "collaborate/LAB/EAWS/S6/S6P24R1.bvh",
+      "status": "included",
+      "frames": 1009,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S6/S6P24R1.bvh",
+        "bytes": 3072746,
+        "crc32": "a41385a4"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        3.0999969000000003,
+        8.099991900000001
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "052"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S7/S7P01R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S7",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S7",
+      "recording_id": "collaborate/LAB/EAWS/S7/S7P01R1.bvh",
+      "status": "included",
+      "frames": 627,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S7/S7P01R1.bvh",
+        "bytes": 1880616,
+        "crc32": "8b3e79e4"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.999995
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "053"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S7/S7P08R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S7",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S7",
+      "recording_id": "collaborate/LAB/EAWS/S7/S7P08R1.bvh",
+      "status": "included",
+      "frames": 1055,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S7/S7P08R1.bvh",
+        "bytes": 3235130,
+        "crc32": "8520b47c"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        3.3555522,
+        8.3555472
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "054"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S7/S7P09R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S7",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S7",
+      "recording_id": "collaborate/LAB/EAWS/S7/S7P09R3.bvh",
+      "status": "included",
+      "frames": 805,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S7/S7P09R3.bvh",
+        "bytes": 2464131,
+        "crc32": "f2435d74"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.9666622,
+        6.9666622
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "055"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S7/S7P13R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S7",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S7",
+      "recording_id": "collaborate/LAB/EAWS/S7/S7P13R1.bvh",
+      "status": "included",
+      "frames": 901,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S7/S7P13R1.bvh",
+        "bytes": 2732094,
+        "crc32": "be689dca"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.499995,
+        7.499995
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "056"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S7/S7P16R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S7",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S7",
+      "recording_id": "collaborate/LAB/EAWS/S7/S7P16R3.bvh",
+      "status": "included",
+      "frames": 970,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S7/S7P16R3.bvh",
+        "bytes": 3062915,
+        "crc32": "7adcca0e"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.88332795,
+        7.88332795
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "057"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S7/S7P21R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S7",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S7",
+      "recording_id": "collaborate/LAB/EAWS/S7/S7P21R1.bvh",
+      "status": "included",
+      "frames": 828,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S7/S7P21R1.bvh",
+        "bytes": 2453529,
+        "crc32": "038fa8eb"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.0944398500000005,
+        7.0944398500000005
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "058"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P05R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S8",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S8",
+      "recording_id": "collaborate/LAB/EAWS/S8/S8P05R1.bvh",
+      "status": "included",
+      "frames": 946,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S8/S8P05R1.bvh",
+        "bytes": 2846142,
+        "crc32": "ef05610b"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.999995
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "059"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P05R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S8",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S8",
+      "recording_id": "collaborate/LAB/EAWS/S8/S8P05R3.bvh",
+      "status": "included",
+      "frames": 837,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S8/S8P05R3.bvh",
+        "bytes": 2526956,
+        "crc32": "a53480a3"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.1444398,
+        7.1444398
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "060"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P15R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S8",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S8",
+      "recording_id": "collaborate/LAB/EAWS/S8/S8P15R1.bvh",
+      "status": "included",
+      "frames": 619,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S8/S8P15R1.bvh",
+        "bytes": 1872773,
+        "crc32": "1172dbfe"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.9333324000000001,
+        5.9333274000000005
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "061"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P16R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S8",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S8",
+      "recording_id": "collaborate/LAB/EAWS/S8/S8P16R3.bvh",
+      "status": "included",
+      "frames": 987,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S8/S8P16R3.bvh",
+        "bytes": 2994427,
+        "crc32": "5f0dd54e"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.9777723,
+        7.9777723
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "062"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P21R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S8",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S8",
+      "recording_id": "collaborate/LAB/EAWS/S8/S8P21R3.bvh",
+      "status": "included",
+      "frames": 597,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S8/S8P21R3.bvh",
+        "bytes": 1793329,
+        "crc32": "42c83163"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.8111078000000003,
+        5.8111078
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "063"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S8/S8P24R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S8",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S8",
+      "recording_id": "collaborate/LAB/EAWS/S8/S8P24R3.bvh",
+      "status": "included",
+      "frames": 814,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S8/S8P24R3.bvh",
+        "bytes": 2491010,
+        "crc32": "455da26a"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.01666215,
+        7.01666215
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "064"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S9/S9P01R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S9",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S9",
+      "recording_id": "collaborate/LAB/EAWS/S9/S9P01R1.bvh",
+      "status": "included",
+      "frames": 613,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S9/S9P01R1.bvh",
+        "bytes": 1846142,
+        "crc32": "6fddd217"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.999995
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "065"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S9/S9P08R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S9",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S9",
+      "recording_id": "collaborate/LAB/EAWS/S9/S9P08R3.bvh",
+      "status": "included",
+      "frames": 1012,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S9/S9P08R3.bvh",
+        "bytes": 3062491,
+        "crc32": "1f17de75"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        3.111108,
+        8.111103
+      ],
+      "selection": "historical_22",
+      "historical": true,
+      "window_key": "066"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S9/S9P13R1.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S9",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S9",
+      "recording_id": "collaborate/LAB/EAWS/S9/S9P13R1.bvh",
+      "status": "included",
+      "frames": 845,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S9/S9P13R1.bvh",
+        "bytes": 2642561,
+        "crc32": "c21f9e7b"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.1888842000000004,
+        7.1888842
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "067"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S9/S9P16R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S9",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S9",
+      "recording_id": "collaborate/LAB/EAWS/S9/S9P16R3.bvh",
+      "status": "included",
+      "frames": 984,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S9/S9P16R3.bvh",
+        "bytes": 2937883,
+        "crc32": "72c11c73"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        2.9611056500000004,
+        7.96110565
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "068"
+    },
+    {
+      "id": "collaborate/LAB/EAWS/S9/S9P27R3.bvh",
+      "dataset": "collaborate",
+      "subset": "LAB",
+      "subject": "S9",
+      "partition": "development",
+      "group_id": "collaborate/LAB/S9",
+      "recording_id": "collaborate/LAB/EAWS/S9/S9P27R3.bvh",
+      "status": "included",
+      "frames": 737,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "LAB.zip",
+        "member": "EAWS/S9/S9P27R3.bvh",
+        "bytes": 2328911,
+        "crc32": "27388c74"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.5888847999999998,
+        6.5888848
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "069"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/CleanWind/S02/MCCWS02G01R01.bvh",
+      "dataset": "collaborate",
+      "subset": "MasticCultivation",
+      "subject": "S02",
+      "partition": "development",
+      "group_id": "collaborate/MasticCultivation/S02",
+      "recording_id": "collaborate/MasticCultivation/MasticCultivation/CleanWind/S02/MCCWS02G01R01.bvh",
+      "status": "included",
+      "frames": 306,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "MasticCultivation.zip",
+        "member": "MasticCultivation/CleanWind/S02/MCCWS02G01R01.bvh",
+        "bytes": 904845,
+        "crc32": "80cc09d3"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        3.3888855
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "070"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/Dusting/S01/MCDUS01G01R03.bvh",
+      "dataset": "collaborate",
+      "subset": "MasticCultivation",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/MasticCultivation/S01",
+      "recording_id": "collaborate/MasticCultivation/MasticCultivation/Dusting/S01/MCDUS01G01R03.bvh",
+      "status": "included",
+      "frames": 1223,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "MasticCultivation.zip",
+        "member": "MasticCultivation/Dusting/S01/MCDUS01G01R03.bvh",
+        "bytes": 3633079,
+        "crc32": "e44fa62e"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        4.2888821,
+        9.2888821
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "071"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S01/MCEAS01G01R04.bvh",
+      "dataset": "collaborate",
+      "subset": "MasticCultivation",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/MasticCultivation/S01",
+      "recording_id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S01/MCEAS01G01R04.bvh",
+      "status": "included",
+      "frames": 2453,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "MasticCultivation.zip",
+        "member": "MasticCultivation/EmbroideryA/S01/MCEAS01G01R04.bvh",
+        "bytes": 7270343,
+        "crc32": "7876be68"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        11.1222086,
+        16.1222086
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "072"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh",
+      "dataset": "collaborate",
+      "subset": "MasticCultivation",
+      "subject": "S02",
+      "partition": "development",
+      "group_id": "collaborate/MasticCultivation/S02",
+      "recording_id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh",
+      "status": "included",
+      "frames": 432,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "MasticCultivation.zip",
+        "member": "MasticCultivation/EmbroideryA/S02/MCEAS02G01R02.bvh",
+        "bytes": 1268921,
+        "crc32": "d4af9199"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.788884100000001
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "073"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/Gathering/S01/MCGAS01G01R05.bvh",
+      "dataset": "collaborate",
+      "subset": "MasticCultivation",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/MasticCultivation/S01",
+      "recording_id": "collaborate/MasticCultivation/MasticCultivation/Gathering/S01/MCGAS01G01R05.bvh",
+      "status": "included",
+      "frames": 138,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "MasticCultivation.zip",
+        "member": "MasticCultivation/Gathering/S01/MCGAS01G01R05.bvh",
+        "bytes": 430380,
+        "crc32": "5a612f0a"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        1.5222207
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "074"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/ScrappingOld/S01/MCSOS01G01R01.bvh",
+      "dataset": "collaborate",
+      "subset": "MasticCultivation",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/MasticCultivation/S01",
+      "recording_id": "collaborate/MasticCultivation/MasticCultivation/ScrappingOld/S01/MCSOS01G01R01.bvh",
+      "status": "included",
+      "frames": 2331,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "MasticCultivation.zip",
+        "member": "MasticCultivation/ScrappingOld/S01/MCSOS01G01R01.bvh",
+        "bytes": 7151528,
+        "crc32": "5fe0e6ff"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        10.4444315,
+        15.4444315
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "075"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/ScrappingOld/S02/MCSOS02G01R03.bvh",
+      "dataset": "collaborate",
+      "subset": "MasticCultivation",
+      "subject": "S02",
+      "partition": "development",
+      "group_id": "collaborate/MasticCultivation/S02",
+      "recording_id": "collaborate/MasticCultivation/MasticCultivation/ScrappingOld/S02/MCSOS02G01R03.bvh",
+      "status": "included",
+      "frames": 424,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "MasticCultivation.zip",
+        "member": "MasticCultivation/ScrappingOld/S02/MCSOS02G01R03.bvh",
+        "bytes": 1272312,
+        "crc32": "a645b98e"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.6999953
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "076"
+    },
+    {
+      "id": "collaborate/MasticCultivation/MasticCultivation/Wiping/S02/MCWIS02G01R03.bvh",
+      "dataset": "collaborate",
+      "subset": "MasticCultivation",
+      "subject": "S02",
+      "partition": "development",
+      "group_id": "collaborate/MasticCultivation/S02",
+      "recording_id": "collaborate/MasticCultivation/MasticCultivation/Wiping/S02/MCWIS02G01R03.bvh",
+      "status": "included",
+      "frames": 278,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "MasticCultivation.zip",
+        "member": "MasticCultivation/Wiping/S02/MCWIS02G01R03.bvh",
+        "bytes": 844728,
+        "crc32": "950ec288"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        3.0777747
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "077"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Beam_preparation/G03/SWPBS01G03R01.bvh",
+      "dataset": "collaborate",
+      "subset": "SlikWeaving",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/Beam_preparation/G03/SWPBS01G03R01.bvh",
+      "status": "included",
+      "frames": 1611,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "SlikWeaving.zip",
+        "member": "SlikWeaving/Beam_preparation/G03/SWPBS01G03R01.bvh",
+        "bytes": 4643829,
+        "crc32": "1118726b"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        6.444435500000001,
+        11.4444355
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "078"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R26.bvh",
+      "dataset": "collaborate",
+      "subset": "SlikWeaving",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R26.bvh",
+      "status": "included",
+      "frames": 426,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "SlikWeaving.zip",
+        "member": "SlikWeaving/Cards/SWPCS01G01R26.bvh",
+        "bytes": 563819,
+        "crc32": "d7d67a7d"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        4.7222175
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "079"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/WeavingLargeSizeLoom/G02/SWLLS01G02R06.bvh",
+      "dataset": "collaborate",
+      "subset": "SlikWeaving",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/WeavingLargeSizeLoom/G02/SWLLS01G02R06.bvh",
+      "status": "included",
+      "frames": 100,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "SlikWeaving.zip",
+        "member": "SlikWeaving/WeavingLargeSizeLoom/G02/SWLLS01G02R06.bvh",
+        "bytes": 306563,
+        "crc32": "59fe217b"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        1.0999989000000001
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "080"
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/WeavingLargeSizeLoom/G03/SWLLS01G03R02.bvh",
+      "dataset": "collaborate",
+      "subset": "SlikWeaving",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/WeavingLargeSizeLoom/G03/SWLLS01G03R02.bvh",
+      "status": "included",
+      "frames": 211,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "SlikWeaving.zip",
+        "member": "SlikWeaving/WeavingLargeSizeLoom/G03/SWLLS01G03R02.bvh",
+        "bytes": 633906,
+        "crc32": "3ab9995f"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        0.0,
+        2.3333310000000003
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "081"
+    }
+  ]
+}

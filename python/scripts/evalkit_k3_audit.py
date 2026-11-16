@@ -8,7 +8,8 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path[:0]=[str(ROOT/'utils'),str(ROOT/'utils/motiogen')]
 from motiogen.evalkit.k.config import digest
 from motiogen.evalkit.k.reference import archive,andy,marker_frames
-from motiogen.evalkit.k.geometry import valid_rotation,frame,unit
+from motiogen.evalkit.k.geometry import valid_rotation,unit
+from motiogen.evalkit.k.reference_bvh import collaborate
 from motiogen.evalkit.k.motion import Motion
 from motiogen.evalkit.k.body import evaluate_body
 from motiogen.evalkit.k.export import ALIASES,retarget,serialize
@@ -28,16 +29,7 @@ def native(row,window=None,light=False):
     b.frames=b.frames[start:end+1]
     stride=max(1,int(np.ceil(len(b.frames)/240))) if light else 1
     b.frames=b.frames[::stride]; b.fps=fps/stride
-    p,r=b.forward_kinematics(True);names=[j.name for j in b.joints]
-    # Use native rest hierarchy; this geometric basis is declared, not called publisher anatomy.
-    local=np.median(b.local_positions(True),0);rest=np.zeros_like(local)
-    for j,bone in enumerate(b.joints):rest[j]=local[j] if bone.parent<0 else rest[bone.parent]+local[j]
-    lower={n.lower():i for i,n in enumerate(names)}
-    ix=lambda *n:next(lower[x.lower()] for x in n if x.lower() in lower)
-    c=ix('Spine3','Chest','Spine2');neck=ix('Neck','Neck1')
-    basis=frame(rest[neck]-rest[c],rest[ix('RightShoulder','RightArm')]-rest[ix('LeftShoulder','LeftArm')])
-    return Motion(p*.01,names,np.arange(len(p))/b.fps,'reference',r,names,
-                  {'segment_basis':basis.tolist(),'scope':'full_body_published_bvh_cm','axes_evidence':'BVH channels + geometry inference; anatomy unverified'}),stride
+    return collaborate(b),stride
 
 
 def one(row):

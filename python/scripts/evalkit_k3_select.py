@@ -14,10 +14,10 @@ def main():
         v=result['selected']
         if result['paired_records']<1:raise ValueError('No paired evidence for '+method)
         policies[method]={'strategy':'direction_refinement' if v.startswith('optimized') else 'legacy','projection':v.endswith('projected')}
-    config['version']='k-3-axis-bones-development-selected'
+    config['version']='k-3-corrected-bvh-development-selected'
     config['fitting']['per_method']=policies
     config['selection']={'scope':'development selection, no new final holdout','rule':'config/evalkit_k3_20261116/selection_rule.json',
-                         'summary_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'experiment_commit':'49ad7d0',
+                         'summary_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'experiment_commit':json.loads((folder/'experiment_freeze.json').read_text())['commit'],
                          'default_compatibility':'K2 remains default; choose this config explicitly'}
     (ROOT/'config/evalkit_k_v3.json').write_text(json.dumps(config,indent=2)+'\n')
     print(json.dumps(policies,indent=2))

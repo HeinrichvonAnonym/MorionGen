@@ -9,7 +9,7 @@ from evalkit_k3_audit import ROOT,REG,ROOTS,archive,parse_bvh
 
 def inspect(row):
     src=row['source'];b=parse_bvh(archive(str(Path(ROOTS['collaborate'])/src['archive'])).read(src['member']))
-    b.frames=b.frames[::max(1,int(np.ceil(len(b.frames)/240)))];local=b.local_positions(True)
+    b.frames=b.frames[::max(1,int(np.ceil(len(b.frames)/240)))];local=b.local_positions(True,'absolute_channels')
     # Remove the root BEFORE FK, preserving source rotations and all child translations.
     relative=np.zeros_like(local);global_r=np.zeros((*local.shape[:2],3,3))
     for i,joint in enumerate(b.joints):
@@ -18,7 +18,7 @@ def inspect(row):
         r=Rotation.from_euler(order,b.frames[:,[joint.channel_start+k for k,c in channels]],degrees=True).as_matrix() if channels else np.broadcast_to(np.eye(3),(len(local),3,3))
         global_r[:,i]=r if joint.parent<0 else global_r[:,joint.parent]@r
         if joint.parent>=0:relative[:,i]=relative[:,joint.parent]+np.einsum('tij,tj->ti',global_r[:,joint.parent],local[:,i])
-    p,_=b.forward_kinematics(True);world64=relative+local[:,:1]
+    p,_=b.forward_kinematics(True,translation_mode='absolute_channels');world64=relative+local[:,:1]
     return {'id':row['id'],'sampled_frames':len(local),'source_root_abs_max_m':float(np.max(np.abs(local[:,0]))*.01),
             'source_root_range_m':(np.ptp(local[:,0],axis=0)*.01).tolist(),
             'float32_world_fk_error_max_m':float(np.max(np.abs(p-world64))*.01),

@@ -1,0 +1,44 @@
+{
+  "version": "k3-development-four-cell-v1",
+  "windows": 82,
+  "exports": 656,
+  "variants": [
+    "legacy_raw",
+    "legacy_projected",
+    "optimized_raw",
+    "optimized_projected"
+  ],
+  "reference": "original published BVH for full body; optical head/thorax only for Andy/Han; no anatomical ground-truth claim",
+  "sample_partition": "development",
+  "holdout": "not run; prior use history unchanged",
+  "score_clock": "same physical times; PRIMAL source time origin restored; common finite masks across available variants",
+  "normalization": "common endpoint tree, per-reference edge median lengths, roots and directions preserved; scorer only",
+  "projection": "native parent tree, per-input edge median lengths, each side separate; original rotations retained",
+  "errors": [
+    "D-R",
+    "F-D",
+    "F-R",
+    "P-D",
+    "F-P"
+  ],
+  "position_spaces": [
+    "raw_world",
+    "normalized_world",
+    "normalized_root_relative"
+  ],
+  "priority": "pose angle error; spatial/contact tradeoffs reported separately",
+  "support": "observed-input direction fidelity separate from registered/spatial downstream support; no errors hidden by support masks",
+  "fit_parameters": "engineering defaults; full settings in experiment_config.json; source-only least squares, no reference residual",
+  "pilot": {
+    "completed_formats": 8,
+    "four_cells_each": true,
+    "superseded_due_to_pre_freeze_code_changes": true
+  },
+  "tests": {
+    "passed": 39,
+    "log": "develop_logs/test_runs/20261116_k3/tests_freeze.log"
+  },
+  "cpu_workers": 3,
+  "threads_per_worker": 1,
+  "minimum_free_disk_gib": 80
+}

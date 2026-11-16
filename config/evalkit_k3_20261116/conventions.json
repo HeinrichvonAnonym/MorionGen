@@ -1,5 +1,5 @@
 {
-  "version": "k3-conventions-1",
+  "version": "k3-conventions-2-bvh-absolute-channels",
   "records": {
     "motionlcm": {
       "scope": "current registered native output; missing native sidecars remain legacy positions-only",
@@ -20,8 +20,8 @@
         "classification": "deterministic_conversion"
       },
       "neutral_topology_lengths": {
-        "value": "source asset rest joints/parents; input geometry for observed lengths",
-        "classification": "source_asset"
+        "value": "HumanML22 hierarchy; observed positions determine lengths; no independent native segment rest rotations in the retained input",
+        "classification": "source_topology_and_input_geometry"
       },
       "head_thorax_anatomy": {
         "value": "neutral model axes reused as segment convention; no independently supplied anatomical calibration found in registered assets",
@@ -56,7 +56,7 @@
         },
         {
           "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
-          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026",
+          "sha256": "615c2d1e3879d5dbbbb503721de4e5c9bb447e483c626219f8f6387a36a7e034",
           "lines": [
             {
               "line": 10,
@@ -67,32 +67,40 @@
               "text": "from motion import HUMANML_NAMES, SOMA77_NAMES, Y_TO_Z"
             },
             {
-              "line": 80,
-              "text": "r = None; rn = []; native_y = method == 'kimodo'"
+              "line": 95,
+              "text": "r = None; rn = []; native_y = method == 'kimodo';orientation_note=None"
             },
             {
-              "line": 93,
+              "line": 113,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 94,
+              "line": 114,
               "text": "native_y = True"
             },
             {
-              "line": 110,
+              "line": 130,
+              "text": "native_position_file=native_y and not (method=='primal' and 'joint_names' in m)"
+            },
+            {
+              "line": 140,
               "text": "if not native_y:"
             },
             {
-              "line": 111,
+              "line": 141,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 112,
+              "line": 142,
               "text": "if r is not None: r = np.einsum('ij,tkjl->tkil',Y_TO_Z.T,r)"
             }
           ]
         }
-      ]
+      ],
+      "controlled_fixture_shape": {
+        "value": "controlled exporter reuses the PRIMAL SMPL22 rest asset; this is an experimental fixture, not this generator's supplied subject shape",
+        "classification": "project_convention"
+      }
     },
     "omnicontrol": {
       "scope": "current registered native output; missing native sidecars remain legacy positions-only",
@@ -113,8 +121,8 @@
         "classification": "deterministic_conversion"
       },
       "neutral_topology_lengths": {
-        "value": "source asset rest joints/parents; input geometry for observed lengths",
-        "classification": "source_asset"
+        "value": "HumanML22 hierarchy; observed positions determine lengths; no independent native segment rest rotations in the retained input",
+        "classification": "source_topology_and_input_geometry"
       },
       "head_thorax_anatomy": {
         "value": "neutral model axes reused as segment convention; no independently supplied anatomical calibration found in registered assets",
@@ -157,7 +165,7 @@
         },
         {
           "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
-          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026",
+          "sha256": "615c2d1e3879d5dbbbb503721de4e5c9bb447e483c626219f8f6387a36a7e034",
           "lines": [
             {
               "line": 10,
@@ -168,32 +176,40 @@
               "text": "from motion import HUMANML_NAMES, SOMA77_NAMES, Y_TO_Z"
             },
             {
-              "line": 80,
-              "text": "r = None; rn = []; native_y = method == 'kimodo'"
+              "line": 95,
+              "text": "r = None; rn = []; native_y = method == 'kimodo';orientation_note=None"
             },
             {
-              "line": 93,
+              "line": 113,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 94,
+              "line": 114,
               "text": "native_y = True"
             },
             {
-              "line": 110,
+              "line": 130,
+              "text": "native_position_file=native_y and not (method=='primal' and 'joint_names' in m)"
+            },
+            {
+              "line": 140,
               "text": "if not native_y:"
             },
             {
-              "line": 111,
+              "line": 141,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 112,
+              "line": 142,
               "text": "if r is not None: r = np.einsum('ij,tkjl->tkil',Y_TO_Z.T,r)"
             }
           ]
         }
-      ]
+      ],
+      "controlled_fixture_shape": {
+        "value": "controlled exporter reuses the PRIMAL SMPL22 rest asset; this is an experimental fixture, not this generator's supplied subject shape",
+        "classification": "project_convention"
+      }
     },
     "ardy": {
       "scope": "current registered native output; missing native sidecars remain legacy positions-only",
@@ -258,7 +274,7 @@
         },
         {
           "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
-          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026",
+          "sha256": "615c2d1e3879d5dbbbb503721de4e5c9bb447e483c626219f8f6387a36a7e034",
           "lines": [
             {
               "line": 10,
@@ -269,31 +285,35 @@
               "text": "from motion import HUMANML_NAMES, SOMA77_NAMES, Y_TO_Z"
             },
             {
-              "line": 80,
-              "text": "r = None; rn = []; native_y = method == 'kimodo'"
+              "line": 95,
+              "text": "r = None; rn = []; native_y = method == 'kimodo';orientation_note=None"
             },
             {
-              "line": 93,
+              "line": 113,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 94,
+              "line": 114,
               "text": "native_y = True"
             },
             {
-              "line": 97,
+              "line": 117,
               "text": "if method == 'ardy': r = m.get('global_rotations'); rn = names"
             },
             {
-              "line": 110,
+              "line": 130,
+              "text": "native_position_file=native_y and not (method=='primal' and 'joint_names' in m)"
+            },
+            {
+              "line": 140,
               "text": "if not native_y:"
             },
             {
-              "line": 111,
+              "line": 141,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 112,
+              "line": 142,
               "text": "if r is not None: r = np.einsum('ij,tkjl->tkil',Y_TO_Z.T,r)"
             }
           ]
@@ -381,7 +401,7 @@
         },
         {
           "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
-          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026",
+          "sha256": "615c2d1e3879d5dbbbb503721de4e5c9bb447e483c626219f8f6387a36a7e034",
           "lines": [
             {
               "line": 10,
@@ -392,31 +412,35 @@
               "text": "from motion import HUMANML_NAMES, SOMA77_NAMES, Y_TO_Z"
             },
             {
-              "line": 80,
-              "text": "r = None; rn = []; native_y = method == 'kimodo'"
+              "line": 95,
+              "text": "r = None; rn = []; native_y = method == 'kimodo';orientation_note=None"
             },
             {
-              "line": 93,
+              "line": 113,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 94,
+              "line": 114,
               "text": "native_y = True"
             },
             {
-              "line": 98,
+              "line": 118,
               "text": "elif method == 'chois' and (file.parent/'raw/native_prediction.npz').exists():"
             },
             {
-              "line": 110,
+              "line": 130,
+              "text": "native_position_file=native_y and not (method=='primal' and 'joint_names' in m)"
+            },
+            {
+              "line": 140,
               "text": "if not native_y:"
             },
             {
-              "line": 111,
+              "line": 141,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 112,
+              "line": 142,
               "text": "if r is not None: r = np.einsum('ij,tkjl->tkil',Y_TO_Z.T,r)"
             }
           ]
@@ -495,6 +519,10 @@
       "rest_recovery": {
         "value": "unknown sequence: median inverse FK offsets from current input, followed by bone-direction consistency gate",
         "classification": "estimated_from_motion"
+      },
+      "controlled_fixture_shape": {
+        "value": "controlled exporter reuses the PRIMAL SMPL22 rest asset; this is an experimental fixture, not this generator's supplied subject shape",
+        "classification": "project_convention"
       }
     },
     "closd": {
@@ -572,7 +600,7 @@
         },
         {
           "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
-          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026",
+          "sha256": "615c2d1e3879d5dbbbb503721de4e5c9bb447e483c626219f8f6387a36a7e034",
           "lines": [
             {
               "line": 10,
@@ -583,31 +611,35 @@
               "text": "from motion import HUMANML_NAMES, SOMA77_NAMES, Y_TO_Z"
             },
             {
-              "line": 80,
-              "text": "r = None; rn = []; native_y = method == 'kimodo'"
+              "line": 95,
+              "text": "r = None; rn = []; native_y = method == 'kimodo';orientation_note=None"
             },
             {
-              "line": 93,
+              "line": 113,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 94,
+              "line": 114,
               "text": "native_y = True"
             },
             {
-              "line": 103,
+              "line": 123,
               "text": "elif method == 'closd' and (file.parent/'native_physics.npz').exists():"
             },
             {
-              "line": 110,
+              "line": 130,
+              "text": "native_position_file=native_y and not (method=='primal' and 'joint_names' in m)"
+            },
+            {
+              "line": 140,
               "text": "if not native_y:"
             },
             {
-              "line": 111,
+              "line": 141,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 112,
+              "line": 142,
               "text": "if r is not None: r = np.einsum('ij,tkjl->tkil',Y_TO_Z.T,r)"
             }
           ]
@@ -745,7 +777,7 @@
         },
         {
           "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
-          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026",
+          "sha256": "615c2d1e3879d5dbbbb503721de4e5c9bb447e483c626219f8f6387a36a7e034",
           "lines": [
             {
               "line": 10,
@@ -756,31 +788,35 @@
               "text": "from motion import HUMANML_NAMES, SOMA77_NAMES, Y_TO_Z"
             },
             {
-              "line": 80,
-              "text": "r = None; rn = []; native_y = method == 'kimodo'"
+              "line": 95,
+              "text": "r = None; rn = []; native_y = method == 'kimodo';orientation_note=None"
             },
             {
-              "line": 93,
+              "line": 113,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 94,
+              "line": 114,
               "text": "native_y = True"
             },
             {
-              "line": 100,
+              "line": 120,
               "text": "elif method == 'dart' and (file.parent/'smplx_params.npz').exists():"
             },
             {
-              "line": 110,
+              "line": 130,
+              "text": "native_position_file=native_y and not (method=='primal' and 'joint_names' in m)"
+            },
+            {
+              "line": 140,
               "text": "if not native_y:"
             },
             {
-              "line": 111,
+              "line": 141,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 112,
+              "line": 142,
               "text": "if r is not None: r = np.einsum('ij,tkjl->tkil',Y_TO_Z.T,r)"
             }
           ]
@@ -872,7 +908,7 @@
         },
         {
           "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
-          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026",
+          "sha256": "615c2d1e3879d5dbbbb503721de4e5c9bb447e483c626219f8f6387a36a7e034",
           "lines": [
             {
               "line": 10,
@@ -883,31 +919,35 @@
               "text": "from motion import HUMANML_NAMES, SOMA77_NAMES, Y_TO_Z"
             },
             {
-              "line": 80,
-              "text": "r = None; rn = []; native_y = method == 'kimodo'"
+              "line": 95,
+              "text": "r = None; rn = []; native_y = method == 'kimodo';orientation_note=None"
             },
             {
-              "line": 81,
+              "line": 96,
               "text": "if method == 'kimodo':"
             },
             {
-              "line": 93,
+              "line": 113,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 94,
+              "line": 114,
               "text": "native_y = True"
             },
             {
-              "line": 110,
+              "line": 130,
+              "text": "native_position_file=native_y and not (method=='primal' and 'joint_names' in m)"
+            },
+            {
+              "line": 140,
               "text": "if not native_y:"
             },
             {
-              "line": 111,
+              "line": 141,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 112,
+              "line": 142,
               "text": "if r is not None: r = np.einsum('ij,tkjl->tkil',Y_TO_Z.T,r)"
             }
           ]
@@ -1073,7 +1113,7 @@
         },
         {
           "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
-          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026",
+          "sha256": "615c2d1e3879d5dbbbb503721de4e5c9bb447e483c626219f8f6387a36a7e034",
           "lines": [
             {
               "line": 10,
@@ -1084,31 +1124,35 @@
               "text": "from motion import HUMANML_NAMES, SOMA77_NAMES, Y_TO_Z"
             },
             {
-              "line": 80,
-              "text": "r = None; rn = []; native_y = method == 'kimodo'"
+              "line": 95,
+              "text": "r = None; rn = []; native_y = method == 'kimodo';orientation_note=None"
             },
             {
-              "line": 84,
+              "line": 99,
               "text": "elif method == 'primal':"
             },
             {
-              "line": 93,
+              "line": 113,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 94,
+              "line": 114,
               "text": "native_y = True"
             },
             {
-              "line": 110,
+              "line": 130,
+              "text": "native_position_file=native_y and not (method=='primal' and 'joint_names' in m)"
+            },
+            {
+              "line": 140,
               "text": "if not native_y:"
             },
             {
-              "line": 111,
+              "line": 141,
               "text": "p = np.asarray(p) @ Y_TO_Z"
             },
             {
-              "line": 112,
+              "line": 142,
               "text": "if r is not None: r = np.einsum('ij,tkjl->tkil',Y_TO_Z.T,r)"
             }
           ]
@@ -1297,7 +1341,7 @@
       "sources": [
         {
           "path": "/home/heinrich/MorionGen/utils/motion_retarget/bvh.py",
-          "sha256": "c8a5ecd478566bbbd5895790744843439fafd8a3aaf669c8a05f3f49bc5d76a3",
+          "sha256": "1e1467a84bd4f437117ba0180e683ca53d6799e5615b4054257fe731cfb81b76",
           "lines": [
             {
               "line": 38,
@@ -1317,59 +1361,68 @@
             },
             {
               "line": 46,
-              "text": "def local_positions(self, include_nonroot_translation: bool = True) -> np.ndarray:"
-            },
-            {
-              "line": 53,
-              "text": "if i != 0 and not include_nonroot_translation:"
-            },
-            {
-              "line": 61,
-              "text": "def forward_kinematics(self, include_nonroot_translation: bool = True) -> tuple[np.ndarray, np.ndarray]:"
+              "text": "def local_positions(self, include_nonroot_translation: bool = True,"
             },
             {
               "line": 63,
-              "text": "local_p = self.local_positions(include_nonroot_translation=include_nonroot_translation)"
+              "text": "if i != 0 and not include_nonroot_translation:"
             },
             {
-              "line": 65,
+              "line": 73,
+              "text": "def forward_kinematics(self, include_nonroot_translation: bool = True,"
+            },
+            {
+              "line": 76,
+              "text": "local_p = self.local_positions(include_nonroot_translation=include_nonroot_translation,translation_mode=translation_mode)"
+            },
+            {
+              "line": 78,
               "text": "global_p = np.zeros_like(local_p)"
             },
             {
-              "line": 68,
+              "line": 81,
               "text": "global_r[:, i] = local_r[:, i]"
             },
             {
-              "line": 69,
+              "line": 82,
               "text": "global_p[:, i] = local_p[:, i]"
             },
             {
-              "line": 72,
+              "line": 85,
               "text": "global_r[:, i] = global_r[:, parent] @ local_r[:, i]"
             },
             {
-              "line": 74,
+              "line": 87,
               "text": "\"tij,tj->ti\", global_r[:, parent], local_p[:, i]"
             },
             {
-              "line": 79,
+              "line": 92,
               "text": "self, joint_index: int, include_nonroot_translation: bool = False,"
             },
             {
-              "line": 86,
+              "line": 99,
               "text": "include_nonroot_translation=include_nonroot_translation,"
             }
           ]
         }
       ],
       "publisher_url": "https://zenodo.org/records/6472155",
-      "publisher_scope": "release confirms BVH and task labels; page does not declare anatomical head/thorax axes or units"
+      "publisher_scope": "release confirms BVH and task labels; page does not declare anatomical head/thorax axes or units",
+      "translation": {
+        "value": "animated position channels replace OFFSET on their axes; unanimated axes use OFFSET",
+        "classification": "deterministic_conversion",
+        "sources": [
+          "https://raw.githubusercontent.com/blender/blender-addons/main/io_anim_bvh/import_bvh.py#L523",
+          "https://bvhsdk.readthedocs.io/en/latest/_modules/bvhsdk/anim.html#Joints.getLocalTranslation"
+        ]
+      }
     }
   },
   "decisions": [
     "Retain documented world/rotation conversions; do not estimate known axes from evaluated motion.",
     "Retain uncertain anatomical correspondence as project assumption, not promoted by low controlled round-trip error.",
     "Source rest basis and marker geometry give representation references, not independent per-vertebra anatomy.",
-    "HYOID fitting and C2/T1 correspondence unchanged and outside this version."
+    "HYOID fitting and C2/T1 correspondence unchanged and outside this version.",
+    "Correct CoLLaboratE animated local translation; preserve additive legacy parser as an explicit compatibility mode."
   ]
 }

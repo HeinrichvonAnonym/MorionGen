@@ -9,14 +9,14 @@
     "joint_speed_p90"
   ],
   "standardization_std": [
-    22.392270611860862,
-    42.912624476169995,
-    42.71969367017695,
-    32.654027269420666,
-    32.347490783346714,
-    0.32126798140845936
+    22.392436916162044,
+    42.91262597884072,
+    42.71969556481291,
+    32.65406605537393,
+    32.347504550420524,
+    0.18272052485758292
   ],
-  "light_sha256": "b9894b4f58266a0575d4b6ba7f7c4dc2ecd983d4f41d826554bca94584ffab61",
+  "light_sha256": "d9792f256380284d24175ea6b8701469631f315c8a4144a519c637f8e288c02c",
   "records": [
     {
       "id": "collaborate/AirplaneRiveting/AirplaneRiveting/S01/PLNS01P01R01.bvh",
@@ -539,52 +539,52 @@
       "window_key": "019"
     },
     {
-      "id": "collaborate/LAB/EAWS/S10/S10P06R2.bvh",
+      "id": "collaborate/LAB/EAWS/S10/S10P07R1.bvh",
       "dataset": "collaborate",
       "subset": "LAB",
       "subject": "S10",
       "partition": "development",
       "group_id": "collaborate/LAB/S10",
-      "recording_id": "collaborate/LAB/EAWS/S10/S10P06R2.bvh",
+      "recording_id": "collaborate/LAB/EAWS/S10/S10P07R1.bvh",
       "status": "included",
-      "frames": 679,
+      "frames": 950,
       "dt": 0.0111111,
       "source": {
         "archive": "LAB.zip",
-        "member": "EAWS/S10/S10P06R2.bvh",
-        "bytes": 2031429,
-        "crc32": "f0988b95"
+        "member": "EAWS/S10/S10P07R1.bvh",
+        "bytes": 2791364,
+        "crc32": "09b90960"
       },
       "history": "inventory_and_format_probe_only",
       "source_window_s": [
-        1.2666629,
-        6.2666629
+        2.77221695,
+        7.77221695
       ],
       "selection": "hash_first_then_geometric_farthest",
       "historical": false,
       "window_key": "020"
     },
     {
-      "id": "collaborate/LAB/EAWS/S10/S10P13R1.bvh",
+      "id": "collaborate/LAB/EAWS/S10/S10P13R2.bvh",
       "dataset": "collaborate",
       "subset": "LAB",
       "subject": "S10",
       "partition": "development",
       "group_id": "collaborate/LAB/S10",
-      "recording_id": "collaborate/LAB/EAWS/S10/S10P13R1.bvh",
+      "recording_id": "collaborate/LAB/EAWS/S10/S10P13R2.bvh",
       "status": "included",
-      "frames": 716,
+      "frames": 620,
       "dt": 0.0111111,
       "source": {
         "archive": "LAB.zip",
-        "member": "EAWS/S10/S10P13R1.bvh",
-        "bytes": 2165654,
-        "crc32": "dd828371"
+        "member": "EAWS/S10/S10P13R2.bvh",
+        "bytes": 1877958,
+        "crc32": "1c921b75"
       },
       "history": "inventory_and_format_probe_only",
       "source_window_s": [
-        1.47221825,
-        6.47221825
+        0.9388854500000003,
+        5.938885450000001
       ],
       "selection": "hash_first_then_geometric_farthest",
       "historical": false,
@@ -1943,6 +1943,32 @@
       "window_key": "073"
     },
     {
+      "id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh",
+      "dataset": "collaborate",
+      "subset": "MasticCultivation",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/MasticCultivation/S01",
+      "recording_id": "collaborate/MasticCultivation/MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh",
+      "status": "included",
+      "frames": 687,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "MasticCultivation.zip",
+        "member": "MasticCultivation/EmbroideryB/S01/MCEBS01G01R01.bvh",
+        "bytes": 2034046,
+        "crc32": "50dd2b17"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        1.3111073000000002,
+        6.3111073
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "074"
+    },
+    {
       "id": "collaborate/MasticCultivation/MasticCultivation/Gathering/S01/MCGAS01G01R05.bvh",
       "dataset": "collaborate",
       "subset": "MasticCultivation",
@@ -1963,32 +1989,6 @@
       "source_window_s": [
         0.0,
         1.5222207
-      ],
-      "selection": "hash_first_then_geometric_farthest",
-      "historical": false,
-      "window_key": "074"
-    },
-    {
-      "id": "collaborate/MasticCultivation/MasticCultivation/ScrappingOld/S01/MCSOS01G01R01.bvh",
-      "dataset": "collaborate",
-      "subset": "MasticCultivation",
-      "subject": "S01",
-      "partition": "development",
-      "group_id": "collaborate/MasticCultivation/S01",
-      "recording_id": "collaborate/MasticCultivation/MasticCultivation/ScrappingOld/S01/MCSOS01G01R01.bvh",
-      "status": "included",
-      "frames": 2331,
-      "dt": 0.0111111,
-      "source": {
-        "archive": "MasticCultivation.zip",
-        "member": "MasticCultivation/ScrappingOld/S01/MCSOS01G01R01.bvh",
-        "bytes": 7151528,
-        "crc32": "5fe0e6ff"
-      },
-      "history": "inventory_and_format_probe_only",
-      "source_window_s": [
-        10.4444315,
-        15.4444315
       ],
       "selection": "hash_first_then_geometric_farthest",
       "historical": false,
@@ -2047,6 +2047,32 @@
       "window_key": "077"
     },
     {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Beam_preparation/G01/SWPBS01G01R01.bvh",
+      "dataset": "collaborate",
+      "subset": "SlikWeaving",
+      "subject": "S01",
+      "partition": "development",
+      "group_id": "collaborate/SlikWeaving/S01",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/Beam_preparation/G01/SWPBS01G01R01.bvh",
+      "status": "included",
+      "frames": 8581,
+      "dt": 0.0111111,
+      "source": {
+        "archive": "SlikWeaving.zip",
+        "member": "SlikWeaving/Beam_preparation/G01/SWPBS01G01R01.bvh",
+        "bytes": 24720920,
+        "crc32": "98062310"
+      },
+      "history": "inventory_and_format_probe_only",
+      "source_window_s": [
+        45.166619000000004,
+        50.166619000000004
+      ],
+      "selection": "hash_first_then_geometric_farthest",
+      "historical": false,
+      "window_key": "078"
+    },
+    {
       "id": "collaborate/SlikWeaving/SlikWeaving/Beam_preparation/G03/SWPBS01G03R01.bvh",
       "dataset": "collaborate",
       "subset": "SlikWeaving",
@@ -2070,7 +2096,7 @@
       ],
       "selection": "hash_first_then_geometric_farthest",
       "historical": false,
-      "window_key": "078"
+      "window_key": "079"
     },
     {
       "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R26.bvh",
@@ -2096,55 +2122,29 @@
       ],
       "selection": "hash_first_then_geometric_farthest",
       "historical": false,
-      "window_key": "079"
-    },
-    {
-      "id": "collaborate/SlikWeaving/SlikWeaving/WeavingLargeSizeLoom/G02/SWLLS01G02R06.bvh",
-      "dataset": "collaborate",
-      "subset": "SlikWeaving",
-      "subject": "S01",
-      "partition": "development",
-      "group_id": "collaborate/SlikWeaving/S01",
-      "recording_id": "collaborate/SlikWeaving/SlikWeaving/WeavingLargeSizeLoom/G02/SWLLS01G02R06.bvh",
-      "status": "included",
-      "frames": 100,
-      "dt": 0.0111111,
-      "source": {
-        "archive": "SlikWeaving.zip",
-        "member": "SlikWeaving/WeavingLargeSizeLoom/G02/SWLLS01G02R06.bvh",
-        "bytes": 306563,
-        "crc32": "59fe217b"
-      },
-      "history": "inventory_and_format_probe_only",
-      "source_window_s": [
-        0.0,
-        1.0999989000000001
-      ],
-      "selection": "hash_first_then_geometric_farthest",
-      "historical": false,
       "window_key": "080"
     },
     {
-      "id": "collaborate/SlikWeaving/SlikWeaving/WeavingLargeSizeLoom/G03/SWLLS01G03R02.bvh",
+      "id": "collaborate/SlikWeaving/SlikWeaving/WeavingMediumSizeLoom/G01/SWMLS01G01R05.bvh",
       "dataset": "collaborate",
       "subset": "SlikWeaving",
       "subject": "S01",
       "partition": "development",
       "group_id": "collaborate/SlikWeaving/S01",
-      "recording_id": "collaborate/SlikWeaving/SlikWeaving/WeavingLargeSizeLoom/G03/SWLLS01G03R02.bvh",
+      "recording_id": "collaborate/SlikWeaving/SlikWeaving/WeavingMediumSizeLoom/G01/SWMLS01G01R05.bvh",
       "status": "included",
-      "frames": 211,
+      "frames": 91,
       "dt": 0.0111111,
       "source": {
         "archive": "SlikWeaving.zip",
-        "member": "SlikWeaving/WeavingLargeSizeLoom/G03/SWLLS01G03R02.bvh",
-        "bytes": 633906,
-        "crc32": "3ab9995f"
+        "member": "SlikWeaving/WeavingMediumSizeLoom/G01/SWMLS01G01R05.bvh",
+        "bytes": 282554,
+        "crc32": "8ea4d7df"
       },
       "history": "inventory_and_format_probe_only",
       "source_window_s": [
         0.0,
-        2.3333310000000003
+        0.9999990000000001
       ],
       "selection": "hash_first_then_geometric_farthest",
       "historical": false,

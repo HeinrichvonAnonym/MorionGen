@@ -1,5 +1,5 @@
 {
-  "version": "k-3-axis-bones-development",
+  "version": "k-3-corrected-bvh-development",
   "angle_tiers_deg": [
     5,
     10,
@@ -117,5 +117,6 @@
     "refinement_hz": 20,
     "quality_angle_deg": 10.0,
     "quality_position_m": 0.1
-  }
+  },
+  "reference_contract": "config/evalkit_k3_20261116/reference_translation_correction.json"
 }

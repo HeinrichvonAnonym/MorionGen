@@ -1,0 +1,226 @@
+{
+  "status": "confirmed_reader_contract_correction",
+  "classification": "deterministic channel interpretation supported by independent importers",
+  "primary_sources": [
+    {
+      "url": "https://raw.githubusercontent.com/blender/blender-addons/main/io_anim_bvh/import_bvh.py",
+      "sha256": "90bf6dc4b3da8b7a20aadeaec7317357bab219a5f0969ff1af891559d0599a9c",
+      "line_range": [
+        519,
+        526
+      ],
+      "finding": "Blender armature location subtracts rest_head_local from animated bvh_loc; therefore animation supplies the local translation"
+    },
+    {
+      "url": "https://bvhsdk.readthedocs.io/en/latest/_modules/bvhsdk/anim.html#Joints.getLocalTranslation",
+      "finding": "getLocalTranslation returns OFFSET for three-channel joints, otherwise frame translation"
+    }
+  ],
+  "semantics": "animated local translation replaces OFFSET on declared position axes; unanimated axes retain OFFSET",
+  "legacy_mode": "offset_plus_channel remains explicit default for old callers; K3 CoLLaboratE selects absolute_channels and float64",
+  "effects": "old reference positions and body lengths were distorted; native rotations remain independently available. Seven extreme animated root origins still fail the shared float32 export precision contract; local pose can be inspected after removing the root before FK.",
+  "superseded_experiment": "49ad7d0 at outputs/evalkit_k3_20261116; 166 result files retained, no configuration selection from this incomplete run",
+  "historical_results": "preserved; old CoLLaboratE positional interpretations require this correction; Andy/Han optical reference unchanged",
+  "records": [
+    {
+      "id": "collaborate/LAB/EAWS/S1/S1P01R1.bvh",
+      "root_header_offset_m": [
+        0.434891,
+        0.927559,
+        0.481285
+      ],
+      "animated_root_first_m": [
+        0.0,
+        0.935,
+        0.0
+      ],
+      "animated_root_abs_max_m": 0.935,
+      "old_height_range_m": [
+        3.0506797518962423,
+        3.0660000000000003
+      ],
+      "corrected_height_range_m": [
+        1.5253398759481211,
+        1.5330000000000001
+      ],
+      "corrected_geometry_finite": true,
+      "shared_float32_world_position_eligible": true,
+      "previous_exclusion": false
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R101.bvh",
+      "root_header_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "animated_root_first_m": [
+        0.0,
+        -2803460000.0,
+        0.0
+      ],
+      "animated_root_abs_max_m": 2803460000.0,
+      "old_height_range_m": [
+        1.2690435791015626,
+        1.5329998779296876
+      ],
+      "corrected_height_range_m": [
+        1.2690435791015626,
+        1.5329998779296876
+      ],
+      "corrected_geometry_finite": true,
+      "shared_float32_world_position_eligible": false,
+      "previous_exclusion": true
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R106.bvh",
+      "root_header_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "animated_root_first_m": [
+        0.0,
+        -75687200000.0,
+        0.0
+      ],
+      "animated_root_abs_max_m": 75687200000.0,
+      "old_height_range_m": [
+        1.29716796875,
+        1.532998046875
+      ],
+      "corrected_height_range_m": [
+        1.29716796875,
+        1.532998046875
+      ],
+      "corrected_geometry_finite": true,
+      "shared_float32_world_position_eligible": false,
+      "previous_exclusion": true
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R22.bvh",
+      "root_header_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "animated_root_first_m": [
+        0.0,
+        -1502090.0,
+        0.0
+      ],
+      "animated_root_abs_max_m": 1502090.0,
+      "old_height_range_m": [
+        1.248784670829773,
+        1.532999899983406
+      ],
+      "corrected_height_range_m": [
+        1.248784670829773,
+        1.532999899983406
+      ],
+      "corrected_geometry_finite": true,
+      "shared_float32_world_position_eligible": false,
+      "previous_exclusion": true
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R34.bvh",
+      "root_header_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "animated_root_first_m": [
+        0.0,
+        3.08352e+24,
+        0.0
+      ],
+      "animated_root_abs_max_m": 3.08352e+24,
+      "old_height_range_m": [
+        0.0,
+        0.0
+      ],
+      "corrected_height_range_m": [
+        0.0,
+        0.0
+      ],
+      "corrected_geometry_finite": true,
+      "shared_float32_world_position_eligible": false,
+      "previous_exclusion": true
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R40.bvh",
+      "root_header_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "animated_root_first_m": [
+        0.0,
+        28128800000000.0,
+        0.0
+      ],
+      "animated_root_abs_max_m": 28128800000000.0,
+      "old_height_range_m": [
+        1.28,
+        1.5350000000000001
+      ],
+      "corrected_height_range_m": [
+        1.28,
+        1.5350000000000001
+      ],
+      "corrected_geometry_finite": true,
+      "shared_float32_world_position_eligible": false,
+      "previous_exclusion": true
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R74.bvh",
+      "root_header_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "animated_root_first_m": [
+        0.0,
+        601289.0,
+        0.0
+      ],
+      "animated_root_abs_max_m": 601289.0,
+      "old_height_range_m": [
+        1.2372399640083314,
+        1.532999899983406
+      ],
+      "corrected_height_range_m": [
+        1.2372399640083314,
+        1.532999899983406
+      ],
+      "corrected_geometry_finite": true,
+      "shared_float32_world_position_eligible": false,
+      "previous_exclusion": true
+    },
+    {
+      "id": "collaborate/SlikWeaving/SlikWeaving/Cards/SWPCS01G01R98.bvh",
+      "root_header_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "animated_root_first_m": [
+        0.0,
+        6.2988000000000006e+35,
+        0.0
+      ],
+      "animated_root_abs_max_m": 6.2988000000000006e+35,
+      "old_height_range_m": [
+        0.0,
+        0.0
+      ],
+      "corrected_height_range_m": [
+        0.0,
+        0.0
+      ],
+      "corrected_geometry_finite": true,
+      "shared_float32_world_position_eligible": false,
+      "previous_exclusion": true
+    }
+  ]
+}

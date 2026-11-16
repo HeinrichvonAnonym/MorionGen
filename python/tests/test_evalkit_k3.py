@@ -90,4 +90,10 @@ class BoneTests(unittest.TestCase):
         frames['k_force_eligible']=np.array([True,False,True]);r=muscle_split(frames)
         self.assertEqual(r['primary_frames'],1);self.assertEqual(r['primary_muscle_effort_sum_a2_mean'],1.)
         self.assertEqual(r['forced_frames'],3);self.assertEqual(r['forced_muscle_effort_sum_a2_mean'],5.)
+    def test_memory_input_cache_distinguishes_geometry_and_observation(self):
+        p=np.array([[[0.,0,0],[1.,0,0]],[[0.,0,0],[1.,0,0]]]);m=Motion(p,['a','b'],np.array([0.,1.]),'test')
+        original=m.content_key();m.positions[1,1,1]=.01
+        self.assertNotEqual(m.content_key(),original)
+        m.positions[1,1,1]=0.;self.assertEqual(m.content_key(),original)
+        m.provenance['degradation']={'prior_joints':['b']};self.assertNotEqual(m.content_key(),original)
 if __name__=='__main__':unittest.main()

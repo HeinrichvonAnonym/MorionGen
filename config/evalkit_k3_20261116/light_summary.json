@@ -4,12 +4,12 @@
     "andy": {
       "computed": 120
     },
+    "han": {
+      "computed": 259
+    },
     "collaborate": {
       "computed": 1284,
       "failed": 7
-    },
-    "han": {
-      "computed": 259
     }
   },
   "failures": [
@@ -70,7 +70,7 @@
       "reason": "ValueError: unobservable_or_precision_limited_geometry"
     }
   ],
-  "raw": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_20261116/light.jsonl",
-  "sha256": "b9894b4f58266a0575d4b6ba7f7c4dc2ecd983d4f41d826554bca94584ffab61",
-  "scope": "all registered development records; optical all frames, BVH at most 240 sampled frames, format topology probe on 3 sampled poses; full time precision measured in selected windows"
+  "raw": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k3_corrected_20261116/light.jsonl",
+  "sha256": "d9792f256380284d24175ea6b8701469631f315c8a4144a519c637f8e288c02c",
+  "scope": "all registered development; all optical frames; BVH at most 240 poses plus 3-pose format probe; corrected absolute translation channels; common float32 0.1mm positional precision eligibility"
 }

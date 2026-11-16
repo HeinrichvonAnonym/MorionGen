@@ -2,7 +2,7 @@
 import json,shutil,hashlib
 from pathlib import Path
 import numpy as np
-from .config import digest,implementation_key
+from .config import digest,implementation_key,ROOT
 from .motion import load
 from .bones import project_motion,common,NAMES,PARENTS
 from .geometry import unit
@@ -53,7 +53,8 @@ def fit_configured(run,work,mass,floor,config):
     work=Path(work);work.mkdir(parents=True,exist_ok=True);motion=load(run,config=config)
     settings=dict(config['fitting']);settings.update(settings.get('per_method',{}).get(motion.method,{}));view=motion;projection={'strategy':'none'}
     if settings.get('projection'):view,projection=project_motion(motion)
-    key={'inputs':motion.provenance['inputs'],'config':config,'implementation':implementation_key(),
+    key={'inputs':motion.provenance.get('inputs',{}),'motion_view_sha256':motion.content_key(),'config':config,'implementation':implementation_key(),
+         'convention_sha256':digest(ROOT/config['convention_registry']) if config.get('convention_registry') else None,
          'biomech':digest(biomech.__file__),'model':digest(biomech.MODEL),'mass':mass,'floor':floor}
     encoded=hashlib.sha256(json.dumps(key,sort_keys=True).encode()).hexdigest()
     cache=work/'k3_receipt.json'

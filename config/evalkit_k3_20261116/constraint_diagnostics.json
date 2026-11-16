@@ -1,0 +1,2774 @@
+{
+  "scope": "actual source-fidelity peak diagnostics; model bounds and locks are observed facts, their error contribution needs a separate ablation",
+  "interpretation": "the frozen optimizer retains source-model coordinate locks; subtalar therefore does not add an independent fitted degree of freedom",
+  "methods": {
+    "motionlcm": {
+      "legacy_raw": {
+        "left": {
+          "error_peak_time_s": 4.9,
+          "source_geometric_knee_deg": 10.87576558729735,
+          "fitted_geometric_knee_deg": 1.5741243901546185,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 5.738719949572088,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                3.617767526060661,
+                20.989847777369558
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -5.731423212185765,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -8.573145655309903,
+                -1.1095888441517843
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -10.755594473370852,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -10.885473181360954,
+                5.183128356335481
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.8107946633900096,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                1.703360307062932,
+                6.630224179952253
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 2.2542922599194366,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -4.007157828498109,
+                5.731990233505334
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 3.0,
+          "source_geometric_knee_deg": 11.53502254120472,
+          "fitted_geometric_knee_deg": 4.674817179012392,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 8.750708575679468,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                5.492852365840202,
+                16.33693287545878
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -4.921278006617294,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -10.984013748695201,
+                -3.8920134244377427
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -15.041059657554616,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -29.580711406526188,
+                -10.05428164602215
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 4.8483112218015645,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                4.830809487913098,
+                7.642851773878365
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 2.5193658133768624,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                1.1861691434474781,
+                4.585232288034098
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      },
+      "optimized_raw": {
+        "left": {
+          "error_peak_time_s": 4.8,
+          "source_geometric_knee_deg": 10.744143743780764,
+          "fitted_geometric_knee_deg": 2.971164221320899,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 2.6919391763435074,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                2.211921287099917,
+                15.3921417033002
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -2.7939985376289025,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -5.503459754670976,
+                -2.6385196892959244
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -9.708084614291506,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -10.442321916172391,
+                4.388322570342585
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 3.189834415197114,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                3.189834415197114,
+                9.220258495251388
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.8238294579713534,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.679541732233194,
+                4.610327080949204
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 3.0,
+          "source_geometric_knee_deg": 11.53502254120472,
+          "fitted_geometric_knee_deg": 5.380198779424064,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 3.504511703023823,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                1.2797097355816145,
+                8.593069445269832
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -6.987270606611806,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -9.22150216055968,
+                -6.96327168620868
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -20.16871510041008,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -33.86200719860196,
+                -15.251044830613365
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 5.533205428697558,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                5.533205428697558,
+                9.259000941755144
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 5.612535279062986,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                4.7240261758871105,
+                9.072915468241675
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      }
+    },
+    "omnicontrol": {
+      "legacy_raw": {
+        "left": {
+          "error_peak_time_s": 7.6000000000000005,
+          "source_geometric_knee_deg": 12.447784317162549,
+          "fitted_geometric_knee_deg": 0.44900707622714564,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 16.474575089972717,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -9.07122132165868,
+                33.883772808990145
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -0.7412091718863394,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -11.708503027494084,
+                1.2029609327732482
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": 5.853364381845648,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -20.09613392760127,
+                8.401031095164491
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.3775990420183676,
+              "near_bound_share": 0.13422131147540983,
+              "trajectory_min_max_deg": [
+                0.3447391804964629,
+                3.376742079034229
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": -4.931570273525259,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -9.2056785245563,
+                7.548169638935919
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 7.1000000000000005,
+          "source_geometric_knee_deg": 10.581176510318386,
+          "fitted_geometric_knee_deg": 2.1552019166124206,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 33.1294620315712,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -6.609482031084239,
+                34.67696559218913
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.03792239668158904,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -5.904526422015667,
+                7.62681100777925
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -9.18079426522645,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -18.710376631955132,
+                1.6401791913468537
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 2.389161285510424,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                1.85901456563852,
+                8.122196659821155
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": -10.40791067042242,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -17.787736803964766,
+                2.659454290542522
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      },
+      "optimized_raw": {
+        "left": {
+          "error_peak_time_s": 6.3,
+          "source_geometric_knee_deg": 12.588678161754936,
+          "fitted_geometric_knee_deg": 0.4884774799595088,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 25.45670591117168,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -9.109660763579427,
+                30.733284836680365
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -1.6648242513906373,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -5.029374675265914,
+                8.94576036327911
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -5.305021088830349,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -23.711524701782256,
+                3.409910913262783
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.5419056019623446,
+              "near_bound_share": 0.7305327868852459,
+              "trajectory_min_max_deg": [
+                5.729577966987071e-06,
+                2.2738830452184295
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": -3.8011105204333338,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -4.092941788394049,
+                6.57151157813902
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 8.9,
+          "source_geometric_knee_deg": 9.189905372767424,
+          "fitted_geometric_knee_deg": 1.1664153178928143,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.097951710626067,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -6.051794478559455,
+                33.104306172644726
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 3.6228726318885873,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -14.064966314789572,
+                4.370618733336313
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -4.178791410890317,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -21.817481289069743,
+                -1.7668541498231976
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.393763522173266,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                1.393763522173266,
+                11.272070003427794
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 7.339841693037946,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -0.25113176079604327,
+                10.250810026636644
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      }
+    },
+    "dart": {
+      "legacy_raw": {
+        "left": {
+          "error_peak_time_s": 0.01,
+          "source_geometric_knee_deg": 15.75200197139763,
+          "fitted_geometric_knee_deg": 0.5786508600521554,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": -5.617230544769459,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -23.53232850655894,
+                29.94069097892491
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 2.7410905187989254,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -12.713599500545552,
+                9.689323161735237
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -21.259946808982033,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -39.08738669495929,
+                2.208633371630774
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.7077828947066866,
+              "near_bound_share": 0.011517275913870806,
+              "trajectory_min_max_deg": [
+                0.0053849384017703485,
+                55.416936047232916
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.6331394321324998,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -3.563294221775321,
+                23.17678107226032
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 0.0,
+          "source_geometric_knee_deg": 10.281048470448674,
+          "fitted_geometric_knee_deg": 0.45084632060580604,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": -6.127375201543251,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -23.328711263267756,
+                38.070802025877455
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -4.90192599438126,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -19.392822091180896,
+                3.9795368168077982
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -12.07139432195774,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -31.79351176928326,
+                3.580523702251659
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.4002841408570495,
+              "near_bound_share": 0.00100150225338007,
+              "trajectory_min_max_deg": [
+                0.37830788955882266,
+                60.875810056828186
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.7997060991532755,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -6.824045725027897,
+                18.002738306761724
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      },
+      "optimized_raw": {
+        "left": {
+          "error_peak_time_s": 0.3,
+          "source_geometric_knee_deg": 14.998467611278393,
+          "fitted_geometric_knee_deg": 1.8871215733861657,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": -14.157266341294157,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -24.963649194747237,
+                20.871650555113096
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 6.539429813090822,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -19.12301069447003,
+                12.534781477211123
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -4.145705783202235,
+              "near_bound_share": 0.04206309464196294,
+              "trajectory_min_max_deg": [
+                -39.99999422471538,
+                11.095955618993667
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 2.123702853539716,
+              "near_bound_share": 0.00801201802704056,
+              "trajectory_min_max_deg": [
+                5.729583801515538e-06,
+                57.65597421496832
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 13.17947607044218,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -1.7868412667212896,
+                24.643922687846075
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 0.02,
+          "source_geometric_knee_deg": 10.27530566378461,
+          "fitted_geometric_knee_deg": 0.4742632934092363,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": -11.625825915100457,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -26.708794334593485,
+                34.23449347273135
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -5.914434964870598,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -25.92025462149222,
+                -3.0383987615214054
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -23.35569964106588,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -38.936054874102815,
+                -12.332181273749052
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.5040079894662455,
+              "near_bound_share": 0.00100150225338007,
+              "trajectory_min_max_deg": [
+                5.72958613353758e-06,
+                57.60032961498001
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.6904218245620188,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.12808990895562167,
+                19.041572242166946
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      }
+    },
+    "closd": {
+      "legacy_raw": {
+        "left": {
+          "error_peak_time_s": 6.66,
+          "source_geometric_knee_deg": 12.951986211125023,
+          "fitted_geometric_knee_deg": 0.4753879661846272,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": -0.38094380989998866,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -28.93005055970988,
+                29.916559958621242
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 3.503628910044498,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -10.980883677616736,
+                17.00192611763624
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -4.499269091547645,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -30.492011424880367,
+                10.470852014538798
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.507305431982731,
+              "near_bound_share": 0.005007511266900351,
+              "trajectory_min_max_deg": [
+                -0.09063297889480319,
+                31.6403019624168
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.2952392023504034,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -35.864395246207906,
+                22.802307354671036
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 3.7,
+          "source_geometric_knee_deg": 14.180183920986817,
+          "fitted_geometric_knee_deg": 1.3671278633724953,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 16.2835559135524,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -29.423695832140567,
+                17.1776632852509
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -4.493699855097818,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -21.885702263326774,
+                2.881959916609384
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -10.311696379568058,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -35.255595643891674,
+                14.363935943787846
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.600969347664109,
+              "near_bound_share": 0.007010515773660491,
+              "trajectory_min_max_deg": [
+                0.11458810907004378,
+                25.310797691873475
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": -0.6096245372025993,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -12.411651575921589,
+                25.13743700128727
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      },
+      "optimized_raw": {
+        "left": {
+          "error_peak_time_s": 6.66,
+          "source_geometric_knee_deg": 12.951986211125023,
+          "fitted_geometric_knee_deg": 0.45491199567052537,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": -4.065501513387347,
+              "near_bound_share": 0.004506760140210316,
+              "trajectory_min_max_deg": [
+                -29.99999452122965,
+                30.113796660114197
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.8374583029218323,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -15.238925861630067,
+                8.507314496286295
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -9.086397824683912,
+              "near_bound_share": 0.00200300450676014,
+              "trajectory_min_max_deg": [
+                -39.999989440443095,
+                6.3280873533861834
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.28102509977367557,
+              "near_bound_share": 0.016524787180771158,
+              "trajectory_min_max_deg": [
+                5.729578837823915e-06,
+                34.15612943380963
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": -1.9142286228580876,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -46.19505603959612,
+                20.916547301623474
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 3.7,
+          "source_geometric_knee_deg": 14.180183920986817,
+          "fitted_geometric_knee_deg": 0.45281811083712065,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 13.473407964498135,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -28.54877428851409,
+                14.501818837120778
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.7019165940924497,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -16.5934036910815,
+                5.715970301844765
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -10.538016647618159,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -32.96740894203915,
+                19.142329025484365
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.29413159131537747,
+              "near_bound_share": 0.028042063094641963,
+              "trajectory_min_max_deg": [
+                5.729577971411536e-06,
+                28.438330109138853
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": -4.5140514175758355,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -21.174390218741355,
+                21.354919830294385
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      }
+    },
+    "ardy": {
+      "legacy_raw": {
+        "left": {
+          "error_peak_time_s": 1.6,
+          "source_geometric_knee_deg": 12.54914595477119,
+          "fitted_geometric_knee_deg": 13.872980042839382,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 10.109140163007769,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                5.485150915431952,
+                13.503346013063174
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -6.395460653423903,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -9.853057740222173,
+                -4.873602546660987
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -7.762169772511108,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -19.875682020133848,
+                -7.7375453660585425
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 13.779605140638814,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                12.95435235866252,
+                24.956193471889677
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 6.515533920816678,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                5.704991566576146,
+                16.842226268156622
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 0.75,
+          "source_geometric_knee_deg": 27.43030922784126,
+          "fitted_geometric_knee_deg": 23.96453564859919,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 17.422204964918976,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                6.087811573702563,
+                18.261465938904582
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -2.337489755098085,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -5.110785434904303,
+                5.514723158008729
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -11.163291518529412,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -16.702255473362044,
+                0.33837734983591256
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 23.624245625449447,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                12.232468855319182,
+                27.04899603573713
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 13.222121447117631,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                4.875039290956595,
+                19.653044488451464
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      },
+      "optimized_raw": {
+        "left": {
+          "error_peak_time_s": 1.19,
+          "source_geometric_knee_deg": 13.151349531155299,
+          "fitted_geometric_knee_deg": 12.97568654839136,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 20.245230615585783,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                3.7826193659253136,
+                24.90416082258737
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -6.651116381193797,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -10.409118920836603,
+                -5.434131624989734
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -13.410750354896754,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -21.9819502146372,
+                -11.337180491415813
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 12.907043125318593,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                12.067524447926912,
+                24.727495586268514
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 4.529324358477345,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                3.8571016844479744,
+                14.230886360808727
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 0.79,
+          "source_geometric_knee_deg": 23.000968038396227,
+          "fitted_geometric_knee_deg": 21.862947886009493,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 27.680276529543363,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                8.756245923756513,
+                30.399407712566422
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -1.355302430547102,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -5.369701593823085,
+                5.304247095262537
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -10.897132892031687,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -16.936201939460464,
+                -0.5849371076502139
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 21.569119151079477,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                12.461890658510706,
+                27.656241380227684
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 11.393810539388104,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                2.6886095434943273,
+                17.2490689194373
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      }
+    },
+    "kimodo": {
+      "legacy_raw": {
+        "left": {
+          "error_peak_time_s": 2.5300000000000002,
+          "source_geometric_knee_deg": 6.163142285803436,
+          "fitted_geometric_knee_deg": 7.800031688926566,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 19.844129448300066,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -20.891692916640178,
+                21.034537459114922
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 8.256238517984258,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -11.47898511033405,
+                8.295482014743055
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": 39.705687837678084,
+              "near_bound_share": 0.40404040404040403,
+              "trajectory_min_max_deg": [
+                2.9311597191908505,
+                39.70571293979776
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 7.88108424296406,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                5.734518624388125,
+                8.046749870346506
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": -0.3973850330276944,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -0.5342163611170291,
+                9.60754399370134
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 1.53,
+          "source_geometric_knee_deg": 8.358458166308083,
+          "fitted_geometric_knee_deg": 1.4827607135629377,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.1380580507826918,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -27.977056801253664,
+                5.990711921612842
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -1.7857819853413242,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -6.172958284464367,
+                7.569328261845884
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -39.308030550882485,
+              "near_bound_share": 0.020202020202020204,
+              "trajectory_min_max_deg": [
+                -39.503068207606525,
+                -3.3879517329576494
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.7185513640160561,
+              "near_bound_share": 0.20875420875420875,
+              "trajectory_min_max_deg": [
+                0.36870769128648956,
+                15.36855122512993
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 16.145139798950375,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                9.265113641375688,
+                18.839029472993044
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      },
+      "optimized_raw": {
+        "left": {
+          "error_peak_time_s": 2.57,
+          "source_geometric_knee_deg": 6.132204645469917,
+          "fitted_geometric_knee_deg": 13.507748951478526,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 44.10878438791659,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -1.9104798766165338,
+                44.48477380740992
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 10.36472753858258,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -6.398245222066148,
+                10.367969852963373
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": 39.99999422471538,
+              "near_bound_share": 0.5993265993265994,
+              "trajectory_min_max_deg": [
+                4.94773070562813,
+                39.99999422471538
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 13.424390554306662,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                5.4335716460600345,
+                13.471405388347103
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": -2.507492526066148,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -2.699268782774696,
+                4.0005008121645504
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 1.83,
+          "source_geometric_knee_deg": 12.595556978521744,
+          "fitted_geometric_knee_deg": 8.927641800404196,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 25.597509694352407,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -1.9609247581470843,
+                27.900418796526296
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -2.4885192017893702,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -7.250555143595659,
+                1.8533354306652794
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -39.99999422471538,
+              "near_bound_share": 0.5723905723905723,
+              "trajectory_min_max_deg": [
+                -39.99999422471538,
+                -3.9015721102279635
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 8.975251835484379,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                5.291792880635664,
+                18.02469419452842
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.7226650049334576,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -3.006607961937409,
+                6.138755668071999
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      }
+    },
+    "chois": {
+      "legacy_raw": {
+        "left": {
+          "error_peak_time_s": 0.93,
+          "source_geometric_knee_deg": 21.190611877838297,
+          "fitted_geometric_knee_deg": 9.988780760077807,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 15.458268441110096,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                5.136169622771453,
+                35.548454964720825
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -3.3619138401778117,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -22.716036753478537,
+                7.968029980720857
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": 14.42661080706987,
+              "near_bound_share": 0.030226700251889168,
+              "trajectory_min_max_deg": [
+                -40.656408690474045,
+                18.38612119335102
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 10.00526023940389,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                9.138294820824612,
+                61.622561674595694
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 5.166770182599751,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                4.374955958068278,
+                25.88357145941027
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 1.7,
+          "source_geometric_knee_deg": 20.620611742414383,
+          "fitted_geometric_knee_deg": 15.494052306428113,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 40.38857078840968,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -3.2092684282406827,
+                40.641329722002205
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -3.1309809535494475,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -25.18457673474,
+                1.9500598360966135
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -16.687688376026884,
+              "near_bound_share": 0.037783375314861464,
+              "trajectory_min_max_deg": [
+                -40.410520680385105,
+                10.300227551106289
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 15.35707617652562,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                11.577370208156141,
+                55.02478451074632
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": -3.9958212826283876,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -4.691571878912948,
+                21.806042172347016
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      },
+      "optimized_raw": {
+        "left": {
+          "error_peak_time_s": 0.96,
+          "source_geometric_knee_deg": 24.286278856546467,
+          "fitted_geometric_knee_deg": 17.137239607868516,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 15.40020710215171,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -0.4972204240316807,
+                30.8449863970955
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 2.70254418090042,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -15.706361459223507,
+                12.33799798205278
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": 9.349403502246934,
+              "near_bound_share": 0.07808564231738035,
+              "trajectory_min_max_deg": [
+                -39.99999422471538,
+                24.474346543057667
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 16.95754558247737,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                15.292320483034224,
+                65.67226234263303
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 8.212875313307913,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                7.789237315950654,
+                28.719401220756485
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 1.23,
+          "source_geometric_knee_deg": 23.63342625377461,
+          "fitted_geometric_knee_deg": 27.596059177594572,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.2912183387754155,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.1554962029641354,
+                36.5707439095683
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -25.8804237735937,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -31.35759244045121,
+                -2.694935036794528
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -39.99999422471538,
+              "near_bound_share": 0.07556675062972293,
+              "trajectory_min_max_deg": [
+                -39.99999422471538,
+                6.611597057893068
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 27.181871267567427,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                14.764023118410273,
+                54.17105769317376
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 18.422451080174405,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -3.376899854796592,
+                21.792600139165003
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      }
+    },
+    "primal": {
+      "legacy_raw": {
+        "left": {
+          "error_peak_time_s": 0.27,
+          "source_geometric_knee_deg": 14.63866668005001,
+          "fitted_geometric_knee_deg": 2.511915649030015,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.557675832328835,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -17.239517547229127,
+                21.69496135207227
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.0361229995306385,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -32.44261622810957,
+                4.338718905868622
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -17.825378886877406,
+              "near_bound_share": 0.015523284927391086,
+              "trajectory_min_max_deg": [
+                -40.31970873992874,
+                2.8660567216983392
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 2.740184572484057,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                2.7007344338633694,
+                57.65328073636909
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 2.361355433359426,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -15.826585970055497,
+                16.60270863561645
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 5.07,
+          "source_geometric_knee_deg": 12.96903001712516,
+          "fitted_geometric_knee_deg": 1.1096395834513149,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": -3.7375606148951492,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -20.20829098927983,
+                19.485517615631164
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -0.37657912336257443,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -26.9635561547587,
+                5.024947407442157
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -16.20292585487279,
+              "near_bound_share": 0.02904356534802203,
+              "trajectory_min_max_deg": [
+                -40.52291749055617,
+                3.922577408563374
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.334152319283051,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.8212014202942317,
+                59.101144256382554
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": 1.714551433212235,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -20.06893342752327,
+                14.581753361480326
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      },
+      "optimized_raw": {
+        "left": {
+          "error_peak_time_s": 0.22,
+          "source_geometric_knee_deg": 14.606952904294289,
+          "fitted_geometric_knee_deg": 4.555204618120291,
+          "coordinates": {
+            "hip_flexion_l": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": -6.5345540774908635,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -19.49915183642535,
+                16.092887864849466
+              ]
+            },
+            "hip_adduction_l": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": 6.706263083162373,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -28.62531688334586,
+                6.709058208896358
+              ]
+            },
+            "hip_rotation_l": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -16.39501845447341,
+              "near_bound_share": 0.09764646970455683,
+              "trajectory_min_max_deg": [
+                -39.99999422471538,
+                2.0744254449356854
+              ]
+            },
+            "knee_angle_l": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 4.732115229933306,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                4.595597626827372,
+                58.2184883349615
+              ]
+            },
+            "ankle_angle_l": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": -3.5043950950377667,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -20.775501789747814,
+                10.692830428555403
+              ]
+            },
+            "subtalar_angle_l": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "right": {
+          "error_peak_time_s": 3.66,
+          "source_geometric_knee_deg": 12.799980561530937,
+          "fitted_geometric_knee_deg": 0.48827296654800934,
+          "coordinates": {
+            "hip_flexion_r": {
+              "range_deg": [
+                -30.0000002521989,
+                119.99999986287999
+              ],
+              "locked": false,
+              "at_error_peak_deg": -11.295919244186562,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -24.231902185032894,
+                11.883201246394703
+              ]
+            },
+            "hip_adduction_r": {
+              "range_deg": [
+                -50.00000022934557,
+                30.0000002521989
+              ],
+              "locked": false,
+              "at_error_peak_deg": -4.812605393339947,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -32.700262591378554,
+                -1.451590324739516
+              ]
+            },
+            "hip_rotation_r": {
+              "range_deg": [
+                -39.99999995429334,
+                39.99999995429334
+              ],
+              "locked": false,
+              "at_error_peak_deg": -22.626110031121073,
+              "near_bound_share": 0.2013019529293941,
+              "trajectory_min_max_deg": [
+                -39.99999422471538,
+                -5.00754531884338
+              ]
+            },
+            "knee_angle_r": {
+              "range_deg": [
+                0.0,
+                139.99999999999991
+              ],
+              "locked": false,
+              "at_error_peak_deg": 0.5414078155706378,
+              "near_bound_share": 0.16725087631447172,
+              "trajectory_min_max_deg": [
+                5.7295781450522306e-06,
+                58.33759078886771
+              ]
+            },
+            "ankle_angle_r": {
+              "range_deg": [
+                -50.0,
+                50.0
+              ],
+              "locked": false,
+              "at_error_peak_deg": -5.125594994629008,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                -23.656730265945797,
+                9.432398881577605
+              ]
+            },
+            "subtalar_angle_r": {
+              "range_deg": [
+                -34.99999999999998,
+                34.99999999999998
+              ],
+              "locked": true,
+              "at_error_peak_deg": 0.0,
+              "near_bound_share": 0.0,
+              "trajectory_min_max_deg": [
+                0.0,
+                0.0
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

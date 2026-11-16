@@ -40,7 +40,7 @@ def _fit_legacy(run, work, mass, floor):
     old = json.loads((work/'receipt.json').read_text()) if (work/'receipt.json').exists() else None
     motion = load(run)
     key = {'run': str(run) if not hasattr(run, 'provenance') else 'explicit_fitting_view', 'mass_kg': mass, 'floor_m': floor, 'prepare': PREPARE,
-           'k_inputs': motion.provenance['inputs'], 'k_implementation': implementation_key(),
+           'k_inputs': motion.provenance.get('inputs',{}), 'motion_view_sha256':motion.content_key(), 'k_implementation': implementation_key(),
            'bone_projection': motion.provenance.get('bone_projection'),
            'biomech_sha256': digest(biomech.__file__), 'model_sha256': digest(biomech.MODEL), 'fit_config': C}
     if old and all(old.get(k) == v for k, v in key.items()) and (work/'coordinates.mot').exists() and (work/'arm_quality.npz').exists():
