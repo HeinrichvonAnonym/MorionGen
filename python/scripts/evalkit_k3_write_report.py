@@ -20,6 +20,7 @@ def main():
     actual={r['method']:r for r in json.loads((a.out/'actual_summary.json').read_text())}
     spatial=json.loads((cfg/'spatial_effects_summary.json').read_text())
     revision=json.loads((cfg/'scoring_revision.json').read_text())
+    figures=json.loads((ROOT/'develop_logs/notes/20261116_k3_figures/index.json').read_text())
     selection=json.loads((cfg/'selection.json').read_text())['records'];rows=[json.loads(Path(p).read_text()) for p in summary['result_paths']]
     lines=['# Evalkit K3：来源约定、统一骨长对照与姿态优化','',
       '本轮检验的是：原始动作经过八种格式退化，再由 evalkit 拟合后，姿态信息保留到什么程度；骨长变化和姿态拟合各自带来了什么误差。验收参考始终来自退化前的原始 BVH。Andy/Han 的独立光学证据限定在头胸，身体模板保留先验属性。',
@@ -36,6 +37,7 @@ def main():
       '', '![八种格式的角度改善与误差来源](/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/overview.png)','',
       '## 误差从哪里产生','',
       'R 是原始参考，D 是退化文件读回，P 是拟合输入投影，F 是最终 OpenSim 坐标经 FK 得到的关节中心。D−R 衡量格式退化；F−D 衡量拟合相对输入的偏差；F−R 决定端到端验收。P−D 与 F−P 进一步说明投影做了什么。各项使用相同物理时间与共同可观测窗口，支持掩码另列。',
+      '', '本实验的降级链包含项目规定的目标骨架转换、降采样前滤波和格式序列化。降采样时沿用四阶 Butterworth 双向滤波，截止频率取 6 Hz 与目标采样率 0.4 倍中的较小值；矩阵滤波后恢复合法旋转矩阵，再插值到目标时钟。这属于受控输入构造约定。因此 D−R 的差异需要结合骨架、滤波和采样率解释，八条分支在此检验的是格式接入路径。真实模型已生成动作的保真度在后表独立核查。',
       '', '| 格式 | 双臂：D−R / F−D / F−R，° | 双腿：D−R / F−D / F−R，° | 躯干：D−R / F−D / F−R，° |',
       '| --- | ---: | ---: | ---: |']
     for m in METHODS:
@@ -142,6 +144,10 @@ def main():
     for m in METHODS:
         h=methods[m]['head_thorax'];n=h['neck']
         lines.append(f'| {m} | '+ ' / '.join(fmt(h[k]['p95_deg']) for k in ['head','thorax','neck'])+f' | {n["valid_frames"]} / {n["total_frames"]} |')
+    fast=figures['fast_head'];jump=figures['source_jump'];interval=jump['peak_interval_s']
+    lines+=['',f'时序检查按原始窗口的头部角速度选择案例。持续高角速度示例 `{Path(fast["id"]).stem}` 的角速度 P95 为 {fast["original_head_p95_deg_s"]:.1f}°/s；六路旋转曲线和读回误差分别绘制。另一个极端峰值来自 `{Path(jump["id"]).stem}` 的窗口首个时间间隔：{interval[1]-interval[0]:.4f} 秒内头部世界旋转变化约 {jump["original_head_peak_deg_s"]*(interval[1]-interval[0]):.1f}°，根位置同时变化 {jump["root_displacement_in_peak_interval_m"]*100:.1f} cm。原始 BVH 前两帧也含有这次变化，属于源记录边界突变；历史窗口和评分掩码继续保留。',
+      '', '![高角速度窗口的头颈旋转读回](/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/head_fast_turn.png)',
+      '', '[源记录边界跳变的独立图](/home/heinrich/MorionGen/develop_logs/notes/20261116_k3_figures/head_source_jump.png)与图索引保存选取规则和所有候选角速度。这些检查说明重采样及边界数据的影响，段轴的解剖含义继续采用前述证据范围。']
     lines+=['','7 条丝织记录的原始根平移异常，进入共同 float32 格式后肢体尺度的位置差异会丢失。它们保留在全量 1,291 条 CoLLaboratE 的登记与失败列表中；本轮分层拟合使用其余可表达的记录。局部姿态可通过原生层级去根平移保留，世界轨迹与接触范围仍需源数据修复。',
       '', '## 各部位工程精度与覆盖','',
       '下表使用全部共同可观测窗口，采用按记录、部位内指标、参与者逐级等权的统计。中位数与 P95 均是各指标统计量的汇总；5°／10°／20°为对应误差档内比例。有效／总数按“指标×帧”计数，同一帧可贡献多个腿部几何指标。骨盆线倾斜只描述双髋连线相对竖直的角度；轴向转动和完整解剖关节角另受观测约束。',

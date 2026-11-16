@@ -33,6 +33,8 @@ Kimodo 原生 SOMA77 骨架资产与之前复用的 ARDY SOMA77 资产哈希相�
 
 受控退化的体型选择也单独登记：MotionLCM、OmniControl 和 CHOIS 的测试夹具复用 PRIMAL 的 SMPL22 静止几何。这是项目实验约定；真实生成输出按各自实际关节位置和资源核查。统一骨长评分用于分离该体型选择与方向误差，真实输出保真度另表报告。
 
+受控降采样也使用项目约定：[export.py](/home/heinrich/MorionGen/utils/motiogen/evalkit/k/export.py) 在较长窗口降采样前执行四阶 Butterworth 双向滤波，截止频率为 `min(6 Hz, 0.4 × 目标采样率)`，旋转矩阵滤波后通过 SVD 恢复正交性，再插值到目标时钟。此设置沿用冻结的退化构造，属于 D−R 的一部分；原始参考保留原生采样。源记录首帧跳变及高角速度片段单列检查，以显示滤波和时间分辨率对峰值的影响。
+
 全量轻量检查中的 7 条丝织记录具有异常根平移，源文件幅值从约 601,289 米到 6.30×10³⁵ 米。将这些世界坐标转为 float32 又会损失肢体尺度的差异。先在原生局部层级去掉根平移，再进行双精度 FK，可保留有限的局部姿态；世界轨迹、地面和接触依据继续受限。这 7 条保持在全量登记中，继续排除于固定拟合名单。[逐条诊断](/home/heinrich/MorionGen/config/evalkit_k3_20261116/excluded_source_quality.json)记录原始根范围、浮点误差和局部姿态状态。
 
 参考平移修正后，仍按预先登记的哈希与动作几何规则重选，82 个窗口中有 5 条替换，历史 22 条及其原窗口全部保留。新名单在正式拟合前冻结；替换依据与前后名单存于 [selection_revision.json](/home/heinrich/MorionGen/config/evalkit_k3_20261116/selection_revision.json)。

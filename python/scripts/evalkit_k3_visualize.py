@@ -75,6 +75,74 @@ def overview(summary,path):
     fig.savefig(path,dpi=150);plt.close(fig)
 
 
+def fast_head(rows,path,criterion='p95'):
+    """Select by original head angular speed, then inspect all native rotation paths."""
+    from scipy.spatial.transform import Rotation,Slerp
+    from motiogen.evalkit.k import load,evaluate
+    from motiogen.evalkit.k.export import target_template
+    from motiogen.evalkit.k.calibration import UPRIGHT
+    from motiogen.evalkit.k.geometry import frame
+    candidates=[];seen=set()
+    for row in rows:
+        if row['window_key'] in seen:continue
+        seen.add(row['window_key'])
+        with np.load(row['reference']) as z:
+            names=list(z['names']);rot=z['rotations'][:,names.index('Head')];t=z['times']
+        speed=np.degrees(Rotation.from_matrix(rot[:-1].swapaxes(-1,-2)@rot[1:]).magnitude())/np.diff(t)
+        peak=int(np.argmax(speed))
+        candidates.append({'p95':float(np.percentile(speed,95)),'peak':float(np.max(speed)),
+            'peak_interval_index':peak,
+            'peak_interval_s':[float(t[peak]-t[0]),float(t[peak+1]-t[0])],
+            'window_key':row['window_key'],'row':row})
+    selected=max(candidates,key=lambda v:(v[criterion],v['window_key']))
+    window,chosen=selected['window_key'],selected['row']
+    with np.load(chosen['reference']) as z:
+        names=list(z['names']);t=z['times'];basis=z['segment_basis']
+        head=z['rotations'][:,names.index('Head')]@basis
+        chest_index=next(names.index(n) for n in ['Spine3','Chest','Spine2'] if n in names)
+        chest=z['rotations'][:,chest_index]@basis
+        peak_index=selected['peak_interval_index']
+        root_step=float(np.linalg.norm(z['points'][peak_index+1,0]-z['points'][peak_index,0]))
+    fig,axes=plt.subplots(2,2,figsize=(14,8),layout='constrained')
+    original={'head':head,'neck':chest.swapaxes(-1,-2)@head};checks=[]
+    for col,part in enumerate(['head','neck']):
+        angle=np.degrees(Rotation.from_matrix(original[part][0].T@original[part]).magnitude())
+        axes[0,col].plot(t-t[0],angle,color=COLORS['R'],lw=2.5,label='R 原始参考')
+        axes[0,col].set_title(('头部世界旋转' if part=='head' else '头相对胸旋转')+'：相对首帧的旋转幅度')
+        axes[1,col].set_title(('头' if part=='head' else '颈')+'原生 K 路径相对 R 的旋转距离')
+    for row in sorted([r for r in rows if r['window_key']==window],key=lambda r:r['method']):
+        method=row['method']
+        if method in ['motionlcm','omnicontrol']:continue
+        motion=load(row['source'],method,config='config/evalkit_k3_20261116/experiment_config.json')
+        names,rest,_=target_template(method);index={n:i for i,n in enumerate(names)}
+        b=frame(np.array([0.,1,0]),rest[index['right_hip']]-rest[index['left_hip']])
+        b=UPRIGHT@b if method=='closd' else b
+        result=evaluate(motion,{'head':b,'thorax':b},config='config/evalkit_k3_20261116/experiment_config.json')
+        check={'method':method}
+        for col,part in enumerate(['head','neck']):
+            item=result['metrics'][part];valid=item.get('anatomical_valid',item['valid']).copy()
+            valid&=np.isfinite(item['rotations']).all((1,2))&(motion.times>=t[0])&(motion.times<=t[-1])
+            q=motion.times[valid];measured=item['rotations'][valid]
+            if not len(q):check[part]={'valid':0};continue
+            reference=Slerp(t,Rotation.from_matrix(original[part]))(q).as_matrix()
+            magnitude=np.degrees(Rotation.from_matrix(original[part][0].T@measured).magnitude())
+            error=np.degrees(Rotation.from_matrix(reference.swapaxes(-1,-2)@measured).magnitude())
+            axes[0,col].plot(q-t[0],magnitude,ls='--',lw=1,label=method)
+            axes[1,col].plot(q-t[0],error,lw=1,label=method)
+            check[part]={'valid':len(q),'maximum_error_deg':float(np.max(error))}
+        checks.append(check)
+    for ax in axes.flat:ax.set_xlabel('窗口内时间 / s');ax.set_ylabel('角度 / °');ax.grid(alpha=.2)
+    axes[0,0].legend(fontsize=8,ncol=2);axes[1,1].legend(fontsize=8,ncol=2)
+    label='高角速度窗口核查' if criterion=='p95' else '源旋转跳变核查'
+    fig.suptitle(f'{label} · {Path(chosen["id"]).stem} · 原始角速度 P95 {selected["p95"]:.1f}°/s，峰值 {selected["peak"]:.1f}°/s\n按原始运动选取；六路原生旋转，D1/D2 独立头朝向保留未知；受控段约定，HYOID 保持原状',fontsize=12)
+    fig.savefig(path,dpi=140,bbox_inches='tight',pad_inches=.15);plt.close(fig)
+    return {'path':str(path),'window_key':window,'id':chosen['id'],'selection':f'maximum original native-window head angular speed {criterion}; independent of fitting error',
+            'original_head_peak_deg_s':selected['peak'],'original_head_p95_deg_s':selected['p95'],'peak_interval_s':selected['peak_interval_s'],
+            'source_window_s':chosen['source_window_s'],'root_displacement_in_peak_interval_m':root_step,
+            'scope':'native K orientations under the controlled segment convention, not anatomical neck validation','checks':checks,
+            'candidates':[{**{k:v for k,v in c.items() if k!='row'},'id':c['row']['id']} for c in candidates]}
+
+
 def main():
     ap=argparse.ArgumentParser();ap.add_argument('--out',type=Path,required=True);ap.add_argument('--dest',type=Path,required=True);ap.add_argument('--preview',action='store_true');a=ap.parse_args();a.dest.mkdir(parents=True,exist_ok=True)
     aggregate={} if a.preview else json.loads((ROOT/'config/evalkit_k3_20261116/results_summary.json').read_text())
@@ -99,7 +167,9 @@ def main():
     overview_path=None
     if not a.preview:
         overview_path=a.dest/'overview.png';overview(summary,overview_path)
-    (a.dest/'index.json').write_text(json.dumps({'preview':a.preview,'source_task_labels':'https://zenodo.org/records/6472155','overview':str(overview_path) if overview_path else None,'figures':receipts},ensure_ascii=False,indent=2)+'\n')
+    head=None if a.preview else fast_head(rows,a.dest/'head_fast_turn.png')
+    jump=None if a.preview else fast_head(rows,a.dest/'head_source_jump.png','peak')
+    (a.dest/'index.json').write_text(json.dumps({'preview':a.preview,'source_task_labels':'https://zenodo.org/records/6472155','overview':str(overview_path) if overview_path else None,'figures':receipts,'fast_head':head,'source_jump':jump},ensure_ascii=False,indent=2)+'\n')
     print('figures',len(receipts))
 
 if __name__=='__main__':main()
