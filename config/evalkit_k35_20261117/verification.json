@@ -1,0 +1,339 @@
+{
+  "mapping_audit": {
+    "records": {
+      "left": {
+        "source_native_nodes": [
+          "LeftLeg",
+          "LeftShin",
+          "LeftFoot",
+          "LeftToeBase"
+        ],
+        "source_indices": [
+          67,
+          68,
+          69,
+          70
+        ],
+        "source_parents": [
+          0,
+          67,
+          68,
+          69
+        ],
+        "model_joints": [
+          "hip_l",
+          "walker_knee_l",
+          "ankle_l",
+          "mtp_l"
+        ],
+        "neutral_direction_difference_deg": [
+          0.4980589469743022,
+          4.450048453423245,
+          4.430547363088853
+        ],
+        "source_directions_in_model_frame": [
+          [
+            -0.018573371728830678,
+            -0.9998274997937608,
+            -2.2776736089563756e-05
+          ],
+          [
+            -0.08230813411847522,
+            -0.9966069239396735,
+            -0.00010106155051449499
+          ],
+          [
+            0.9340427032276976,
+            -0.3571595076116588,
+            0.001146590464235479
+          ]
+        ],
+        "model_directions": [
+          [
+            -0.011012621667909301,
+            -0.9999302619376578,
+            0.004265375163648076
+          ],
+          [
+            -0.004818640344112039,
+            -0.9999813781040481,
+            -0.0037448832242026314
+          ],
+          [
+            0.9453189540988965,
+            -0.31951678568790987,
+            -0.06543010534176914
+          ]
+        ]
+      },
+      "right": {
+        "source_native_nodes": [
+          "RightLeg",
+          "RightShin",
+          "RightFoot",
+          "RightToeBase"
+        ],
+        "source_indices": [
+          72,
+          73,
+          74,
+          75
+        ],
+        "source_parents": [
+          0,
+          72,
+          73,
+          74
+        ],
+        "model_joints": [
+          "hip_r",
+          "walker_knee_r",
+          "ankle_r",
+          "mtp_r"
+        ],
+        "neutral_direction_difference_deg": [
+          0.49681431933299425,
+          4.45059202807276,
+          4.317827749381588
+        ],
+        "source_directions_in_model_frame": [
+          [
+            -0.01857415306502856,
+            -0.9998274852778288,
+            -2.282388534432439e-05
+          ],
+          [
+            -0.08230786583765608,
+            -0.9966069460941421,
+            -0.00010108490496307076
+          ],
+          [
+            0.9340427320711683,
+            -0.35715943210275625,
+            0.0011466146103157352
+          ]
+        ],
+        "model_directions": [
+          [
+            -0.011012621667909301,
+            -0.9999302619376578,
+            -0.004265375163648076
+          ],
+          [
+            -0.004818640344112039,
+            -0.9999813781040481,
+            0.0037448832242026314
+          ],
+          [
+            0.9453189540988965,
+            -0.31951678568790987,
+            0.06543010534176914
+          ]
+        ]
+      }
+    },
+    "calibration_hash": "89f00fe8cddabf2b9905b499d842112c52dc04a7936c62c0ead2a3eb17d40aab",
+    "model_hash": "b309b0c9b1a2a47dd645e052276c6e37459df926ad6bde45d88a5077d9532737",
+    "source_asset_record": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c95839/MorionGen/baselines/ardy/ardy/assets/skeletons/somaskel77/joints.p",
+    "registration": "pelvis lateral axis + declared Y-up; neutral frame diagnostic only, not subject anatomical calibration",
+    "finding": "ToeBase mapped to mtp child origin; ToeEnd excluded; both sides preserve proximal-distal order",
+    "resolved_source_asset": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/ardy/ardy/assets/skeletons/somaskel77/joints.p",
+    "resolved_source_sha256": "dc5fd8e39e0ff312f5d0f536a87ac22ac58445e13443fcb8ab54e6817cb97ce7",
+    "asset_matches_registered_hash": true
+  },
+  "subtalar_probe": [
+    {
+      "policy": "locked",
+      "coordinates_deg": {
+        "hip_flexion_l": 6.491838233038275,
+        "hip_adduction_l": -12.872603725430155,
+        "hip_rotation_l": 8.306035906463316,
+        "knee_angle_l": 5.729577951323733e-06,
+        "ankle_angle_l": -16.285034825817064
+      },
+      "direction_errors": [
+        12.908854375790478,
+        12.986769036893218,
+        0.13007885055220889
+      ]
+    },
+    {
+      "policy": "unlocked",
+      "coordinates_deg": {
+        "hip_flexion_l": 13.829750046620925,
+        "hip_adduction_l": -16.978828068311568,
+        "hip_rotation_l": -39.01061100282778,
+        "knee_angle_l": 14.991136889889182,
+        "ankle_angle_l": -20.762781045596967,
+        "subtalar_angle_l": 34.99999427042202
+      },
+      "direction_errors": [
+        12.880995014716461,
+        8.871259000486946,
+        4.852326258079631
+      ]
+    }
+  ],
+  "runtime_check": {
+    "maximum_endpoint_discrepancy_m": 0.0,
+    "leg_receipt": {
+      "legs": {
+        "left": {
+          "accepted": true,
+          "coordinates": [
+            "hip_flexion_l",
+            "hip_adduction_l",
+            "hip_rotation_l",
+            "knee_angle_l",
+            "ankle_angle_l"
+          ],
+          "measures": {
+            "proximal_before": 4.532764164545559,
+            "proximal_after": 1.909784330066416,
+            "knee_before": 1.3119688457253247,
+            "knee_after": 0.4773624364652278,
+            "foot_direction_increase": 3.4315715300825627,
+            "foot_position_increase_m": -0.01220320181215545,
+            "maximum_step_increase_deg": 0.0009596871632453485,
+            "velocity_error_increase_deg_s": -0.22255401688013876,
+            "bone_step_increase_deg": -0.001337688722536673,
+            "bone_velocity_error_increase_deg_s": -0.48478480159653214,
+            "coverage_loss": 0.0
+          },
+          "checks": {
+            "proximal_improvement": true,
+            "knee_nonregression": true,
+            "foot_direction": true,
+            "foot_position": true,
+            "step": true,
+            "velocity": true,
+            "bone_step": true,
+            "bone_velocity": true,
+            "coverage": true
+          },
+          "reason": "accepted"
+        },
+        "right": {
+          "accepted": true,
+          "coordinates": [
+            "hip_flexion_r",
+            "hip_adduction_r",
+            "hip_rotation_r",
+            "knee_angle_r",
+            "ankle_angle_r"
+          ],
+          "measures": {
+            "proximal_before": 5.133045506662265,
+            "proximal_after": 2.149226176491722,
+            "knee_before": 1.509603586724495,
+            "knee_after": 0.5529175040430871,
+            "foot_direction_increase": 3.6888216357806876,
+            "foot_position_increase_m": -0.014013467519904926,
+            "maximum_step_increase_deg": 0.0024729049919898216,
+            "velocity_error_increase_deg_s": -0.16796035997543868,
+            "bone_step_increase_deg": -0.0046615161315719245,
+            "bone_velocity_error_increase_deg_s": -0.1692806339910672,
+            "coverage_loss": 0.0
+          },
+          "checks": {
+            "proximal_improvement": true,
+            "knee_nonregression": true,
+            "foot_direction": true,
+            "foot_position": true,
+            "step": true,
+            "velocity": true,
+            "bone_step": true,
+            "bone_velocity": true,
+            "coverage": true
+          },
+          "reason": "accepted"
+        }
+      },
+      "coupling": {
+        "status": "model_couplers_synchronized",
+        "couplers": [
+          {
+            "independent": "knee_angle_r",
+            "dependent": "knee_angle_r_beta",
+            "function": "identity from model XML",
+            "source_storage": "degrees",
+            "dependent_storage": "native",
+            "maximum_dependent_change_in_storage_units": 0.017016297333686703
+          },
+          {
+            "independent": "knee_angle_l",
+            "dependent": "knee_angle_l_beta",
+            "function": "identity from model XML",
+            "source_storage": "degrees",
+            "dependent_storage": "native",
+            "maximum_dependent_change_in_storage_units": 0.014825052040544628
+          }
+        ],
+        "reference_access": false
+      },
+      "input_contract": "existing joint positions; no reference, new fields or range changes",
+      "settings": {
+        "hz": 20,
+        "max_nfev": 70,
+        "position_weight": 0.05,
+        "continuity_weight": 0.002,
+        "minimum_improvement_deg": 1.0,
+        "knee_tolerance_deg": 1.0,
+        "foot_tolerance_deg": 5.0,
+        "foot_position_tolerance_m": 0.02,
+        "step_tolerance_deg": 5.0,
+        "velocity_tolerance_deg_s": 10.0,
+        "quality_angle_deg": 10.0,
+        "coverage_tolerance": 0.01,
+        "foot_weight": 0.5,
+        "enabled": true
+      }
+    },
+    "config_hash": "1ca39069674785f0ed91e7754b6522b32b55e846afab523eda8649e05d76a55a",
+    "implementation": {
+      "config/evalkit_k_v2.json": "82cdab6f927abbad21c42fc66150c76459e38858962cac2eb80b77223f32cbce",
+      "utils/motiogen/evalkit/k/__init__.py": "3cf58663609b2c2287b1efb7b0db8df26749f3635c5d17f3d0cc42b7a89d198e",
+      "utils/motiogen/evalkit/k/arms.py": "aefa8c74ab9ca666fbc0ac28d3e2d763e67dada93d5609878363636f988d9c16",
+      "utils/motiogen/evalkit/k/body.py": "e6fde837b2afa04c028187d0a0e9272b34563e52617069fd0f7cf744d5350ddf",
+      "utils/motiogen/evalkit/k/bones.py": "60fd3b5bef58cc840e5fb553d2e9f243a65002aa075a4a4328f406db412a9863",
+      "utils/motiogen/evalkit/k/calibration.py": "84e95a25c2371ac290b008fb2b048d47dbd38343779a999bd478fd0422428304",
+      "utils/motiogen/evalkit/k/config.py": "24a5602a3549b9113917ed07141de0307c4e3a8e87773b4ebe8884a929052201",
+      "utils/motiogen/evalkit/k/constraints.py": "25c5557148a217e88ff12ef6a71a8ea1862b52f169c23ddc3e31278fb38d250b",
+      "utils/motiogen/evalkit/k/export.py": "51a485d3cb030ae88aee2e66c6e29261b71c0535368e737c3817a570fde48399",
+      "utils/motiogen/evalkit/k/fitting.py": "17acc67049d0d7d79a3794840995a05bf9f62530c4d77025dbb556296e2d12ec",
+      "utils/motiogen/evalkit/k/fitting3.py": "42007fcbc1ac8265246efb12252db88e565fecae15ad6e0f0ec7e716f1e3f689",
+      "utils/motiogen/evalkit/k/geometry.py": "c0db68ed560d488b99edffb74fabe5e36a05e2bb7fd67c8580a161f2c169ab3f",
+      "utils/motiogen/evalkit/k/legs.py": "be66c68996c0ce8b6f6bec0e94e2ddffd711756201a0c200615e475641c65de4",
+      "utils/motiogen/evalkit/k/motion.py": "3420f13aff718056e7978b3ca67d7e1044a3063c4399b5e65b00964b00a09d5d",
+      "utils/motiogen/evalkit/k/posture.py": "b15e24516e6f0254cf28e57916ead8a151a8176e0c06ba4be25d3c26df3b52e4",
+      "utils/motiogen/evalkit/k/quality.py": "4f1d78daf45aa7ef6b4d94330fa06933f827c948e8eadfa93f17db803e051332",
+      "utils/motiogen/evalkit/k/reference.py": "5f49cdded809bca5447dbcbe14e043e051cb3c863f36b503606eb6e1541ead63",
+      "utils/motiogen/evalkit/k/reference_bvh.py": "1e3c9faa84ae9694b7542d761b77467b165efe6744119ee00f95355733132633",
+      "utils/motiogen/evalkit/k/refinement.py": "f9ca309270cf6ce05bf46dfcac1f025cc2ae96657cdcc83e8d535394fdc22064",
+      "utils/motiogen/evalkit/k/retargeting.py": "8b8f0e63df175965224134040feef66b2ba7f8bf31ca65dd6729d47bb2c0d70b",
+      "utils/motiogen/evalkit/k/scoring.py": "4fb8188823c6b2917e6b7303d0f9187b3bc8aa251ac697d2ed4c995373c70675",
+      "utils/motiogen/evalkit/k/solver_seeds.py": "cb4ed3bcce87b996462a26cd9b155c1167108ecfef86808a4bbf219938855242",
+      "utils/motiogen/evalkit/k/trunk_transfer.py": "1125fe817ea911e681a3214532fabbc96774ece83a709cd204231db57b034917",
+      "utils/motiogen/evalkit/k/validation.py": "4b86a85ae98c90150fe769e7aa90890ae23090f909a540c0e2c8ce1ee85bff7f",
+      "config/evalkit_k_calibration/ardy.json": "31dcf01f96f43a142d1346bf687d96c3adfe5a60639cb49f52418337fa3c8063",
+      "config/evalkit_k_calibration/chois.json": "02800f92c53540d07d1af1ff31b2def832f4299dcea7cf223e4bed3e1f3e6804",
+      "config/evalkit_k_calibration/closd.json": "5de072c4575a222704c46e7e1a62460faa407fd2a599854696e31b5c91d72744",
+      "config/evalkit_k_calibration/dart.json": "54a610c925db4dfdbcc9c17e5f9f9e4796fffa255808c2e784d68997ec3443ca",
+      "config/evalkit_k_calibration/kimodo.json": "89f00fe8cddabf2b9905b499d842112c52dc04a7936c62c0ead2a3eb17d40aab",
+      "config/evalkit_k_calibration/primal.json": "3851c0cc6e3c8a7a92a7b7928cfb7473d713d95f2e229f1e2897860809d201e6",
+      "utils/motion_retarget/bvh.py": "1e1467a84bd4f437117ba0180e683ca53d6799e5615b4054257fe731cfb81b76",
+      "utils/motiogen/motion.py": "15ddda16c474ccf5dae777092699701bff7e8228c32b31bcba3704232653c517",
+      "python/scripts/evalkit_k_humanml_codec.py": "7a132370781838960ab3d683b33e26527fcc8ad687236c8770ffe43c4f3f0e26",
+      "python/scripts/evalkit_k_validate.py": "d08a9bff41e203841d4b12dd25903742364a8b9f5fb92760afe33586ce6a8686",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/common/quaternion.py": "ae2e3d090eb39342bdcd0bdae7183bab3159bc100eea5725680dd25032f78c25",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/common/skeleton.py": "5b047d93ca883a84d972a8e743d33a68089a990e3553f18eb7752b3ce4000776",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/scripts/motion_process.py": "88e0299c8cd599166665a1923be9bbd3eb1667c7b7bb5a63ce325d3b35741edc",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/get_opt.py": "39f5b0e0904d9421feae2e5cc7fa624ce64681d1a9466c80b2185c486bcf8ece",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/metrics.py": "de7b8b46ad019aeddeba93e1586fdf8092b83d86128e0da92dd2f6ce03dac935",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/paramUtil.py": "fe0265f3dcd0d466690d816eae973fcece145f64551cef7e46fed7ef3de80d34",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/plot_script.py": "be14e1b2bff5c8173e9c1a234bec20831d28d2023d6c465467e07fe49fa6b9a9",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/utils.py": "053a866d9bf7233ad91cb387fd111c969ae29b3ad362597a069fadf9d703b1ab",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/utils/word_vectorizer.py": "64dfc2eeaebb04f0c0f9a9b6526d5416edee248b4e1d10f617bcb07305188803"
+    }
+  }
+}

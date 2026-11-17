@@ -13,7 +13,7 @@ from motiogen.evalkit.k.scoring import compare,angles,region
 from motiogen.evalkit.k.quality import metric_fidelity,apply_metric_gates
 from motiogen.evalkit.k.fitting3 import support
 BASE=Path('/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs');OUT=BASE/'evalkit_k35_legs_20261117'
-SETTINGS={'hz':20,'max_nfev':70,'position_weight':.05,'continuity_weight':.002,'minimum_improvement_deg':1.,'knee_tolerance_deg':1.,'foot_tolerance_deg':5.,'foot_position_tolerance_m':.02,'step_tolerance_deg':5.,'velocity_tolerance_deg_s':10.}
+SETTINGS={'hz':20,'max_nfev':70,'position_weight':.05,'continuity_weight':.002,'minimum_improvement_deg':1.,'knee_tolerance_deg':1.,'foot_tolerance_deg':5.,'foot_position_tolerance_m':.02,'step_tolerance_deg':5.,'velocity_tolerance_deg_s':10.,'quality_angle_deg':10.,'coverage_tolerance':.01}
 
 def inventory():
  old=read(ROOT/'config/evalkit_k34_20261117/acceptance.json')['selected'];rows=[]
@@ -45,7 +45,8 @@ def run(task):
  return {'method':row['method'],'window':row['window'],'foot_weight':weight,'path':str(work/'result.json')}
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--panel',action='store_true');a=ap.parse_args()
+ global OUT
+ ap=argparse.ArgumentParser();ap.add_argument('--panel',action='store_true');ap.add_argument('--out',type=Path,default=OUT);a=ap.parse_args();OUT=a.out
  for k in ['OPENBLAS_NUM_THREADS','OMP_NUM_THREADS','MKL_NUM_THREADS']:assert os.environ.get(k)=='1'
  OUT.mkdir(exist_ok=True);rows=inventory()
  freeze={'rows':rows,'inputs':{r[k]:digest(r[k]) for r in rows for k in ['kinematics','model','comparison']},'implementation':implementation_key(),'runner':digest(__file__),'settings':SETTINGS,'protected':{str(p.relative_to(ROOT)):digest(p) for d in ['config','plans'] for p in (ROOT/d).rglob('*') if p.is_file()},'scope':'11 fixed development windows; 8 formats; no holdout; same input and model; no new fields'}

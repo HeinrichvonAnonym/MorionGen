@@ -29,12 +29,22 @@ def accept_window(baseline,candidate,target,times,settings):
         'foot_position_increase_m':p95(np.linalg.norm(candidate[:,3]-target[:,3],axis=1))-p95(np.linalg.norm(baseline[:,3]-target[:,3],axis=1)),
         'maximum_step_increase_deg':float(abs(np.diff(ca)).max()-abs(np.diff(ba)).max()),
         'velocity_error_increase_deg_s':p95(abs(np.gradient(ck,times)))-p95(abs(np.gradient(bk,times)))}
+    bdirections=unit(np.diff(baseline,axis=1));cdirections=unit(np.diff(candidate,axis=1));tdirections=unit(np.diff(target,axis=1))
+    step=lambda d:float(np.max(np.degrees(np.arccos(np.clip((d[1:]*d[:-1]).sum(-1),-1,1)))))
+    velocity=lambda d:p95(np.linalg.norm(np.gradient(d,times,axis=0)-np.gradient(tdirections,times,axis=0),axis=-1)*180/np.pi)
+    measures['bone_step_increase_deg']=step(cdirections)-step(bdirections)
+    measures['bone_velocity_error_increase_deg_s']=velocity(cdirections)-velocity(bdirections)
+    valid=lambda d,k:float(np.mean((d<=settings['quality_angle_deg']).all(1)&(abs(k)<=settings['quality_angle_deg'])))
+    measures['coverage_loss']=valid(bd,bk)-valid(cd,ck)
     tests={'proximal_improvement':measures['proximal_after']<=measures['proximal_before']-settings['minimum_improvement_deg'],
         'knee_nonregression':measures['knee_after']<=measures['knee_before']+settings['knee_tolerance_deg'],
         'foot_direction':measures['foot_direction_increase']<=settings['foot_tolerance_deg'],
         'foot_position':measures['foot_position_increase_m']<=settings['foot_position_tolerance_m'],
         'step':measures['maximum_step_increase_deg']<=settings['step_tolerance_deg'],
-        'velocity':measures['velocity_error_increase_deg_s']<=settings['velocity_tolerance_deg_s']}
+        'velocity':measures['velocity_error_increase_deg_s']<=settings['velocity_tolerance_deg_s'],
+        'bone_step':measures['bone_step_increase_deg']<=settings['step_tolerance_deg'],
+        'bone_velocity':measures['bone_velocity_error_increase_deg_s']<=settings['velocity_tolerance_deg_s'],
+        'coverage':measures['coverage_loss']<=settings['coverage_tolerance']}
     return all(tests.values()),{'measures':measures,'checks':tests,'reason':'accepted' if all(tests.values()) else 'candidate_guard_failed'}
 
 

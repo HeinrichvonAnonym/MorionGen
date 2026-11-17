@@ -73,6 +73,15 @@ def fit_configured(run,work,mass,floor,config):
         if settings['strategy']=='direction_refinement' and motion.method in settings['methods']:
             from .refinement import refine
             coords,optimization=refine(work/'model.osim',view,times,labels,coords,settings)
+        if settings.get('leg_refinement',{}).get('enabled',False):
+            from .legs import refine_legs
+            _,leg_names,_=view.legacy()
+            targets=interpolate(view,times,leg_names)
+            baseline_coords=coords.copy()
+            coords,candidate_coords,leg_receipt=refine_legs(work/'model.osim',times,labels,coords,targets,leg_names,settings['leg_refinement'])
+            optimization['leg_refinement']=leg_receipt
+            np.savez_compressed(work/'leg_candidate_coordinates.npz',times=times,labels=labels,
+                                baseline=baseline_coords,candidate=candidate_coords,selected=coords)
         write_coordinates(work/'coordinates.mot',times,labels,coords)
         fitted,names=positions(work/'model.osim',times,labels,coords)
         source=interpolate(motion,times,names);projected=interpolate(view,times,names)
