@@ -94,6 +94,8 @@ def main():
     fig.suptitle('022 Kimodo: same model and IK objective, input-derived initialization only',fontsize=15)
     fig.tight_layout()
     for suffix in ('png','svg'):fig.savefig(a.output/('knee_initialization.'+suffix),dpi=160)
+    svg=a.output/'knee_initialization.svg'
+    svg.write_text('\n'.join(line.rstrip() for line in svg.read_text().splitlines())+'\n')
 
 
 if __name__=='__main__':main()
