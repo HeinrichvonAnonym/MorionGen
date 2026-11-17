@@ -1,0 +1,37 @@
+{
+  "records": [
+    {
+      "window": "000",
+      "method": "kimodo"
+    },
+    {
+      "window": "008",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "010",
+      "method": "kimodo"
+    },
+    {
+      "window": "015",
+      "method": "kimodo"
+    },
+    {
+      "window": "017",
+      "method": "chois"
+    },
+    {
+      "window": "022",
+      "method": "kimodo"
+    },
+    {
+      "window": "070",
+      "method": "chois"
+    },
+    {
+      "window": "074",
+      "method": "kimodo"
+    }
+  ],
+  "selection": "Exactly the eight followup_regression entries preregistered in failure_followup_v1/protocol.json before the15-path ablation"
+}

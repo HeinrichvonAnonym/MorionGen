@@ -1,0 +1,21 @@
+{
+  "version": "k4-failure-followup-regression-1",
+  "conditions": [
+    "control",
+    "chain_proxy"
+  ],
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "hypothesis": "Observed positional-chain proxy improves position-only fixed geometry; verify transfer on the original eight preregistered supplementary paths, including both position/rig routes and previous difficult poses. No default promotion.",
+  "source_code_commit": "1c5e443",
+  "selection": "Same two configs for every window; rig present keeps declared geometry, no window-key runtime decisions",
+  "precondition": "008 MotionLCM chain-proxy passes native/export and D/R clocks; axial transport and combined declined because010 worsened",
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "max_candidate_workers": 2,
+  "frozen_regression_workers": 6,
+  "source_config_sha256": {
+    "control": "201418887ee8f59de579ca90821451916f2d64ea5da14cb60919e6151f4675bf",
+    "chain_proxy": "88943891d50e7396e73f29a21371a2ea31b88ba7ab95618dc90fe0ebadb81f06"
+  }
+}
