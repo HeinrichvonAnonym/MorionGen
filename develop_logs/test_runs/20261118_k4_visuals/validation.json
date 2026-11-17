@@ -1,0 +1,22 @@
+{
+  "windows": 24,
+  "formats": 8,
+  "scored_conditions_checked": 95,
+  "missing_legacy_controls": 1,
+  "external_resources": 0,
+  "protected_files": 610,
+  "changed": [],
+  "html_bytes": 4910974,
+  "html_sha256": "4f7ab565d4f0074d7799857ed580d3647fa6faa97f695ffbab281f27e6dfa134",
+  "browser_checks": [
+    "24 case selections",
+    "playback advances",
+    "peak frame 074 at0.633s",
+    "layout/condition/view/stratum switches",
+    "missing head rotation stays unobservable",
+    "legacy hip failure disabled",
+    "narrow viewport has no horizontal overflow",
+    "no console errors"
+  ],
+  "file_url_check": "Browser policy blocked file:// navigation; offline dependencies checked structurally, HTTP browser interaction verified"
+}
