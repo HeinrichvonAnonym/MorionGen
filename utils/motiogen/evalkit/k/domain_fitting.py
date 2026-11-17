@@ -18,6 +18,9 @@ from .quality import metric_fidelity,apply_metric_gates
 def fit_kinematic_domain(run,work,mass=75.,floor=0.,config=None,method=None):
     cfg=resolve_config(config)
     if cfg.get('output_kind')!='kinematic_only':raise ValueError('an explicit kinematic_only domain configuration is required')
+    if cfg.get('strategy')=='trustworthy_fixed_geometry':
+        from .selection import fit_kinematic
+        return fit_kinematic(run,work,mass,floor,cfg,method)
     work=Path(work);work.mkdir(parents=True,exist_ok=True)
     motion=load(run,method,config=cfg['baseline_config'])
     nominal_fit(motion,work/'nominal',mass,floor,config=cfg['baseline_config'])

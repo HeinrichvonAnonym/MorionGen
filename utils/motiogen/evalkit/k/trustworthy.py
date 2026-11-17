@@ -36,21 +36,25 @@ def guard(source,baseline,candidate,times):
     a=fidelity(source,baseline,times);b=fidelity(source,candidate,times)
     bad=[]
     for key in a['angles']:
-        if b['angles'][key]['p95_abs']>a['angles'][key]['p95_abs']+1:bad.append('angle:'+key)
-        if b['angles'][key]['within_5']<a['angles'][key]['within_5']-.01:bad.append('coverage:'+key)
+        av,bv=a['angles'][key],b['angles'][key]
+        if bv['coverage']<av['coverage']-.01:bad.append('scoring_coverage:'+key)
+        if av['p95_abs'] is not None and bv['p95_abs'] is not None and bv['p95_abs']>av['p95_abs']+1:bad.append('angle:'+key)
+        if av['within_5'] is not None and bv['within_5'] is not None and bv['within_5']<av['within_5']-.01:bad.append('coverage:'+key)
     for key in ['left_shoulder','right_shoulder','left_knee','right_knee','left_foot','right_foot','left_wrist','right_wrist']:
-        if b['positions'][key]['p95_abs']>a['positions'][key]['p95_abs']+.01:bad.append('position:'+key)
+        av,bv=a['positions'][key],b['positions'][key]
+        if bv['coverage']<av['coverage']-.01:bad.append('position_coverage:'+key)
+        if av['p95_abs'] is not None and bv['p95_abs'] is not None and bv['p95_abs']>av['p95_abs']+.01:bad.append('position:'+key)
     if b['maximum_angle_step_deg']>a['maximum_angle_step_deg']+5:bad.append('step')
     if b['maximum_velocity_error_p95_deg_s']>a['maximum_velocity_error_p95_deg_s']+10:bad.append('velocity')
-    improvement=(sum(v['p95_abs'] for v in b['angles'].values())<sum(v['p95_abs'] for v in a['angles'].values())-1e-5 or
-                 sum(v['p95_abs'] for v in b['positions'].values())<sum(v['p95_abs'] for v in a['positions'].values())-1e-5)
+    improvement=(sum(v['p95_abs'] or 0. for v in b['angles'].values())<sum(v['p95_abs'] or 0. for v in a['angles'].values())-1e-5 or
+                 sum(v['p95_abs'] or 0. for v in b['positions'].values())<sum(v['p95_abs'] or 0. for v in a['positions'].values())-1e-5)
     return not bad and improvement,{'failures':bad,'improvement':bool(improvement),'scope':'whole-window input-only guard; complete pose/model retained on rejection'}
 
 
-def fit_variant(run,work,config,geometry=False,optimized=False,nominal_work=None):
+def fit_variant(run,work,config,geometry=False,optimized=False,nominal_work=None,mass=75.,floor=0.):
     cfg=resolve_config(config);work=Path(work);work.mkdir(parents=True,exist_ok=True)
     motion=load(run,config=cfg['baseline_config']);nominal=Path(nominal_work or work/'nominal')
-    nominal_fit(motion,nominal,75.,0.,config=cfg['baseline_config'])
+    nominal_fit(motion,nominal,mass,floor,config=cfg['baseline_config'])
     evidence={'inputs':motion.content_key(),'nominal_model':digest(nominal/'model.osim'),'nominal_arrays':digest(nominal/'kinematics.npz'),'config':cfg,'geometry':geometry,'optimized':optimized,'implementation':implementation_key()}
     receipt_path=work/'receipt.json';arrays_path=work/'fit.npz'
     if receipt_path.exists() and arrays_path.exists() and json.loads(receipt_path.read_text()).get('evidence')==evidence:return json.loads(receipt_path.read_text())
