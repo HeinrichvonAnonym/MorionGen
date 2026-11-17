@@ -1,0 +1,67 @@
+{
+  "frame": 190,
+  "time": 1.9000000000000001,
+  "variants": [
+    {
+      "policy": "official",
+      "cost": 0.07042970162729327,
+      "coordinates_deg": {
+        "hip_flexion_l": 12.529672485263456,
+        "hip_adduction_l": -18.555684717912904,
+        "hip_rotation_l": -39.99999422468949,
+        "knee_angle_l": 15.192960500651115,
+        "ankle_angle_l": -27.500386821530274
+      },
+      "direction_error_deg": [
+        10.895415319196836,
+        10.638565851804069
+      ]
+    },
+    {
+      "policy": "hip_rotation",
+      "cost": 1.5790953715738504e-19,
+      "coordinates_deg": {
+        "hip_flexion_l": 3.3890995352976345,
+        "hip_adduction_l": -25.710898959319323,
+        "hip_rotation_l": -99.25210449063115,
+        "knee_angle_l": 25.187128700412593,
+        "ankle_angle_l": -27.500386821530274
+      },
+      "direction_error_deg": [
+        1.9408655015201235e-08,
+        1.1903383628556335e-08
+      ]
+    },
+    {
+      "policy": "signed_knee",
+      "cost": 0.042434003894186494,
+      "coordinates_deg": {
+        "hip_flexion_l": -1.962416762152083,
+        "hip_adduction_l": -19.24255380008789,
+        "hip_rotation_l": 39.99999421409089,
+        "knee_angle_l": -19.61983589233682,
+        "ankle_angle_l": -16.285554066863245
+      },
+      "direction_error_deg": [
+        8.450200671694146,
+        8.254929382146974
+      ]
+    },
+    {
+      "policy": "both",
+      "cost": 1.4828053657984229e-18,
+      "coordinates_deg": {
+        "hip_flexion_l": 4.1603388236549685,
+        "hip_adduction_l": -24.675747064218676,
+        "hip_rotation_l": 82.04900520685287,
+        "knee_angle_l": -24.14828806289193,
+        "ankle_angle_l": 7.060863075184206
+      },
+      "direction_error_deg": [
+        5.791098536226153e-08,
+        3.8911189201134426e-08
+      ]
+    }
+  ],
+  "scope": "input-only single-frame domain diagnostic; outside-domain variants excluded from production"
+}

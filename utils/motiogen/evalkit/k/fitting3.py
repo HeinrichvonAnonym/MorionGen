@@ -84,6 +84,17 @@ def fit_configured(run,work,mass,floor,config):
     angle_limit=settings['quality_angle_deg'];position_limit=settings['quality_position_m']
     prior=motion.legacy_prior_joints()
     quality=support(source,fitted,names,angle_limit,position_limit,prior)
+    metric_quality={}
+    if settings.get('require_metric_fidelity',False):
+        from .quality import metric_fidelity,apply_metric_gates,REASONS
+        metric_quality=metric_fidelity(source,fitted,names,angle_limit,prior)
+        quality=apply_metric_gates(quality,metric_quality)
+        receipt['support_scope']='region_angle_valid requires input bone-direction and geometric-angle agreement; metric_quality separates observed input from model fidelity; registration and position gates remain required downstream'
+        receipt['metric_fidelity']={'reason_codes':REASONS,
+            'scope':'observed input geometry and model reproduction are separate; no evaluation reference used',
+            'threshold_deg':angle_limit,
+            'coverage':{n:{'observed':int(q['observed'].sum()),'model_fit_valid':int(q['model_fit_valid'].sum()),'total':len(times)} for n,q in metric_quality.items()}}
+        np.savez_compressed(work/'metric_quality.npz',times=times,**{n+'_'+k:v for n,q in metric_quality.items() for k,v in q.items()})
     valid_cal=bool(receipt['calibration']['qualified']);angle_masks={k:v['angle_valid'] for k,v in quality.items()}
     spatial_masks={k:v['position_valid']&valid_cal for k,v in quality.items()}
     joint_error=np.linalg.norm(source-fitted,axis=-1).max(1)
@@ -112,4 +123,4 @@ def fit_configured(run,work,mass,floor,config):
     return {'times':times,'labels':labels,'coords':coords,'receipt':receipt,'ik_max_error_m':joint_error,
             'calibration_valid':valid_cal,'position_fit_valid':joint_error<=position_limit,'unmeasurable':(joint_error>position_limit)|~np.full(len(times),valid_cal),
             'arm_valid':{s:q['valid']&valid_cal for s,q in arms.items()},
-            'region_angle_valid':angle_masks,'region_registered_valid':{k:v&valid_cal for k,v in angle_masks.items()},'region_position_valid':spatial_masks}
+            'metric_quality':metric_quality,'region_angle_valid':angle_masks,'region_registered_valid':{k:v&valid_cal for k,v in angle_masks.items()},'region_position_valid':spatial_masks}

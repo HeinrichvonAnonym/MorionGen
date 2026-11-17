@@ -1,0 +1,71 @@
+{
+  "frame": 190,
+  "time": 1.9000000000000001,
+  "variants": [
+    {
+      "policy": "official",
+      "cost": 0.10170781968701124,
+      "coordinates_deg": {
+        "hip_flexion_l": 6.491838233038275,
+        "hip_adduction_l": -12.872603725430155,
+        "hip_rotation_l": 8.306035906463316,
+        "knee_angle_l": 5.729577951323733e-06,
+        "ankle_angle_l": -16.285034825817064
+      },
+      "direction_error_deg": [
+        12.908854375790478,
+        12.986769036893218,
+        0.13007885055220889
+      ]
+    },
+    {
+      "policy": "hip_rotation",
+      "cost": 0.10170781968701044,
+      "coordinates_deg": {
+        "hip_flexion_l": 6.491839148064431,
+        "hip_adduction_l": -12.872603757361997,
+        "hip_rotation_l": 8.306034665311595,
+        "knee_angle_l": 5.729577952085987e-06,
+        "ankle_angle_l": -16.28503585730771
+      },
+      "direction_error_deg": [
+        12.908854488688428,
+        12.98676893553607,
+        0.13007777407424878
+      ]
+    },
+    {
+      "policy": "signed_knee",
+      "cost": 0.0913543286951044,
+      "coordinates_deg": {
+        "hip_flexion_l": 1.324767744528231,
+        "hip_adduction_l": -14.602146674416634,
+        "hip_rotation_l": 12.693802332870174,
+        "knee_angle_l": -9.841811208720294,
+        "ankle_angle_l": -20.788973253069543
+      },
+      "direction_error_deg": [
+        11.364041995389874,
+        12.826210729872967,
+        2.7120990829958593
+      ]
+    },
+    {
+      "policy": "both",
+      "cost": 0.09135432870363966,
+      "coordinates_deg": {
+        "hip_flexion_l": 1.324788745088802,
+        "hip_adduction_l": -14.602132723140384,
+        "hip_rotation_l": 12.693769785032583,
+        "knee_angle_l": -9.841770327820479,
+        "ankle_angle_l": -20.788956377281878
+      },
+      "direction_error_deg": [
+        11.364050590791347,
+        12.826207512799291,
+        2.7120783877904135
+      ]
+    }
+  ],
+  "scope": "input-only single-frame domain diagnostic; outside-domain variants excluded from production"
+}

@@ -1,0 +1,80 @@
+{
+  "frame": 190,
+  "time": 1.9000000000000001,
+  "input_geometric_knee_angle": 25.560905654419003,
+  "sweep": [
+    {
+      "requested_knee": -30,
+      "actual_knee_deg": -29.999999999999996,
+      "direction_errors_deg": [
+        12.869754754321027,
+        30.0337007822449
+      ]
+    },
+    {
+      "requested_knee": -25,
+      "actual_knee_deg": -25.0,
+      "direction_errors_deg": [
+        12.855505148662441,
+        25.43745059236013
+      ]
+    },
+    {
+      "requested_knee": -20,
+      "actual_knee_deg": -20.0,
+      "direction_errors_deg": [
+        12.851111282598845,
+        21.12148382830497
+      ]
+    },
+    {
+      "requested_knee": -10,
+      "actual_knee_deg": -10.0,
+      "direction_errors_deg": [
+        12.866534755871594,
+        14.26163667368205
+      ]
+    },
+    {
+      "requested_knee": 0,
+      "actual_knee_deg": 0.0,
+      "direction_errors_deg": [
+        12.90596566922387,
+        12.989638414647882
+      ]
+    },
+    {
+      "requested_knee": 10,
+      "actual_knee_deg": 10.0,
+      "direction_errors_deg": [
+        12.960053094442664,
+        18.384160662550507
+      ]
+    },
+    {
+      "requested_knee": 20,
+      "actual_knee_deg": 20.0,
+      "direction_errors_deg": [
+        13.020058268645036,
+        26.606780914977755
+      ]
+    },
+    {
+      "requested_knee": 25,
+      "actual_knee_deg": 25.0,
+      "direction_errors_deg": [
+        13.049776526858889,
+        31.102860519893945
+      ]
+    },
+    {
+      "requested_knee": 30,
+      "actual_knee_deg": 29.999999999999996,
+      "direction_errors_deg": [
+        13.078114308976147,
+        35.72406226810237
+      ]
+    }
+  ],
+  "scope": "fixed other coordinates; diagnostic response, not a fit or anatomical validation"
+}

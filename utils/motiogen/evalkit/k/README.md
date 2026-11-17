@@ -84,3 +84,13 @@ CHOIS 的 body wrist 与额外 hand point 分开保留。`Motion.legacy_aliases(
 ## K3.1 局部求解救援
 
 显式配置 `config/evalkit_k_v3_1.json` 在七路格式上先执行原 K3，再按输入残差启动确定性内部多初值搜索；两个阶段使用同一模型范围。CLoSD 保留原 K3，原因是本轮候选的完整窗口角速度误差增加。典型开发动作及已知失败窗口的验收、时序限制见[开发报告](/home/heinrich/MorionGen/develop_logs/notes/20261116_evalkit_k3_rescue.md)。Kimodo 跪姿继续保留部分支持状态；当前默认入口及 K3 配置均保持原值。
+
+## K3.4：受控转换与模型拟合分开验收
+
+显式配置 `config/evalkit_k34_20261117/runtime_config.json` 选用 `direction_v3` 受控转换。`trunk_transfer.py` 在目标骨长固定、骨盆及头胸/四肢世界旋转固定的条件下，对内部脊柱施加最小摆转，使骨盆至肩中点的方向与源动作一致。它是源到目标骨架的转换目标，内部脊柱旋转保留派生属性；几何不可行帧在 receipt 中显式记录。旧 `legacy`、`topology_v2` 入口保持原值。
+
+`quality.py` 按指标分开保存输入观测与模型重现：输入几何角可观测，并不保证 OpenSim 模型能重现。新配置的区域有效掩码同时要求骨段方向和区域几何角达到工程容差。`metric_quality.npz` 存储输入角、模型角、误差、观测掩码、拟合掩码及原因编码；`region_quality.npz` 保留旧方向掩码供比较。R/D/F 验收仍用完整原评分窗口，不借助新掩码缩小误差。
+
+`solver_seeds.py` 与独立变量过滤保留为显式开发消融，未纳入所选运行配置：本轮 16 个同输入配对窗口未显示实质精度收益。原模型范围、锁定及耦合约束继续使用。浅屈膝失败需要同时考虑弯曲平面和脚部方向；超出模型表达范围时返回拟合不可靠，同时保留直接观测的几何指标。
+
+固定开发实验在提交 `5ee8c63` 复现：`python/scripts/evalkit_k34_development.py --light --fit`。该脚本校验实现/参考/配置哈希，拒绝将新版本混入原产物目录；运行需数值库单线程、最多三个工作进程、数据盘至少 80 GiB 余量。结果与可视化、局部代价详见 `develop_logs/notes/20261117_evalkit_k34.md`。本轮没有新增留出验证。

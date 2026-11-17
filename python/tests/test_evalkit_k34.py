@@ -41,3 +41,24 @@ class TransferTests(unittest.TestCase):
         world=Rotation.from_rotvec([.3,-.5,.1]).as_matrix()
         p2,q2,_=transfer(SimpleNamespace(positions=src@world.T),names,names,names,rest,parents,world@r,np.zeros((1,3)))
         np.testing.assert_allclose(p2,p@world.T,atol=1e-12);np.testing.assert_allclose(q2,world@q,atol=1e-12)
+
+class QualityTests(unittest.TestCase):
+    def test_two_small_direction_errors_can_hide_joint_error(self):
+        from motiogen.evalkit.k.quality import metric_fidelity,apply_metric_gates
+        from motiogen.evalkit.k.bones import NAMES
+        from motiogen.evalkit.k.fitting3 import support
+        p=np.zeros((1,len(NAMES),3));ix={n:i for i,n in enumerate(NAMES)}
+        for side,x in [('left',-.1),('right',.1)]:
+            for node,y in [('hip',1.),('knee',.6),('ankle',.2),('foot',.1),('shoulder',1.6),('elbow',1.2),('wrist',.8)]:p[0,ix[side+'_'+node]]=[x,y,0]
+        p[:,ix['pelvis_mid']]=[0,1,0];p[:,ix['shoulder_mid']]=[0,1.6,0]
+        f=p.copy();theta=np.deg2rad(8)
+        f[0,ix['left_knee']]=p[0,ix['left_hip']]+[.4*np.sin(theta),-.4*np.cos(theta),0]
+        f[0,ix['left_ankle']]=f[0,ix['left_knee']]+[-.4*np.sin(theta),-.4*np.cos(theta),0]
+        f[0,ix['left_foot']]=f[0,ix['left_ankle']]+[0,-.1,0]
+        q=support(p,f,NAMES);self.assertTrue(q['left_leg']['angle_valid'][0])
+        m=metric_fidelity(p,f,NAMES,10);self.assertTrue(m['left_knee_flexion']['observed'][0]);self.assertFalse(m['left_knee_flexion']['model_fit_valid'][0])
+        apply_metric_gates(q,m);self.assertTrue(q['left_leg']['direction_valid'][0]);self.assertFalse(q['left_leg']['angle_valid'][0])
+        self.assertEqual(m['left_knee_flexion']['reason'][0],3)
+        # Missing foot observation must not erase an independently observed knee.
+        m=metric_fidelity(p,f,NAMES,10,prior=['left_foot'])
+        self.assertTrue(m['left_knee_flexion']['observed'][0]);self.assertFalse(m['left_foot_incline']['observed'][0])

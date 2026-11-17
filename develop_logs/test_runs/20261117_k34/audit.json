@@ -1,0 +1,2217 @@
+{
+  "protected_files_unchanged": 217,
+  "reference_files_unchanged": 82,
+  "new_holdout_runs": 0,
+  "bounds": [
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/010/kimodo/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 4.410170166271677,
+          "max_deg": 14.551042945319029,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -4.600028998492088,
+          "max_deg": 9.256139316216682,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -11.554270567465217,
+          "max_deg": 18.057525858104245,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 5.85235955581479,
+          "max_deg": 18.72085859265968,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -10.48923206071476,
+          "max_deg": 2.685839866690453,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": -0.9840455357883536,
+          "max_deg": 27.182048398144424,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -13.319766252577315,
+          "max_deg": -1.4171268559730612,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 0.8181644589293654,
+          "max_deg": 22.840700064188734,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 5.729578084239426e-06,
+          "max_deg": 0.014362441362543174,
+          "lower_share": 1.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -19.54446746995133,
+          "max_deg": -5.351825843822642,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/038/omnicontrol/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.90078853946241,
+          "max_deg": 69.8402503223381,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -17.736603723692987,
+          "max_deg": -17.490782382983863,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 10.069824807815701,
+          "max_deg": 11.339516518036657,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 100.1138331378444,
+          "max_deg": 100.29459376992546,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": 1.0152165036526157,
+          "max_deg": 1.276744157457532,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 70.00892485678153,
+          "max_deg": 70.74992496260444,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -12.154139258753842,
+          "max_deg": -11.159927767972661,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.1297163467301745,
+          "max_deg": 3.86946856398788,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 100.06665100623191,
+          "max_deg": 100.20023031429024,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -6.06770574952196,
+          "max_deg": -3.0689105720459966,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/046/primal/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 102.84838705256232,
+          "max_deg": 104.59389113414139,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -7.818274413117035,
+          "max_deg": -6.842343294586443,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 10.685446342283704,
+          "max_deg": 11.241069898186357,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 97.10026365783682,
+          "max_deg": 97.42112845070518,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": 1.8531442498544428,
+          "max_deg": 3.594543398421296,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 102.6767819583892,
+          "max_deg": 104.3424317159431,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -13.603718350946563,
+          "max_deg": -13.102275325539287,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 7.342818015128769,
+          "max_deg": 8.173126306828701,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 108.6987437862484,
+          "max_deg": 109.17418462138815,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": 7.726302912090968,
+          "max_deg": 8.469858574454852,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/051/ardy/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 93.8321583594324,
+          "max_deg": 95.40537398331696,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -5.628934659297382,
+          "max_deg": -3.0659933265755517,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 0.05619570166569175,
+          "max_deg": 3.614221994438116,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 73.05092351375099,
+          "max_deg": 74.84132931549613,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -31.117874511912223,
+          "max_deg": -24.5891412821328,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 96.51017282608227,
+          "max_deg": 99.06519241162066,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -21.485397108270995,
+          "max_deg": -19.281828272526486,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 18.291236667260282,
+          "max_deg": 20.557989760387585,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 85.44236485024913,
+          "max_deg": 86.91661393678358,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -2.737850395370611,
+          "max_deg": -1.6177221179430883,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/000/chois/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 12.28967756141232,
+          "max_deg": 14.122407281248638,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 3.392311341741278,
+          "max_deg": 11.779614165784228,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 39.999994224698504,
+          "max_deg": 39.99999422471538,
+          "lower_share": 0.0,
+          "upper_share": 1.0
+        },
+        "knee_angle_r": {
+          "min_deg": 11.089118687364845,
+          "max_deg": 29.189029619949636,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -21.743805535235442,
+          "max_deg": -17.29576083491983,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 15.227565273348405,
+          "max_deg": 25.116009618035427,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": 3.105405441490421,
+          "max_deg": 6.066758836706595,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": -2.416450500093848,
+          "max_deg": 3.7685454636043167,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 10.635864902076245,
+          "max_deg": 44.10446983989147,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -10.468156495516443,
+          "max_deg": -2.0367569571892,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/031/motionlcm/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.23196262313081,
+          "max_deg": 71.47439281254418,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 4.361227805781134,
+          "max_deg": 6.242785417648578,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -19.154607456891323,
+          "max_deg": -17.396136168524105,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.460488901106616,
+          "max_deg": 13.507679396655691,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.993640392635623,
+          "max_deg": -15.134902813626512,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 73.74178912194185,
+          "max_deg": 74.87424428982972,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -7.053963437802768,
+          "max_deg": -5.665169272389537,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.65694600833707,
+          "max_deg": 4.006247672332242,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.137463726551683,
+          "max_deg": 15.994179736107332,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.265556447451992,
+          "max_deg": -16.05495653827503,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/031/omnicontrol/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.23285199820184,
+          "max_deg": 72.20227811363802,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 4.3612172961167985,
+          "max_deg": 6.242783338757284,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -19.15460386463124,
+          "max_deg": -17.39614089274225,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.46050938611678,
+          "max_deg": 13.507969193238662,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.99363743521932,
+          "max_deg": -15.16630266851851,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 73.74699595419021,
+          "max_deg": 75.21327069388059,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -7.053976303181638,
+          "max_deg": -5.665153610828977,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.656940171781329,
+          "max_deg": 4.006232122707605,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.137459548059201,
+          "max_deg": 15.994181032539887,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.264771763756638,
+          "max_deg": -16.05495938709164,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/031/dart/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.20404603959676,
+          "max_deg": 71.19332661424896,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 4.011714675037333,
+          "max_deg": 5.885129238472293,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -19.090820556599237,
+          "max_deg": -17.323177609454508,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.460203461882797,
+          "max_deg": 13.507256995410534,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.99284157207515,
+          "max_deg": -15.127288009827875,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 73.72519427049318,
+          "max_deg": 75.42412694715372,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -6.705373068918517,
+          "max_deg": -5.318572540967691,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.551004578723467,
+          "max_deg": 3.900391727640141,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.140909853222428,
+          "max_deg": 15.993960477760977,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.263751254893258,
+          "max_deg": -16.053797174250626,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/031/closd/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 73.31798672714868,
+          "max_deg": 76.87617679288732,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 7.212069497230563,
+          "max_deg": 9.369382003237083,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -23.715434318476333,
+          "max_deg": -22.04476633642371,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.460465001347209,
+          "max_deg": 13.507733726140158,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.995442980133234,
+          "max_deg": -15.13025644933773,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 78.90883252808241,
+          "max_deg": 81.2482416089934,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -9.632015016545237,
+          "max_deg": -8.297984202190037,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 7.579429654006537,
+          "max_deg": 8.917199099326558,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.141738644783544,
+          "max_deg": 15.994840085386498,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.266362757770185,
+          "max_deg": -16.055700645164922,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/031/chois/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.2886690867168,
+          "max_deg": 71.66337795921406,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 4.364060226658737,
+          "max_deg": 6.242222861644293,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -19.154432183782138,
+          "max_deg": -17.39616779622033,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.460493019146157,
+          "max_deg": 13.507661031259481,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.993647682307746,
+          "max_deg": -15.128327603207133,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 73.83012291847862,
+          "max_deg": 74.95468285178126,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -7.052708393177783,
+          "max_deg": -5.666877324058559,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.6569621394615,
+          "max_deg": 4.006237897314321,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.14112605795326,
+          "max_deg": 15.994177411370968,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.264907298563248,
+          "max_deg": -16.05495338029428,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/031/primal/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.33426026990249,
+          "max_deg": 71.59678406204262,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 4.3562843740123816,
+          "max_deg": 6.242493673384822,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -19.159177072758883,
+          "max_deg": -17.394644126469473,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.714696984454581,
+          "max_deg": 13.499502804539674,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.874249929699612,
+          "max_deg": -15.124405328541116,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 73.84619774549077,
+          "max_deg": 74.9105906978534,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -7.051757843296715,
+          "max_deg": -5.667528067909108,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.654438654092974,
+          "max_deg": 4.006270831713554,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.137145038979183,
+          "max_deg": 15.995261171634137,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.272306350899214,
+          "max_deg": -16.052474685574484,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/056/motionlcm/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 1.4810219583101274,
+          "max_deg": 2.0888593570242877,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -7.381595607050571,
+          "max_deg": -6.474331615648812,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -11.663131827719047,
+          "max_deg": -10.03830221688474,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.1585876072257815,
+          "max_deg": 7.609367285929203,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -10.287382325166169,
+          "max_deg": -9.476118020949599,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": -2.3537813548262965,
+          "max_deg": -1.2344918063216537,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": 2.4992173243865543,
+          "max_deg": 3.24049659760827,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 19.781528832533354,
+          "max_deg": 21.18046258932822,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 6.298936845543381,
+          "max_deg": 8.2822223515883,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -5.841990763771282,
+          "max_deg": -5.085556522843955,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/026/dart/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 63.43067207683615,
+          "max_deg": 68.81767989821843,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -12.708100991876451,
+          "max_deg": -11.373746757966044,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 22.67598901133728,
+          "max_deg": 25.067823724136655,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 9.534087696221558,
+          "max_deg": 11.877527517058747,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -14.985358804118219,
+          "max_deg": -12.074358926661665,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 52.196730385585894,
+          "max_deg": 57.88042251663403,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": 5.251612988542274,
+          "max_deg": 6.452689233693267,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": -19.189574175916654,
+          "max_deg": -17.76727887924278,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 8.03802903296433,
+          "max_deg": 12.425086340555167,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -8.426098095239675,
+          "max_deg": -3.720536279627947,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/070/ardy/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": -29.994133718989968,
+          "max_deg": 119.99999413330202,
+          "lower_share": 0.002976190476190476,
+          "upper_share": 0.16964285714285715
+        },
+        "hip_adduction_r": {
+          "min_deg": -5.746480631969364,
+          "max_deg": 0.010355293905346471,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -2.5638916701056074,
+          "max_deg": 10.515579351250096,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 1.8600334194990502,
+          "max_deg": 57.72975097239344,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -14.395053339918313,
+          "max_deg": 3.5887971316052334,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": -29.99999452188517,
+          "max_deg": 119.99999413330202,
+          "lower_share": 0.002976190476190476,
+          "upper_share": 0.15773809523809523
+        },
+        "hip_adduction_l": {
+          "min_deg": -18.954826398202382,
+          "max_deg": -0.017797654948822433,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": -0.16307701176608985,
+          "max_deg": 1.6874181175625926,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 1.8327579691795632,
+          "max_deg": 62.91547986721924,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -9.986060729439064,
+          "max_deg": 8.279454010685713,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/006/closd/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 43.24452439989607,
+          "max_deg": 54.24784753529025,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 3.4549889831494984,
+          "max_deg": 21.147179970012925,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 19.566286468544096,
+          "max_deg": 26.077784370385775,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 5.956771734702939,
+          "max_deg": 12.372954936140902,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -14.980181180742834,
+          "max_deg": -10.71948489675259,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 34.80895540350895,
+          "max_deg": 47.35202393715591,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -26.227194447730792,
+          "max_deg": -8.117320634274366,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": -22.713712220372834,
+          "max_deg": -10.061091793420111,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 12.158860748941278,
+          "max_deg": 25.750008002609405,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -11.774788514115583,
+          "max_deg": 5.860729925690532,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/baseline/008/kimodo/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 24.408167356665018,
+          "max_deg": 50.490145049162514,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 2.8832825493130416,
+          "max_deg": 9.195048359122612,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 12.051679325372573,
+          "max_deg": 18.49122554635388,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 24.868609607216072,
+          "max_deg": 32.03399517488915,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": 5.520802499465343,
+          "max_deg": 8.74609838700863,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 37.930579943835504,
+          "max_deg": 62.48325861195102,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -2.674176849504527,
+          "max_deg": -0.4438193359632499,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 36.86882787453843,
+          "max_deg": 39.99999422471538,
+          "lower_share": 0.0,
+          "upper_share": 0.0658682634730539
+        },
+        "knee_angle_l": {
+          "min_deg": 12.072002118499599,
+          "max_deg": 21.217506646861477,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -12.612584416339505,
+          "max_deg": -7.067736428869066,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/010/kimodo/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 4.410168611401183,
+          "max_deg": 14.551043509026057,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -4.6000286639561105,
+          "max_deg": 9.256139316982585,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -11.554262403191881,
+          "max_deg": 18.05753004474884,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 5.8523595393784325,
+          "max_deg": 18.72105645648517,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -10.48923210425688,
+          "max_deg": 2.6858404965151865,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": -0.9872406011096583,
+          "max_deg": 27.182048410497334,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -13.319749290232743,
+          "max_deg": -1.4192795570040988,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 0.8181659544174974,
+          "max_deg": 22.840707318361513,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 5.72957808839254e-06,
+          "max_deg": 2.4910978970887005e-05,
+          "lower_share": 1.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -19.544468113686534,
+          "max_deg": -5.355358204133598,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/038/omnicontrol/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.90078898709933,
+          "max_deg": 69.8402501784789,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -17.736608543571904,
+          "max_deg": -17.49077520306003,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 10.069824916795147,
+          "max_deg": 11.339834641978888,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 100.11360406672394,
+          "max_deg": 100.2945955947499,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": 1.0151484693269481,
+          "max_deg": 1.2767493769753153,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 70.00884904405868,
+          "max_deg": 70.7498909833191,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -12.154139229508868,
+          "max_deg": -11.159824531429354,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.129658384747156,
+          "max_deg": 3.869578816230412,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 100.06663631585432,
+          "max_deg": 100.20023013056031,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -6.067755061456899,
+          "max_deg": -3.068851782839074,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/046/primal/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 102.84838191841004,
+          "max_deg": 104.59398606090613,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -7.818274233177818,
+          "max_deg": -6.842343541873125,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 10.68544588161546,
+          "max_deg": 11.241069422110417,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 97.10026355691923,
+          "max_deg": 97.42113048771162,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": 1.8530310380649395,
+          "max_deg": 3.5944448410790395,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 102.67678157135332,
+          "max_deg": 104.342436208481,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -13.603685522992187,
+          "max_deg": -13.102283714964836,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 7.342816077064806,
+          "max_deg": 8.173126207639811,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 108.69874437236155,
+          "max_deg": 109.1741505097209,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": 7.726260032915297,
+          "max_deg": 8.469860431732418,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/051/ardy/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 93.83215707330893,
+          "max_deg": 95.40543759293963,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -5.628935684954831,
+          "max_deg": -3.0659928469465063,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 0.05619430649186373,
+          "max_deg": 3.6143084033409534,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 73.05092384577642,
+          "max_deg": 74.84128090178478,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -31.11787456112076,
+          "max_deg": -24.58860407071963,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 96.51072801405311,
+          "max_deg": 99.06519210584618,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -21.48539827182605,
+          "max_deg": -19.28182623828907,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 18.291002496811053,
+          "max_deg": 20.557989817135233,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 85.4423645196564,
+          "max_deg": 86.91661376458941,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -2.737851119554895,
+          "max_deg": -1.617759950409314,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/000/chois/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 12.289699117775454,
+          "max_deg": 14.122657320362462,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 3.392410446946051,
+          "max_deg": 11.779613989960371,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 39.99999422470823,
+          "max_deg": 39.99999422471538,
+          "lower_share": 0.0,
+          "upper_share": 1.0
+        },
+        "knee_angle_r": {
+          "min_deg": 11.08939422871391,
+          "max_deg": 29.189030294278357,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -21.743805568695848,
+          "max_deg": -17.295759895739042,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 15.227565264223193,
+          "max_deg": 25.11601257077934,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": 3.105405466058393,
+          "max_deg": 6.06683244433675,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": -2.416435966632131,
+          "max_deg": 3.7685522000884912,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 10.635908247479973,
+          "max_deg": 44.104469533726345,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -10.468193426907863,
+          "max_deg": -2.0367569660366263,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/031/motionlcm/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.23123049660552,
+          "max_deg": 71.47439279656986,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 4.361227805630748,
+          "max_deg": 6.242785616685385,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -19.154607511532387,
+          "max_deg": -17.396137844023922,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.460487212351133,
+          "max_deg": 13.507679427063952,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.993640969423698,
+          "max_deg": -15.134902825108144,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 73.74178906633824,
+          "max_deg": 74.8742443888346,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -7.054184524357663,
+          "max_deg": -5.665169287654739,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.6568752190265177,
+          "max_deg": 4.006247748372551,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.137463817927499,
+          "max_deg": 15.994179986086237,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.265556399748505,
+          "max_deg": -16.05495635005637,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/031/omnicontrol/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.23246973872023,
+          "max_deg": 72.20227812836198,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 4.361217315046317,
+          "max_deg": 6.242783551767404,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -19.15460382767685,
+          "max_deg": -17.396142393743578,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.460507687992838,
+          "max_deg": 13.50796912820949,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.99363802717528,
+          "max_deg": -15.166303092987476,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 73.7469960880351,
+          "max_deg": 75.21327085939154,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -7.054193273204594,
+          "max_deg": -5.665153531620997,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.6568930352733386,
+          "max_deg": 4.006232215416536,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.137459614545564,
+          "max_deg": 15.994180993091867,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.2655452906081,
+          "max_deg": -16.054959503492626,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/031/dart/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.20303143724752,
+          "max_deg": 71.19332651947369,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 4.011714717773768,
+          "max_deg": 5.885129469472906,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -19.09082063651228,
+          "max_deg": -17.322948071941738,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.460201366525079,
+          "max_deg": 13.507256847037581,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.99284234524442,
+          "max_deg": -15.127288017492923,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 73.72519418619432,
+          "max_deg": 75.4243470440393,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -6.705616406668461,
+          "max_deg": -5.318572513357983,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.5510046133351403,
+          "max_deg": 3.9003918916743894,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.140909760797586,
+          "max_deg": 15.993960398638565,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.264335053147107,
+          "max_deg": -16.053797129269768,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/031/closd/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 73.31725545374022,
+          "max_deg": 76.87617590280388,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 7.212069209924704,
+          "max_deg": 9.369554724665903,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -23.715493344579663,
+          "max_deg": -22.04471857043567,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.460465033590754,
+          "max_deg": 13.507734792460944,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.995442985975362,
+          "max_deg": -15.130277210088112,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 78.90884711321884,
+          "max_deg": 81.24824146974076,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -9.632019938843575,
+          "max_deg": -8.298129205982631,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 7.579376636625251,
+          "max_deg": 8.917156658046027,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.141640765396689,
+          "max_deg": 15.994810533948616,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.26642437022425,
+          "max_deg": -16.05570173661619,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/031/chois/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.28844613872825,
+          "max_deg": 71.663377948972,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 4.364060208342648,
+          "max_deg": 6.242222956639432,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -19.154432072993405,
+          "max_deg": -17.39616780170085,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.460491279319866,
+          "max_deg": 13.507661128136837,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.99364828454598,
+          "max_deg": -15.12840833869769,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 73.83012258828376,
+          "max_deg": 74.95468164389233,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -7.052923520201345,
+          "max_deg": -5.66687731066007,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.6569618844116434,
+          "max_deg": 4.006237862634936,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.141125946938537,
+          "max_deg": 15.994177482893946,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.265546957977378,
+          "max_deg": -16.05495339022106,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/031/primal/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 68.33315022590087,
+          "max_deg": 71.59538439258382,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 4.356284361409462,
+          "max_deg": 6.242493764993954,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -19.15917602066334,
+          "max_deg": -17.39464414477879,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.714695480103428,
+          "max_deg": 13.49655305837382,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -18.87425043280136,
+          "max_deg": -15.124405404227657,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 73.8461978162773,
+          "max_deg": 74.9107439714501,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -7.051958020450044,
+          "max_deg": -5.667528637601325,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 2.6544386652151926,
+          "max_deg": 4.00627092552905,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 13.137145160244899,
+          "max_deg": 15.995261144458999,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -18.272306377646274,
+          "max_deg": -16.052474584467678,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/074/kimodo/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 63.4985420390561,
+          "max_deg": 85.40478804622911,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -34.20686525934039,
+          "max_deg": -11.232052641370105,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -24.661869158217602,
+          "max_deg": 23.549938645659683,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 139.99999423910225,
+          "max_deg": 139.99999427042195,
+          "lower_share": 0.0,
+          "upper_share": 1.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -49.99999427042172,
+          "max_deg": 1.4830789254272874,
+          "lower_share": 0.052313883299798795,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 6.550893184864017,
+          "max_deg": 119.99999413330202,
+          "lower_share": 0.0,
+          "upper_share": 0.052313883299798795
+        },
+        "hip_adduction_l": {
+          "min_deg": -49.99999449976762,
+          "max_deg": -49.999994499648686,
+          "lower_share": 1.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": -39.99999422471538,
+          "max_deg": 34.37787528860416,
+          "lower_share": 0.6398390342052314,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 133.01168416492715,
+          "max_deg": 139.99999427042195,
+          "lower_share": 0.0,
+          "upper_share": 0.8993963782696177
+        },
+        "ankle_angle_l": {
+          "min_deg": -49.99999427042204,
+          "max_deg": -3.4821908649481843,
+          "lower_share": 0.1851106639839034,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/056/motionlcm/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 1.48102195586844,
+          "max_deg": 2.0879431394913657,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -7.381595625266614,
+          "max_deg": -6.474331640374799,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -11.66303978146744,
+          "max_deg": -10.038212725659987,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 7.158587443773295,
+          "max_deg": 7.607739919098377,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -10.2873823896372,
+          "max_deg": -9.476117926264758,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": -2.353781308929573,
+          "max_deg": -1.2345367673417234,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": 2.4992173272275626,
+          "max_deg": 3.240501684046205,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 19.781595484414936,
+          "max_deg": 21.18046280059857,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 6.298935858541686,
+          "max_deg": 8.282136817481591,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -5.841990804559795,
+          "max_deg": -5.085584675059018,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/026/dart/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 63.42992529165986,
+          "max_deg": 68.81733428615283,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -12.708100946694016,
+          "max_deg": -11.373746747182945,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 22.67598916934822,
+          "max_deg": 25.067827072067775,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 9.534084070824376,
+          "max_deg": 11.876887525798471,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -14.985358772740925,
+          "max_deg": -12.07435914331468,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 52.1965171686515,
+          "max_deg": 57.88078949679949,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": 5.251613096583915,
+          "max_deg": 6.452673115861581,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": -19.18900222849012,
+          "max_deg": -17.76731771042127,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 8.03808557413834,
+          "max_deg": 12.425079556272872,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -8.426065023124954,
+          "max_deg": -3.7205347991383575,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/077/kimodo/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": -2.585616400031014,
+          "max_deg": 80.41137774384873,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": -49.99999449976762,
+          "max_deg": 0.30179159815399775,
+          "lower_share": 0.9837133550488599,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -39.999994224711706,
+          "max_deg": 3.2302408049911384,
+          "lower_share": 0.035830618892508145,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 1.8205778855637613,
+          "max_deg": 139.99999427042195,
+          "lower_share": 0.0,
+          "upper_share": 0.9055374592833876
+        },
+        "ankle_angle_r": {
+          "min_deg": -9.969902264505578,
+          "max_deg": 8.365307935527646,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": -2.5890144838687243,
+          "max_deg": 103.99421960526723,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -0.3160818003519466,
+          "max_deg": 29.999994522620945,
+          "lower_share": 0.0,
+          "upper_share": 0.9837133550488599
+        },
+        "hip_rotation_l": {
+          "min_deg": -26.017535358740858,
+          "max_deg": 1.3755158230580182,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 1.8146646132006488,
+          "max_deg": 139.99999427042195,
+          "lower_share": 0.0,
+          "upper_share": 0.9837133550488599
+        },
+        "ankle_angle_l": {
+          "min_deg": -9.97910767961647,
+          "max_deg": 12.104154327598772,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/070/ardy/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": -29.996996570332897,
+          "max_deg": 119.99999413330202,
+          "lower_share": 0.002976190476190476,
+          "upper_share": 0.16964285714285715
+        },
+        "hip_adduction_r": {
+          "min_deg": -5.746480584429572,
+          "max_deg": 0.010355290816311438,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": -2.5638920375366805,
+          "max_deg": 10.515563275129011,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 1.8600334007341661,
+          "max_deg": 57.72977013328148,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -14.39504523416832,
+          "max_deg": 3.5887973209166044,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": -29.999994522614234,
+          "max_deg": 119.99999413330202,
+          "lower_share": 0.002976190476190476,
+          "upper_share": 0.15773809523809523
+        },
+        "hip_adduction_l": {
+          "min_deg": -18.954826489667138,
+          "max_deg": -0.017797649782281294,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": -0.16311097525511242,
+          "max_deg": 1.6874190102127171,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 1.832757984630832,
+          "max_deg": 62.91546980811216,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -9.9860607285961,
+          "max_deg": 8.279513957632537,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/006/closd/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 43.24550206465331,
+          "max_deg": 54.24784758236638,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 3.4549889968805485,
+          "max_deg": 21.147179965635182,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 19.56628648417379,
+          "max_deg": 26.07778430556969,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 5.956771727131987,
+          "max_deg": 12.372954973163049,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": -14.980181177577855,
+          "max_deg": -10.719484884787944,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 34.808955408403236,
+          "max_deg": 47.35202426300387,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -26.227194565874523,
+          "max_deg": -8.117320650910541,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": -22.713841638216508,
+          "max_deg": -10.060399572656902,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_l": {
+          "min_deg": 12.158860415787547,
+          "max_deg": 25.7500083517427,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -11.775249230246468,
+          "max_deg": 5.860729952806435,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k34_20261117/fits/solver/008/kimodo/fit/kinematics.npz",
+      "bounds": {
+        "hip_flexion_r": {
+          "min_deg": 24.408167129606255,
+          "max_deg": 50.49013726190697,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_r": {
+          "min_deg": 2.8832030810004237,
+          "max_deg": 9.19504831222035,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_r": {
+          "min_deg": 12.051683040142782,
+          "max_deg": 18.49122820079839,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "knee_angle_r": {
+          "min_deg": 24.868366858913333,
+          "max_deg": 32.03398152976895,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_r": {
+          "min_deg": 5.520802558167105,
+          "max_deg": 8.74609472993225,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_flexion_l": {
+          "min_deg": 37.930582328119314,
+          "max_deg": 62.48321957062403,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_adduction_l": {
+          "min_deg": -2.6741091569736164,
+          "max_deg": -0.4438187634910395,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "hip_rotation_l": {
+          "min_deg": 36.86880171382647,
+          "max_deg": 39.99999422471538,
+          "lower_share": 0.0,
+          "upper_share": 0.0658682634730539
+        },
+        "knee_angle_l": {
+          "min_deg": 12.071996138513759,
+          "max_deg": 21.21750754105446,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        },
+        "ankle_angle_l": {
+          "min_deg": -12.61258238970976,
+          "max_deg": -7.066992459793204,
+          "lower_share": 0.0,
+          "upper_share": 0.0
+        }
+      }
+    }
+  ]
+}
