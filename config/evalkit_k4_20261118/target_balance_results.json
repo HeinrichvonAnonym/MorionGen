@@ -1,0 +1,80 @@
+{
+  "version": "k4-017-balance-results-1",
+  "status": "Seven-window local verification passed; remaining14 fixed-panel combinations running; no default promotion",
+  "frozen_fit_commit": "17b4416",
+  "registered_local": 7,
+  "local_passed": 7,
+  "new_holdout_uses": 0,
+  "full_656_run": false,
+  "rows": [
+    {
+      "window": "074",
+      "method": "kimodo",
+      "selected": "pelvis_continuity",
+      "native_and_runtime_original_R_passed": true
+    },
+    {
+      "window": "017",
+      "method": "chois",
+      "selected": "balanced_targets",
+      "native_and_runtime_original_R_passed": true
+    },
+    {
+      "window": "000",
+      "method": "kimodo",
+      "selected": "pelvis_continuity",
+      "native_and_runtime_original_R_passed": true
+    },
+    {
+      "window": "015",
+      "method": "kimodo",
+      "selected": "balanced_targets",
+      "native_and_runtime_original_R_passed": true
+    },
+    {
+      "window": "022",
+      "method": "kimodo",
+      "selected": "balanced_targets",
+      "native_and_runtime_original_R_passed": true
+    },
+    {
+      "window": "069",
+      "method": "kimodo",
+      "selected": "pelvis_continuity",
+      "native_and_runtime_original_R_passed": true
+    },
+    {
+      "window": "070",
+      "method": "chois",
+      "selected": "balanced_targets",
+      "native_and_runtime_original_R_passed": true
+    }
+  ],
+  "evidence": {
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/candidate_pool_20261118_v1/review.json": "e27bdc914285479036983440e45a33609b8c951239b963b49f05854e54cd2707",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/candidate_pool_20261118_v1/selected_replay/review.json": "ecd2de9c2413029b45a043a0cbc21fa170c6bbb842763e836ffad34a203cab22",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/native_017_20261118_v2/ablation_summary.json": "ac5883b81321c9d639f5d8f05ec92d40e384f8c3958924e07fe1aaffb922efb1",
+    "/home/heinrich/MorionGen/develop_logs/notes/20261118_k4_017_target_balance.md": "d6677f2f666ed30ddb1c4c06dc74995bf81981283a1b1d1b88393d1f8943c7d5",
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_017/all_tests_pool_v2.log": "e6708984b5dd397d7ca008c6aff99f7d5a4efc34d122e54854b7e2ed75ed4581",
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_017/preservation_check.json": "bdc1c0302ee3500698fd892485980516297ac16c1ab5a1502a08c2681b86c531"
+  },
+  "tests": {
+    "passed": 91,
+    "log": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_017/all_tests_pool_v2.log"
+  },
+  "preservation": {
+    "frozen_commit": "d940f3d27e3a35c9e0cc5b5f185274a30124fcac",
+    "checked": 610,
+    "changed": [],
+    "new_holdout_uses": 0,
+    "free_gib": 842.6832809448242
+  },
+  "panel_continuation": {
+    "status_at_report": "running",
+    "expected_new": 14,
+    "reused_from_local": 6,
+    "additional_070": 1,
+    "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/candidate_pool_panel_20261118_v1",
+    "code_commit": "17b4416"
+  }
+}
