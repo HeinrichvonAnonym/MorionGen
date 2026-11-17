@@ -1,6 +1,9 @@
 """Independent original-R validation of a D-only fixed-model range audit."""
 import argparse,json,hashlib
 from pathlib import Path
+import sys
+ROOT=Path(__file__).resolve().parents[2]
+sys.path[:0]=[str(ROOT/'utils'),str(ROOT/'utils/motiogen')]
 import numpy as np
 from motiogen.evalkit.k.config import ROOT
 from motiogen.evalkit.k.motion import Motion,load
