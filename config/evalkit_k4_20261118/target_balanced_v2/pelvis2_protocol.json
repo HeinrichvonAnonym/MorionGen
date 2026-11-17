@@ -1,0 +1,5 @@
+{
+  "reason": "Weak global rate target passes pelvis but 074 thigh10.66deg/s remains. Compare previously effective pelvis weight2 WITH the now-validated per-target penalty, identically for017/074; isolate whether it solves both without rate barrier.",
+  "acceptance": "Independent R per-target, fixed coverage and both clocks; same config on both windows",
+  "new_holdout_uses": 0
+}
