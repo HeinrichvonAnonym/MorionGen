@@ -1,0 +1,18 @@
+{
+  "version": "native-solver-control-2",
+  "source_model_sha256": "8723e663e87c90759a5ff497974cf187b1324d666a00e4972e0cff5526e26a49",
+  "source_seed_sha256": "7b92df20824035704953249e2475a984d4d91d3c89003c6bf5a83aca27aef73b",
+  "refinement": {
+    "position_scale_m": 0.05,
+    "direction_scale_deg": 5,
+    "position_weight": 1.0,
+    "continuity_weight": 0.02,
+    "max_nfev": 100,
+    "parameter_source": "Registered v6 controls: pose residuals5deg/5cm; added-direction velocity scale10deg/s with weight0.25; pelvis-line weight2 is a separate engineering hypothesis. No R or per-window selector.",
+    "include_pelvis_line": true,
+    "extra_start": "neutral_knee_if_target_failed",
+    "direction_continuity_weight": 0.0,
+    "direction_rate_scale_deg_s": 10.0
+  },
+  "scope": "Full-window D-only solver control on unchanged old common model and original IK seed; no geometry, domain or registration change; head fixed within replay."
+}

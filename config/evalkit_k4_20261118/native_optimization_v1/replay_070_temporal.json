@@ -1,0 +1,69 @@
+{
+  "version": "070-native-replay-temporal",
+  "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/native_optimization_20261118_v1/replays_070/temporal",
+  "baseline": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/common_v1",
+  "conditions": [
+    "native",
+    "linear",
+    "hip_slerp",
+    "whole_so3",
+    "whole_native_grid"
+  ],
+  "optional_controls": [
+    "hip_slerp"
+  ],
+  "records": [
+    {
+      "window": "070",
+      "method": "chois",
+      "fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/native_optimization_20261118_v1/fits/temporal/070/chois",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/070/chois/candidate",
+      "model_sha256": "fccbbe990cf97881611e8234c138b21c41b1961aa432a8cebd4d68cbd5914878",
+      "native_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/native_optimization_20261118_v1/fits/temporal/070/chois/coordinates_refined_native.mot",
+      "native_sha256": "a53b980dd5a8f6df5220c79e9e6166d108b38fca56901810ba5ac23797e0a134"
+    }
+  ],
+  "implementation_sha256": {
+    "python/scripts/evalkit_k4_rotation_probe.py": "7306ba82b7d7e6626a4e23074738b89fc581c00f3fc2e8597091dba9b4c1dca8",
+    "python/scripts/evalkit_k4_rotation_batch.py": "b8201e5ce146d909166108d1f58057939b080d29a909172e1dbf85ba78ddfe71",
+    "python/scripts/evalkit_k4_ablation_score.py": "3a8d8fe631db9ce3046b67cb625b31a8df7cf9cd9d5624d53ff548bf43e05a07",
+    "utils/motiogen/evalkit/k/__init__.py": "3cf58663609b2c2287b1efb7b0db8df26749f3635c5d17f3d0cc42b7a89d198e",
+    "utils/motiogen/evalkit/k/acceptance.py": "73881a8c51f65264bc15fc8da7c03bba58fbd5d5cb6d0e7903f882af0e7d69db",
+    "utils/motiogen/evalkit/k/arms.py": "aefa8c74ab9ca666fbc0ac28d3e2d763e67dada93d5609878363636f988d9c16",
+    "utils/motiogen/evalkit/k/body.py": "e6fde837b2afa04c028187d0a0e9272b34563e52617069fd0f7cf744d5350ddf",
+    "utils/motiogen/evalkit/k/body_frames.py": "476c96ed6e4de59e31cf0a8a98845b70fea3303ff93ae167c4f578eeba20a19a",
+    "utils/motiogen/evalkit/k/calibration.py": "f6fc524bd6f7ef7f5ba9638b865d93df0a4a1dc475626b18b42a3dd3b0002c9d",
+    "utils/motiogen/evalkit/k/config.py": "b9fe64bc286a21ec053825da4f795379ca5402b478c5ae0ee045783436fb5ad3",
+    "utils/motiogen/evalkit/k/constraints.py": "e69f840247d639e198f4f787b252109e20d63f8d9972fc1e0d6aaaea5636700a",
+    "utils/motiogen/evalkit/k/coupling_extension.py": "748c8d7ac6e67f782df17f98b23cfdfe0a7a2b3a352f5764c27a26343660c0e3",
+    "utils/motiogen/evalkit/k/diagnostic_domain.py": "8b50ae8e2eb21173837c021641d8da7871cb91740585e58a8dbf10274929d018",
+    "utils/motiogen/evalkit/k/export.py": "aab260a1eff27686c48af3f849ddb04c44d57d0fa50bf30afb6bc0b508b7938b",
+    "utils/motiogen/evalkit/k/fitting.py": "67132f3e05b7f5fd23c9bc635370b289d16824c0e7488763dcd2a7c73fcd7780",
+    "utils/motiogen/evalkit/k/fixed_geometry.py": "9079167ad7ffc916492fe2fc7f7b7e85396af61de6f6a6646ce38c8b25222bf8",
+    "utils/motiogen/evalkit/k/geometry.py": "c0db68ed560d488b99edffb74fabe5e36a05e2bb7fd67c8580a161f2c169ab3f",
+    "utils/motiogen/evalkit/k/head_neck.py": "c006ab6323b3888398d0ac6f7b45377efe66502031b83f7e4a5ae1c20ea66e89",
+    "utils/motiogen/evalkit/k/head_scoring.py": "68e119e8cce1c74eef8f718942624b94844c23ec6fadb05a17e1782a8f26b4ed",
+    "utils/motiogen/evalkit/k/initialization.py": "7adea49182972bd0a83230c5fb79d799a88883362f9e536e8f86958eb83f094b",
+    "utils/motiogen/evalkit/k/input_rig.py": "3e21e3a7266a45a146d6623f19e5653710eb3177ba490d30779fdc942096933a",
+    "utils/motiogen/evalkit/k/k4_fitting.py": "ffaa43ae507de7ea4734323854db31cfd82dd81501154eabb7ca633997a2c00e",
+    "utils/motiogen/evalkit/k/motion.py": "2bbdc14108a1b05accefd208559c5e08f411d29e4f5f7aaa9ee925ff67c78fd9",
+    "utils/motiogen/evalkit/k/native_frames.py": "40023a0ddc7dbc0434acd0db9d6046bf796b5db8fc6f52115fa482ed9a526577",
+    "utils/motiogen/evalkit/k/original_domain.py": "b20e8b105a2d3851c2c833f5d98b1f5c8071663dafd432bc56db79878a3c6dfa",
+    "utils/motiogen/evalkit/k/posture.py": "768bf0b66ad202e8b76206f43a74910249bf7a6008ca88a1a7e6e7ac1765847e",
+    "utils/motiogen/evalkit/k/quality.py": "274a196a37e928417f8533086ceecdf3e4958b99eedbcfaee206bfb1250c81b5",
+    "utils/motiogen/evalkit/k/reference.py": "5f49cdded809bca5447dbcbe14e043e051cb3c863f36b503606eb6e1541ead63",
+    "utils/motiogen/evalkit/k/refinement.py": "9024086cff1baa776b4ce554c1fe637b776da4711bfa5c52ebfeeabba1551084",
+    "utils/motiogen/evalkit/k/resampling/__init__.py": "4aa0312a8cf738509de64aec5f1056c0d8576620a9673ac59e987ab2e3b94f82",
+    "utils/motiogen/evalkit/k/resampling/clock.py": "c8bbd444b287269c54c633066870706a139a04cf1f6926cb8c930704a6f842d6",
+    "utils/motiogen/evalkit/k/resampling/model.py": "eda5bae5136763aab101a27346d5ceedb328da2a780845125920ec44784a5b2a",
+    "utils/motiogen/evalkit/k/rig_geometry.py": "627e6ca9b03a140bc51f731f70afab9ac429d5a4f54674eb00d12728709a3afb",
+    "utils/motiogen/evalkit/k/root.py": "6b9799a558b817a73c951da1b31617ce0e33494f3d85dac9ec0d6f076c953621",
+    "utils/motiogen/evalkit/k/rotation_resampling.py": "a6962233020b50931d8329704437e4170e09cbb39ac3506934085c3cc6911d87",
+    "utils/motiogen/evalkit/k/scoring.py": "17a12dbb4fb06324eca2ac98bae994aeed0f9b88d82fc6690faad7cb778154d0",
+    "utils/motiogen/evalkit/k/strict_acceptance.py": "28c86865fe976c3eca578d8d812ccf79d942f8b30710b7e2a2162b20a5715e8b",
+    "utils/motiogen/evalkit/k/timebase.py": "9f8213dd20dfb28c530a4a6850160da3e3742fc92d047086ce4b361cc403de32",
+    "utils/motiogen/evalkit/k/validation.py": "4b86a85ae98c90150fe769e7aa90890ae23090f909a540c0e2c8ce1ee85bff7f"
+  },
+  "source_policy": "Within each replay all output conditions share the same native q/model/head. Across pose/temporal fits geometry is checked by hashes; old common is a historical comparison.",
+  "new_holdout_uses": 0
+}

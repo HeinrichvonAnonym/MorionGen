@@ -1,0 +1,22 @@
+{
+  "version": "native-optimization-2",
+  "hypothesis": "070 modern pose and temporal full-window fits both pass. Before attributing this to geometry or limits, run the same refinement on the old fixed model/IK seed. Isolated probes already reproduce low arm error within old bounds; range enlargement is not justified.",
+  "records": [
+    {
+      "window": "070",
+      "method": "chois",
+      "conditions": [
+        "old_model_pose",
+        "old_model_temporal"
+      ]
+    }
+  ],
+  "changes": [
+    "native solver only",
+    "MOT roundtrip audit separate from E-N temporal readback"
+  ],
+  "runtime_inputs": "D and existing model/IK; no R",
+  "scoring": "Frozen original R, all D-R/F-D/F-R and original clock; frozen source-jump strata",
+  "promotion": "none; no window-number runtime selectors",
+  "new_holdout_uses": 0
+}
