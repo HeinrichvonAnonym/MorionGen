@@ -54,6 +54,9 @@ def resample_native(times,labels,coordinates,rate=100.,clock_policy="uniform_end
 def fit(run,work,mass,floor,config):
     import biomech
     settings=json.loads(Path(config).read_text()) if not isinstance(config,dict) else dict(config)
+    if settings.get('version')=='k4-candidate-pool-1':
+        from .candidate_pool import fit as fit_pool
+        return fit_pool(run,work,mass,floor,settings)
     if settings.get('version')!='k4-fit-1':raise ValueError('Unsupported K4 fit configuration')
     if settings.get('solver') not in ('nominal_model_marker_IK','direction_position_refinement'):
         raise ValueError('Unsupported K4 solver')

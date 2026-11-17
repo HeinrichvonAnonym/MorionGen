@@ -1,0 +1,35 @@
+{
+  "version": "k4-multistart-sentinels-1",
+  "selection": "Original fixed six sentinels plus already-used 070 native arm-jump case; same candidate and full original windows; no per-window settings.",
+  "records": [
+    {
+      "window": "074",
+      "method": "kimodo"
+    },
+    {
+      "window": "017",
+      "method": "chois"
+    },
+    {
+      "window": "000",
+      "method": "kimodo"
+    },
+    {
+      "window": "015",
+      "method": "kimodo"
+    },
+    {
+      "window": "022",
+      "method": "kimodo"
+    },
+    {
+      "window": "069",
+      "method": "kimodo"
+    },
+    {
+      "window": "070",
+      "method": "chois"
+    }
+  ],
+  "new_holdout_uses": 0
+}

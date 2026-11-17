@@ -1,0 +1,12 @@
+{
+  "version": "k4-fixed-candidate-bank-experiment-1",
+  "conditions": [
+    "pool"
+  ],
+  "strict_scoring": true,
+  "hypothesis": "A fixed pair of whole-window solvers can preserve input fidelity across axial and high-flexion cases; choose by D-only pose, coverage and native-clock time quality. Never choose from R scores or window IDs.",
+  "candidate_origin": "Both candidates pre-exist and are preserved; no fitting constants changed in this experiment.",
+  "selection": "Missing observations then number of failed targets then worst and mean normalized P95; time step uses max positive per-step F-D excess. All D frames retained without R jump masks.",
+  "acceptance": "Independent original-R native and export clock; selected and nonselected candidates both retained. Seven-window local evidence only; 20-panel/656 validation outstanding.",
+  "new_holdout_uses": 0
+}
