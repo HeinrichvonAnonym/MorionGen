@@ -1,0 +1,23 @@
+{
+  "version": "k4-strict-acceptance-1",
+  "expected_full_paths": 656,
+  "engineering_angle_p95_deg": 5.0,
+  "engineering_world_position_p95_cm": 5.0,
+  "rotation_metric": "declared head relative thorax; no anatomical-axis claim",
+  "required_coverage": "all samples supported by frozen R/D observability; candidate failures retain denominator",
+  "position_geometries": {
+    "world": "required target",
+    "pelvis_relative": "reported",
+    "common_length_world": "reported with target status",
+    "common_length_pelvis_relative": "reported"
+  },
+  "temporal_max_step_increase_deg": 5.0,
+  "temporal_rate_error_p95_increase_deg_s": 10.0,
+  "temporal_stratum": "continuous; frozen source-jump intervals separate, full window always reported",
+  "within_target_regression": "report, do not block",
+  "unobservable_components": "position-only axial head rotation remains unknown; observable components may not be relabelled unavailable",
+  "holdout": "no new use",
+  "scope": "observed body FK plus attached head/neck chain; no HYOID muscle or force qualification",
+  "acceptance_stratum": "continuous",
+  "full_window_policy": "Full-window and frozen source-jump metrics retained separately; full R/D-supported coverage required, source-jump tolerance never enlarged by K"
+}

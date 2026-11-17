@@ -70,8 +70,9 @@ def fit(run,work,mass,floor,config):
         from .diagnostic_domain import apply
         domain=apply(out/'model.osim',settings['diagnostic_domain'])
         geometry['diagnostic_domain']=domain
-        for name,change in domain['changes'].items():geometry['joint_domain'][name]['locked']=change['locked_after']
-        geometry['joint_domain_source']='Original asset plus explicit diagnostic lock changes; original ranges retained'
+        for name,change in domain['changes'].items():
+            geometry['joint_domain'][name].update(locked=change['locked_after'],range_native=change['range_native_after'])
+        geometry['joint_domain_source']='Original asset plus recorded diagnostic lock/range interventions'
     points,names,fps=motion.legacy()
     biomech.write_trc(points,names,fps,out/'markers.trc')
     weights={n:w for n,w in biomech.WEIGHTS.items() if n in biomech.MARKERS or n in geometry['registered_axial_markers']}
@@ -118,6 +119,23 @@ def fit(run,work,mass,floor,config):
             'positions':fitted,'positions_pre_root':pre_root,'coordinates_pre_root':pre_root_coordinates,
             'root_shift_m':root_shift,'root_compensation_valid':root_valid,
             'names':np.asarray(fitted_names),'position_finite':np.isfinite(fitted).all(-1)}
+    head_definition=None
+    if settings.get('head_neck'):
+        if settings['head_neck']!='attached_head_neck_v1':raise ValueError('Unknown head/neck policy')
+        from .head_neck import attach,combine
+        head_definition,head=attach(motion,out/'model.osim',labels,consistent,physical_times)
+        _,head_before=attach(motion,out/'model.osim',labels,pre_root_coordinates,physical_times,fixed_definition=head_definition)
+        # Fixed attachment/lengths must be identical across root-only compensation.
+        if not np.allclose(head['offsets'],head_before['offsets'],equal_nan=True):
+            raise ValueError('Root compensation changed head/neck geometry')
+        np.savez_compressed(out/'head_neck.npz',**head)
+        np.savez_compressed(out/'head_neck_pre_root.npz',**head_before)
+        (out/'head_neck_model.json').write_text(json.dumps(head_definition,indent=2)+'\n')
+        values['body_positions']=fitted.copy();values['body_names']=np.asarray(fitted_names)
+        fitted,fitted_names=combine(fitted,fitted_names,head)
+        pre_root,_=combine(pre_root,list(values['body_names']),head_before)
+        values.update(positions=fitted,positions_pre_root=pre_root,names=np.asarray(fitted_names),
+                      position_finite=np.isfinite(fitted).all(-1))
     np.savez_compressed(out/'fit.npz',**values)
     from .quality import assess
     quality=assess(motion,values['times'],fitted,fitted_names)
@@ -129,7 +147,8 @@ def fit(run,work,mass,floor,config):
                             head_relative_thorax=native_frames_result['head_relative_thorax'],
                             valid=native_frames_result['head_relative_valid'])
     receipt={'key':key,'version':settings['version'],'geometry':geometry,
-             'scope':'constraint-assembled model FK; no independent head joint; native rotations reported separately',
+             'scope':'constraint-consistent body FK and optional attached head/neck FK; native rotations reported separately',
+             'head_neck_model':head_definition,
              'kinematic_only':True,'force_eligible':False,'clock_origin_s':float(motion.times[0]),
              'input_rig_status':motion.provenance['input_geometry'],
              'coordinate_contract':'coordinates.mot satisfies declared model constraints; pre-root and pre-constraint coordinates preserved separately',

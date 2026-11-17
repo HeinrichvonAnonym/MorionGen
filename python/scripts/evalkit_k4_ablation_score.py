@@ -50,19 +50,22 @@ def add_pelvis_diagnostic(result,r,d,f,mask):
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('fits','baseline','output'):p.add_argument('--'+name,type=Path,required=True)
+    p.add_argument('--strict',action='store_true')
     p.add_argument('--window',required=True);p.add_argument('--method',required=True);a=p.parse_args()
     run=Path(json.loads((ROOT/'config/k_degradation_20261117/freeze.json').read_text())['run'])
     records=json.loads((run/'artifact_verification.json').read_text())['records']
     artifact={(r['window'],r['method']):r for r in records}[(a.window,a.method)]
     source=run/'inputs'/a.window/a.method/'candidate'
-    d=load(source/'factorial/reference.npz' if a.method=='primal' else source,a.method)
-    with np.load(run/'references'/f'{a.window}.npz') as z:r=Motion(z['positions'],list(z['names']),z['times'],'reference')
+    d=load(source/'factorial/reference.npz' if a.method=='primal' else source,a.method,
+        config=ROOT/'config/evalkit_k4_20261117/input.json' if a.strict else None)
+    with np.load(run/'references'/f'{a.window}.npz') as z:r=Motion(z['positions'],list(z['names']),z['times'],'reference',z['rotations'] if a.strict else None,list(z['names']) if a.strict else [])
     with np.load(a.baseline/a.window/a.method/'fit.npz') as z:bt=z['times']
     times=d.times[supported(d.times,bt[0],bt[-1])]
-    with np.load(a.fits/a.window/a.method/'fk.npz') as z:f=Motion(z['positions'],list(z['names']),z['times'],'model_fk')
+    with np.load(a.fits/a.window/a.method/'fk.npz') as z:
+        fdata={k:z[k] for k in z.files};f=Motion(z['positions'],list(z['names']),z['times'],'model_fk')
     events=artifact['source_jump_events'];mask=jump_mask(times,d,events)
     full_r,full_f=at(r,d.times),at(f,d.times);full_mask=jump_mask(d.times,d,events)
-    result=score(full_r,d,full_f,full_mask,normalization_reference=r)
+    result=score(full_r,d,full_f,full_mask,normalization_reference=r,fixed_observation_support=a.strict)
     result.update({'window':a.window,'method':a.method,'fitted_artifact':str(a.fits/a.window/a.method/'fk.npz'),
         'original_reference_file':str(run/'references'/f'{a.window}.npz'),'fitted_frames':len(f.times),
         'fit_boundary_missing_frames':int((~supported(d.times,f.times[0],f.times[-1])).sum()),
@@ -70,14 +73,19 @@ def main():
         'native_rotation_scope':'Frozen D native frame transfer; separate from model F',
         'clock_boundary_roundoff_s':BOUNDARY_ROUNDOFF_S})
     raw_d,raw_f=at(d,r.times),at(f,r.times);raw_mask=jump_mask(r.times,d,events)
-    result['original_clock']=score(r,raw_d,raw_f,raw_mask)
+    result['original_clock']=score(r,raw_d,raw_f,raw_mask,fixed_observation_support=a.strict)
     result['original_clock']['input_boundary_missing_frames']=int((~supported(r.times,d.times[0],d.times[-1])).sum())
     result['original_clock']['fit_boundary_missing_frames']=int((~supported(r.times,f.times[0],f.times[-1])).sum())
     rt,dt,ft=sample(r,times),sample(d,times),at(f,times)
-    result['paired_baseline_clock']=score(rt,dt,ft,mask,normalization_reference=r)
+    result['paired_baseline_clock']=score(rt,dt,ft,mask,normalization_reference=r,fixed_observation_support=a.strict)
     add_pelvis_diagnostic(result['paired_baseline_clock'],rt,dt,ft,mask)
     add_pelvis_diagnostic(result,full_r,d,full_f,full_mask)
     add_pelvis_diagnostic(result['original_clock'],r,raw_d,raw_f,raw_mask)
+    if a.strict:
+        from motiogen.evalkit.k.head_scoring import compare
+        for block,clock,strata in [(result,d.times,full_mask),(result['original_clock'],r.times,raw_mask),
+                                   (result['paired_baseline_clock'],times,mask)]:
+            block.update(compare(r,d,fdata,clock,strata))
     result['paired_baseline_clock']['definition']='D timestamps inside frozen common-baseline F span, fixed before candidates; candidate missing values remain in denominator; full D/original-clock results also retained'
     result['paired_baseline_clock']['excluded_D_boundary_frames']=len(d.times)-len(times)
     result['scoring_code_sha256']={str(path.relative_to(ROOT)):hashlib.sha256(path.read_bytes()).hexdigest()

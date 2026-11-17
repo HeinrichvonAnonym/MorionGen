@@ -1,0 +1,24 @@
+{
+  "version": "k4-strict-domain-head-1",
+  "conditions": [
+    "registered_head_control",
+    "registered_head_range_diagnostic"
+  ],
+  "old_counterparts": {
+    "registered_head_control": "multi_pelvis_subtalar_registered_position1",
+    "registered_head_range_diagnostic": "registered_head_control"
+  },
+  "prior_candidate_folder": "optimization_v2",
+  "hypothesis": "015 shoulder flexion limit transfers error into torso; 000 subtalar limit transfers error into knee; 022 hip flexion limit transfers error into pelvis/torso. Three-frame one-factor controls support these effects. Test complete six preregistered windows with common convergence budget and head chain.",
+  "domain_basis": "Observed input-only diagnostic coordinates: shoulder flexion up to143.55deg, hip flexion165.78deg, subtalar67.70deg. Guards160/175/75 are declared engineering exploration margins, not anatomical ranges. Symmetric policy applied to every input; no window-specific runtime logic.",
+  "strict_scoring": true,
+  "score_support": "Fixed R/D; independent R scoring only after runtime",
+  "head_neck": "Fixed declared hierarchy or input-estimated chain, FK coordinates; source-native relative rotation separately named",
+  "limits": {
+    "workers": 1,
+    "numerical_threads": 1,
+    "min_free_gib": 80
+  },
+  "promotion": "none; range change diagnostic only",
+  "new_holdout_uses": 0
+}

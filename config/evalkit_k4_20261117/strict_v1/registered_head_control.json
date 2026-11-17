@@ -1,0 +1,36 @@
+{
+  "version": "k4-fit-1",
+  "status": "strict development control; no promotion",
+  "independent_geometry": true,
+  "solver": "direction_position_refinement",
+  "constraint_policy": "direct_couplers",
+  "postprocess": "native_preserving",
+  "root_policy": "input_hip_midpoint",
+  "refinement": {
+    "position_scale_m": 0.05,
+    "direction_scale_deg": 5,
+    "position_weight": 1.0,
+    "continuity_weight": 0.02,
+    "max_nfev": 50,
+    "parameter_source": "Paired domain diagnostic; common convergence budget 50 vs previous 12, same objective weights; observed convergence probe retained separately.",
+    "include_pelvis_line": true
+  },
+  "joint_domain": "original asset; global translations and heading free",
+  "scope": "kinematic-only candidate; original-model ranges and locks retained",
+  "force_eligible": false,
+  "condition": "registered_head_control",
+  "diagnostic_domain": "release_subtalar_original_range",
+  "initialization": {
+    "strategy": "input_multistart",
+    "seeds": [
+      "nominal",
+      "knee",
+      "heading",
+      "heading_knee"
+    ],
+    "selection": "full_window_weighted_markers",
+    "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights"
+  },
+  "marker_registration": "owned_joint_frame",
+  "head_neck": "attached_head_neck_v1"
+}

@@ -16,9 +16,9 @@ from motiogen.evalkit.k.root import compensate
 def derive(fit,source,method,window,output,control=False):
     motion=load(source,method,config=ROOT/'config/evalkit_k4_20261117/input.json')
     with np.load(fit/'fit.npz') as z:data={k:z[k] for k in z.files}
-    names=list(data['names']);labels=list(data['labels']);times=data['times'];model=fit/'model.osim'
+    names=list(data.get('body_names',data['names']));labels=list(data['labels']);times=data['times'];model=fit/'model.osim'
     rebuilt,_=model_fk(model,labels,data['coords'],assemble=False)
-    if np.max(np.linalg.norm(rebuilt-data['positions'],axis=-1))>1e-7:raise ValueError('Saved/model FK mismatch')
+    if np.max(np.linalg.norm(rebuilt-data.get('body_positions',data['positions']),axis=-1))>1e-7:raise ValueError('Saved/model FK mismatch')
     coordinates=data.get('coordinates_pre_root',data['coords'])
     before,_=model_fk(model,labels,coordinates,assemble=False)
     _,root=compensate(model,times,labels,coordinates,motion)
@@ -28,13 +28,27 @@ def derive(fit,source,method,window,output,control=False):
         _,dr=compensate(model,times,labels,q,motion)
         views.update({'filtered_direct_before':direct,'filtered_direct_after':dr['after']})
     else:
-        if np.max(abs(root['after']-data['positions']))>1e-7:raise ValueError('Root replay mismatch')
+        if np.max(abs(root['after']-data.get('body_positions',data['positions'])))>1e-7:raise ValueError('Root replay mismatch')
     receipt={'input_hashes':motion.provenance['inputs'],'fit_sha256':hashlib.sha256((fit/'fit.npz').read_bytes()).hexdigest(),
              'model_sha256':hashlib.sha256(model.read_bytes()).hexdigest(),'views':list(views),
              'scope':'D-derived root translation and constraint-consistent model FK; no R access'}
+    head_enabled=(fit/'head_neck_model.json').exists()
     for name,p in views.items():
         dest=output/name/window/method;dest.mkdir(parents=True,exist_ok=True)
-        np.savez_compressed(dest/'fk.npz',times=times,positions=p,names=names)
+        view_names=names;extra={}
+        if head_enabled:
+            if name not in ('before','after'):raise ValueError('Head chain needs explicit view coordinates')
+            from motiogen.evalkit.k.head_neck import attach,combine
+            q=coordinates if name=='before' else data['coords']
+            definition,chain=attach(motion,model,labels,q,times,
+                fixed_definition=json.loads((fit/'head_neck_model.json').read_text()))
+            p,view_names=combine(p,names,chain)
+            extra={'head_relative_thorax':chain['head_relative_thorax'],
+                   'head_rotation_valid':chain['relative_rotation_valid'],
+                   'head_world_rotation':chain['world_rotations'][:,-1]}
+            (dest/'head_neck_model.json').write_text(json.dumps(definition,indent=2)+'\n')
+            np.savez_compressed(dest/'head_neck_coordinates.npz',**chain)
+        np.savez_compressed(dest/'fk.npz',times=times,positions=p,names=view_names,**extra)
     dest=output/'receipts';dest.mkdir(parents=True,exist_ok=True)
     (dest/f'{window}_{method}.json').write_text(json.dumps(receipt,indent=2)+'\n')
 

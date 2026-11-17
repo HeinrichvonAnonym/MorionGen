@@ -59,7 +59,7 @@ def main():
                 for root in ('before','after'):
                     call([a.code_root/'python/scripts/evalkit_k4_ablation_score.py','--fits',views/root,
                         '--baseline',a.run/'common_v1','--output',a.output/'scores'/condition/root,
-                        '--window',key,'--method',method],'score_'+root)
+                        '--window',key,'--method',method,*(['--strict'] if protocol.get('strict_scoring') else [])],'score_'+root)
                 result['status']='completed'
             except Exception as error:
                 import traceback

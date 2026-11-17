@@ -32,12 +32,18 @@ def unit(v):
     return np.where(den>1e-9,v/np.maximum(den,1e-9),np.nan)
 
 
-def score(reference, degraded, fitted, tolerance_mask=None, normalization_reference=None):
+def score(reference, degraded, fitted, tolerance_mask=None, normalization_reference=None, fixed_observation_support=False):
     if not (np.array_equal(reference.times,degraded.times) and np.array_equal(reference.times,fitted.times)):
         raise ValueError('R, D, F require identical physical timestamps')
     t=reference.times
     raw={'R':points(reference,True), 'D':points(degraded), 'F':points(fitted)}
     lengths_source=raw['R'] if normalization_reference is None else points(normalization_reference,True)
+    if fixed_observation_support:
+        # Candidate values may never replace a missing R/D observation.
+        for name in raw['R']:
+            observed=np.isfinite(raw['R'][name]).all(-1)&np.isfinite(raw['D'][name]).all(-1)
+            for value in raw.values():
+                value[name]=value[name].copy();value[name][~observed]=np.nan
     norm={key:normalize(lengths_source,value) for key,value in raw.items()}
     if tolerance_mask is None:tolerance_mask=np.zeros(len(t),bool)
     if np.shape(tolerance_mask)!=(len(t),):raise ValueError('Invalid frozen temporal stratum')
@@ -62,9 +68,12 @@ def score(reference, degraded, fitted, tolerance_mask=None, normalization_refere
             for name,(start,end) in DIRECTIONS.items():
                 va,vb=a[end]-a[start],b[end]-b[start]
                 error=angle(va,vb)
+                observed=np.isfinite(angle(raw['R'][end]-raw['R'][start],raw['D'][end]-raw['D'][start]))
+                if fixed_observation_support:error[~observed]=np.nan
                 metrics['directions_deg'][name]=summary(error[mask],[5,10,20])
                 steps=mask[1:]&mask[:-1]
                 sa,sb=angle(va[:-1],va[1:]),angle(vb[:-1],vb[1:])
+                if fixed_observation_support:steps &= observed[1:]&observed[:-1]
                 rate=(np.diff(unit(vb),axis=0)-np.diff(unit(va),axis=0))/np.diff(t)[:,None]
                 metrics['temporal'][name]={'reference_step_deg':summary(sa[steps]),
                     'output_step_deg':summary(sb[steps]),'signed_step_change_deg':summary((sb-sa)[steps],signed=(sb-sa)[steps]),
@@ -73,6 +82,8 @@ def score(reference, degraded, fitted, tolerance_mask=None, normalization_refere
                 for joint,parent,child in [('knee','hip','ankle'),('elbow','shoulder','wrist')]:
                     def flex(p):return 180-angle(p[side+'_'+parent]-p[side+'_'+joint],p[side+'_'+child]-p[side+'_'+joint])
                     delta=flex(b)-flex(a)
+                    if fixed_observation_support:
+                        delta[~np.isfinite(flex(raw['R'])-flex(raw['D']))]=np.nan
                     metrics['joint_angles_deg'][side+'_'+joint]=summary(abs(delta[mask]),[5,10,20],delta[mask])
             for name in ('pelvis_mid','left_foot','right_foot','left_ankle','right_ankle'):
                 dv=np.diff(b[name]-a[name],axis=0)/np.diff(t)[:,None]
@@ -80,7 +91,7 @@ def score(reference, degraded, fitted, tolerance_mask=None, normalization_refere
                 metrics['temporal'][name+'_velocity_cm_s']=summary(np.linalg.norm(dv[steps],axis=-1)*100)
             pair[stratum]=metrics
         result[label]=pair
-    return {'comparisons':result,'clock':{'frames':len(t),'start_s':float(t[0]),'end_s':float(t[-1]),
+    return {'fixed_observation_support':fixed_observation_support,'comparisons':result,'clock':{'frames':len(t),'start_s':float(t[0]),'end_s':float(t[-1]),
                     'source_jump_frames':int(tolerance_mask.sum())},
             'normalization':'Window-median R lengths applied to R,D,F independently; separate sides; root retained; scoring only',
             'scope':'Kinematic point directions and centres; head/neck model unavailable stays NaN; no anatomical accuracy claim',
