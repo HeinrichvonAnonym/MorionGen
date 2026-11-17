@@ -18,11 +18,38 @@ from motiogen.evalkit.k.k4_fitting import model_fk, write_coordinates
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--replay', type=Path, required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument('--replay', type=Path)
+    source.add_argument('--fit', type=Path, help='Audit the actual runtime MOT against fit.npz and recomputed body FK')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     osim.Logger.setLevelString('error')
     args.output.mkdir(parents=True, exist_ok=False)
+    if args.fit:
+        receipt = json.loads((args.fit/'receipt.json').read_text())
+        model = args.fit/'model.osim'
+        file = args.fit/'coordinates.mot'
+        time, labels, q = biomech.read_storage(file)
+        positions, names = model_fk(model, labels, q, direct_couplers=True)
+        with np.load(args.fit/'fit.npz') as z:
+            if labels != list(z['labels']) or q.shape != z['coords'].shape:
+                raise ValueError('Runtime MOT and NPZ labels/shape differ')
+            coordinate_error = float(abs(q-z['coords']).max())
+            time_error = float(abs(time+receipt['clock_origin_s']-z['times']).max())
+            stored = z['positions'][:, [list(z['names']).index(n) for n in names]]
+            fk_error = float(abs(positions-stored).max())
+        result = dict(source_fit=str(args.fit), frames=len(time), time_max_abs_s=time_error,
+                      coordinate_max_abs_native_units=coordinate_error, saved_body_fk_max_abs_m=fk_error,
+                      passed=time_error < 1e-6 and coordinate_error < 1e-6 and fk_error < 1e-7,
+                      source_sha256={name:hashlib.sha256((args.fit/name).read_bytes()).hexdigest()
+                                     for name in ('model.osim','coordinates.mot','fit.npz','receipt.json')},
+                      scope='Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.',
+                      implementation_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
+        (args.output/'audit.json').write_text(json.dumps(result, indent=2)+'\n')
+        print(json.dumps(result))
+        if not result['passed']:
+            raise SystemExit(1)
+        return
     receipt = json.loads((args.replay/'receipt.json').read_text())
     model = Path(receipt['source_fit'])/'model.osim'
     rows = []
