@@ -1,0 +1,17 @@
+{
+  "frame_indices": [
+    0,
+    9,
+    10,
+    19,
+    23,
+    75,
+    149
+  ],
+  "selection": "Start/middle/end plus maximum D-only pelvis/shoulder/trunk residual over two frozen native configurations; no R",
+  "seeds": [
+    "native",
+    "neutral"
+  ],
+  "scope": "Axial-only reachability witness, full-body coupling/temporal acceptance separate"
+}
