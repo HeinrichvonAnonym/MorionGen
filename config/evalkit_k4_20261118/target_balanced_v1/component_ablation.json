@@ -1,0 +1,13 @@
+{
+  "version": "target-components-1",
+  "reason": "Combined target balancing changes geometric-angle and excess-penalty terms. Separate their effects before attributing benefit to either term.",
+  "conditions": [
+    "frozen_weight1_control",
+    "joint_angle_only",
+    "violation_only",
+    "combined_temporal"
+  ],
+  "fixed": "Same 017 model, native IK seed, physical direction-error continuity, scales and original window",
+  "reference_access": false,
+  "new_holdout_uses": 0
+}
