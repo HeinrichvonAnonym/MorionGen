@@ -55,12 +55,22 @@ def main():
             if saved['inputs']!=common['inputs'] or saved['model_sha256']!=common['model_sha256']:
                 raise ValueError('Frozen input or model asset changed')
             views=a.output/'views'/condition
-            call([a.code_root/'python/scripts/evalkit_k4_views.py','--fit',fit,'--input',original['input'],
-                  '--method',method,'--window',key,'--output',views],'views')
-            for root in ('before','after'):
+            if protocol.get('native_export_scoring'):
+                views=views/key/method
+                call([a.code_root/'python/scripts/evalkit_k4_native_export_views.py','--code-root',a.code_root,
+                      '--fit',fit,'--input',original['input'],'--method',method,'--window',key,'--output',views],'views')
+                conditions=('native','export')
+            else:
+                call([a.code_root/'python/scripts/evalkit_k4_views.py','--fit',fit,'--input',original['input'],
+                      '--method',method,'--window',key,'--output',views],'views')
+                conditions=('before','after')
+            for root in conditions:
                 call([a.code_root/'python/scripts/evalkit_k4_ablation_score.py','--fits',views/root,
                     '--baseline',a.run/'common_v1','--output',a.output/'scores'/condition/root,
                     '--window',key,'--method',method,*(['--strict'] if protocol.get('strict_scoring') else [])],'score_'+root)
+            if protocol.get('native_export_scoring'):
+                call([a.code_root/'python/scripts/evalkit_k4_export_audit.py','--fit',fit,
+                      '--output',folder/'actual_export'],'export_audit')
             result['status']='completed'
         except Exception as error:
             import traceback

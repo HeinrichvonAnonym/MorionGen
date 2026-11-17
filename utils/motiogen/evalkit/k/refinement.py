@@ -67,7 +67,16 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
     if rate_weight:
         from .temporal_targets import direction_error_rate,rate_excess_residual
         rate_excess_residual(np.zeros((1,3)),rate_scale,rate_margin,rate_weight)
-    temporal_active=bool(tw or rate_weight)
+    transport_settings=settings.get('leg_axial_transport')
+    transport_weight=float(transport_settings.get('weight',0.)) if transport_settings else 0.
+    transport_rate=np.deg2rad(float(transport_settings.get('rate_scale_deg_s',90.))) if transport_settings else 1.
+    transport_threshold=float(transport_settings.get('weak_knee_flexion_deg',30.)) if transport_settings else 30.
+    if transport_settings:
+        from .branch_continuity import transport_direction,weak_flexion_weight
+        weak_flexion_weight(0.,transport_threshold)
+        if transport_weight<0 or not np.isfinite(transport_weight) or transport_rate<=0 or not np.isfinite(transport_rate):
+            raise ValueError('Finite nonnegative transport weight and positive rate scale required')
+    temporal_active=bool(tw or rate_weight or transport_weight)
     if temporal_active:
         times=np.asarray(times)
         if times.shape!=(len(coordinates),) or not np.isfinite(times).all() or np.any(np.diff(times)<=0) or rate_scale<=0:
@@ -79,12 +88,27 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
         if target_rotation.shape!=(len(coordinates),3,3):raise ValueError('Native body target clock/layout mismatch')
         if body not in ('pelvis','torso'):raise ValueError('Undeclared body target')
     result=np.array(coordinates,copy=True);receipts=[];previous=None;knee_seed_tables=None;previous_direction_error=None
+    previous_body_rotations=None;previous_input_directions=None
+    def body_rotations():
+        result=[]
+        for side in ('l','r'):
+            rot=model.getBodySet().get('femur_'+side).getTransformInGround(state).R()
+            result.append(np.array([[rot.get(i,j) for j in range(3)] for i in range(3)]))
+        return result
     for frame,(row,goal) in enumerate(zip(coordinates,target)):
         if not np.isfinite(goal).all():
-            receipts.append({'status':'input_missing','selected':'nominal'});previous=None;previous_direction_error=None;continue
+            receipts.append({'status':'input_missing','selected':'nominal'});previous=None;previous_direction_error=None
+            previous_body_rotations=None;previous_input_directions=None;continue
         biomech._set(model,state,labels,row)
         x0=np.clip(np.deg2rad(row[cols]),lo+1e-9,hi-1e-9)
         gu=unit(vectors(goal));gp=goal-goal[hip].mean(0);ga=joint_angles(goal)
+        transported=[]
+        if transport_weight and previous_body_rotations is not None:
+            for side,edge,joint in [(0,0,0),(1,5,2)]:
+                rotation=transport_direction(previous_input_directions[edge],gu[edge])
+                if rotation is not None:
+                    transported.append((side,rotation@previous_body_rotations[side],
+                                        weak_flexion_weight(ga[joint],transport_threshold)))
         def evaluate(x):
             biomech._set(model,state,labels,row)
             for h,v in zip(handles,x):h.setValue(state,float(v),False)
@@ -113,6 +137,14 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
                     current_rotation=np.array([[tf.R().get(i,j) for j in range(3)] for i in range(3)])
                     terms.append((native_weight*(current_rotation-goal_rotation)/(np.sqrt(2)*direction_scale)).ravel())
             if continuity and previous is not None:terms.append(cw*(x-previous)/direction_scale)
+            if continuity and transported:
+                rotations=body_rotations()
+                dt=times[frame]-times[frame-1]
+                for side,target_rotation,weight in transported:
+                    # D transports the observed direction; only the weakly
+                    # observed axial gauge is regularized by a temporal prior.
+                    terms.append((transport_weight*np.sqrt(weight)*(rotations[side]-target_rotation)
+                                  /(np.sqrt(2)*transport_rate*dt)).ravel())
             if continuity and temporal_active and previous_direction_error is not None:
                 # Penalize added direction velocity, not the input motion itself.
                 if tw:terms.append((tw*((u-gu)-previous_direction_error)/(rate_scale*(times[frame]-times[frame-1]))).ravel())
@@ -169,8 +201,11 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
             c=cs.get(label);result[frame,j]=c.getValue(state)*(180/np.pi if c.getMotionType()==1 else 1)
         previous=np.deg2rad(result[frame,cols])
         previous_direction_error=unit(vectors(final_points))-gu
+        if transport_weight:
+            previous_body_rotations=body_rotations();previous_input_directions=gu.copy()
         receipts.append({'status':'computed','selected':name,'before_loss':initial_loss,'after_loss':loss,'attempts':attempts,
                          'selection_loss':selected_loss,
+                         'leg_axial_transport_weights':[float(x[2]) for x in transported],
                          'extra_start_triggered':restart_triggered})
     return result,{'frames':receipts,'active_coordinates':active,'settings':settings,
                    'neutral_restart_knee_mapping':knee_seed_tables,

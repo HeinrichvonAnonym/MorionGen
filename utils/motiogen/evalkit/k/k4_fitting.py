@@ -81,7 +81,7 @@ def fit(run,work,mass,floor,config):
         receipt=json.loads(receipt_path.read_text())
         if receipt['key']!=key:raise ValueError('K4 cache identity changed; use a new output directory')
         with np.load(out/'fit.npz') as z:return {**{k:z[k] for k in z.files},'receipt':receipt}
-    geometry=build(motion,out/'model.osim',mass,settings['independent_geometry'],settings.get('marker_registration','legacy'),settings.get('joint_centres','scaled_asset'),settings.get('shoulder_width_source','declared_or_observed'))
+    geometry=build(motion,out/'model.osim',mass,settings['independent_geometry'],settings.get('marker_registration','legacy'),settings.get('joint_centres','scaled_asset'),settings.get('shoulder_width_source','declared_or_observed'),settings.get('position_trunk_strategy','model_prior'))
     if settings.get('diagnostic_domain') and settings.get('kinematic_domain'):raise ValueError('Select one explicit model domain')
     model_domain=settings.get('kinematic_domain',settings.get('diagnostic_domain'))
     if model_domain:

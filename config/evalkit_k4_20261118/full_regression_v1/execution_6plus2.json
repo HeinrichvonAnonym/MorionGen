@@ -1,0 +1,8 @@
+{
+  "version": "k4-execution-amendment-1",
+  "protocol_sha256": "303ee2ef2b3bd711b1ee5318aa77cda0407bba64059f4d2d3d56842dcc4043d3",
+  "original_runner_sha256": "30117baffa16d3ffa28404158ca22f3cb050c26d5a9b066f58d7ab41934540e1",
+  "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1",
+  "max_workers": 6,
+  "authorization": "User authorized max8 total workers and separate candidate optimization; six frozen-regression slots plus at most two candidate slots; scientific protocol unchanged"
+}

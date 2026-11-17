@@ -1,0 +1,17 @@
+{
+  "records": [
+    {
+      "window": "002",
+      "method": "kimodo"
+    },
+    {
+      "window": "010",
+      "method": "ardy"
+    },
+    {
+      "window": "008",
+      "method": "motionlcm"
+    }
+  ],
+  "scope": "Three distinct failure mechanisms, full original fixed windows; supplementary development panel, original82 unchanged"
+}

@@ -28,10 +28,20 @@ def scale_bodies(model, factors, mass):
     state=model.initSystem();model.scale(state,scales,True,mass)
 
 
-def build(motion,out,mass,independent_geometry=False,marker_registration='legacy',joint_centres='scaled_asset',shoulder_width_source='declared_or_observed'):
+def build(motion,out,mass,independent_geometry=False,marker_registration='legacy',joint_centres='scaled_asset',shoulder_width_source='declared_or_observed',position_trunk_strategy='model_prior'):
     import opensim as osim
     import biomech
     targets=geometry_targets(motion,shoulder_width_source);lengths=targets['lengths_m']
+    if position_trunk_strategy not in ('model_prior','observed_chain_proxy_v1'):
+        raise ValueError('Unknown position-input trunk geometry strategy')
+    if position_trunk_strategy!='model_prior' and not motion.provenance.get('input_rig'):
+        if not independent_geometry:raise ValueError('Chain proxy requires independent fixed geometry')
+        from .position_geometry import trunk_chain_proxy
+        estimate,description=trunk_chain_proxy(motion)
+        targets['effective_trunk_estimate']=description
+        if estimate is not None:
+            lengths['rest_hip_to_shoulder_midpoint']=estimate
+            targets['neutral_trunk_length']='unidentified; effective chain proxy used as explicit fixed model approximation'
     if shoulder_width_source!='declared_or_observed' and (not independent_geometry or joint_centres!='scaled_asset'):
         raise ValueError('Observed rigid shoulder width requires independent geometry and scaled-asset centres')
     if any(not np.isfinite(v) or v<=1e-6 for v in lengths.values()):
@@ -65,6 +75,8 @@ def build(motion,out,mass,independent_geometry=False,marker_registration='legacy
         torso_receipt={'policy':'independent fixed torso height and shoulder width','scale_yz':[float(y),float(z)],
                        'relative_residual':residual(fit.x).tolist(),'neutral_length_source':targets['source'] if neutral else 'model_prior',
                        'bounds':'0.25..4 engineering guard; boundary hits remain diagnostic'}
+        if targets.get('effective_trunk_estimate',{}).get('status')=='estimated_effective_length':
+            torso_receipt['neutral_length_source']='observed_chain_proxy; neutral length remains unidentified'
     if joint_centres not in ('scaled_asset','declared_rig'):raise ValueError('Unknown fixed joint-centre policy')
     centre_receipt={'status':'scaled_asset'}
     if joint_centres=='declared_rig':

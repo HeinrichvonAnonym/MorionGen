@@ -1,0 +1,33 @@
+{
+  "version": "k4-failure-followup-1",
+  "conditions": [
+    "control",
+    "foot_domain",
+    "axial_transport",
+    "chain_proxy",
+    "combined"
+  ],
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "hypotheses": {
+    "foot_domain": "Existing ankle and subtalar one-axis joints, symmetric -90..90 degree kinematic search; current range-bound residuals; no physiological/force claim",
+    "axial_transport": "Near-straight input knees weakly constrain axial orientation; direction-parallel transport prior may reduce interjoint gauge changes",
+    "chain_proxy": "Observed positional spine chain supplies an effective rigid geometry estimate, not identified neutral length"
+  },
+  "selection": "No runtime window IDs; same factors for every diagnostic case; original R only in independent scoring",
+  "followup_regression": [
+    "000_kimodo",
+    "008_omnicontrol",
+    "010_kimodo",
+    "015_kimodo",
+    "017_chois",
+    "022_kimodo",
+    "070_chois",
+    "074_kimodo"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "max_candidate_workers": 2,
+  "frozen_regression_workers": 6,
+  "total_worker_limit": 8
+}
