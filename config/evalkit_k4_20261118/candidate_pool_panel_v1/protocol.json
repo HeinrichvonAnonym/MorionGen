@@ -1,0 +1,13 @@
+{
+  "version": "k4-candidate-pool-panel-1",
+  "conditions": [
+    "pool"
+  ],
+  "strict_scoring": true,
+  "precondition": "All seven candidate-bank sentinel cases pass independent original-R native and native-preserving export checks, coverage and time checks; actual exports pass serialization audit.",
+  "hypothesis": "Transfer unchanged D-only fixed candidate bank to the remaining14 originally registered panel combinations, covering all8 formats.",
+  "reuse": "Six original-panel cases reuse candidate_pool_20261118_v1 with exactly identical K code and pool.json;070 remains an additional arm case.",
+  "frozen_code_commit": "17b4416",
+  "new_holdout_uses": 0,
+  "promotion": "none until wider verification"
+}

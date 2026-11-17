@@ -1,0 +1,155 @@
+{
+  "version": "k4-fixed-panel-continuation-1",
+  "records": [
+    {
+      "window": "015",
+      "method": "ardy",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "chois",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "closd",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "dart",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "motionlcm",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "omnicontrol",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "primal",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "022",
+      "method": "motionlcm",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "022",
+      "method": "omnicontrol",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "ardy",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "chois",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "closd",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "dart",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "primal",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    }
+  ],
+  "reused_six": [
+    {
+      "window": "000",
+      "method": "kimodo",
+      "membership": [
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "kimodo",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json",
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    },
+    {
+      "window": "017",
+      "method": "chois",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json",
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    },
+    {
+      "window": "022",
+      "method": "kimodo",
+      "membership": [
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "kimodo",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json",
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    },
+    {
+      "window": "074",
+      "method": "kimodo",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json",
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    }
+  ],
+  "full_panel_source": "config/evalkit_k4_20261117/strict_v1/panel.json",
+  "full_panel_sha256": "2db8b4a6473d4cf940cb122a0853a84756684a4a171ee0f83ae2da8a70e1ef6e",
+  "extra_070": "Retained separately from the original20 panel",
+  "new_holdout_uses": 0
+}
