@@ -1,0 +1,9 @@
+{
+  "review": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/knee_seed_022_v1/independent_review.json",
+  "review_sha256": "1a4856062e583e4a0eca7cda5b018c2c7739aebb0600db7a8d230f169601df23",
+  "code_sha256": "118441d443100a4032605b84788c718cf1bc4bd18dce823e4cf28db240c3a568",
+  "reference_sha256": "1299b035c15bea4bda82468ac93db03cc3fa45aaa7c800b0685c633403f22428",
+  "window": "022",
+  "method": "kimodo",
+  "alignment": "shared world coordinates; no per-motion alignment"
+}

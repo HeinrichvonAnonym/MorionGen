@@ -1,0 +1,15 @@
+{
+  "version": "k4-user-requested-022-kimodo-diagnostic-1",
+  "selection": "User requested 022 Kimodo after common-baseline review; supplementary diagnostic, original 18 panel unchanged",
+  "original_panel_sha256": "8e9c6856dd70e79cc81b90e1f97682d88b07aa099c705b06b3107fc219b6a523",
+  "records": [
+    {
+      "window": "022",
+      "method": "kimodo",
+      "reasons": [
+        "explicit user-requested severe knee failure"
+      ]
+    }
+  ],
+  "new_holdout_uses": 0
+}
