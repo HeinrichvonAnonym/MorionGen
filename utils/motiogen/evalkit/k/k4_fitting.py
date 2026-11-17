@@ -66,9 +66,11 @@ def fit(run,work,mass,floor,config):
         if receipt['key']!=key:raise ValueError('K4 cache identity changed; use a new output directory')
         with np.load(out/'fit.npz') as z:return {**{k:z[k] for k in z.files},'receipt':receipt}
     geometry=build(motion,out/'model.osim',mass,settings['independent_geometry'],settings.get('marker_registration','legacy'),settings.get('joint_centres','scaled_asset'))
-    if settings.get('diagnostic_domain'):
+    if settings.get('diagnostic_domain') and settings.get('kinematic_domain'):raise ValueError('Select one explicit model domain')
+    model_domain=settings.get('kinematic_domain',settings.get('diagnostic_domain'))
+    if model_domain:
         from .diagnostic_domain import apply
-        domain=apply(out/'model.osim',settings['diagnostic_domain'])
+        domain=apply(out/'model.osim',model_domain)
         geometry['diagnostic_domain']=domain
         for name,change in domain['changes'].items():
             geometry['joint_domain'][name].update(locked=change['locked_after'],range_native=change['range_native_after'])
@@ -152,7 +154,10 @@ def fit(run,work,mass,floor,config):
         np.savez_compressed(out/'native_head_thorax.npz',times=motion.times,
                             head_relative_thorax=native_frames_result['head_relative_thorax'],
                             valid=native_frames_result['head_relative_valid'])
-    receipt={'key':key,'version':settings['version'],'geometry':geometry,
+    from .original_domain import assess as assess_original_domain
+    original_domain=assess_original_domain(biomech.MODEL,labels,consistent)
+    (out/'original_domain_diagnostics.json').write_text(json.dumps(original_domain,indent=2)+'\n')
+    receipt={'original_domain_diagnostics':original_domain,'key':key,'version':settings['version'],'geometry':geometry,
              'scope':'constraint-consistent body FK and optional attached head/neck FK; native rotations reported separately',
              'head_neck_model':head_definition,
              'kinematic_only':True,'force_eligible':False,'clock_origin_s':float(motion.times[0]),

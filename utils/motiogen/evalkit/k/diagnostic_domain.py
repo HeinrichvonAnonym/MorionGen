@@ -9,7 +9,7 @@ def apply(model_path,policy):
     if isinstance(policy,dict):
         if set(policy)!={'base','coordinate_ranges_deg','scope'} or policy['base']!='release_subtalar_original_range':
             raise ValueError('Explicit diagnostic range contract required')
-        if policy['scope']!='counterfactual_kinematic_only':raise ValueError('Range expansion is diagnostic only')
+        if policy['scope'] not in ('counterfactual_kinematic_only','independent_kinematic'):raise ValueError('Explicit kinematic-only domain required')
         ranges=policy['coordinate_ranges_deg']
     elif policy!='release_subtalar_original_range':raise ValueError('Unknown diagnostic model-domain policy')
     before=digest(model_path);model=osim.Model(str(model_path));changes={}
@@ -29,4 +29,4 @@ def apply(model_path,policy):
         changes[name]['range_native_after']=[c.getRangeMin(),c.getRangeMax()]
     model.finalizeConnections();model.initSystem();model.printToXML(str(model_path))
     return {'policy':policy,'changes':changes,'model_sha256_before':before,'model_sha256_after':digest(model_path),
-            'scope':('Counterfactual range expansion on diagnostic copy; no anatomical range validation, structural change, or force qualification' if ranges else 'Diagnostic copy only: existing subtalar DOFs released inside original asset ranges; no structural change or force qualification')}
+            'scope':('Explicit kinematic range configuration on model copy; no anatomical range validation, structural change, or force qualification' if ranges else 'Diagnostic copy only: existing subtalar DOFs released inside original asset ranges; no structural change or force qualification')}

@@ -1,0 +1,31 @@
+{
+  "version": "k4-multistart-sentinels-1",
+  "selection": "Fixed before new fits: previous 000 failure, fixed panel 015/017/069/074, user-requested 022 Kimodo; development only",
+  "records": [
+    {
+      "window": "074",
+      "method": "kimodo"
+    },
+    {
+      "window": "017",
+      "method": "chois"
+    },
+    {
+      "window": "000",
+      "method": "kimodo"
+    },
+    {
+      "window": "015",
+      "method": "kimodo"
+    },
+    {
+      "window": "022",
+      "method": "kimodo"
+    },
+    {
+      "window": "069",
+      "method": "kimodo"
+    }
+  ],
+  "new_holdout_uses": 0
+}

@@ -1,0 +1,21 @@
+{
+  "version": "k4-independent-domain-1",
+  "conditions": [
+    "independent_knee180"
+  ],
+  "strict_scoring": true,
+  "authorization": "User explicitly authorized independent kinematic ranges with per-range and coupling validation on 2026-11-17",
+  "hypothesis": "Knee180 removes measured074 fixed-domain reachability deficit; previous shoulder/hip/subtalar ranges and fixed head attachment retained. Existing coupling functions require a frozen numerical audit before fitting.",
+  "old_counterparts": {
+    "independent_knee180": "registered_head_range_diagnostic"
+  },
+  "prior_candidate_folder": "strict_domain_head_v1",
+  "coupling_policy": "Unchanged functions; audit0..180 for finite FK, proper rotations, continuity and dependent-coordinate consistency; numerical checks are not physiological validation",
+  "new_holdout_uses": 0,
+  "promotion": "none until full656 acceptance",
+  "limits": {
+    "workers": 1,
+    "numerical_threads": 1,
+    "min_free_gib": 80
+  }
+}
