@@ -62,7 +62,13 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
     pw=float(settings.get('position_weight',.25));cw=float(settings.get('continuity_weight',.02))
     tw=float(settings.get('direction_continuity_weight',0.))
     rate_scale=np.deg2rad(float(settings.get('direction_rate_scale_deg_s',10.)))
-    if tw:
+    rate_weight=float(settings.get('direction_rate_violation_weight',0.))
+    rate_margin=float(settings.get('direction_rate_margin_fraction',.8))
+    if rate_weight:
+        from .temporal_targets import direction_error_rate,rate_excess_residual
+        rate_excess_residual(np.zeros((1,3)),rate_scale,rate_margin,rate_weight)
+    temporal_active=bool(tw or rate_weight)
+    if temporal_active:
         times=np.asarray(times)
         if times.shape!=(len(coordinates),) or not np.isfinite(times).all() or np.any(np.diff(times)<=0) or rate_scale<=0:
             raise ValueError('Physical input clock required for direction continuity')
@@ -107,14 +113,17 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
                     current_rotation=np.array([[tf.R().get(i,j) for j in range(3)] for i in range(3)])
                     terms.append((native_weight*(current_rotation-goal_rotation)/(np.sqrt(2)*direction_scale)).ravel())
             if continuity and previous is not None:terms.append(cw*(x-previous)/direction_scale)
-            if continuity and tw and previous_direction_error is not None:
+            if continuity and temporal_active and previous_direction_error is not None:
                 # Penalize added direction velocity, not the input motion itself.
-                terms.append((tw*((u-gu)-previous_direction_error)/(rate_scale*(times[frame]-times[frame-1]))).ravel())
+                if tw:terms.append((tw*((u-gu)-previous_direction_error)/(rate_scale*(times[frame]-times[frame-1]))).ravel())
+                if rate_weight:
+                    error_rate=direction_error_rate(u-gu,previous_direction_error,times[frame]-times[frame-1])
+                    terms.append(rate_excess_residual(error_rate,rate_scale,rate_margin,rate_weight))
             return np.concatenate(terms)
         initial_loss=float(np.dot(residual(x0,False),residual(x0,False)))
         def selection_loss(x,pose_loss):
-            value=residual(x,True) if tw else None
-            return float(np.dot(value,value)) if tw else pose_loss
+            value=residual(x,True) if temporal_active else None
+            return float(np.dot(value,value)) if temporal_active else pose_loss
         candidates=[('nominal',x0,initial_loss,selection_loss(x0,initial_loss))]
         starts=[('nominal_start',x0)]
         if previous is not None:starts.append(('continuity_start',np.clip(previous,lo+1e-9,hi-1e-9)))
@@ -166,4 +175,4 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
     return result,{'frames':receipts,'active_coordinates':active,'settings':settings,
                    'neutral_restart_knee_mapping':knee_seed_tables,
                    'native_target_bodies':list(orientation_targets),'scope':'experimental local direction/position refinement; full-window regression gates required',
-                   'candidate_selection':('input pose plus physical direction-error continuity; nominal retained' if tw else 'input-only objective; nominal retained as a per-frame candidate')}
+                   'candidate_selection':('input pose plus physical direction-error continuity/target excess; nominal retained' if temporal_active else 'input-only objective; nominal retained as a per-frame candidate')}

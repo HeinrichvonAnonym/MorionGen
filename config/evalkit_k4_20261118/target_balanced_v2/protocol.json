@@ -1,0 +1,22 @@
+{
+  "version": "target-balanced-2",
+  "hypothesis": "v1 meets 017 pose but 074 native pelvis/thigh added direction-rate P95 exceed10deg/s. Add rate-excess target globally, without changing observation, geometry or ranges.",
+  "conditions": [
+    "rate1",
+    "rate4"
+  ],
+  "records": [
+    {
+      "window": "017",
+      "method": "chois"
+    },
+    {
+      "window": "074",
+      "method": "kimodo"
+    }
+  ],
+  "scope": "Native rate target uses difference of fitted-minus-D unit-direction errors over physical time; preserves fast observed motion. No Euler smoothing or R access.",
+  "gate": "Same candidate must pass both windows before fixed seven regression; all unsuccessful conditions retained",
+  "new_holdout_uses": 0,
+  "promotion": "none"
+}

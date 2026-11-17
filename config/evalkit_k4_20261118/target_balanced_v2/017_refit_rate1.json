@@ -1,0 +1,22 @@
+{
+  "source_model_sha256": "6efa3ab048b8605699b59c50ae010a31d9da1ced531171b749ca9f2199dd1efe",
+  "source_seed_sha256": "8016218f5634f6bcf3e4c964a4ca693e1eb213526f44f5d8546904428612427a",
+  "refinement": {
+    "position_scale_m": 0.05,
+    "direction_scale_deg": 5,
+    "position_weight": 1.0,
+    "continuity_weight": 0.02,
+    "max_nfev": 100,
+    "parameter_source": "Global input target excess (5deg/5cm) plus physical direction-error rate excess (10deg/s); 20% margins. Rate weights1/4 are preregistered unit/comparable-excess engineering controls, not per-window choices.",
+    "include_pelvis_line": true,
+    "extra_start": "neutral_knee_if_target_failed",
+    "direction_continuity_weight": 0.25,
+    "direction_rate_scale_deg_s": 10.0,
+    "joint_angle_weight": 1.0,
+    "target_violation_weight": 4.0,
+    "target_margin_fraction": 0.8,
+    "direction_rate_violation_weight": 1.0,
+    "direction_rate_margin_fraction": 0.8
+  },
+  "scope": "Same frozen D/model/IK; added-rate target only versus v1 balanced. Both windows receive identical parameters."
+}
