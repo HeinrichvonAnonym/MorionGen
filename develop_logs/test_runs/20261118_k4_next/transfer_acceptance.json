@@ -1,0 +1,1525 @@
+{
+  "expected": 16,
+  "completed": 16,
+  "passed": 11,
+  "pending": 0,
+  "execution_failed": 0,
+  "promotion": "none",
+  "policy_sha256": "26975f87079206cf2b512287896951140f7dceb57d879c3717c1523598c09d26",
+  "scope": "Full fixed development windows; R-only independent acceptance; exact frozen policy; F-D fidelity separate from F-R; no split changes",
+  "records": [
+    {
+      "window": "000",
+      "method": "kimodo",
+      "condition": "control",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/control/000/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.1102230246251565e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "662db2cc646a5a0515f9943a1a369294c7ac649b05c33909fe22bd6b57b2b426",
+          "coordinates.mot": "ded092fa201ea3e44e61b37033e233da3b4a0117892e2891e9be476dc9fb1d2a",
+          "fit.npz": "7f584caa2e6c053952c6cd8cfc9f049c7715f658db47eb46d0619bcb5784d2e2",
+          "receipt.json": "768c096fcf91e56a37c1762074212ff34d8a4b98898bd0f591ca91126612de15"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "pelvis_continuity",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/000_kimodo/summary.json"
+    },
+    {
+      "window": "000",
+      "method": "kimodo",
+      "condition": "chain_proxy",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/chain_proxy/000/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.1102230246251565e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "662db2cc646a5a0515f9943a1a369294c7ac649b05c33909fe22bd6b57b2b426",
+          "coordinates.mot": "ded092fa201ea3e44e61b37033e233da3b4a0117892e2891e9be476dc9fb1d2a",
+          "fit.npz": "7f584caa2e6c053952c6cd8cfc9f049c7715f658db47eb46d0619bcb5784d2e2",
+          "receipt.json": "71f9a02be1d6d6650ddeda29d4275e564a5b6062219b2547f0ec0a3cf993f118"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "pelvis_continuity",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/000_kimodo/summary.json"
+    },
+    {
+      "window": "008",
+      "method": "omnicontrol",
+      "condition": "control",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/control/008/omnicontrol",
+        "frames": 491,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 7.105427357601002e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "5287d53720e5f58fc53a98479291310e3c8c9a10899b9c628829fd17a33b5f76",
+          "coordinates.mot": "fe48024ba4ca71ea656522d487e6a195f4115b4c4b2ac0ffeaef0ca1e24f6aa6",
+          "fit.npz": "89e7149dd128444007170a8ee7280ab1bb73417620d87340fcc5cd19bc02cc7a",
+          "receipt.json": "b043be3331d6ad3385b43031425c87d16273300312b09eef6618d8c27cd5713c"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": false,
+      "failures": [
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.510036337587024,
+          "target": 5.0
+        },
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.416802059081751,
+          "target": 5.0
+        },
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.448334317590015,
+          "target": 5.0
+        },
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.430520230466322,
+          "target": 5.0
+        },
+        {
+          "view": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.511816779601081,
+          "target": 5.0
+        },
+        {
+          "view": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.420426234222037,
+          "target": 5.0
+        },
+        {
+          "view": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.44587619199056,
+          "target": 5.0
+        },
+        {
+          "view": "native",
+          "clock": "R_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.432192088155786,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.510036337587024,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.416802059081813,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.448334317590015,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.430520230466311,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.511857431523496,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.420358846980352,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.445802555564187,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.432298340088512,
+          "target": 5.0
+        }
+      ],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": false,
+      "frozen_failures": [
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.510036337587024,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.416802059081751,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.448334317590015,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.430520230466322,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.511816779601081,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.420426234222037,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.44587619199056,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.432192088155786,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.510036337587024,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.416802059081813,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.448334317590015,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.430520230466311,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.511857431523496,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.420358846980352,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.445802555564187,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.432298340088512,
+          "target": 5.0
+        }
+      ],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/008_omnicontrol/summary.json"
+    },
+    {
+      "window": "008",
+      "method": "omnicontrol",
+      "condition": "chain_proxy",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/chain_proxy/008/omnicontrol",
+        "frames": 491,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 7.105427357601002e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "87e01b5de7bafa92ecca44956018e4fdc932ed5a7cbce1f418c3ce5de7d301c8",
+          "coordinates.mot": "dfca6bdf315e553b563101bfbae6152257874c9dc5a687a480d1d53ffae0cf79",
+          "fit.npz": "bdcdbfa5e4809e0858b5c0a061f299be953bfa9dd130fc40d30c38d8716b68fb",
+          "receipt.json": "d711fc388c62d620a33a0545ca0022712733fa57b6cc07510d85773a82fafbff"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": false,
+      "frozen_failures": [
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.510036337587024,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.416802059081751,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.448334317590015,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.430520230466322,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.511816779601081,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.420426234222037,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.44587619199056,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.432192088155786,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.510036337587024,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.416802059081813,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 5.448334317590015,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 99,
+          "scored": 99,
+          "denominator": 99,
+          "p95": 6.430520230466311,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/trunk_axis",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.511857431523496,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/shoulder_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.420358846980352,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/pelvis_line",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 5.445802555564187,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "positions_cm/left_shoulder/world",
+          "status": "target_failed",
+          "expected_observed": 442,
+          "scored": 442,
+          "denominator": 450,
+          "p95": 6.432298340088512,
+          "target": 5.0
+        }
+      ],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/008_omnicontrol/summary.json"
+    },
+    {
+      "window": "010",
+      "method": "kimodo",
+      "condition": "control",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/control/010/kimodo",
+        "frames": 265,
+        "time_max_abs_s": 4.440892098500626e-16,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.7763568394002505e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "9161aa91f11cf4ffba35680ca545ef957cad0452c6cadcd84d7e284fc9f65c51",
+          "coordinates.mot": "2706d6a04daceb241da2676acbcc703571d189f3e27c5a202573d1a74892ea57",
+          "fit.npz": "385248f7af03a413fc711b85f70dc6f8812285584f090c9f8a409631900d7eff",
+          "receipt.json": "5bc3ede84e0c9e2f27680262ebfd3ac46101c31f4ad44f7b51e2d9d07109039e"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": false,
+      "failures": [
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 2.5720089402352527e-12,
+          "candidate": 19.442231335751682,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.8910574063755187e-12,
+          "candidate": 21.2767867440967,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "view": "native",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 15.735819091618598,
+          "candidate": 28.33770664772035,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "native",
+          "clock": "R_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.7057106994317,
+          "candidate": 28.869745352859763,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 2.5720089402352527e-12,
+          "candidate": 19.442231335752123,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.8910574063755187e-12,
+          "candidate": 21.276786744096704,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 15.735819091618598,
+          "candidate": 30.154278011038755,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.7057106994317,
+          "candidate": 32.36214870875164,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/output_step_deg",
+          "status": "failed",
+          "baseline": 1.9108842012337595,
+          "candidate": 33.20389520978754,
+          "increase_limit": 5.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.849099777721644,
+          "candidate": 176.1404025324675,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        }
+      ],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": false,
+      "frozen_failures": [
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 2.5720089402352527e-12,
+          "candidate": 19.442231335751682,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.8910574063755187e-12,
+          "candidate": 21.2767867440967,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 15.735819091618598,
+          "candidate": 28.33770664772035,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.7057106994317,
+          "candidate": 28.869745352859763,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 2.5720089402352527e-12,
+          "candidate": 19.442231335752123,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.8910574063755187e-12,
+          "candidate": 21.276786744096704,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 15.735819091618598,
+          "candidate": 30.154278011038755,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.7057106994317,
+          "candidate": 32.36214870875164,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/output_step_deg",
+          "status": "failed",
+          "baseline": 1.9108842012337595,
+          "candidate": 33.20389520978754,
+          "increase_limit": 5.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.849099777721644,
+          "candidate": 176.1404025324675,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        }
+      ],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/010_kimodo/summary.json"
+    },
+    {
+      "window": "010",
+      "method": "kimodo",
+      "condition": "chain_proxy",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/chain_proxy/010/kimodo",
+        "frames": 265,
+        "time_max_abs_s": 4.440892098500626e-16,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.7763568394002505e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "9161aa91f11cf4ffba35680ca545ef957cad0452c6cadcd84d7e284fc9f65c51",
+          "coordinates.mot": "2706d6a04daceb241da2676acbcc703571d189f3e27c5a202573d1a74892ea57",
+          "fit.npz": "385248f7af03a413fc711b85f70dc6f8812285584f090c9f8a409631900d7eff",
+          "receipt.json": "b3ee266c67270588b4288c63b0ff0dbdf01c0fb4e1d35fbc50055895cfee95ee"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": false,
+      "failures": [
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 2.5720089402352527e-12,
+          "candidate": 19.442231335751682,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.8910574063755187e-12,
+          "candidate": 21.2767867440967,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "view": "native",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 15.735819091618598,
+          "candidate": 28.33770664772035,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "native",
+          "clock": "R_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.7057106994317,
+          "candidate": 28.869745352859763,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 2.5720089402352527e-12,
+          "candidate": 19.442231335752123,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.8910574063755187e-12,
+          "candidate": 21.276786744096704,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 15.735819091618598,
+          "candidate": 30.154278011038755,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.7057106994317,
+          "candidate": 32.36214870875164,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/output_step_deg",
+          "status": "failed",
+          "baseline": 1.9108842012337595,
+          "candidate": 33.20389520978754,
+          "increase_limit": 5.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.849099777721644,
+          "candidate": 176.1404025324675,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        }
+      ],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": false,
+      "frozen_failures": [
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 2.5720089402352527e-12,
+          "candidate": 19.442231335751682,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.8910574063755187e-12,
+          "candidate": 21.2767867440967,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 15.735819091618598,
+          "candidate": 28.33770664772035,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.7057106994317,
+          "candidate": 28.869745352859763,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 2.5720089402352527e-12,
+          "candidate": 19.442231335752123,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.8910574063755187e-12,
+          "candidate": 21.276786744096704,
+          "increase_limit": 10.0,
+          "expected_observed": 66,
+          "scored": 66
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 15.735819091618598,
+          "candidate": 30.154278011038755,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.7057106994317,
+          "candidate": 32.36214870875164,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/output_step_deg",
+          "status": "failed",
+          "baseline": 1.9108842012337595,
+          "candidate": 33.20389520978754,
+          "increase_limit": 5.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 16.849099777721644,
+          "candidate": 176.1404025324675,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        }
+      ],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/010_kimodo/summary.json"
+    },
+    {
+      "window": "015",
+      "method": "kimodo",
+      "condition": "control",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/control/015/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 8.881784197001252e-16,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.5543122344752192e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "25d8f845428fb61303f2b9dd97ffcd20062f973c9b4a5c7391afe0baaaed682b",
+          "coordinates.mot": "a7c2654a9a15279f256be1152d46ab6b4d60104856254daf0e58e0be5de217b7",
+          "fit.npz": "5f11490760fc1d5225abad32ab2e9d4a28f8222669053b53a14916ccda9ed77a",
+          "receipt.json": "e4b051500ad3f354cdd49ee58c57a6336bb995cea5acd65cfce723c13d80b978"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/015_kimodo/summary.json"
+    },
+    {
+      "window": "015",
+      "method": "kimodo",
+      "condition": "chain_proxy",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/chain_proxy/015/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 8.881784197001252e-16,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.5543122344752192e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "25d8f845428fb61303f2b9dd97ffcd20062f973c9b4a5c7391afe0baaaed682b",
+          "coordinates.mot": "a7c2654a9a15279f256be1152d46ab6b4d60104856254daf0e58e0be5de217b7",
+          "fit.npz": "5f11490760fc1d5225abad32ab2e9d4a28f8222669053b53a14916ccda9ed77a",
+          "receipt.json": "806ee3f1b128b0af084c2642bbce74e2d3b941a9e06d25d3e38c6d7ed90ee3c0"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/015_kimodo/summary.json"
+    },
+    {
+      "window": "017",
+      "method": "chois",
+      "condition": "control",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/control/017/chois",
+        "frames": 597,
+        "time_max_abs_s": 8.881784197001252e-16,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.1102230246251565e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "6efa3ab048b8605699b59c50ae010a31d9da1ced531171b749ca9f2199dd1efe",
+          "coordinates.mot": "de6a6c3625e3bc4c04461b4d3892a9310ff9795a695d352c01522b1b80f88299",
+          "fit.npz": "90ccd42e128b198c2b5b528677188dcd703a466229271d157a5f965986d5bfb5",
+          "receipt.json": "0ca0dcbca87ea4a4b22fb15cf8d4804eaa76611184b347452af77886596dee0e"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/017_chois/summary.json"
+    },
+    {
+      "window": "017",
+      "method": "chois",
+      "condition": "chain_proxy",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/chain_proxy/017/chois",
+        "frames": 597,
+        "time_max_abs_s": 8.881784197001252e-16,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.1102230246251565e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "6efa3ab048b8605699b59c50ae010a31d9da1ced531171b749ca9f2199dd1efe",
+          "coordinates.mot": "de6a6c3625e3bc4c04461b4d3892a9310ff9795a695d352c01522b1b80f88299",
+          "fit.npz": "90ccd42e128b198c2b5b528677188dcd703a466229271d157a5f965986d5bfb5",
+          "receipt.json": "c34e7cf423399d08ade985b9cdb5b2e189b3055b92777dec34a6b69123569f59"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/017_chois/summary.json"
+    },
+    {
+      "window": "022",
+      "method": "kimodo",
+      "condition": "control",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/control/022/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.1102230246251565e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "407c448293ed6a4845097e1ed28efe7d58bcf18017f6dd87b375868f64d462a6",
+          "coordinates.mot": "482ce4a37f6cac818bc1d4e6ab8e3ac22ba73e3b5ed7cee11febab8ce36553c3",
+          "fit.npz": "5216d94c4b5c1303711bac92f8c2ca9b9c2b7e5f2bd2ebefdc0e7e5dc3b63f24",
+          "receipt.json": "c488335bbbc47af0ca0a03304bc94b80fbc4f2524fc2196d2b34b6febfa4be50"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/022_kimodo/summary.json"
+    },
+    {
+      "window": "022",
+      "method": "kimodo",
+      "condition": "chain_proxy",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/chain_proxy/022/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.1102230246251565e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "407c448293ed6a4845097e1ed28efe7d58bcf18017f6dd87b375868f64d462a6",
+          "coordinates.mot": "482ce4a37f6cac818bc1d4e6ab8e3ac22ba73e3b5ed7cee11febab8ce36553c3",
+          "fit.npz": "5216d94c4b5c1303711bac92f8c2ca9b9c2b7e5f2bd2ebefdc0e7e5dc3b63f24",
+          "receipt.json": "f54cd6c0d696d88b6c563419b1615598e1e81bcdda0341135a0bfe3c64f4f46a"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/022_kimodo/summary.json"
+    },
+    {
+      "window": "070",
+      "method": "chois",
+      "condition": "control",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/control/070/chois",
+        "frames": 405,
+        "time_max_abs_s": 4.440892098500626e-16,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.3322676295501878e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "fccbbe990cf97881611e8234c138b21c41b1961aa432a8cebd4d68cbd5914878",
+          "coordinates.mot": "60db4333fcc945753cef7843b545d37ab3db97347db105b2a95c8be3d6e6b7c0",
+          "fit.npz": "0261aeaaff8b2fe8e3714248872d15c129a0f5bf44e711f6b65e5be2c43f1b8f",
+          "receipt.json": "0dcae3d9c3c49555b397a5ff3921e49621d12acd1f3874614fdd1b28beba58ef"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/070_chois/summary.json"
+    },
+    {
+      "window": "070",
+      "method": "chois",
+      "condition": "chain_proxy",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/chain_proxy/070/chois",
+        "frames": 405,
+        "time_max_abs_s": 4.440892098500626e-16,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.3322676295501878e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "fccbbe990cf97881611e8234c138b21c41b1961aa432a8cebd4d68cbd5914878",
+          "coordinates.mot": "60db4333fcc945753cef7843b545d37ab3db97347db105b2a95c8be3d6e6b7c0",
+          "fit.npz": "0261aeaaff8b2fe8e3714248872d15c129a0f5bf44e711f6b65e5be2c43f1b8f",
+          "receipt.json": "5a956ac3df57009fa368b48f0fc50f7a5e6643a236341a7e8fac4c392927d53e"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/070_chois/summary.json"
+    },
+    {
+      "window": "074",
+      "method": "kimodo",
+      "condition": "control",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/control/074/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.7763568394002505e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "818b1139547bd5bcfe1fd69fd789c8e3a87a8c1e2b265180db3bdd08f931a0a6",
+          "coordinates.mot": "cc568518e92ce62418f68df3fe1a0b98fdf2d4b3eb7cae1c3c0ef32d2212d5fe",
+          "fit.npz": "997c9a4aadf61eafb081421f88af594239fcfb21e097c6aaa5c97b2ad1a26c03",
+          "receipt.json": "deaf819d78143feb5e674deb8cead5b7e879390a895bdd2f4e9a8882c035c6e0"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": false,
+      "failures": [
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 9.156059121948788e-13,
+          "candidate": 10.595362963993065,
+          "increase_limit": 10.0,
+          "expected_observed": 149,
+          "scored": 149
+        },
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "pelvis_line/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.4958807473869717e-07,
+          "candidate": 11.736469159624988,
+          "increase_limit": 10.0,
+          "expected_observed": 149,
+          "scored": 149
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 9.156059121948788e-13,
+          "candidate": 10.595362963993786,
+          "increase_limit": 10.0,
+          "expected_observed": 149,
+          "scored": 149
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "pelvis_line/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.4958807473869717e-07,
+          "candidate": 11.736469159624988,
+          "increase_limit": 10.0,
+          "expected_observed": 149,
+          "scored": 149
+        }
+      ],
+      "frozen_selected": "pelvis_continuity",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/074_kimodo/summary.json"
+    },
+    {
+      "window": "074",
+      "method": "kimodo",
+      "condition": "chain_proxy",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/failure_followup_regression_20261118_v1/fits/chain_proxy/074/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.7763568394002505e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "818b1139547bd5bcfe1fd69fd789c8e3a87a8c1e2b265180db3bdd08f931a0a6",
+          "coordinates.mot": "cc568518e92ce62418f68df3fe1a0b98fdf2d4b3eb7cae1c3c0ef32d2212d5fe",
+          "fit.npz": "997c9a4aadf61eafb081421f88af594239fcfb21e097c6aaa5c97b2ad1a26c03",
+          "receipt.json": "e93cfc7f8d751d88736483c2544d0055486ff19e0bd5c77f477e77ee51da6bce"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": false,
+      "failures": [
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 9.156059121948788e-13,
+          "candidate": 10.595362963993065,
+          "increase_limit": 10.0,
+          "expected_observed": 149,
+          "scored": 149
+        },
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "pelvis_line/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.4958807473869717e-07,
+          "candidate": 11.736469159624988,
+          "increase_limit": 10.0,
+          "expected_observed": 149,
+          "scored": 149
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 9.156059121948788e-13,
+          "candidate": 10.595362963993786,
+          "increase_limit": 10.0,
+          "expected_observed": 149,
+          "scored": 149
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "pelvis_line/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.4958807473869717e-07,
+          "candidate": 11.736469159624988,
+          "increase_limit": 10.0,
+          "expected_observed": 149,
+          "scored": 149
+        }
+      ],
+      "frozen_selected": "pelvis_continuity",
+      "frozen_passed": true,
+      "frozen_failures": [],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/074_kimodo/summary.json"
+    }
+  ]
+}

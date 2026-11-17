@@ -28,7 +28,7 @@ def scale_bodies(model, factors, mass):
     state=model.initSystem();model.scale(state,scales,True,mass)
 
 
-def build(motion,out,mass,independent_geometry=False,marker_registration='legacy',joint_centres='scaled_asset',shoulder_width_source='declared_or_observed',position_trunk_strategy='model_prior'):
+def build(motion,out,mass,independent_geometry=False,marker_registration='legacy',joint_centres='scaled_asset',shoulder_width_source='declared_or_observed',position_trunk_strategy='model_prior',foot_geometry='scaled_asset'):
     import opensim as osim
     import biomech
     targets=geometry_targets(motion,shoulder_width_source);lengths=targets['lengths_m']
@@ -82,6 +82,12 @@ def build(motion,out,mass,independent_geometry=False,marker_registration='legacy
     if joint_centres=='declared_rig':
         from .rig_geometry import register_centres
         centre_receipt=register_centres(model,motion.provenance.get('input_rig'))
+    if foot_geometry not in ('scaled_asset','declared_rig'):
+        raise ValueError('Unknown fixed foot geometry policy')
+    foot_receipt={'status':'scaled_asset'}
+    if foot_geometry=='declared_rig':
+        from .rig_geometry import register_foot_vectors
+        foot_receipt=register_foot_vectors(model,motion.provenance.get('input_rig'))
     # Retain anatomical joint structure. Only global position/heading are free.
     for name in ('pelvis_tx','pelvis_ty','pelvis_tz','pelvis_rotation'):
         coordinate=model.updCoordinateSet().get(name);coordinate.setRangeMin(-1e3);coordinate.setRangeMax(1e3);coordinate.setDefaultClamped(False)
@@ -138,7 +144,7 @@ def build(motion,out,mass,independent_geometry=False,marker_registration='legacy
     if marker_registration=='owned_joint_frame' and max(marker_offsets.values())>1e-9:
         raise ValueError('Registered IK marker does not coincide with its declared joint frame')
     return {'targets':targets,'before':base,'after':final,'body_scales':factors,'torso':torso_receipt,
-            'joint_centres':centre_receipt,'marker_registration':marker_registration,'marker_joint_frame_offset_m':marker_offsets,
+            'joint_centres':centre_receipt,'foot_geometry':foot_receipt,'marker_registration':marker_registration,'marker_joint_frame_offset_m':marker_offsets,
             'registered_axial_markers':registered,'kinematic_only':True,'force_eligible':False,
             'geometry_fixed_for_clip':True,'head_model_support':'no independent head joint',
             'joint_domain':domain,'joint_domain_source':'Original asset except explicitly freed global translations and heading',

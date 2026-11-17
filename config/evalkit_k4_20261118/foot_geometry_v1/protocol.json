@@ -1,0 +1,21 @@
+{
+  "version": "k4-foot-geometry-1",
+  "conditions": [
+    "control",
+    "foot_domain",
+    "foot_geometry",
+    "geometry_domain"
+  ],
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "hypothesis": "Separate declared neutral ankle-to-toe-base vector geometry from ankle/subtalar range. Test whether unchanged-axis model geometry contributes to foot direction error and compensating proximal branch changes. No assumed success.",
+  "factors": {
+    "geometry": "scaled_asset versus declared_rig, once per clip; preserve ankle centres, axes, DOFs, couplings",
+    "domain": "existing control versus bilateral ankle/subtalar -90..90 degrees, independent kinematic scope"
+  },
+  "selection": "Same configs for every input; rig absence explicitly retains scaled asset; no window-ID selection",
+  "new_holdout_uses": 0,
+  "max_candidate_workers": 2,
+  "frozen_regression_workers": 6,
+  "promotion": "none"
+}

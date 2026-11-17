@@ -1,0 +1,113 @@
+{
+  "scope": "D-declared rest geometry versus fitted model neutral geometry; diagnostic, not original-action acceptance",
+  "records": [
+    {
+      "window": "002",
+      "method": "kimodo",
+      "side": "left",
+      "asset_vector_m": [
+        0.13780273366590334,
+        -0.04657717517354493,
+        -0.00953799491806362
+      ],
+      "declared_vector_m": [
+        0.125,
+        -0.07499999999999996,
+        0.0
+      ],
+      "angle_deg": 12.840026025811968,
+      "asset_length_m": 0.14577379737113247,
+      "declared_length_m": 0.1457737973711325
+    },
+    {
+      "window": "002",
+      "method": "kimodo",
+      "side": "right",
+      "asset_vector_m": [
+        0.13780273366590334,
+        -0.04657717517354493,
+        0.00953799491806362
+      ],
+      "declared_vector_m": [
+        0.125,
+        -0.07499999999999996,
+        0.0
+      ],
+      "angle_deg": 12.840026025811968,
+      "asset_length_m": 0.14577379737113247,
+      "declared_length_m": 0.1457737973711325
+    },
+    {
+      "window": "010",
+      "method": "ardy",
+      "side": "left",
+      "asset_vector_m": [
+        0.13780273366590334,
+        -0.04657717517354493,
+        -0.00953799491806362
+      ],
+      "declared_vector_m": [
+        0.125,
+        -0.07499999999999996,
+        0.0
+      ],
+      "angle_deg": 12.840026025811968,
+      "asset_length_m": 0.14577379737113247,
+      "declared_length_m": 0.1457737973711325
+    },
+    {
+      "window": "010",
+      "method": "ardy",
+      "side": "right",
+      "asset_vector_m": [
+        0.13780273366590334,
+        -0.04657717517354493,
+        0.00953799491806362
+      ],
+      "declared_vector_m": [
+        0.125,
+        -0.07499999999999996,
+        0.0
+      ],
+      "angle_deg": 12.840026025811968,
+      "asset_length_m": 0.14577379737113247,
+      "declared_length_m": 0.1457737973711325
+    },
+    {
+      "window": "000",
+      "method": "kimodo",
+      "side": "left",
+      "asset_vector_m": [
+        0.13780273366590334,
+        -0.04657717517354493,
+        -0.00953799491806362
+      ],
+      "declared_vector_m": [
+        0.125,
+        -0.07499999999999996,
+        0.0
+      ],
+      "angle_deg": 12.840026025811968,
+      "asset_length_m": 0.14577379737113247,
+      "declared_length_m": 0.1457737973711325
+    },
+    {
+      "window": "000",
+      "method": "kimodo",
+      "side": "right",
+      "asset_vector_m": [
+        0.13780273366590334,
+        -0.04657717517354493,
+        0.00953799491806362
+      ],
+      "declared_vector_m": [
+        0.125,
+        -0.07499999999999996,
+        0.0
+      ],
+      "angle_deg": 12.840026025811968,
+      "asset_length_m": 0.14577379737113247,
+      "declared_length_m": 0.1457737973711325
+    }
+  ]
+}

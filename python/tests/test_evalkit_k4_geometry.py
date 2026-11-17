@@ -85,6 +85,42 @@ class GeometryTests(unittest.TestCase):
 if __name__=='__main__':unittest.main()
 
 class DeclaredCentresTests(unittest.TestCase):
+    def test_declared_feet_keep_ankles_axes_and_markers_after_serialization(self):
+        import biomech
+        from motiogen.evalkit.k.rig_geometry import transport
+        run=Path(json.loads((ROOT/'config/k_degradation_20261117/freeze.json').read_text())['run'])
+        motion=load(run/'inputs/002/kimodo/candidate','kimodo',config=ROOT/'config/evalkit_k4_20261117/input.json')
+        rig=motion.provenance['input_rig'];rest=np.asarray(rig['neutral_joints']);idx={n:i for i,n in enumerate(rig['names'])}
+        with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs/20261117_k4') as temp:
+            a=Path(temp)/'asset.osim';b=Path(temp)/'declared.osim'
+            old=build(motion,a,75,True,'owned_joint_frame')
+            new=build(motion,b,75,True,'owned_joint_frame',foot_geometry='declared_rig')
+            self.assertEqual(old['joint_domain'],new['joint_domain'])
+            self.assertLess(max(new['marker_joint_frame_offset_m'].values()),1e-9)
+            model_a=osim.Model(str(a));state_a=model_a.initSystem()
+            model_b=osim.Model(str(b));state_b=model_b.initSystem()
+            self.assertEqual(model_a.getConstraintSet().getSize(),model_b.getConstraintSet().getSize())
+            for side,s in [('left','l'),('right','r')]:
+                ankle=biomech._child_origin(model_b,state_b,'ankle_'+s)
+                np.testing.assert_allclose(ankle,biomech._child_origin(model_a,state_a,'ankle_'+s),atol=1e-12)
+                vector=biomech._child_origin(model_b,state_b,'mtp_'+s)-ankle
+                expected=transport(rig)@(rest[idx[side+'_foot']]-rest[idx[side+'_ankle']])
+                np.testing.assert_allclose(vector,expected,atol=1e-10)
+                for prefix in ('ankle_','subtalar_','mtp_'):
+                    ja=osim.CustomJoint.safeDownCast(model_a.getJointSet().get(prefix+s))
+                    jb=osim.CustomJoint.safeDownCast(model_b.getJointSet().get(prefix+s))
+                    if ja and jb:
+                        for k in range(6):
+                            xa=ja.getSpatialTransform().getTransformAxis(k);xb=jb.getSpatialTransform().getTransformAxis(k)
+                            self.assertEqual([xa.getAxis().get(i) for i in range(3)],[xb.getAxis().get(i) for i in range(3)])
+            # Declared geometry is independent of sampled motion and reference metadata.
+            altered=copy.deepcopy(motion);altered.positions[:]=0;altered.provenance['reference']='UNREADABLE'
+            again=build(altered,Path(temp)/'again.osim',75,True,'owned_joint_frame',foot_geometry='declared_rig')
+            self.assertEqual(new['foot_geometry'],again['foot_geometry'])
+            positional=load(run/'inputs/008/motionlcm/candidate','motionlcm',config=ROOT/'config/evalkit_k4_20261117/input.json')
+            fallback=build(positional,Path(temp)/'fallback.osim',75,True,'owned_joint_frame',foot_geometry='declared_rig')
+            self.assertEqual(fallback['foot_geometry']['status'],'unavailable')
+
     def test_initialization_search_subset_preserves_final_model(self):
         import biomech,hashlib
         from motiogen.evalkit.k.initialization import search_model
