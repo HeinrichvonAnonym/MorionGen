@@ -75,6 +75,10 @@ def fit(run,work,mass,floor,config):
         for name,change in domain['changes'].items():
             geometry['joint_domain'][name].update(locked=change['locked_after'],range_native=change['range_native_after'])
         geometry['joint_domain_source']='Original asset plus recorded diagnostic lock/range interventions'
+    if settings.get('kinematic_coupling'):
+        if not settings.get('kinematic_domain'):raise ValueError('Coupling extension requires independent model domain')
+        from .coupling_extension import apply as extend_coupling
+        geometry['coupling_extension']=extend_coupling(out/'model.osim',settings['kinematic_coupling'])
     points,names,fps=motion.legacy()
     biomech.write_trc(points,names,fps,out/'markers.trc')
     weights={n:w for n,w in biomech.WEIGHTS.items() if n in biomech.MARKERS or n in geometry['registered_axial_markers']}
