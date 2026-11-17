@@ -7,12 +7,22 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import time
 
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     for name in ('run','code-root','output'):ap.add_argument('--'+name,type=Path,required=True)
-    a=ap.parse_args();config=a.code_root/'config/evalkit_k4_20261117/optimization_v1'
+    ap.add_argument('--config-root',type=Path)
+    ap.add_argument('--wait-for',type=Path);ap.add_argument('--wait-pid',type=int)
+    a=ap.parse_args();config=a.config_root or a.code_root/'config/evalkit_k4_20261117/optimization_v1'
+    deadline=time.monotonic()+4*3600
+    while a.wait_for and not a.wait_for.exists():
+        if time.monotonic()>deadline:raise TimeoutError('Preceding numerical workers did not finish')
+        if a.wait_pid:
+            try:os.kill(a.wait_pid,0)
+            except ProcessLookupError:raise RuntimeError('Preceding run exited without completion')
+        time.sleep(10)
     protocol=json.loads((config/'protocol.json').read_text());panel=json.loads((config/'sentinels.json').read_text())
     a.output.mkdir(parents=True,exist_ok=False)
     shutil.copyfile(config/'protocol.json',a.output/'protocol.json');shutil.copyfile(config/'sentinels.json',a.output/'panel.json')

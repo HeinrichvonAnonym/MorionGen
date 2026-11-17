@@ -1,0 +1,27 @@
+{
+  "version": "k4-position-weight-optimization-2",
+  "conditions": [
+    "multi_pelvis_registered_position1",
+    "multi_pelvis_subtalar_registered_position1"
+  ],
+  "old_counterparts": {
+    "multi_pelvis_registered_position1": "multi_pelvis_registered",
+    "multi_pelvis_subtalar_registered_position1": "multi_pelvis_subtalar_registered"
+  },
+  "prior_candidate_folder": "optimization_v1",
+  "paired_change": "Only position_weight 0.25 -> 1.0; same six preregistered combinations, same owned marker registration, multistart, geometry, domain, clocks and all other refinement settings.",
+  "reason": "022 v1 multistart removed branch-switch jumps. Owned-marker repair left refined torso/shoulder residual essentially unchanged; investigate direction/position weighting rather than attribute it to registration.",
+  "comparisons": [
+    "D-R",
+    "F-D",
+    "F-R"
+  ],
+  "limits": {
+    "workers": 1,
+    "numerical_threads": 1,
+    "min_free_gib": 80,
+    "start_after": "original panel numerical workers finish; v1 remains at one worker"
+  },
+  "promotion": "none",
+  "new_holdout_uses": 0
+}

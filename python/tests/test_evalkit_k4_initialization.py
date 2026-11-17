@@ -1,4 +1,5 @@
 import sys
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -12,6 +13,17 @@ from motiogen.evalkit.k.initialization import seed_definitions,weighted_marker_l
 
 
 class InitializationTests(unittest.TestCase):
+    def test_position_weight_pair_changes_only_declared_factor(self):
+        folder=ROOT/'config/evalkit_k4_20261117'
+        for name in ('multi_pelvis_registered','multi_pelvis_subtalar_registered'):
+            a=json.loads((folder/'optimization_v1'/f'{name}.json').read_text())
+            b=json.loads((folder/'optimization_v2'/f'{name}_position1.json').read_text())
+            self.assertEqual(a['refinement']['position_weight'],.25)
+            self.assertEqual(b['refinement']['position_weight'],1.)
+            for x in (a,b):
+                x.pop('condition');x['refinement'].pop('parameter_source');x['refinement'].pop('position_weight')
+            self.assertEqual(a,b)
+
     def fixture(self,path):
         m=osim.Model(str(biomech.MODEL));state=m.initSystem();cs=m.getCoordinateSet()
         labels=[cs.get(i).getName() for i in range(cs.getSize())]
