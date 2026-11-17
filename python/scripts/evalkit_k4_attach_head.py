@@ -18,6 +18,10 @@ def main():
     if 'body_positions' in data:raise ValueError('Head already attached')
     shutil.copyfile(a.fit/'model.osim',a.output/'model.osim')
     labels=list(data['labels']);times=data['times'];body_names=list(data['names'])
+    source_receipt=json.loads((a.fit/'receipt.json').read_text())
+    if 'coordinates_pre_root' not in data:
+        if source_receipt.get('root_policy','IK')!='IK':raise ValueError('Missing pre-root coordinates for compensated fit')
+        data['coordinates_pre_root']=data['coords'].copy();data['positions_pre_root']=data['positions'].copy()
     definition,head=attach(motion,a.output/'model.osim',labels,data['coords'],times)
     _,before=attach(motion,a.output/'model.osim',labels,data['coordinates_pre_root'],times,fixed_definition=definition)
     data['body_positions']=data['positions'].copy();data['body_names']=data['names'].copy()

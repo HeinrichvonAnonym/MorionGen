@@ -21,11 +21,13 @@ def derive(fit,source,method,window,output,control=False):
     if np.max(np.linalg.norm(rebuilt-data.get('body_positions',data['positions']),axis=-1))>1e-7:raise ValueError('Saved/model FK mismatch')
     coordinates=data.get('coordinates_pre_root',data['coords'])
     before,_=model_fk(model,labels,coordinates,assemble=False)
-    _,root=compensate(model,times,labels,coordinates,motion)
+    after_coordinates,root=compensate(model,times,labels,coordinates,motion)
+    view_coordinates={'before':coordinates,'after':after_coordinates}
     views={'before':before,'after':root['after']}
     if control:
         direct,_,q=model_fk(model,labels,data['coordinates_filtered_unassembled'],direct_couplers=True,return_coordinates=True)
-        _,dr=compensate(model,times,labels,q,motion)
+        direct_after_coordinates,dr=compensate(model,times,labels,q,motion)
+        view_coordinates.update(filtered_direct_before=q,filtered_direct_after=direct_after_coordinates)
         views.update({'filtered_direct_before':direct,'filtered_direct_after':dr['after']})
     else:
         if np.max(abs(root['after']-data.get('body_positions',data['positions'])))>1e-7:raise ValueError('Root replay mismatch')
@@ -37,9 +39,8 @@ def derive(fit,source,method,window,output,control=False):
         dest=output/name/window/method;dest.mkdir(parents=True,exist_ok=True)
         view_names=names;extra={}
         if head_enabled:
-            if name not in ('before','after'):raise ValueError('Head chain needs explicit view coordinates')
             from motiogen.evalkit.k.head_neck import attach,combine
-            q=coordinates if name=='before' else data['coords']
+            q=view_coordinates[name]
             definition,chain=attach(motion,model,labels,q,times,
                 fixed_definition=json.loads((fit/'head_neck_model.json').read_text()))
             p,view_names=combine(p,names,chain)
