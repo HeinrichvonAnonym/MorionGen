@@ -1,0 +1,60 @@
+{
+  "version": "k4-hip-domain-probe-1",
+  "hypothesis": "074 left hip adduction hits -50 for all frames and axial rotation repeatedly hits \u00b140. Compare range factors and initialization independently, retaining fixed geometry and objective. Broad ranges are diagnostic coordinate domains, not physiology.",
+  "conditions": {
+    "unchanged": {},
+    "hip_rotation": {
+      "hip_rotation_l": [
+        -90,
+        90
+      ],
+      "hip_rotation_r": [
+        -90,
+        90
+      ]
+    },
+    "hip_adduction": {
+      "hip_adduction_l": [
+        -90,
+        90
+      ],
+      "hip_adduction_r": [
+        -90,
+        90
+      ]
+    },
+    "both": {
+      "hip_rotation_l": [
+        -90,
+        90
+      ],
+      "hip_rotation_r": [
+        -90,
+        90
+      ],
+      "hip_adduction_l": [
+        -90,
+        90
+      ],
+      "hip_adduction_r": [
+        -90,
+        90
+      ]
+    }
+  },
+  "seeds": [
+    "previous_fit",
+    "neutral"
+  ],
+  "refinement": {
+    "position_scale_m": 0.05,
+    "direction_scale_deg": 5,
+    "position_weight": 1.0,
+    "continuity_weight": 0,
+    "max_nfev": 100,
+    "parameter_source": "Paired domain diagnostic; common convergence budget 50 vs previous 12, same objective weights; observed convergence probe retained separately.",
+    "include_pelvis_line": true
+  },
+  "frames": "first,middle,last; fixed before fits",
+  "new_holdout_uses": 0
+}

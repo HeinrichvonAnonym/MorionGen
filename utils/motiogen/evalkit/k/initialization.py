@@ -54,7 +54,7 @@ def seed_definitions(model_path,points,names):
     else:unavailable['heading']='horizontal first-frame hip line missing or degenerate'
     return seeds,{'knee_mapping':scans,'unavailable':unavailable,
         'source':'D first-frame joint centres and fixed model coordinate-to-geometry mapping',
-        'grid':'281 samples within original knee coordinate range; seed only, final IK is continuous'}
+        'grid':'281 samples within declared current-model knee coordinate range; seed only, final IK is continuous'}
 
 
 def weighted_marker_loss(model_path,labels,coordinates,points,names,weights):

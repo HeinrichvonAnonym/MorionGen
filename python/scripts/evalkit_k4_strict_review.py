@@ -12,11 +12,14 @@ def main():
     a=p.parse_args()
     if a.output.exists():raise ValueError('Keep review snapshots immutable')
     panel=json.loads(a.panel.read_text());policy=json.loads(a.policy.read_text());rows=[]
+    missing=[a.baseline/f"{item['window']}_{item['method']}.json" for item in panel['records']
+             if not (a.baseline/f"{item['window']}_{item['method']}.json").is_file()]
+    if missing:raise FileNotFoundError('Declared temporal baseline is incomplete: '+', '.join(map(str,missing)))
     for item in panel['records']:
         w,m=item['window'],item['method'];f=a.scores/f'{w}_{m}.json';baseline=a.baseline/f'{w}_{m}.json'
         row={'window':w,'method':m,'status':'pending','score':str(f)}
         if f.exists():
-            s=json.loads(f.read_text());b=json.loads(baseline.read_text()) if baseline.exists() else None
+            s=json.loads(f.read_text());b=json.loads(baseline.read_text())
             result=assess(s,b,policy);row.update(status=result['status'],acceptance=result)
             row['comparison_metrics']={pair:s['comparisons'][pair] for pair in ['D-R','F-D','F-R']}
             row['head_neck_rotation_comparisons']=s.get('head_neck_rotation_comparisons')

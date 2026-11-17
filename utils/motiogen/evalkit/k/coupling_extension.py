@@ -1,8 +1,8 @@
 """Explicit high-flexion continuation for independent kinematics, never force use.
 
 The original primary knee coordinate remains unchanged. Auxiliary rotations
-return smoothly to zero at full folding; translations approach their boundary
-values. This is a declared geometric extension, not a physiological model.
+approach declared endpoints (fixed-FK folding in v2); translations approach their
+boundary values. This is a geometric extension, not a physiological model.
 """
 import numpy as np
 from .config import digest

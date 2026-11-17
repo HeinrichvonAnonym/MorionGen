@@ -1,7 +1,7 @@
 """Experimental input-only pose refinement on a fixed OpenSim model.
 
 Directions use a 5-degree chord scale and positions use 5 cm. Both are explicit
-engineering weights. The original model's ranges/locks and structure are kept.
+engineering weights. The supplied model's declared ranges/locks are respected.
 """
 import numpy as np
 from scipy.optimize import least_squares
