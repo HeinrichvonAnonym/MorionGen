@@ -62,10 +62,17 @@ def refine_legs(model_path,times,labels,data,source,names,settings):
         lo=np.array([c.getRangeMin() for c in coords])+1e-7;hi=np.array([c.getRangeMax() for c in coords])-1e-7
         joints=[n+'_'+s for n in ['hip','walker_knee','ankle','mtp']]
         target=source[:,[names.index(side+'_'+n) for n in ['hip','knee','ankle','foot']]]
-        optimized=[];previous=None
-        for i in indices:
+        optimized=np.empty((len(indices),len(coords)));previous=None;anchor_solution=None
+        order=np.arange(len(indices));anchor=0;anchor_receipt={'enabled':False}
+        if settings.get('anchor_bent_frame',False):
+            from .branch_order import anchored_order
+            order,anchor,anchor_receipt=anchored_order(target[indices],settings.get('anchor_min_plane_angle_deg',10.))
+            anchor_receipt['time']=float(times[indices[anchor]])
+        for k in order:
+            i=indices[k]
+            if k==anchor+1 and anchor_solution is not None:previous=anchor_solution.copy()
             biomech._set(model,state,labels,data[i]);wanted=unit(np.diff(target[i],axis=0));seed=np.clip(np.deg2rad(data[i,cols]),lo,hi)
-            if not np.isfinite(wanted).all():optimized.append(seed);continue
+            if not np.isfinite(wanted).all():optimized[k]=seed;continue
             def residual(x,foot_weight):
                 for c,v in zip(coords,x):c.setValue(state,float(v),False)
                 model.realizePosition(state);actual=np.array([biomech._child_origin(model,state,j) for j in joints])
@@ -82,7 +89,8 @@ def refine_legs(model_path,times,labels,data,source,names,settings):
                 joint_seeds.insert(0,np.clip(previous,lo,hi))
             joint=[least_squares(lambda x:residual(x,settings['foot_weight']),x,bounds=(lo,hi),max_nfev=settings['max_nfev']) for x in joint_seeds]
             best=min(joint,key=lambda s:float(s.fun@s.fun)).x
-            optimized.append(best);previous=best
+            optimized[k]=best;previous=best
+            if k==anchor:anchor_solution=best.copy()
         values=PchipInterpolator(times[indices],np.asarray(optimized),axis=0)(times)
         candidate=data.copy();candidate[:,cols]=np.rad2deg(values);raw[:,cols]=candidate[:,cols]
         def points(q):
@@ -92,7 +100,7 @@ def refine_legs(model_path,times,labels,data,source,names,settings):
             return np.asarray(result)
         accepted,receipt=accept_window(points(data),points(candidate),target,times,settings)
         if accepted:out[:,cols]=candidate[:,cols]
-        diagnostics[side]={'accepted':accepted,'coordinates':coord_names,**receipt}
+        diagnostics[side]={'accepted':accepted,'coordinates':coord_names,'anchor':anchor_receipt,**receipt}
     from .constraints import synchronize_couplers
     out,coupling=synchronize_couplers(model_path,model,labels,out)
     raw,_=synchronize_couplers(model_path,model,labels,raw)
