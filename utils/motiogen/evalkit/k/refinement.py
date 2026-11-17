@@ -44,6 +44,8 @@ def refine(model_path,motion,times,labels,data,settings):
         if group=='torso':return unit(np.stack([.5*(a[2]+a[3]-a[0]-a[1]),a[3]-a[2]]))
         return unit(np.diff(a,axis=0))
     for group,coord_names,joints,source_names in groups:
+        if settings.get('independent_coordinates_only',False):
+            coord_names=[n for n in coord_names if not cs.get(n).getLocked(state) and not cs.get(n).isConstrained(state)]
         coords=[cs.get(n) for n in coord_names];columns=[labels.index(n) for n in coord_names]
         lo=np.array([c.getRangeMin() for c in coords])+1e-7;hi=np.array([c.getRangeMax() for c in coords])-1e-7
         errors=[];failures=0
@@ -69,6 +71,10 @@ def refine(model_path,motion,times,labels,data,settings):
             if rescue and float(initial@initial)>.01:
                 rng=np.random.default_rng(1729)
                 seeds.extend(lo+(hi-lo)*f for f in rng.uniform(.15,.85,(6,len(x0))))
+            if settings.get('geometry_knee_seed',False) and group.endswith('leg'):
+                from .solver_seeds import knee_seed
+                seed=knee_seed(x0,coord_names,target,lo,hi)
+                if seed is not None:seeds.append(seed)
             # Prefer the better observed-input seed; retry the other only for a large residual.
             seeds.sort(key=lambda x:float(residual(x)@residual(x)))
             # Continue the preceding coordinate chart before considering a new
@@ -77,7 +83,7 @@ def refine(model_path,motion,times,labels,data,settings):
             if settings.get('continue_arm_branch',False) and group.endswith('arm') and group in previous:
                 seeds.insert(0,np.clip(previous[group],lo,hi))
             for seed_index,seed in enumerate(seeds):
-                if seed_index and min(v[0] for v in candidates)<.01:break
+                if seed_index and min(v[0] for v in candidates)<.01 and not (settings.get('geometry_knee_seed',False) and group.endswith('leg')):break
                 sol=least_squares(residual,seed,bounds=(lo,hi),max_nfev=settings['max_nfev'],ftol=1e-5,xtol=1e-5,gtol=1e-5)
                 candidates.append((float(sol.fun@sol.fun),sol.x))
                 if (seed_index==0 and settings.get('continue_arm_branch',False)

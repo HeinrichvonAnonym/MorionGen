@@ -67,7 +67,7 @@ def retarget(reference,method,policy='legacy'):
     indices={n:i for i,n in enumerate(sn)}
     rotation_indices={n:i for i,n in enumerate(rn)}
     source_for=[target_alias.get(n,n) for n in names]
-    if policy not in ('legacy','topology_v2'):
+    if policy not in ('legacy','topology_v2','direction_v3'):
         raise ValueError('Unknown retarget policy: '+policy)
     mapping_receipt={}
     if policy!='legacy':
@@ -106,12 +106,16 @@ def retarget(reference,method,policy='legacy'):
     root=reference.positions[:,indices['pelvis']]
     for j,parent in enumerate(parents):
         p[:,j]=root if parent<0 else p[:,parent]+np.einsum('tij,j->ti',r[:,parent],rest[j]-rest[parent])
+    transfer_receipt={}
+    if policy=='direction_v3':
+        from .trunk_transfer import transfer
+        p,r,transfer_receipt=transfer(reference,sn,names,source_for,rest,parents,r,root)
     discrepancies={n:float(np.nanmedian(np.linalg.norm(p[:,j]-reference.positions[:,indices[s]],axis=-1)))
                    for j,(n,s) in enumerate(zip(names,source_for)) if s in indices}
     if reference.provenance.get('scope') == 'isolated_head_thorax_on_template_body':
         supported &= np.asarray([s in ('head','spine3') for s in source_for])
     return Motion(p,names,reference.times,method,r,names,{'retarget_bases':bases.tolist(),
-        'retarget_policy':policy,'spine_mapping':mapping_receipt,
+        'retarget_policy':policy,'spine_mapping':mapping_receipt,'trunk_transfer':transfer_receipt,
         'source_observed_joint_mask':supported.tolist(),'prior_joints':[n for n,v in zip(names,supported) if not v],
         'position_median_error_m':discrepancies,'shape':'fixed_target_template',
         'precision_scope':'target_rig_conversion; anatomical transfer accuracy separately measured'}),parents
