@@ -1,0 +1,37 @@
+{
+  "version": "native-optimization-20261118-1",
+  "source_commit": "57fcb6f",
+  "records": [
+    {
+      "window": "074",
+      "method": "kimodo"
+    },
+    {
+      "window": "070",
+      "method": "chois"
+    }
+  ],
+  "hypotheses": {
+    "074": "Reuse completed v6 four-way same-model native-fit controls; verify under whole SO3 and knot-preserving export before claiming improvement.",
+    "070": "Modern same-model pose vs input-direction-error continuity full-window fits; retain old common_v1 and separately probe its fixed-model constraints/solver.",
+    "clock": "Uniform export at an integer multiple of D frame rate, >=100 Hz, preserves all native samples without reference information. Compare N, old uniform Euler, old uniform SO3 and new native-multiple SO3."
+  },
+  "boundaries": [
+    "D and declared rig/model only in runtime",
+    "R and common lengths independent scoring",
+    "No per-window runtime selector",
+    "Fixed source-jump masks; original-R clock and D clock both reported",
+    "No new holdout or force qualification"
+  ],
+  "runtime_conditions": [
+    "pose",
+    "temporal"
+  ],
+  "new_holdout_uses": 0,
+  "limits": {
+    "cpu_processes": 3,
+    "numerical_threads": 1,
+    "min_free_GiB": 80
+  },
+  "promotion": "none until consistent full development regression"
+}

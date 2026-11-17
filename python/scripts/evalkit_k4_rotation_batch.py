@@ -21,7 +21,7 @@ def main():
         with (out/f'{w}_{m}.log').open('w') as log:
             try:
                 if shutil.disk_usage(out).free<80*1024**3:raise RuntimeError('80 GiB reserve reached')
-                subprocess.run([sys.executable,str(ROOT/'python/scripts/evalkit_k4_rotation_probe.py'),'--fit',row['fit'],'--input',row['input'],'--output',str(dest),'--window',w,'--method',m,'--whole-body'],env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+                subprocess.run([sys.executable,str(ROOT/'python/scripts/evalkit_k4_rotation_probe.py'),'--fit',row['fit'],'--input',row['input'],'--output',str(dest),'--window',w,'--method',m,'--whole-body',*(['--native-multiple'] if 'whole_native_grid' in protocol['conditions'] else [])],env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
                 replay=json.loads((dest/'receipt.json').read_text())
                 receipt['legacy_control_failures']=replay.get('legacy_control_failures',{})
                 for condition in protocol['conditions']:

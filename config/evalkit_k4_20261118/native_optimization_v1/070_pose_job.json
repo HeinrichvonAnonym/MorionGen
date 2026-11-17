@@ -1,0 +1,8 @@
+{
+  "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/070/chois/candidate",
+  "method": "chois",
+  "mass_kg": 75.0,
+  "floor_m": -2.8854088155648436e-05,
+  "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/native_optimization_20261118_v1/fits/pose/070/chois",
+  "fit_config": "/home/heinrich/MorionGen/config/evalkit_k4_20261118/native_optimization_v1/pose.json"
+}

@@ -19,6 +19,7 @@ def main():
     for name in ('fit','input','output'):p.add_argument('--'+name,type=Path,required=True)
     for name in ('window','method'):p.add_argument('--'+name,required=True)
     p.add_argument('--whole-body',action='store_true',help='Replay all eligible joint rotations; also audit constrained joints')
+    p.add_argument('--native-multiple',action='store_true',help='Add independent SO(3) export on a uniform grid containing every native input knot')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
     motion=load(a.input,a.method,config=ROOT/'config/evalkit_k4_20261117/input.json')
     saved=json.loads((a.fit/'receipt.json').read_text())
@@ -38,6 +39,13 @@ def main():
         from motiogen.evalkit.k.resampling import interpolate_rotations
         whole,whole_receipt=interpolate_rotations(model,labels,q,t,new,linear)
         conditions.append(('whole_so3',new,whole));receipt['whole_body']=whole_receipt
+    if a.native_multiple:
+        from motiogen.evalkit.k.resampling import interpolate_rotations
+        from motiogen.evalkit.k.resampling.clock import native_multiple_clock
+        aligned,aligned_linear=resample_native(t,labels,q,clock_policy='native_multiple')
+        aligned_q,aligned_receipt=interpolate_rotations(model,labels,q,t,aligned,aligned_linear)
+        _,clock_receipt=native_multiple_clock(t)
+        conditions.append(('whole_native_grid',aligned,aligned_q));receipt['native_clock_export']={'clock':clock_receipt,'rotations':aligned_receipt}
     definition_file=a.fit/'head_neck_model.json'
     if definition_file.exists():
         definition=json.loads(definition_file.read_text());definition_source=str(definition_file)

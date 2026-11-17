@@ -27,9 +27,12 @@ def main():
     protocol=json.loads(a.protocol.read_text());a.output.mkdir(parents=True,exist_ok=False)
     motion=load(a.input,a.method,config=ROOT/'config/evalkit_k4_20261117/input.json')
     points,names,_=motion.legacy()
-    t,labels,q=biomech.read_storage(a.source/'coordinates_refined_native.mot')
-    if len(q)!=len(points) or not np.allclose(t,motion.times-motion.times[0],atol=1e-8):
-        raise ValueError('Native D clock and warm-start coordinates must coincide')
+    native_file=a.source/'coordinates_refined_native.mot'
+    if not native_file.exists():native_file=a.source/'ik/ik.mot'
+    t,labels,q=biomech.read_storage(native_file)
+    from motiogen.evalkit.k.timebase import native_clock
+    t,clock=native_clock(t,motion.times)
+    if len(q)!=len(points):raise ValueError('Native D clock and warm-start coordinates must coincide')
     indices=protocol.get('frame_indices',[0,len(q)//2,len(q)-1])
     if not indices or any(type(i) is not int or not 0<=i<len(q) for i in indices):
         raise ValueError('Declared probe frames are outside the input clock')
@@ -42,7 +45,7 @@ def main():
     for condition,ranges in protocol['conditions'].items():
         folder=a.output/condition;folder.mkdir();modelpath=folder/'model.osim'
         shutil.copyfile(a.source/'model.osim',modelpath)
-        domain=apply(modelpath,{'base':'release_subtalar_original_range','scope':'independent_kinematic',
+        domain=apply(modelpath,{'base':protocol.get('domain_base','release_subtalar_original_range'),'scope':'independent_kinematic',
                                 'coordinate_ranges_deg':ranges})
         model=osim.Model(str(modelpath));state=model.initSystem();cs=model.getCoordinateSet()
         defaults=np.array([cs.get(n).getDefaultValue()*(180/np.pi if cs.get(n).getMotionType()==1 else 1) for n in labels])

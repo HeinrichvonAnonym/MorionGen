@@ -1,0 +1,51 @@
+{
+  "version": "070-shoulder-domain-1",
+  "frame_indices": [
+    8,
+    43,
+    70,
+    71,
+    72,
+    73
+  ],
+  "selection": "Frozen from native-FK vs D diagnostics: early drift, first shoulder twist boundary, before/at/after continuous-window jump at2.4s. R not used in selection.",
+  "domain_base": "preserve_existing",
+  "conditions": {
+    "original": {},
+    "shoulder_full_chart": {
+      "arm_flex_l": [
+        -180,
+        180
+      ],
+      "arm_rot_l": [
+        -180,
+        180
+      ],
+      "arm_flex_r": [
+        -180,
+        180
+      ],
+      "arm_rot_r": [
+        -180,
+        180
+      ]
+    }
+  },
+  "seeds": [
+    "previous_fit",
+    "neutral"
+  ],
+  "refinement": {
+    "position_scale_m": 0.05,
+    "direction_scale_deg": 5,
+    "position_weight": 1.0,
+    "continuity_weight": 0.0,
+    "max_nfev": 150,
+    "parameter_source": "Registered v6 controls: pose residuals5deg/5cm; added-direction velocity scale10deg/s with weight0.25; pelvis-line weight2 is a separate engineering hypothesis. No R or per-window selector.",
+    "include_pelvis_line": true,
+    "extra_start": "neutral_knee_if_target_failed",
+    "direction_continuity_weight": 0.0,
+    "direction_rate_scale_deg_s": 10.0
+  },
+  "scope": "Isolated D-only fixed-geometry shoulder-domain/seed diagnostic; no temporal acceptance or force qualification"
+}

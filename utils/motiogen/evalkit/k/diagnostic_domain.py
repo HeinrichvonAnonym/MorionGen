@@ -7,13 +7,13 @@ def apply(model_path,policy):
     import numpy as np
     ranges={}
     if isinstance(policy,dict):
-        if set(policy)!={'base','coordinate_ranges_deg','scope'} or policy['base']!='release_subtalar_original_range':
+        if set(policy)!={'base','coordinate_ranges_deg','scope'} or policy['base'] not in ('release_subtalar_original_range','preserve_existing'):
             raise ValueError('Explicit diagnostic range contract required')
         if policy['scope'] not in ('counterfactual_kinematic_only','independent_kinematic'):raise ValueError('Explicit kinematic-only domain required')
         ranges=policy['coordinate_ranges_deg']
     elif policy!='release_subtalar_original_range':raise ValueError('Unknown diagnostic model-domain policy')
     before=digest(model_path);model=osim.Model(str(model_path));changes={}
-    for side in ('l','r'):
+    for side in (('l','r') if not isinstance(policy,dict) or policy['base']=='release_subtalar_original_range' else ()):
         name='subtalar_angle_'+side;c=model.updCoordinateSet().get(name)
         changes[name]={'locked_before':c.getDefaultLocked(),'locked_after':False,
                        'range_native_before':[c.getRangeMin(),c.getRangeMax()]}

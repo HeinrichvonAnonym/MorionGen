@@ -32,7 +32,8 @@ def write_coordinates(path,times,labels,coordinates):
     table.addTableMetaDataString('inDegrees','yes');osim.STOFileAdapter.write(table,str(path))
 
 
-def resample_native(times,labels,coordinates,rate=100.):
+def resample_native(times,labels,coordinates,rate=100.,clock_policy="uniform_endpoint"):
+
     """Preserve native samples as targets, unwrap only the free heading chart.
 
     Use a uniform grid including both boundaries. Actual spacing is recorded;
@@ -42,7 +43,11 @@ def resample_native(times,labels,coordinates,rate=100.):
     if 'pelvis_rotation' in labels:
         j=list(labels).index('pelvis_rotation');data[:,j]=np.rad2deg(np.unwrap(np.deg2rad(data[:,j])))
     n=max(1,int(round((times[-1]-times[0])*rate)))
-    new=np.linspace(times[0],times[-1],n+1)
+    if clock_policy=='uniform_endpoint':new=np.linspace(times[0],times[-1],n+1)
+    elif clock_policy=='native_multiple':
+        from .resampling.clock import native_multiple_clock
+        new,_=native_multiple_clock(times,rate)
+    else:raise ValueError('Unknown export clock policy')
     return new,np.stack([np.interp(new,times,c) for c in data.T],1)
 
 
@@ -59,6 +64,9 @@ def fit(run,work,mass,floor,config):
     if settings.get('rotation_resampling'):
         if settings.get('hip_rotation_resampling') or settings.get('postprocess')!='native_preserving' or settings['rotation_resampling']!='whole_body_so3':
             raise ValueError('Select one explicit native-preserving rotation resampling policy')
+    clock_policy=settings.get('export_clock','uniform_endpoint')
+    if clock_policy not in ('uniform_endpoint','native_multiple'):raise ValueError('Unknown export clock policy')
+    if clock_policy=='native_multiple' and settings.get('postprocess')!='native_preserving':raise ValueError('Native-knot export requires native-preserving postprocessing')
     motion=load(run,settings.get('method'),config=ROOT/'config/evalkit_k4_20261117/input.json')
     out=Path(work);out.mkdir(parents=True,exist_ok=True)
     key={'inputs':motion.provenance['inputs'],'config':settings,'mass_kg':mass,'floor_m':floor,
@@ -114,9 +122,13 @@ def fit(run,work,mass,floor,config):
         refinement['body_target_source']=body_target_receipt
         write_coordinates(out/'coordinates_refined_native.mot',nt,labels,native)
         (out/'refinement.json').write_text(json.dumps(refinement,indent=2)+'\n')
-    rotation_resampling=None
+    rotation_resampling=None;export_clock_receipt={'policy':clock_policy}
     if settings.get('postprocess','legacy_lowpass')=='native_preserving':
-        times,coordinates=resample_native(nt,labels,native)
+        minimum_rate=float(settings.get('resample_min_rate_hz',100.))
+        times,coordinates=resample_native(nt,labels,native,minimum_rate,clock_policy)
+        if clock_policy=='native_multiple':
+            from .resampling.clock import native_multiple_clock
+            _,export_clock_receipt=native_multiple_clock(nt,minimum_rate)
         if settings.get('hip_rotation_resampling'):
             if settings['hip_rotation_resampling']!='joint_slerp':raise ValueError('Unknown hip resampling policy')
             from .rotation_resampling import hip_slerp
@@ -128,7 +140,7 @@ def fit(run,work,mass,floor,config):
         if refinement is not None:raise ValueError('Refined coordinates require explicit native-preserving resampling')
         times,labels,coordinates=biomech.write_coordinates(out/'ik/ik.mot',out/'coordinates.mot')
     direct=settings.get('constraint_policy','assembly')=='direct_couplers'
-    physical_times=(np.linspace(motion.times[0],motion.times[-1],len(times))
+    physical_times=((times-times[0])+motion.times[0]
                     if settings.get('postprocess')=='native_preserving' else times+motion.times[0])
     fitted,fitted_names,consistent=model_fk(out/'model.osim',labels,coordinates,return_coordinates=True,direct_couplers=direct)
     pre_root=fitted.copy();pre_root_coordinates=consistent.copy();root_shift=np.zeros((len(times),3));root_valid=np.zeros(len(times),bool)
@@ -182,7 +194,7 @@ def fit(run,work,mass,floor,config):
              'coordinate_contract':'coordinates.mot satisfies declared model constraints; pre-root and pre-constraint coordinates preserved separately',
              'constraint_policy':settings.get('constraint_policy','assembly'),
              'resampling':settings.get('postprocess','legacy_lowpass'),
-             'rotation_resampling':rotation_resampling,
+             'rotation_resampling':rotation_resampling,'export_clock':export_clock_receipt,
              'root_policy':settings['root_policy'],'refinement_ran':refinement is not None,
              'initialization':initialization,
              'output_dt_s':float(np.median(np.diff(times))),
