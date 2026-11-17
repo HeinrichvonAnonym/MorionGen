@@ -18,7 +18,7 @@ def bounded_jacobian(function,x,lower,upper,step):
     return np.stack(columns,axis=1)
 
 
-def refine(model_path, labels, coordinates, points, names, settings, orientation_targets=None):
+def refine(model_path, labels, coordinates, points, names, settings, orientation_targets=None,times=None):
     import opensim as osim
     import biomech
     model=osim.Model(str(model_path));state=model.initSystem();cs=model.getCoordinateSet()
@@ -60,15 +60,22 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
     jw=float(settings.get('joint_angle_weight',0.))
     vw=float(settings.get('target_violation_weight',0.));margin=float(settings.get('target_margin_fraction',1.))
     pw=float(settings.get('position_weight',.25));cw=float(settings.get('continuity_weight',.02))
+    tw=float(settings.get('direction_continuity_weight',0.))
+    rate_scale=np.deg2rad(float(settings.get('direction_rate_scale_deg_s',10.)))
+    if tw:
+        times=np.asarray(times)
+        if times.shape!=(len(coordinates),) or not np.isfinite(times).all() or np.any(np.diff(times)<=0) or rate_scale<=0:
+            raise ValueError('Physical input clock required for direction continuity')
+    pelvis_weight=float(settings.get('pelvis_line_weight',1.))
     native_weight=float(settings.get('native_frame_weight',0.))
     orientation_targets=orientation_targets or {}
     for body,target_rotation in orientation_targets.items():
         if target_rotation.shape!=(len(coordinates),3,3):raise ValueError('Native body target clock/layout mismatch')
         if body not in ('pelvis','torso'):raise ValueError('Undeclared body target')
-    result=np.array(coordinates,copy=True);receipts=[];previous=None;knee_seed_tables=None
+    result=np.array(coordinates,copy=True);receipts=[];previous=None;knee_seed_tables=None;previous_direction_error=None
     for frame,(row,goal) in enumerate(zip(coordinates,target)):
         if not np.isfinite(goal).all():
-            receipts.append({'status':'input_missing','selected':'nominal'});previous=None;continue
+            receipts.append({'status':'input_missing','selected':'nominal'});previous=None;previous_direction_error=None;continue
         biomech._set(model,state,labels,row)
         x0=np.clip(np.deg2rad(row[cols]),lo+1e-9,hi-1e-9)
         gu=unit(vectors(goal));gp=goal-goal[hip].mean(0);ga=joint_angles(goal)
@@ -80,7 +87,9 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
         def residual(x,continuity=True):
             p=evaluate(x);u=unit(vectors(p));local=p-p[hip].mean(0)
             directional=(u-gu)/direction_scale;positional=(local-gp)/position_scale
-            terms=[directional.ravel(),(pw*positional).ravel()]
+            weighted=directional.copy()
+            if settings.get('include_pelvis_line',False):weighted[-1]*=pelvis_weight
+            terms=[weighted.ravel(),(pw*positional).ravel()]
             if jw:
                 angular=(joint_angles(p)-ga)/np.deg2rad(float(settings.get('direction_scale_deg',5)))
                 terms.append(jw*angular)
@@ -98,9 +107,15 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
                     current_rotation=np.array([[tf.R().get(i,j) for j in range(3)] for i in range(3)])
                     terms.append((native_weight*(current_rotation-goal_rotation)/(np.sqrt(2)*direction_scale)).ravel())
             if continuity and previous is not None:terms.append(cw*(x-previous)/direction_scale)
+            if continuity and tw and previous_direction_error is not None:
+                # Penalize added direction velocity, not the input motion itself.
+                terms.append((tw*((u-gu)-previous_direction_error)/(rate_scale*(times[frame]-times[frame-1]))).ravel())
             return np.concatenate(terms)
         initial_loss=float(np.dot(residual(x0,False),residual(x0,False)))
-        candidates=[('nominal',x0,initial_loss)]
+        def selection_loss(x,pose_loss):
+            value=residual(x,True) if tw else None
+            return float(np.dot(value,value)) if tw else pose_loss
+        candidates=[('nominal',x0,initial_loss,selection_loss(x0,initial_loss))]
         starts=[('nominal_start',x0)]
         if previous is not None:starts.append(('continuity_start',np.clip(previous,lo+1e-9,hi-1e-9)))
         attempts=[]
@@ -115,11 +130,11 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
             attempts.append({'start':name,'nfev':int(opt.nfev),'status':int(opt.status),
                              'optimality':float(opt.optimality),'cost_with_continuity':float(opt.cost),
                              'input_loss':loss})
-            if np.isfinite(loss):candidates.append((name,opt.x,loss))
+            if np.isfinite(loss):candidates.append((name,opt.x,loss,selection_loss(opt.x,loss)))
         for name,start in starts:attempt(name,start)
         restart_triggered=False
         if extra_start=='neutral_knee_if_target_failed':
-            best=min(candidates,key=lambda c:c[2]);p=evaluate(best[1])
+            best=min(candidates,key=lambda c:c[3]);p=evaluate(best[1])
             direction_error=np.linalg.norm(unit(vectors(p))-gu,axis=-1)/direction_scale
             position_error=np.linalg.norm((p-p[hip].mean(0))-gp,axis=-1)/position_scale
             angle_error=abs(joint_angles(p)-ga)/np.deg2rad(float(settings.get('direction_scale_deg',5)))
@@ -139,14 +154,16 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
                             start[active.index(name)]=np.deg2rad(table['coordinate_deg'][index])
                         else:start[active.index(name)]=x0[active.index(name)]
                 attempt('neutral_knee_start',np.clip(start,lo+1e-9,hi-1e-9))
-        name,chosen,loss=min(candidates,key=lambda c:c[2])
-        evaluate(chosen)
+        name,chosen,loss,selected_loss=min(candidates,key=lambda c:c[3])
+        final_points=evaluate(chosen)
         for j,label in enumerate(labels):
             c=cs.get(label);result[frame,j]=c.getValue(state)*(180/np.pi if c.getMotionType()==1 else 1)
         previous=np.deg2rad(result[frame,cols])
+        previous_direction_error=unit(vectors(final_points))-gu
         receipts.append({'status':'computed','selected':name,'before_loss':initial_loss,'after_loss':loss,'attempts':attempts,
+                         'selection_loss':selected_loss,
                          'extra_start_triggered':restart_triggered})
     return result,{'frames':receipts,'active_coordinates':active,'settings':settings,
                    'neutral_restart_knee_mapping':knee_seed_tables,
                    'native_target_bodies':list(orientation_targets),'scope':'experimental local direction/position refinement; full-window regression gates required',
-                   'candidate_selection':'input-only objective; nominal retained as a per-frame candidate'}
+                   'candidate_selection':('input pose plus physical direction-error continuity; nominal retained' if tw else 'input-only objective; nominal retained as a per-frame candidate')}

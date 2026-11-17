@@ -85,6 +85,19 @@ class GeometryTests(unittest.TestCase):
 if __name__=='__main__':unittest.main()
 
 class DeclaredCentresTests(unittest.TestCase):
+    def test_initialization_search_subset_preserves_final_model(self):
+        import biomech,hashlib
+        from motiogen.evalkit.k.initialization import search_model
+        original=hashlib.sha256(Path(biomech.MODEL).read_bytes()).hexdigest()
+        with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs/20261117_k4') as temp:
+            path,receipt=search_model(biomech.MODEL,temp,{'hip_rotation_l':[-20,20]})
+            model=osim.Model(str(path));c=model.getCoordinateSet().get('hip_rotation_l')
+            self.assertAlmostEqual(np.rad2deg(c.getRangeMin()),-20)
+            self.assertEqual(set(receipt['changes']),{'hip_rotation_l'})
+            with self.assertRaisesRegex(ValueError,'subset'):
+                search_model(biomech.MODEL,temp,{'hip_rotation_l':[-90,90]})
+        self.assertEqual(hashlib.sha256(Path(biomech.MODEL).read_bytes()).hexdigest(),original)
+
     def test_declared_centres_survive_save_and_keep_model_constraints(self):
         import biomech
         from motiogen.evalkit.k.rig_geometry import transport

@@ -107,7 +107,7 @@ def fit(run,work,mass,floor,config):
         if settings['refinement'].get('native_frame_weight',0):
             from .body_frames import targets
             body_targets,body_target_receipt=targets(motion)
-        native,refinement=refine(out/'model.osim',labels,native,points,names,settings['refinement'],body_targets)
+        native,refinement=refine(out/'model.osim',labels,native,points,names,settings['refinement'],body_targets,times=motion.times)
         refinement['body_target_source']=body_target_receipt
         write_coordinates(out/'coordinates_refined_native.mot',nt,labels,native)
         (out/'refinement.json').write_text(json.dumps(refinement,indent=2)+'\n')

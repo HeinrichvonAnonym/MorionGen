@@ -1,0 +1,131 @@
+{
+  "version": "k4-fixed20-remaining14-v6",
+  "records": [
+    {
+      "window": "015",
+      "method": "ardy",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "chois",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "closd",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "dart",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "motionlcm",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "omnicontrol",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "primal",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "022",
+      "method": "motionlcm",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "022",
+      "method": "omnicontrol",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "ardy",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "chois",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "closd",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "dart",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "primal",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    }
+  ],
+  "complete_panel_size": 20,
+  "reused_source_records": [
+    {
+      "window": "074",
+      "method": "kimodo"
+    },
+    {
+      "window": "017",
+      "method": "chois"
+    },
+    {
+      "window": "000",
+      "method": "kimodo"
+    },
+    {
+      "window": "015",
+      "method": "kimodo"
+    },
+    {
+      "window": "022",
+      "method": "kimodo"
+    },
+    {
+      "window": "069",
+      "method": "kimodo"
+    }
+  ],
+  "new_holdout_uses": 0
+}

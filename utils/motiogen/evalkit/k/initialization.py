@@ -21,6 +21,28 @@ def structure(path):
     return ET.tostring(tree.getroot())
 
 
+def search_model(model_path,work,ranges):
+    """Optional bounded IK search; final fitted model remains untouched."""
+    import opensim as osim
+    model_path=Path(model_path)
+    if not ranges:return model_path,None
+    model=osim.Model(str(model_path));state=model.initSystem();changes={}
+    for name,bounds in ranges.items():
+        c=model.updCoordinateSet().get(name)
+        if c.getMotionType()!=1 or c.getDefaultLocked() or c.isDependent(state):
+            raise ValueError('Initialization search requires independent angular coordinates')
+        if len(bounds)!=2 or not np.isfinite(bounds).all() or bounds[0]>=bounds[1]:
+            raise ValueError('Invalid initialization search interval')
+        lo,hi=np.deg2rad(bounds);old=[c.getRangeMin(),c.getRangeMax()]
+        if lo<old[0]-1e-8 or hi>old[1]+1e-8:
+            raise ValueError('Initialization search must be a subset of final model domain')
+        c.setRangeMin(float(lo));c.setRangeMax(float(hi))
+        changes[name]={'final_range_rad':old,'initialization_range_rad':[float(lo),float(hi)]}
+    path=Path(work)/'search_model.osim';model.printToXML(str(path))
+    return path,{'changes':changes,'model_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
+        'scope':'IK initialization search only; final model geometry/domain preserved; no reference or window-specific rule'}
+
+
 def seed_definitions(model_path,points,names):
     """First-frame observed hip line and knee geometry; missing seeds stay unavailable."""
     import opensim as osim
@@ -95,7 +117,8 @@ def run(model_path,trc,points,names,times,weights,work,settings):
     if settings.get('strategy')!='input_multistart':raise ValueError('Unsupported initialization strategy')
     if settings.get('selection')!='full_window_weighted_markers':raise ValueError('Unsupported initialization selection')
     work=Path(work);work.mkdir(parents=True,exist_ok=True)
-    model_path=Path(model_path);original_hash=hashlib.sha256(model_path.read_bytes()).hexdigest()
+    final_model_path=Path(model_path);original_hash=hashlib.sha256(final_model_path.read_bytes()).hexdigest()
+    model_path,search=search_model(final_model_path,work,settings.get('search_ranges_deg'))
     seeds,definition=seed_definitions(model_path,points,names)
     order=settings.get('seeds',['nominal','knee','heading','heading_knee'])
     if len(set(order))!=len(order) or 'nominal' not in order or set(order)-{'nominal','knee','heading','heading_knee'}:
@@ -119,8 +142,9 @@ def run(model_path,trc,points,names,times,weights,work,settings):
         candidates[name]=row
     selected=choose(candidates)
     receipt={'definition':definition,'candidates':candidates,'selected':selected,'settings':settings,
+        'search_domain':search,
         'source_model_sha256':original_hash,'selection':'single full-clip candidate by input-only weighted marker loss; no frame switching',
         'scope':'initial state only; model geometry, domains, weights and observations fixed; no R access'}
-    if hashlib.sha256(model_path.read_bytes()).hexdigest()!=original_hash:raise ValueError('Source model changed')
+    if hashlib.sha256(final_model_path.read_bytes()).hexdigest()!=original_hash:raise ValueError('Source model changed')
     (work/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
     return work/selected/'ik',receipt

@@ -1,0 +1,154 @@
+{
+  "version": "k4-strict-panel-1",
+  "sources": {
+    "config/evalkit_k4_20261117/fixed_panel.json": "8e9c6856dd70e79cc81b90e1f97682d88b07aa099c705b06b3107fc219b6a523",
+    "config/evalkit_k4_20261117/optimization_v1/sentinels.json": "9d3e8d3156d005f1266d4147f83194e82197008537b8d431ae27eacf426635f0"
+  },
+  "records": [
+    {
+      "window": "000",
+      "method": "kimodo",
+      "membership": [
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "ardy",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "chois",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "closd",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "dart",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "kimodo",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json",
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "motionlcm",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "omnicontrol",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "015",
+      "method": "primal",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "017",
+      "method": "chois",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json",
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    },
+    {
+      "window": "022",
+      "method": "kimodo",
+      "membership": [
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    },
+    {
+      "window": "022",
+      "method": "motionlcm",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "022",
+      "method": "omnicontrol",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "ardy",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "chois",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "closd",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "dart",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "kimodo",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json",
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    },
+    {
+      "window": "069",
+      "method": "primal",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json"
+      ]
+    },
+    {
+      "window": "074",
+      "method": "kimodo",
+      "membership": [
+        "config/evalkit_k4_20261117/fixed_panel.json",
+        "config/evalkit_k4_20261117/optimization_v1/sentinels.json"
+      ]
+    }
+  ],
+  "new_holdout_uses": 0
+}

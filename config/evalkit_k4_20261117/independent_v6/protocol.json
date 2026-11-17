@@ -1,0 +1,18 @@
+{
+  "version": "k4-independent-domain-6",
+  "conditions": [
+    "rotation_only",
+    "rotation_temporal",
+    "rotation_temporal_search",
+    "rotation_temporal_search_pelvis"
+  ],
+  "strict_scoring": true,
+  "hypothesis": "SO3 interpolation isolates chart artifacts. Direction-error continuity tracks D velocity rather than smoothing D. Narrow IK search is preconditioning only, followed by broad final-model refinement; pelvis direction weight is a separate final control.",
+  "new_holdout_uses": 0,
+  "promotion": "none until full656 acceptance",
+  "limits": {
+    "workers": 3,
+    "numerical_threads": 1,
+    "min_free_gib": 80
+  }
+}

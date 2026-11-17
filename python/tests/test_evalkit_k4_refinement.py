@@ -91,3 +91,17 @@ class RestartTests(unittest.TestCase):
         self.assertIn('neutral_knee_start',[a['start'] for a in receipt['frames'][0]['attempts']])
         self.assertLess(abs(receipt['neutral_restart_knee_mapping']['left']['seed_deg']-100),1.)
         self.assertTrue(all(f['after_loss']<=f['before_loss']+1e-9 for f in receipt['frames']))
+
+    def test_physical_direction_continuity_preserves_exact_fk_and_requires_clock(self):
+        m=osim.Model(str(biomech.MODEL));state=m.initSystem();cs=m.getCoordinateSet()
+        labels=[cs.get(i).getName() for i in range(cs.getSize())]
+        row=np.array([cs.get(n).getValue(state)*(180/np.pi if cs.get(n).getMotionType()==1 else 1) for n in labels])
+        q=np.tile(row,(3,1));q[:,labels.index('hip_flexion_l')]=[20,22,24]
+        q[:,labels.index('knee_angle_l')]=[60,62,64]
+        p,n,q=model_fk(biomech.MODEL,labels,q,direct_couplers=True,return_coordinates=True)
+        settings={'max_nfev':2,'direction_continuity_weight':.25,'continuity_weight':0,'include_pelvis_line':True}
+        with self.assertRaisesRegex(ValueError,'clock'):refine(biomech.MODEL,labels,q,p,n,settings)
+        result,receipt=refine(biomech.MODEL,labels,q,p,n,settings,times=np.arange(3)/30)
+        actual,_=model_fk(biomech.MODEL,labels,result,direct_couplers=True)
+        np.testing.assert_allclose(actual,p,atol=1e-8)
+        self.assertTrue(all(x['selection_loss']<1e-10 for x in receipt['frames']))
