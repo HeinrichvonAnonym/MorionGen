@@ -70,6 +70,8 @@ def main():
         replay=a.run/'replays'/w/m;receipt_path=replay/'receipt.json'
         if not receipt_path.exists():row['status']='replay_failed';continue
         receipt=json.loads(receipt_path.read_text());row['resampling']=receipt['whole_body']
+        row['native_clock_export']=receipt.get('native_clock_export')
+        row['source_policy']=protocol.get('source_policy','See frozen protocol and source fit receipt')
         ndata=read(replay/'views/native'/w/m/'fk.npz');native=Motion(ndata['positions'],list(ndata['names']),ndata['times'],'native_fk')
         nq=read(replay/'views/native'/w/m/'coordinates.npz')
         native_score=json.loads((a.run/'scores/native'/f'{w}_{m}.json').read_text())
@@ -93,6 +95,7 @@ def main():
                         'common_length_positions_cm':{n:v['common_length_world']['p95'] for region in block['positions_cm'].values() for n,v in region.items()},
                         'head_relative_thorax_deg':score['head_neck_rotation_comparisons'][pair][stratum]['p95']}
             values['original_clock_comparison_summaries']=score['original_clock']['comparisons']
+            values['acceptance_original_clock_relative_D']=assess(score['original_clock'],None,policy)
             values['attribution']=attribution(r,native,motion)
             q=read(replay/'views'/condition/w/m/'coordinates.npz');values['joint_path']=local_path(nq,q,receipt['whole_body']['audit'])
             row['conditions'][condition]=values
@@ -101,7 +104,7 @@ def main():
     result={'expected':len(protocol['records']),'completed':sum(r['status']=='completed' for r in rows),'rows':rows,
         'attribution_definition':'N=native model FK at D timestamps under shared root/head definition. E=exported FK, then position readback to D timestamps using unchanged scorer. E-R=(N-R)+(E-N) in vectors only; no subtraction of norms/P95/rotation distances. Full score files include original R clock and frozen jump strata.',
         'path_definition':'Sampled local joint SO(3) arc length minus native endpoint geodesic; path difference is not a standalone physical accuracy measure.',
-        'scope':'Paired interpolation experiment, no refitting or geometric changes. Six v6 fits and fourteen older common fits are separate source strata. Original-R targets remain independent.',
+        'scope':'Paired interpolation within each source fit, with unchanged native coordinates, model and head attachment. Across-source fitting differences follow the protocol source policy; Original-R targets remain independent.',
         'promotion':'none; explicit candidate only','new_holdout_uses':0,
         'review_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'protocol_sha256':hashlib.sha256((a.run/'protocol.json').read_bytes()).hexdigest(),
