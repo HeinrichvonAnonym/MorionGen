@@ -18,7 +18,7 @@ def prepare(source,destination,labels,coordinates,profile):
     from pathlib import Path
     from .config import digest
     if Path(source).resolve()==Path(destination).resolve():raise ValueError('domain probes require a distinct model path')
-    spec=PROFILES[profile];model=osim.Model(str(source));state=model.initSystem();cs=model.getCoordinateSet();data=coordinates.copy();fixed={};changes={}
+    spec={'ranges':{},'unlock':[]} if profile=='original' else PROFILES[profile];model=osim.Model(str(source));state=model.initSystem();cs=model.getCoordinateSet();data=coordinates.copy();fixed={};changes={}
     # Legacy optimizer columns may contain nominal values for locked DOFs.
     # Realize their actual fixed values before unlocking, preserving baseline FK.
     for j,n in enumerate(labels):

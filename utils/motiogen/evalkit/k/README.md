@@ -104,3 +104,13 @@ CHOIS 的 body wrist 与额外 hand point 分开保留。`Motion.legacy_aliases(
 实验配置为 `config/evalkit_k35_20261117/experimental_config.json`，阈值属于显式工程选择。11 个开发窗口中，4 条腿在 3 个窗口通过检查；Kimodo 010、074、077 保留原结果。该实验选项尚未替代 K3.4 推荐配置。`leg_candidate_coordinates.npz` 保留基准、候选和选择后的坐标，收据保存拒绝原因。
 
 初始目标消融可在提交 `e580516` 复现。当前入口 `python/scripts/evalkit_k35_legs.py --out <新数据盘目录>` 支持独立目录；`--panel` 运行预先固定的八格式窗口组。旧目录保持实现哈希保护。详细证据见 `develop_logs/notes/20261117_evalkit_k35_legs.md`。
+
+## K3.6：独立运动学模型域入口
+
+`domain_fitting.fit_kinematic_domain` 与 `python/scripts/evalkit_k36_fit.py` 沿用现有八格式读取器，先保存名义 K3.4 拟合，再对复制的模型运行显式模型域和离线双向延续。配置为 `config/evalkit_k36_20261117/kinematic_config.json`，不会替换默认 `fit` 或原肌骨资产。
+
+`model_domain.py` 集中声明诊断范围，并在解锁前把历史“锁定坐标的名义值”恢复为模型实际固定值，确保基准 FK 不因解锁读入无效列而变化。`branch_order.py` 按输入大小腿单位方向的叉积强度选择较可观测的膝平面，从同一锚点分别向前后求解；接近伸直或完全折叠的帧不会因角度大而自动成为锚点。需要完整窗口，属于离线流程。
+
+输出使用 `kinematic_model.osim`、`kinematic_coordinates.mot`、`kinematic_fit.npz` 和独立收据。返回 `output_kind=kinematic_only`、`force_eligible=False`，拟合坐标依赖扩展模型及连续性先验；这些结果不进入现有肌肉／受力流水线。常规模型留在 `nominal/`，原输入要求及标准接口保持原值。
+
+11 个固定开发窗口、八格式回归中接受 21/22 条腿；074 左腿仍回退。主误差完整对照退化前 R，逐指标输入保真另报。完整 82×8 新模型拟合及新的留出验证尚未运行。详细对照、姿态收益和位置代价见 `develop_logs/notes/20261117_evalkit_k36_domain.md`。
