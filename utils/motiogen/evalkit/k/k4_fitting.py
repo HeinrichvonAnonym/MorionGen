@@ -54,6 +54,8 @@ def fit(run,work,mass,floor,config):
         raise ValueError('Unsupported K4 solver')
     if settings.get('root_policy') not in ('IK','input_hip_midpoint'):
         raise ValueError('Unsupported K4 root policy')
+    if settings.get('hip_rotation_resampling') and settings.get('postprocess')!='native_preserving':
+        raise ValueError('Hip joint interpolation requires native-preserving postprocessing')
     motion=load(run,settings.get('method'),config=ROOT/'config/evalkit_k4_20261117/input.json')
     out=Path(work);out.mkdir(parents=True,exist_ok=True)
     key={'inputs':motion.provenance['inputs'],'config':settings,'mass_kg':mass,'floor_m':floor,
@@ -109,8 +111,13 @@ def fit(run,work,mass,floor,config):
         refinement['body_target_source']=body_target_receipt
         write_coordinates(out/'coordinates_refined_native.mot',nt,labels,native)
         (out/'refinement.json').write_text(json.dumps(refinement,indent=2)+'\n')
+    rotation_resampling=None
     if settings.get('postprocess','legacy_lowpass')=='native_preserving':
         times,coordinates=resample_native(nt,labels,native)
+        if settings.get('hip_rotation_resampling'):
+            if settings['hip_rotation_resampling']!='joint_slerp':raise ValueError('Unknown hip resampling policy')
+            from .rotation_resampling import hip_slerp
+            coordinates,rotation_resampling=hip_slerp(out/'model.osim',labels,native,nt,times,coordinates)
     else:
         if refinement is not None:raise ValueError('Refined coordinates require explicit native-preserving resampling')
         times,labels,coordinates=biomech.write_coordinates(out/'ik/ik.mot',out/'coordinates.mot')
@@ -169,6 +176,7 @@ def fit(run,work,mass,floor,config):
              'coordinate_contract':'coordinates.mot satisfies declared model constraints; pre-root and pre-constraint coordinates preserved separately',
              'constraint_policy':settings.get('constraint_policy','assembly'),
              'resampling':settings.get('postprocess','legacy_lowpass'),
+             'rotation_resampling':rotation_resampling,
              'root_policy':settings['root_policy'],'refinement_ran':refinement is not None,
              'initialization':initialization,
              'output_dt_s':float(np.median(np.diff(times))),

@@ -1,0 +1,18 @@
+{
+  "version": "k4-hip-rotation-replay-1",
+  "window": "074",
+  "method": "kimodo",
+  "source_run": "independent_sentinels_v5",
+  "source_conditions": [
+    "complete_restart",
+    "complete_restart_width"
+  ],
+  "conditions": [
+    "native",
+    "linear",
+    "hip_slerp"
+  ],
+  "hypothesis": "Expanded hip coordinates expose Euler chart changes; compare identical solved native coordinates before interpolation, linear-coordinate100Hz and model-verified joint-SLERP100Hz. No refit or R-dependent selection.",
+  "new_holdout_uses": 0,
+  "promotion": "none; full-window/time gates still apply"
+}
