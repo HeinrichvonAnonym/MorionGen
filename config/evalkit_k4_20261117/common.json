@@ -1,0 +1,8 @@
+{
+  "version": "k4-fit-1",
+  "independent_geometry": false,
+  "solver": "nominal_model_marker_IK",
+  "root_policy": "IK",
+  "scope": "input-aware common baseline; kinematic only",
+  "force_eligible": false
+}

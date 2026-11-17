@@ -60,7 +60,7 @@ class Motion:
         return self.positions, names, self.fps
 
 
-def load(source, method=None):
+def load(source, method=None, *, config=None):
     src = Path(source)
     file = src if src.suffix == '.npz' else src/'motion.npz'
     used = []
@@ -121,6 +121,15 @@ def load(source, method=None):
         declared = json.loads(sidecar.read_text())
         motion.provenance['degradation'] = declared
         motion.provenance['inputs'][str(sidecar.resolve())] = digest(sidecar)
+    if config is not None:
+        settings=json.loads(Path(config).read_text()) if not isinstance(config,dict) else config
+        if settings.get('version')!='k4-input-1':raise ValueError('Unsupported explicit K input configuration')
+        from .input_rig import attach,geometry_targets
+        attach(motion,source)
+        motion.provenance['geometry_targets']=geometry_targets(motion)
+        motion.provenance['k_input_version']=settings['version']
+        motion.provenance['calibration']={'status':'native_frame_only','anatomical_calibration':'unverified'}
+        return motion
     from .calibration import model_basis
     bases,receipt=model_basis(motion,src if src.is_dir() else src.parent)
     motion.provenance['calibration']=receipt

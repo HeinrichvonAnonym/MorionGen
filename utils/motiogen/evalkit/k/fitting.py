@@ -22,11 +22,14 @@ PREPARE = 'evalkit-k2-arm-joint-centres'
 C = SPEC['fit']
 
 
-def fit(run, work, mass, floor):
+def fit(run, work, mass, floor, *, config=None):
     """run: any motion source biomech_sources.load reads (motion.npz run directory, PRIMAL factorial file, Kimodo case).
     Writes work/model.osim,
     work/coordinates.mot and the IK files (reused when work already holds the fit of the same run, mass, floor and
     preparation); returns the 100 Hz coordinates and the per-frame gate."""
+    if config is not None:
+        from .k4_fitting import fit as fit_k4
+        return fit_k4(run,work,mass,floor,config)
     work = Path(work).resolve(); work.mkdir(parents=True, exist_ok=True)
     old = json.loads((work/'receipt.json').read_text()) if (work/'receipt.json').exists() else None
     motion = load(run)

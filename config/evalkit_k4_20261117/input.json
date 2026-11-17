@@ -1,0 +1,9 @@
+{
+  "version": "k4-input-1",
+  "scope": "Explicit input geometry and native-frame loading; solver configuration is separate",
+  "reference_access": false,
+  "anatomical_calibration": "unverified",
+  "missing_neutral_trunk_length": "retain explicitly labelled model prior",
+  "kinematic_only": true,
+  "force_eligible": false
+}
