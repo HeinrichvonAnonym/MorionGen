@@ -1,0 +1,5 @@
+{
+  "root_anchor": "hip_midpoint",
+  "retarget_policy": "legacy",
+  "scope": "074 isolated root experiment; preserve historical rotation transfer policy; source body observations required; no reference fields supplied to runtime fitting"
+}

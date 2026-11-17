@@ -32,9 +32,24 @@ def fit_kinematic_domain(run,work,mass=75.,floor=0.,config=None,method=None):
         selected,candidate,optimization=refine_legs(model,times,labels,initial,source,names,cfg['leg_refinement'])
         fitted,fit_names=positions(model,times,labels,selected)
         if fit_names!=names:raise ValueError('kinematic domain output node order changed')
+        pre_root=selected.copy();pre_root_fitted=fitted.copy();pre_root_candidate=candidate.copy()
+        root_valid=np.zeros(len(times),bool);root_shift=np.zeros((len(times),3))
+        root_receipt={'status':'disabled'}
+        root_policy=cfg.get('root_alignment','none')
+        if root_policy=='observed_hip_midpoint':
+            from .root_alignment import align_fitted_root
+            selected,fitted,root_valid,root_shift,root_receipt=align_fitted_root(
+                model,times,labels,selected,source,names,motion.legacy_prior_joints())
+            candidate,_,_,_,_=align_fitted_root(
+                model,times,labels,candidate,source,names,motion.legacy_prior_joints())
+        elif root_policy!='none':
+            raise ValueError('Unknown root alignment: '+root_policy)
         write_coordinates(work/'kinematic_coordinates.mot',times,labels,selected)
-        np.savez_compressed(arrays_path,times=times,labels=labels,names=names,source=source,fitted=fitted,coordinates=selected,baseline_coordinates=initial,candidate_coordinates=candidate)
+        np.savez_compressed(arrays_path,times=times,labels=labels,names=names,source=source,fitted=fitted,coordinates=selected,baseline_coordinates=initial,candidate_coordinates=candidate,
+                            pre_root_coordinates=pre_root,pre_root_fitted=pre_root_fitted,pre_root_candidate_coordinates=pre_root_candidate,
+                            root_alignment_valid=root_valid,root_shift_m=root_shift)
         receipt={'key':key,'evidence':evidence,'domain':domain,'optimization':optimization,'output_kind':'kinematic_only','force_eligible':False,
+                 'root_alignment':root_receipt,'leg_guard_scope':'whole-window candidates before independent root alignment',
                  'scope':'geometric pose reproduction; joint coordinates and expanded model are not validated for muscle/force inference'}
         receipt_path.write_text(json.dumps(receipt,indent=2)+'\n')
     with np.load(arrays_path) as z:times=z['times'];labels=list(z['labels']);names=list(z['names']);source=z['source'];fitted=z['fitted'];coordinates=z['coordinates']
@@ -42,4 +57,5 @@ def fit_kinematic_domain(run,work,mass=75.,floor=0.,config=None,method=None):
     quality=apply_metric_gates(support(source,fitted,names,cfg['quality_angle_deg'],cfg['quality_position_m'],motion.legacy_prior_joints()),metrics)
     np.savez_compressed(work/'kinematic_metric_quality.npz',times=times,**{n+'_'+k:v for n,q in metrics.items() for k,v in q.items()})
     return {'times':times,'labels':labels,'coords':coordinates,'names':names,'source':source,'fitted':fitted,'receipt':receipt,
-        'region_angle_valid':{n:q['angle_valid'] for n,q in quality.items()},'metric_quality':metrics,'output_kind':'kinematic_only','force_eligible':False,'model_path':str(model)}
+        'region_angle_valid':{n:q['angle_valid'] for n,q in quality.items()},'region_position_valid':{n:q['position_valid'] for n,q in quality.items()},
+        'metric_quality':metrics,'output_kind':'kinematic_only','force_eligible':False,'model_path':str(model)}

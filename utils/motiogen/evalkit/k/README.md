@@ -127,3 +127,18 @@ The 074 development result separates old candidate, old fallback and new
 accepted output; its residual world-position error is retained alongside
 root-relative error. Evidence and regression scope are in the K3.7 acceptance
 file and `develop_logs/notes/20261117_evalkit_k37_074.md`.
+
+### K3.8: explicit geometric root placement
+
+`root_alignment.py` separates a bilateral hip midpoint from named rig roots and
+model body origins. Controlled exporters opt into
+`retarget(..., root_anchor='hip_midpoint')`; the existing source-root default
+remains available. `config/evalkit_k38_20261117/kinematic_config.json` opts the
+kinematic API into observed-input midpoint translation after pose fitting.
+Only the exporter sees the original source motion. The fitter uses its input
+hips and preserves all angular coordinates; missing/prior hips retain the
+previous root with an invalid alignment mask. Before/after coordinates, points,
+shifts and masks are saved separately. Root-stage world-position and velocity
+errors must be reported as D−R, F−D and F−R because cancellation can conceal errors.
+The 074 paired-export result and adverse effects on unchanged old-format inputs
+are documented in `develop_logs/notes/20261117_evalkit_k38_root.md`.
