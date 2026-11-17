@@ -28,7 +28,7 @@ def scale_bodies(model, factors, mass):
     state=model.initSystem();model.scale(state,scales,True,mass)
 
 
-def build(motion,out,mass,independent_geometry=False):
+def build(motion,out,mass,independent_geometry=False,marker_registration='legacy'):
     import opensim as osim
     import biomech
     targets=geometry_targets(motion);lengths=targets['lengths_m']
@@ -67,8 +67,17 @@ def build(motion,out,mass,independent_geometry=False):
     for name in ('pelvis_tx','pelvis_ty','pelvis_tz','pelvis_rotation'):
         coordinate=model.updCoordinateSet().get(name);coordinate.setRangeMin(-1e3);coordinate.setRangeMax(1e3);coordinate.setDefaultClamped(False)
     state=model.initSystem()
+    if marker_registration not in ('legacy','owned_joint_frame'):
+        raise ValueError('Unsupported marker registration policy')
     for name,(joint,body,_) in biomech.MARKERS.items():
-        location=model.getJointSet().get(joint).getChildFrame().findTransformInBaseFrame().p()
+        if marker_registration=='owned_joint_frame':
+            transform=model.getJointSet().get(joint).getChildFrame().findTransformInBaseFrame()
+            location=osim.Vec3(*[transform.p().get(j) for j in range(3)])
+        else:
+            # Audited frozen common baseline: all 9,184 limb-marker offsets
+            # across 656 saved models are zero. Reproduce that control
+            # deterministically without retaining a borrowed temporary Vec3.
+            location=osim.Vec3(0,0,0)
         model.addMarker(osim.Marker(name,model.getBodySet().get(body),location))
     rig=motion.provenance.get('input_rig')
     registered=[];axial=[]
@@ -102,7 +111,15 @@ def build(motion,out,mass,independent_geometry=False):
         'locked':coordinates.get(i).getDefaultLocked(),'clamped':coordinates.get(i).getDefaultClamped(),
         'dependent':coordinates.get(i).isDependent(state),'motion_type':int(coordinates.get(i).getMotionType())}
         for i in range(coordinates.getSize())}
+    marker_offsets={}
+    for name,(joint,_,_) in biomech.MARKERS.items():
+        marker=model.getMarkerSet().get(name).getLocationInGround(state)
+        center=model.getJointSet().get(joint).getChildFrame().getPositionInGround(state)
+        marker_offsets[name]=float(np.linalg.norm([marker.get(j)-center.get(j) for j in range(3)]))
+    if marker_registration=='owned_joint_frame' and max(marker_offsets.values())>1e-9:
+        raise ValueError('Registered IK marker does not coincide with its declared joint frame')
     return {'targets':targets,'before':base,'after':final,'body_scales':factors,'torso':torso_receipt,
+            'marker_registration':marker_registration,'marker_joint_frame_offset_m':marker_offsets,
             'registered_axial_markers':registered,'kinematic_only':True,'force_eligible':False,
             'geometry_fixed_for_clip':True,'head_model_support':'no independent head joint',
             'joint_domain':domain,'joint_domain_source':'Original asset except explicitly freed global translations and heading',

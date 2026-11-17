@@ -57,17 +57,21 @@ def refine(model_path, labels, coordinates, points, names, settings):
         candidates=[('nominal',x0,initial_loss)]
         starts=[('nominal_start',x0)]
         if previous is not None:starts.append(('continuity_start',np.clip(previous,lo+1e-9,hi-1e-9)))
+        attempts=[]
         for name,start in starts:
             opt=least_squares(residual,start,bounds=(lo,hi),max_nfev=settings.get('max_nfev',12),
                               diff_step=1e-4,ftol=1e-5,xtol=1e-5,gtol=1e-5)
             err=residual(opt.x,False);loss=float(np.dot(err,err))
+            attempts.append({'start':name,'nfev':int(opt.nfev),'status':int(opt.status),
+                             'optimality':float(opt.optimality),'cost_with_continuity':float(opt.cost),
+                             'input_loss':loss})
             if np.isfinite(loss):candidates.append((name,opt.x,loss))
         name,chosen,loss=min(candidates,key=lambda c:c[2])
         evaluate(chosen)
         for j,label in enumerate(labels):
             c=cs.get(label);result[frame,j]=c.getValue(state)*(180/np.pi if c.getMotionType()==1 else 1)
         previous=np.deg2rad(result[frame,cols])
-        receipts.append({'status':'computed','selected':name,'before_loss':initial_loss,'after_loss':loss})
+        receipts.append({'status':'computed','selected':name,'before_loss':initial_loss,'after_loss':loss,'attempts':attempts})
     return result,{'frames':receipts,'active_coordinates':active,'settings':settings,
                    'scope':'experimental local direction/position refinement; full-window regression gates required',
                    'candidate_selection':'input-only objective; nominal retained as a per-frame candidate'}

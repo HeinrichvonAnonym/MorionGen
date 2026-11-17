@@ -65,7 +65,7 @@ def fit(run,work,mass,floor,config):
         receipt=json.loads(receipt_path.read_text())
         if receipt['key']!=key:raise ValueError('K4 cache identity changed; use a new output directory')
         with np.load(out/'fit.npz') as z:return {**{k:z[k] for k in z.files},'receipt':receipt}
-    geometry=build(motion,out/'model.osim',mass,settings['independent_geometry'])
+    geometry=build(motion,out/'model.osim',mass,settings['independent_geometry'],settings.get('marker_registration','legacy'))
     if settings.get('diagnostic_domain'):
         from .diagnostic_domain import apply
         domain=apply(out/'model.osim',settings['diagnostic_domain'])
@@ -76,7 +76,16 @@ def fit(run,work,mass,floor,config):
     biomech.write_trc(points,names,fps,out/'markers.trc')
     weights={n:w for n,w in biomech.WEIGHTS.items() if n in biomech.MARKERS or n in geometry['registered_axial_markers']}
     (out/'ik').mkdir(exist_ok=True)
-    biomech.inverse_kinematics(out/'model.osim',out/'markers.trc',out/'ik/ik.mot',0.,(len(points)-1)/fps,weights)
+    initialization=None
+    if settings.get('initialization'):
+        import shutil
+        from .initialization import run as initialize
+        selected,initialization=initialize(out/'model.osim',out/'markers.trc',points,names,motion.times,
+                                           weights,out/'initialization',settings['initialization'])
+        for path in selected.iterdir():
+            if path.is_file():shutil.copyfile(path,out/'ik'/path.name)
+    else:
+        biomech.inverse_kinematics(out/'model.osim',out/'markers.trc',out/'ik/ik.mot',0.,(len(points)-1)/fps,weights)
     nt,labels,native=biomech.read_storage(out/'ik/ik.mot')
     from .timebase import native_clock
     nt,clock_receipt=native_clock(nt,motion.times)
@@ -127,6 +136,7 @@ def fit(run,work,mass,floor,config):
              'constraint_policy':settings.get('constraint_policy','assembly'),
              'resampling':settings.get('postprocess','legacy_lowpass'),
              'root_policy':settings['root_policy'],'refinement_ran':refinement is not None,
+             'initialization':initialization,
              'output_dt_s':float(np.median(np.diff(times))),
              'clock_boundary_roundoff_s':1e-9,
              'native_clock':clock_receipt,

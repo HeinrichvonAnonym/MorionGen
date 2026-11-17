@@ -1,0 +1,49 @@
+{
+  "version": "k4-multistart-optimization-1",
+  "conditions": [
+    "multi_ik",
+    "multi_pelvis",
+    "multi_pelvis_subtalar",
+    "multi_pelvis_registered",
+    "multi_pelvis_subtalar_registered"
+  ],
+  "comparisons": [
+    "D-R",
+    "F-D",
+    "F-R"
+  ],
+  "selection": "Fixed before new fits: previous 000 failure, fixed panel 015/017/069/074, user-requested 022 Kimodo; development only",
+  "held_constant": "Existing independent model geometry, original coordinate ranges, original IK marker weights and frozen D. Pelvis/subtalar factors match prior ablation. Runtime uses only D/config/model. No per-frame IK candidate switching.",
+  "old_counterparts": {
+    "multi_ik": "g1_s0",
+    "multi_pelvis": "g1_s1_pelvis",
+    "multi_pelvis_subtalar": "g1_s1_pelvis_subtalar",
+    "multi_pelvis_registered": "multi_pelvis",
+    "multi_pelvis_subtalar_registered": "multi_pelvis_subtalar"
+  },
+  "initialization": {
+    "strategy": "input_multistart",
+    "seeds": [
+      "nominal",
+      "knee",
+      "heading",
+      "heading_knee"
+    ],
+    "selection": "full_window_weighted_markers",
+    "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights"
+  },
+  "refinement_change": "Convergence metadata only; objective and candidate selection unchanged",
+  "limits": {
+    "workers": 1,
+    "alongside_original_ablation_workers": 2,
+    "numerical_threads": 1,
+    "min_free_gib": 80
+  },
+  "promotion": "none; whole-body and temporal gates retained",
+  "new_holdout_uses": 0,
+  "marker_registration_factor": {
+    "legacy": "Saved common model marker registration retained in three initialization comparisons",
+    "owned_joint_frame": "Two additional paired conditions copy the joint-frame Transform translation into owned Vec3 before creating each marker; serialized model/FK correspondence asserted",
+    "evidence": "Independent FK test found saved legacy knee markers at body origin, differing from knee child-frame origin. Marker registration repair is separate from initialization and does not alter D or skeletal geometry."
+  }
+}

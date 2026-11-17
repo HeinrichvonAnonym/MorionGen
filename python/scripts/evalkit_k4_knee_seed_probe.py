@@ -8,7 +8,6 @@ import hashlib
 import json
 from pathlib import Path
 import sys
-import xml.etree.ElementTree as ET
 
 import numpy as np
 
@@ -19,28 +18,11 @@ import biomech
 from motiogen.evalkit.k.motion import load
 from motiogen.evalkit.k.k4_fitting import model_fk
 from motiogen.evalkit.k.timebase import native_clock
-
-
-def flexion(hip, knee, ankle):
-    """Independent atan2 convention: straight=0, right angle=90 degrees."""
-    a, b = knee - hip, ankle - knee
-    value = np.rad2deg(np.arctan2(np.linalg.norm(np.cross(a, b), axis=-1),
-                                 np.sum(a * b, axis=-1)))
-    valid = np.linalg.norm(a,axis=-1)*np.linalg.norm(b,axis=-1)>1e-12
-    return np.where(valid,value,np.nan)
+from motiogen.evalkit.k.initialization import flexion, structure, seed_definitions
 
 
 def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
-
-
-def structure(path):
-    tree = ET.parse(path)
-    for coordinate in tree.findall('.//Coordinate'):
-        value = coordinate.find('default_value')
-        if value is not None:
-            value.text = 'INITIALIZATION_ONLY'
-    return ET.tostring(tree.getroot())
 
 
 def main():
@@ -59,37 +41,14 @@ def main():
     if baseline['key']['inputs'] != motion.provenance['inputs']:
         raise ValueError('Input differs from frozen common baseline')
     p, names, fps = motion.legacy()
-    idx = {n: i for i, n in enumerate(names)}
     source = a.fit/'model.osim'
-    model = osim.Model(str(source)); state = model.initSystem()
-    cs = model.getCoordinateSet()
-    labels = [cs.get(i).getName() for i in range(cs.getSize())]
-    defaults = np.array([cs.get(n).getDefaultValue() * (180/np.pi if cs.get(n).getMotionType()==1 else 1) for n in labels])
-    # Scan the model's own knee coordinate -> geometric knee angle mapping.
-    scans = {}; knee_seed = {}
-    for side, suffix in [('left', 'l'), ('right', 'r')]:
-        target = flexion(*[p[0, idx[side+'_'+joint]] for joint in ('hip', 'knee', 'ankle')])
-        if not np.isfinite(target):
-            raise ValueError('First-frame knee geometry is missing or degenerate')
-        c = cs.get('knee_angle_'+suffix)
-        grid = np.linspace(c.getRangeMin(), c.getRangeMax(), 281)*180/np.pi
-        q = np.tile(defaults, (len(grid), 1)); q[:, labels.index(c.getName())] = grid
-        fk, fn = model_fk(source, labels, q, direct_couplers=True)
-        angles = flexion(*[fk[:, fn.index(side+'_'+joint)] for joint in ('hip', 'knee', 'ankle')])
-        chosen = int(np.argmin(abs(angles-target)))
-        knee_seed[c.getName()] = float(grid[chosen])
-        scans[side] = {'input_initial_flexion_deg': float(target), 'coordinate_deg': grid.tolist(),
-                       'geometric_flexion_deg': angles.tolist(), 'seed_deg': float(grid[chosen]),
-                       'seed_mapping_error_deg': float(abs(angles[chosen]-target))}
-    h = p[0, idx['right_hip']] - p[0, idx['left_hip']]
-    neutral = biomech._child_origin(model,state,'hip_r') - biomech._child_origin(model,state,'hip_l')
-    yaw = np.arctan2(h[0],h[2]) - np.arctan2(neutral[0],neutral[2])
-    yaw = float(np.rad2deg(np.arctan2(np.sin(yaw),np.cos(yaw))))
-    if not np.isfinite(h).all() or np.linalg.norm(h[[0,2]]) < 1e-6:
-        raise ValueError('Horizontal hip line cannot initialize heading')
-    conditions = {'default_replay': {}, 'knee_only': knee_seed,
-                  'heading_only': {'pelvis_rotation': yaw},
-                  'heading_knee': {**knee_seed, 'pelvis_rotation': yaw}}
+    seeds, definition = seed_definitions(source, p, names)
+    if set(seeds) != {'nominal','knee','heading','heading_knee'}:
+        raise ValueError('Four-seed diagnostic unavailable: '+str(definition['unavailable']))
+    conditions = {'default_replay': seeds['nominal'], 'knee_only': seeds['knee'],
+                  'heading_only': seeds['heading'], 'heading_knee': seeds['heading_knee']}
+    yaw = seeds['heading']['pelvis_rotation']
+    scans = definition['knee_mapping']
     receipt = {'source_model_sha256': sha(source), 'input_hashes': motion.provenance['inputs'],
                'source_trc_sha256': sha(a.fit/'markers.trc'), 'code_sha256': sha(__file__),
                'scope': 'D-only initialization diagnostic. Same model, marker weights, TRC and IK tool; no R, no geometry/range/lock changes.',
