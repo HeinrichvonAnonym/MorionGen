@@ -1,0 +1,44 @@
+{
+  "002_kimodo": {
+    "foot_error_over_5_frames": 44,
+    "over5_at_ankle_or_subtalar_bound": 44,
+    "bound_frames": 90,
+    "3.75": {
+      "time": 3.7444413,
+      "trunk_tilt": 47.01801770785992,
+      "left_knee_flexion": 55.079010734351115
+    },
+    "4.3": {
+      "time": 4.3111079666666665,
+      "trunk_tilt": 76.05701688231818,
+      "left_knee_flexion": 65.95959723819122
+    },
+    "7.8": {
+      "time": 7.8111079666666665,
+      "trunk_tilt": 17.678298467521277,
+      "left_knee_flexion": 50.94734491528848
+    },
+    "8.1": {
+      "time": 8.111107966666667,
+      "trunk_tilt": 7.774358951697193,
+      "left_knee_flexion": 51.614342718948166
+    }
+  },
+  "008_motionlcm": {},
+  "010_ardy": {
+    "native FK, position interpolation": {
+      "max_deg": 2.1616623152907866,
+      "max_time_s": 2.0222202,
+      "p95_deg": 1.856934813123795,
+      "over5_frames": 0,
+      "frames": 199
+    },
+    "exported model FK": {
+      "max_deg": 36.790691338580466,
+      "max_time_s": 0.3777774,
+      "p95_deg": 8.737723255993288,
+      "over5_frames": 11,
+      "frames": 199
+    }
+  }
+}
