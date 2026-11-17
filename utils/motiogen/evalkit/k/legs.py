@@ -77,8 +77,13 @@ def refine_legs(model_path,times,labels,data,source,names,settings):
                 for c,v in zip(coords,x):c.setValue(state,float(v),False)
                 model.realizePosition(state);actual=np.array([biomech._child_origin(model,state,j) for j in joints])
                 direction=(unit(np.diff(actual,axis=0))-wanted)*np.array([1.,1.,foot_weight])[:,None]
+                position_delta=actual-target[i]
+                if settings.get('root_relative_positions',False):
+                    model_root=.5*(biomech._child_origin(model,state,'hip_l')+biomech._child_origin(model,state,'hip_r'))
+                    input_root=.5*(source[i,names.index('left_hip')]+source[i,names.index('right_hip')])
+                    position_delta=position_delta-(model_root-input_root)
                 continuity=x-(previous if previous is not None else seed)
-                return np.r_[direction.ravel(),settings['position_weight']*(actual-target[i]).ravel(),settings['continuity_weight']*continuity]
+                return np.r_[settings.get('direction_weight',1.)*direction.ravel(),settings['position_weight']*position_delta.ravel(),settings['continuity_weight']*continuity]
             # Fixed deterministic interior starts are bounded by the same asset.
             seeds=[seed,lo+.5*(hi-lo)]
             if previous is not None:seeds.append(np.clip(previous,lo,hi))

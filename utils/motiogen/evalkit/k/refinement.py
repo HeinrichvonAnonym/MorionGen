@@ -58,8 +58,13 @@ def refine(model_path,motion,times,labels,data,settings):
                 for c,v in zip(coords,x):c.setValue(state,float(v),False)
                 model.realizePosition(state)
                 actual=np.array([biomech._child_origin(model,state,j) for j in joints]);v=directions(actual,group)
+                position_delta=actual-target
+                if settings.get('root_relative_positions',False):
+                    model_root=.5*(biomech._child_origin(model,state,'hip_l')+biomech._child_origin(model,state,'hip_r'))
+                    input_root=.5*(targets['left_hip'][i]+targets['right_hip'][i])
+                    position_delta=position_delta-(model_root-input_root)
                 return np.r_[settings['direction_weight']*(v-wanted).ravel(),
-                             settings['position_weight']*(actual-target).ravel(),
+                             settings['position_weight']*position_delta.ravel(),
                              settings['continuity_weight']*(x-prior),.001*(x-x0)]
             initial=residual(x0)
             candidates=[(float(initial@initial),x0)]
