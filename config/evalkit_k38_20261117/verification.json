@@ -1,1 +1,0 @@
-{"protected_unchanged": 233, "references_unchanged": 82, "frozen_input_files_unchanged": 77, "new_holdout_runs": 0, "tests_passed": 84, "subtests_passed": 16, "fresh_vs_fixed_pose_max_point_difference_m": 0.0003122155739907399, "root_scope": "observed midpoint, geometric only; no new rotational information; no force qualification"}

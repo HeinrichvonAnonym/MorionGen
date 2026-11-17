@@ -48,41 +48,19 @@ class Motion:
     def fps(self):
         return float(1/np.median(np.diff(self.times)))
 
-    def content_key(self):
-        """Hash a decoded in-memory view as well as its file provenance."""
-        import hashlib
-        h=hashlib.sha256()
-        h.update(json.dumps({'method':self.method,'names':self.names,'rotation_names':self.rotation_names,
-            'prior_joints':self.provenance.get('degradation',{}).get('prior_joints',[])},sort_keys=True).encode())
-        for value in [self.positions,self.times,self.rotations]:
-            if value is None:h.update(b'none');continue
-            a=np.ascontiguousarray(value);h.update(str((a.shape,a.dtype.str)).encode());h.update(a.tobytes())
-        return h.hexdigest()
-
-    def legacy_aliases(self):
-        rename={}
-        if 'left_wrist_body' in self.names:
-            rename.update(left_wrist='left_hand_point',right_wrist='right_hand_point',
-                          left_wrist_body='left_wrist',right_wrist_body='right_wrist')
-        if 'Spine' not in self.names:rename.update(spine1='Spine',spine3='Spine3')
-        return rename
-
-    def legacy_prior_joints(self):
-        rename=self.legacy_aliases()
-        return [rename.get(n,n) for n in self.provenance.get('degradation',{}).get('prior_joints',[])]
-
     def legacy(self):
         if not np.allclose(np.diff(self.times), 1/self.fps, rtol=1e-3, atol=1e-6):
             raise ValueError('Full-body fitting requires an explicitly resampled uniform clock')
-        rename=self.legacy_aliases();names=[rename.get(n,n) for n in self.names]
+        names = self.names.copy()
+        if 'left_wrist_body' in names:
+            rename = {'left_wrist':'left_hand_point','right_wrist':'right_hand_point','left_wrist_body':'left_wrist','right_wrist_body':'right_wrist'}
+            names = [rename.get(n,n) for n in names]
+        if 'Spine' not in names:
+            names = [{'spine1':'Spine','spine3':'Spine3'}.get(n,n) for n in names]
         return self.positions, names, self.fps
 
 
-def load(source, method=None, config=None):
-    from .config import resolve_config, ROOT
-    settings = resolve_config(config)
-    if isinstance(source, Motion):
-        return source
+def load(source, method=None):
     src = Path(source)
     file = src if src.suffix == '.npz' else src/'motion.npz'
     used = []
@@ -96,26 +74,21 @@ def load(source, method=None, config=None):
     if 'posed_joints' in m: method = 'kimodo'
     if 'pose' in m or 'factorial' in str(src): method = 'primal'
     if not method:
-        candidates = [n for n in settings['profiles'] if n in str(src).lower()]
+        candidates = [n for n in CONFIG['profiles'] if n in str(src).lower()]
         method = candidates[0] if len(candidates)==1 else 'unknown'
-    fps = float(m.get('fps', settings['profiles'].get(method,{}).get('fps',30)))
-    r = None; rn = []; native_y = method == 'kimodo';orientation_note=None
+    fps = float(m.get('fps', CONFIG['profiles'].get(method,{}).get('fps',30)))
+    r = None; rn = []; native_y = method == 'kimodo'
     if method == 'kimodo':
         p = np.asarray(m['posed_joints']); p = p[0] if p.ndim==4 else p
         names = list(SOMA77_NAMES); r = m.get('global_rot_mats'); rn = names
     elif method == 'primal':
         native = Path(str(file).replace('_canonical.npz','.npz'))
-        a = m if 'pose' in m else read(native) if native.exists() else {}
+        a = m if 'pose' in m else read(native)
+        pose = a['pose'][0]
         p = m['joints'] if 'joint_names' in m else a['joints'][0]
         names = list(HUMANML_NAMES)
-        if 'pose' in a:
-            pose = a['pose'][0]
-            local = Rotation.from_rotvec(pose[:,3:].reshape(-1,3)).as_matrix().reshape(-1,22,3,3)
-            r = chain(local,PARENTS); rn = names
-        elif settings.get('convention_registry') and 'joint_names' in m:
-            orientation_note='legacy_canonical_positions_without_native_pose; independent head orientation unavailable'
-        else:
-            raise ValueError('PRIMAL native pose is required by the selected legacy config')
+        local = Rotation.from_rotvec(pose[:,3:].reshape(-1,3)).as_matrix().reshape(-1,22,3,3)
+        r = chain(local,PARENTS); rn = names
         if 'joint_names' in m:
             p = np.asarray(p) @ Y_TO_Z
         native_y = True
@@ -134,16 +107,6 @@ def load(source, method=None, config=None):
                 q = q.copy(); q[~good] = [0,0,0,1]
                 r = Rotation.from_quat(q.reshape(-1,4)).as_matrix().reshape(*q.shape[:-1],3,3); r[~good] = np.nan
                 rn = [str(n) for n in a['body_names']]
-    native_position_file=native_y and not (method=='primal' and 'joint_names' in m)
-    position_contract={'units':'m','axes':'Y-up' if native_position_file else 'right-handed Z-up',
-                       'origin':'source_native_format' if native_position_file else 'project_canonical_archive',
-                       'declared_metadata':{k:meta[k] for k in ['axes','units'] if k in meta}}
-    if settings.get('convention_registry'):
-        if meta.get('units') not in (None,'m'):
-            raise ValueError('K3 selected format expects metres; declared units require a separate conversion config')
-        expected={'Y-up','right-handed Y-up'} if native_position_file else {'Z-up','right-handed Z-up'}
-        if meta.get('axes') is not None and meta['axes'] not in expected:
-            raise ValueError('K3 selected format and declared position axes disagree')
     if not native_y:
         p = np.asarray(p) @ Y_TO_Z
         if r is not None: r = np.einsum('ij,tkjl->tkil',Y_TO_Z.T,r)
@@ -152,22 +115,14 @@ def load(source, method=None, config=None):
     times = np.asarray(m.get('times',m.get('timestamps',np.arange(len(p))/fps)),float)
     motion = Motion(p,names,times,method,r,rn,{'inputs':{str(x.resolve()):digest(x) for x in used},
                   'orientation_source':'native' if r is not None else 'unavailable',
-                  'anatomical_calibration':'native_segment_axes_only', 'axes':'right-handed Y-up','units':'m',
-                  'source_position_contract':position_contract})
-    if orientation_note:motion.provenance['orientation_limitation']=orientation_note
+                  'anatomical_calibration':'native_segment_axes_only', 'axes':'right-handed Y-up','units':'m'})
     sidecar = file.parent/'k_provenance.json'
     if sidecar.exists():
         declared = json.loads(sidecar.read_text())
         motion.provenance['degradation'] = declared
         motion.provenance['inputs'][str(sidecar.resolve())] = digest(sidecar)
     from .calibration import model_basis
-    bases,receipt=model_basis(motion,src if src.is_dir() else src.parent,config=settings)
+    bases,receipt=model_basis(motion,src if src.is_dir() else src.parent)
     motion.provenance['calibration']=receipt
     if bases is not None:motion.provenance['model_bases']={k:v.tolist() for k,v in bases.items()}
-    registry = settings.get('convention_registry')
-    if registry:
-        path = ROOT/registry
-        motion.provenance['convention'] = {'version': settings['version'], 'registry': registry,
-            'sha256': digest(path), 'anatomical_scope': 'source model convention; project assumptions retained explicitly'}
-        motion.provenance['inputs'][str(path)] = digest(path)
     return motion

@@ -38,11 +38,6 @@ def main():
           'head_thorax_anatomy':field('neutral model axes reused as segment convention; no independently supplied anatomical calibration found in registered assets','project_assumption'),
           'sources':sources}
     records['chois']['rest_recovery']=field('unknown sequence: median inverse FK offsets from current input, followed by bone-direction consistency gate','estimated_from_motion')
-    records['chois']['fitting_observation_names']=field('rename body wrists and extra hand points together with their observation flags; an extra hand-point prior leaves the observed body wrist available','deterministic_conversion')
-    for method in ['motionlcm','omnicontrol','chois']:
-        records[method]['controlled_fixture_shape']=field('controlled exporter reuses the PRIMAL SMPL22 rest asset; this is an experimental fixture, not this generator\'s supplied subject shape','project_convention')
-    for method in ['motionlcm','omnicontrol']:
-        records[method]['neutral_topology_lengths']=field('HumanML22 hierarchy; observed positions determine lengths; no independent native segment rest rotations in the retained input','source_topology_and_input_geometry')
     records['closd']['sources'].append(evidence('utils/motiogen/closd_native.py',['rigid_body_rot','rotations_xyzw']))
     records['kimodo']['sources'].append(evidence(DATA/'baselines/kimodo/docs/source/user_guide/output_formats.md',['rotation','meter','Y-up','posed_joints']))
     records['andy']={'units':field('CSV explicitly [mm], timestamp [s]','source_header'),
@@ -64,15 +59,11 @@ def main():
       'head_thorax_anatomy':field('native published segment rotations; geometric chest rest basis reused for both head and chest in existing controlled protocol','project_assumption'),
       'sources':[evidence('utils/motion_retarget/bvh.py',['rotation_channels','include_nonroot_translation','global_r[','local_p'])],
       'publisher_url':'https://zenodo.org/records/6472155','publisher_scope':'release confirms BVH and task labels; page does not declare anatomical head/thorax axes or units'}
-    records['collaborate']['translation']={'value':'animated position channels replace OFFSET on their axes; unanimated axes use OFFSET',
-        'classification':'deterministic_conversion','sources':['https://raw.githubusercontent.com/blender/blender-addons/main/io_anim_bvh/import_bvh.py#L523',
-        'https://bvhsdk.readthedocs.io/en/latest/_modules/bvhsdk/anim.html#Joints.getLocalTranslation']}
-    result={'version':'k3-conventions-3-bvh-and-observation-names','records':records,
+    result={'version':'k3-conventions-1','records':records,
       'decisions':['Retain documented world/rotation conversions; do not estimate known axes from evaluated motion.',
                    'Retain uncertain anatomical correspondence as project assumption, not promoted by low controlled round-trip error.',
                    'Source rest basis and marker geometry give representation references, not independent per-vertebra anatomy.',
-                   'HYOID fitting and C2/T1 correspondence unchanged and outside this version.',
-                   'Correct CoLLaboratE animated local translation; preserve additive legacy parser as an explicit compatibility mode.']}
+                   'HYOID fitting and C2/T1 correspondence unchanged and outside this version.']}
     target=ROOT/'config/evalkit_k3_20261116/conventions.json';target.write_text(json.dumps(result,indent=2,ensure_ascii=False)+'\n')
     print('sources',len(records),'missing',[m for m,r in records.items() if any(s.get('status')=='missing' for s in r['sources'])])
 if __name__=='__main__':main()

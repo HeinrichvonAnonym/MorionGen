@@ -1,8 +1,8 @@
-# Evalkit K：运动读取、姿态、可测性与版本
+# K v1：运动读取、姿态与可测性
 
-内部统一为米、右手 Y-up，保留输入秒时钟。Andy 的 Z-up 导入约定通过正交旋转转换；头胸标记框架由项目按右侧、上方、后方三轴构建，前屈在此约定下为负 X 旋转，人体解剖对应另记证据。`load(source, method)` 返回 `Motion`，`evaluate(motion)` 返回头、胸、颈以及位置支持的躯干、膝、肘、大腿和颈头连线指标。完整三维旋转与一条骨方向分别表达；颈头连线的空间方向提供两个自由度，头部绕该连线的独立转动需要额外观测。
+内部统一为米、右手 Y-up，保留输入秒时钟。Andy 原始 Z-up 通过正交旋转转换；头胸段统一采用解剖右侧、上方、后方三轴，前屈为该坐标下负 X 旋转。`load(source, method)` 返回 `Motion`，`evaluate(motion)` 返回头、胸、颈以及位置支持的躯干、膝、肘、大腿和颈头连线指标。完整三维旋转与一条骨方向分别表达；颈头连线不能提供头部的独立轴向旋转。
 
-默认配置为 `config/evalkit_k_v2.json`；K1 的八格式定义保留在 `config/evalkit_k_v1.json`，K3 由 `config/evalkit_k_v3.json` 显式选择。模型中立几何及历史来源哈希在 `config/evalkit_k_calibration/`。读取器按实际字段识别可用旋转：CLoSD 旧记录缺少刚体四元数、DART 旧记录缺少参数时保留位置指标。PRIMAL 原生 Y-up 与公共 Z-up 文件分别处理。
+八个格式入口和帧率在 `config/evalkit_k_v1.json`；模型中立几何及历史来源哈希在 `config/evalkit_k_calibration/`。读取器按实际字段识别可用旋转：CLoSD 旧记录缺少刚体四元数、DART 旧记录缺少参数时保留位置指标。PRIMAL 原生 Y-up 与公共 Z-up 文件分别处理。
 
 ## 输出状态
 
@@ -52,93 +52,3 @@ FBLS/HYOID 的资源位置统一由 `motiogen.model_resources` 读取 `config/bi
 三个目标格式同时计算关节中心原范围、关节中心扩展范围、注册标记原范围候选，以最终滤波坐标中角度和位置共同合格的帧比例择优，再以手臂位置 RMSE 区分。候选失败单独保存，有效候选可继续；全部失败时返回拟合不可用。`receipt.arm_selection` 给出规则、候选分数及所选模型，`arm_candidates/` 保留各候选路径。该选择只使用当前输入几何，全身标定有效性仍独立判断。
 
 原范围候选保留原 IK 初始化；仅扩展范围候选使用首帧连续初始化。注册标记候选用于保留某些直臂姿态的稳定解，同样接受最终源几何检验。全部手臂统计基于 100 Hz 最终坐标，绘图可另行抽样。
-
-## K3：显式约定、两种骨长视图与全身方向拟合
-
-`load(..., config=...)`、`evaluate(..., config=...)` 与 `k.fitting.fit(..., config=...)` 使用独立配置。CLI 加 `--config config/evalkit_k_v3.json`；统一 evalkit 的 `evaluate()` 传 `k_config`，批量 manifest 每行可指定 `k_config`。无显式配置的既有入口继续使用 K2。CLI 把已按 `--method` 解码的 `Motion` 传给拟合器，通用旧文件名也能保留所选格式。
-
-| 文件 | 职责 |
-| --- | --- |
-| `motion.py`、`calibration.py` | 原生字段、确定性轴转换、模型资产及估计来源 |
-| `reference_bvh.py` | CoLLaboratE 参考的平移通道语义；独立于拟合器 |
-| `bones.py` | 公共评价骨架；输入骨长投影与评分骨长归一 |
-| `fitting3.py`、`refinement.py` | 拟合视图、全身方向优化、逐部位支持和缓存 |
-| `scoring.py` | 原始参考下的 D−R、F−D、F−R；投影 P−D 与 F−P |
-
-CoLLaboratE 的动画平移通道直接提供对应轴的局部位置；未动画的轴采用 OFFSET。K3 显式使用 `absolute_channels` 和双精度 FK。共享 BVH 读取器保留原 `offset_plus_channel` 默认行为，使旧结果可在原检出复现。米制比例及 Y-up 的依据、共用胸段静止基底等项目假设记录在 K3 的来源证据表中。
-
-`Motion.positions` 保留原始输入。拟合前投影仅使用当前输入逐段长度中位数；头胸旋转继续取原始字段。参考骨长只进入评分器调用的 `bones.normalize`，拟合器的接口不接收参考。结果保留 `source`、`projected`、`fitted` 三份几何；独立的评分产物再保存 R、D、P、F 的统一骨长视图。公共根定义为双髋中点，另报去根平移的位置差异。
-
-头部关节点和颈头连线由源姿态通路单独评分，保存原几何及统一骨长后的 D−R。全身 OpenSim 拟合没有独立头部位置输出，此处不把源位置当作头部拟合结果。连线方向与独立头旋转各自保留定义；Kimodo 受控骨架中未对应的 Neck2 先验会影响连线方向，这项降级损失另列。
-
-方向优化以输入骨段方向为主，保留较弱的位置、连续性和初值项，20 Hz 求解后插值到 100 Hz；最终坐标经 OpenSim FK 评分。距下关节等模型既有锁定继续保留。轴向转动和解剖关节角的解释仍取决于可观测性及段定义。
-
-`region_angle_valid` 表示对输入方向的保真；`region_registered_valid` 还要求合格直立标定；`region_position_valid` 检查配准位置。原始参考精度由验证中的 F−R 单独确定。下游力学支持取配准角度与位置条件的交集，下肢肌肉主结果再与残差条件相交，强制全帧结果单列。
-
-CHOIS 的 body wrist 与额外 hand point 分开保留。`Motion.legacy_aliases()` 同时用于拟合节点名和 `legacy_prior_joints()` 的观测标记；额外手点为先验时，已观测的 body wrist 继续支持手臂几何。对应 body wrist 本身为先验时，该侧手臂支持仍为 false。冻结拟合的轨迹保留，新的观测标记与原始窗口骨长评分由 `evalkit_k3_rescore.py` 单独生成，并检查未经掩码筛选的原始误差完全一致。
-
-缓存同时记录输入文件与内存视图、来源约定、投影策略、拟合参数、模型和实现哈希。四组消融固定读取 `config/evalkit_k3_20261116/experiment_config.json`，最终运行配置中的逐格式策略不会覆盖消融分组。开发名单、冻结检出及已使用留出的历史均独立保存；HYOID 保持原状。
-
-本轮八路最终配置均选择方向优化与原输入，开发结果和局部失败见[阶段报告](/home/heinrich/MorionGen/develop_logs/notes/20261116_evalkit_k3_alignment.md)。受控输入的固定骨长使投影接近恒等变换，少数结果仍存在非线性求解敏感性；真实输出的随帧骨长变化及投影位移另表保存。逐部位保真掩码继续约束下游支持范围，完整固定评分窗口用于原始参考验收。
-
-## K3.1 局部求解救援
-
-显式配置 `config/evalkit_k_v3_1.json` 在七路格式上先执行原 K3，再按输入残差启动确定性内部多初值搜索；两个阶段使用同一模型范围。CLoSD 保留原 K3，原因是本轮候选的完整窗口角速度误差增加。典型开发动作及已知失败窗口的验收、时序限制见[开发报告](/home/heinrich/MorionGen/develop_logs/notes/20261116_evalkit_k3_rescue.md)。Kimodo 跪姿继续保留部分支持状态；当前默认入口及 K3 配置均保持原值。
-
-## K3.4：受控转换与模型拟合分开验收
-
-显式配置 `config/evalkit_k34_20261117/runtime_config.json` 选用 `direction_v3` 受控转换。`trunk_transfer.py` 在目标骨长固定、骨盆及头胸/四肢世界旋转固定的条件下，对内部脊柱施加最小摆转，使骨盆至肩中点的方向与源动作一致。它是源到目标骨架的转换目标，内部脊柱旋转保留派生属性；几何不可行帧在 receipt 中显式记录。旧 `legacy`、`topology_v2` 入口保持原值。
-
-`quality.py` 按指标分开保存输入观测与模型重现：输入几何角可观测，并不保证 OpenSim 模型能重现。新配置的区域有效掩码同时要求骨段方向和区域几何角达到工程容差。`metric_quality.npz` 存储输入角、模型角、误差、观测掩码、拟合掩码及原因编码；`region_quality.npz` 保留旧方向掩码供比较。R/D/F 验收仍用完整原评分窗口，不借助新掩码缩小误差。
-
-`solver_seeds.py` 与独立变量过滤保留为显式开发消融，未纳入所选运行配置：本轮 16 个同输入配对窗口未显示实质精度收益。原模型范围、锁定及耦合约束继续使用。浅屈膝失败需要同时考虑弯曲平面和脚部方向；超出模型表达范围时返回拟合不可靠，同时保留直接观测的几何指标。
-
-固定开发实验在提交 `5ee8c63` 复现：`python/scripts/evalkit_k34_development.py --light --fit`。该脚本校验实现/参考/配置哈希，拒绝将新版本混入原产物目录；运行需数值库单线程、最多三个工作进程、数据盘至少 80 GiB 余量。结果与可视化、局部代价详见 `develop_logs/notes/20261117_evalkit_k34.md`。本轮没有新增留出验证。
-
-## K3.5 实验选项：同输入分阶段腿部拟合
-
-`legs.py` 先求大小腿方向，再加入足部方向联合细化；目标归一为单位骨段方向，范围、锁定与输入字段保持原值。`fitting.leg_refinement.enabled` 显式启用，K3.4 配置继续保持关闭。
-
-候选按完整窗口、整条腿接受或回退：同时检查大小腿改善、膝角、脚部方向和位置、膝与全部骨段的时序、输入保真覆盖。选择只访问输入和模型输出。原始参考 R 用于开发验收；全窗口误差与支持掩码独立报告。插值后再检查完整时钟，避免评分仅覆盖求解采样帧。
-
-实验配置为 `config/evalkit_k35_20261117/experimental_config.json`，阈值属于显式工程选择。11 个开发窗口中，4 条腿在 3 个窗口通过检查；Kimodo 010、074、077 保留原结果。该实验选项尚未替代 K3.4 推荐配置。`leg_candidate_coordinates.npz` 保留基准、候选和选择后的坐标，收据保存拒绝原因。
-
-初始目标消融可在提交 `e580516` 复现。当前入口 `python/scripts/evalkit_k35_legs.py --out <新数据盘目录>` 支持独立目录；`--panel` 运行预先固定的八格式窗口组。旧目录保持实现哈希保护。详细证据见 `develop_logs/notes/20261117_evalkit_k35_legs.md`。
-
-## K3.6：独立运动学模型域入口
-
-`domain_fitting.fit_kinematic_domain` 与 `python/scripts/evalkit_k36_fit.py` 沿用现有八格式读取器，先保存名义 K3.4 拟合，再对复制的模型运行显式模型域和离线双向延续。配置为 `config/evalkit_k36_20261117/kinematic_config.json`，不会替换默认 `fit` 或原肌骨资产。
-
-`model_domain.py` 集中声明诊断范围，并在解锁前把历史“锁定坐标的名义值”恢复为模型实际固定值，确保基准 FK 不因解锁读入无效列而变化。`branch_order.py` 按输入大小腿单位方向的叉积强度选择较可观测的膝平面，从同一锚点分别向前后求解；接近伸直或完全折叠的帧不会因角度大而自动成为锚点。需要完整窗口，属于离线流程。
-
-输出使用 `kinematic_model.osim`、`kinematic_coordinates.mot`、`kinematic_fit.npz` 和独立收据。返回 `output_kind=kinematic_only`、`force_eligible=False`，拟合坐标依赖扩展模型及连续性先验；这些结果不进入现有肌肉／受力流水线。常规模型留在 `nominal/`，原输入要求及标准接口保持原值。
-
-11 个固定开发窗口、八格式回归中接受 21/22 条腿；074 左腿仍回退。主误差完整对照退化前 R，逐指标输入保真另报。完整 82×8 新模型拟合及新的留出验证尚未运行。详细对照、姿态收益和位置代价见 `develop_logs/notes/20261117_evalkit_k36_domain.md`。
-
-### K3.7: continuous hip-flexion chart
-
-`config/evalkit_k37_20261117/kinematic_config.json` explicitly selects the
-`hip_flexion_chart` copied-model profile through the existing kinematic-only API.
-It changes only hip-flexion bounds relative to K3.6, admitting a continuous
-rotation representation over −360..360 degrees. The interval is an engineering
-coordinate domain, not an anatomical range. Model geometry, input requirements,
-solver settings, whole-window guards and default pipelines remain unchanged.
-The 074 development result separates old candidate, old fallback and new
-accepted output; its residual world-position error is retained alongside
-root-relative error. Evidence and regression scope are in the K3.7 acceptance
-file and `develop_logs/notes/20261117_evalkit_k37_074.md`.
-
-### K3.8: explicit geometric root placement
-
-`root_alignment.py` separates a bilateral hip midpoint from named rig roots and
-model body origins. Controlled exporters opt into
-`retarget(..., root_anchor='hip_midpoint')`; the existing source-root default
-remains available. `config/evalkit_k38_20261117/kinematic_config.json` opts the
-kinematic API into observed-input midpoint translation after pose fitting.
-Only the exporter sees the original source motion. The fitter uses its input
-hips and preserves all angular coordinates; missing/prior hips retain the
-previous root with an invalid alignment mask. Before/after coordinates, points,
-shifts and masks are saved separately. Root-stage world-position and velocity
-errors must be reported as D−R, F−D and F−R because cancellation can conceal errors.
-The 074 paired-export result and adverse effects on unchanged old-format inputs
-are documented in `develop_logs/notes/20261117_evalkit_k38_root.md`.

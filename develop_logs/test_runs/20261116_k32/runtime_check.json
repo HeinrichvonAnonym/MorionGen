@@ -1,6 +1,0 @@
-{
-  "status": "passed",
-  "coordinate_max_difference": 0.0,
-  "position_max_difference_m": 0.0,
-  "scope": "complete Wiping window; production two passes versus immutable cached K3 first pass plus continuation; source-only fit"
-}

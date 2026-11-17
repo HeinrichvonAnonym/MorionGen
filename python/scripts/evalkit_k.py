@@ -11,14 +11,13 @@ sys.path[:0]=[str(ROOT/'utils'),str(ROOT/'utils/motiogen')]
 from motiogen.evalkit.k import load,evaluate,CONFIG
 from motiogen.evalkit.k.geometry import recover_short_gaps,valid_rotation
 from motiogen.evalkit.k.posture import summary
-from motiogen.evalkit.k.config import implementation_key, resolve_config
+from motiogen.evalkit.k.config import implementation_key
 
 
-def process(source,method,out,calibration=None,fit=False,mass=75.,floor=0.,predict_short_gaps=False,config=None):
-    settings=resolve_config(config)
-    motion=load(source,method,config=settings)
+def process(source,method,out,calibration=None,fit=False,mass=75.,floor=0.,predict_short_gaps=False):
+    motion=load(source,method)
     bases=json.loads(Path(calibration).read_text())['anatomical_bases'] if calibration else None
-    result=evaluate(motion,bases,config=settings);out=Path(out);out.mkdir(parents=True,exist_ok=True)
+    result=evaluate(motion,bases);out=Path(out);out.mkdir(parents=True,exist_ok=True)
     arrays={'times':motion.times,'positions':motion.positions,'joint_names':motion.names}
     arrays['position_valid'] = np.isfinite(motion.positions).all(-1)
     prior = set(motion.provenance.get('degradation',{}).get('prior_joints',[]))
@@ -41,17 +40,16 @@ def process(source,method,out,calibration=None,fit=False,mass=75.,floor=0.,predi
     rec={**summary(result),'provenance':motion.provenance,'implementation':implementation_key(),
          'calibration_file':str(calibration) if calibration else None}
     if predict_short_gaps:
-        rec['recovery']={'mode':'offline_interpolation','max_gap_seconds':settings['recovery']['max_gap_seconds'],
+        rec['recovery']={'mode':'offline_interpolation','max_gap_seconds':CONFIG['recovery']['max_gap_seconds'],
                          'scope':'prediction_only; observed validity and anatomical reliability unchanged','regions':{}}
         for name,item in result['metrics'].items():
-            recovered,predicted=recover_short_gaps(motion.times,item['rotations'],item['valid'],settings['recovery']['max_gap_seconds'])
+            recovered,predicted=recover_short_gaps(motion.times,item['rotations'],item['valid'],CONFIG['recovery']['max_gap_seconds'])
             arrays[name+'_with_predictions']=recovered;arrays[name+'_predicted']=predicted
             rec['recovery']['regions'][name]={'predicted_frames':int(predicted.sum())}
     if fit:
         from motiogen.evalkit.k.fitting import fit as fit_body
         try:
-            # Keep the explicitly selected format and decoded native sidecars.
-            fitted=fit_body(motion,out/'fit',mass,floor,config=settings)
+            fitted=fit_body(source,out/'fit',mass,floor)
         except (ValueError,RuntimeError) as error:
             rec['fit']={'status':'unavailable','reason':str(error)}
         else:
@@ -60,10 +58,7 @@ def process(source,method,out,calibration=None,fit=False,mass=75.,floor=0.,predi
                         'calibration_valid':fitted['calibration_valid'],
                         'time_mapping':{'source_time_origin_s':float(motion.times[0]),'fit_time_origin_s':float(fitted['times'][0]),'fit_clock':'relative_seconds'}}
             np.savez_compressed(out/'fit_coordinates.npz',times=fitted['times'],labels=fitted['labels'],coordinates=fitted['coords'],valid=~fitted['unmeasurable'],
-                                **{'arm_'+s+'_valid':v for s,v in fitted['arm_valid'].items()},
-                                **{k+'_angle_valid':v for k,v in fitted.get('region_angle_valid',{}).items()},
-                                **{k+'_registered_valid':v for k,v in fitted.get('region_registered_valid',{}).items()},
-                                **{k+'_position_valid':v for k,v in fitted.get('region_position_valid',{}).items()})
+                                **{'arm_'+s+'_valid':v for s,v in fitted['arm_valid'].items()})
     np.savez_compressed(out/'k.npz',**arrays)
     (out/'k.json').write_text(json.dumps(rec,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
     return rec
@@ -73,6 +68,6 @@ if __name__=='__main__':
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--source',type=Path,required=True);ap.add_argument('--method');ap.add_argument('--out',type=Path,required=True)
     ap.add_argument('--calibration',type=Path);ap.add_argument('--fit',action='store_true');ap.add_argument('--mass',type=float,default=75.);ap.add_argument('--floor',type=float,default=0.)
-    ap.add_argument('--predict-short-gaps',action='store_true');ap.add_argument('--config',type=Path)
-    a=ap.parse_args();r=process(a.source,a.method,a.out,a.calibration,a.fit,a.mass,a.floor,a.predict_short_gaps,a.config)
+    ap.add_argument('--predict-short-gaps',action='store_true')
+    a=ap.parse_args();r=process(a.source,a.method,a.out,a.calibration,a.fit,a.mass,a.floor,a.predict_short_gaps)
     print(json.dumps({'method':r['method'],'metrics':r['metrics'],'fit':r.get('fit',{}).get('valid_fraction')},ensure_ascii=False))

@@ -32,8 +32,8 @@ class BVHMotion:
         lookup = {joint.name.lower(): i for i, joint in enumerate(self.joints)}
         return lookup[name.lower()]
 
-    def local_rotvecs(self, dtype=np.float32) -> np.ndarray:
-        result = np.zeros((self.frame_count, len(self.joints), 3), dtype=dtype)
+    def local_rotvecs(self) -> np.ndarray:
+        result = np.zeros((self.frame_count, len(self.joints), 3), dtype=np.float32)
         for i, joint in enumerate(self.joints):
             rotation_channels = [(k, c) for k, c in enumerate(joint.channels) if c.lower().endswith("rotation")]
             if not rotation_channels:
@@ -43,17 +43,7 @@ class BVHMotion:
             result[:, i] = euler_degrees_to_rotvec(self.frames[:, columns], order)
         return result
 
-    def local_positions(self, include_nonroot_translation: bool = True,
-                        translation_mode: str = 'offset_plus_channel') -> np.ndarray:
-        """Explicit dialect: legacy additive or animated absolute local channels.
-
-        Blender's BVH armature importer subtracts rest_head_local from animated
-        locations. Its resulting local translation is the channel value; OFFSET
-        supplies only axes without translation channels. CoLLaboratE uses that
-        contract. The legacy default is retained for reproducibility.
-        """
-        if translation_mode not in ('offset_plus_channel','absolute_channels'):
-            raise ValueError('Unknown BVH translation mode: '+translation_mode)
+    def local_positions(self, include_nonroot_translation: bool = True) -> np.ndarray:
         result = np.broadcast_to(
             np.stack([joint.offset for joint in self.joints]),
             (self.frame_count, len(self.joints), 3),
@@ -65,15 +55,12 @@ class BVHMotion:
             for local_index, channel in enumerate(joint.channels):
                 axis = axes.get(channel.lower())
                 if axis is not None:
-                    value = self.frames[:, joint.channel_start + local_index]
-                    if translation_mode == 'absolute_channels':result[:, i, axis] = value
-                    else:result[:, i, axis] += value
+                    result[:, i, axis] += self.frames[:, joint.channel_start + local_index]
         return result
 
-    def forward_kinematics(self, include_nonroot_translation: bool = True,
-                           translation_mode: str = 'offset_plus_channel', dtype=np.float32) -> tuple[np.ndarray, np.ndarray]:
-        local_r = rotvec_to_matrix(self.local_rotvecs(dtype=dtype))
-        local_p = self.local_positions(include_nonroot_translation=include_nonroot_translation,translation_mode=translation_mode)
+    def forward_kinematics(self, include_nonroot_translation: bool = True) -> tuple[np.ndarray, np.ndarray]:
+        local_r = rotvec_to_matrix(self.local_rotvecs())
+        local_p = self.local_positions(include_nonroot_translation=include_nonroot_translation)
         global_r = np.zeros_like(local_r)
         global_p = np.zeros_like(local_p)
         for i, joint in enumerate(self.joints):
@@ -86,7 +73,7 @@ class BVHMotion:
                 global_p[:, i] = global_p[:, parent] + np.einsum(
                     "tij,tj->ti", global_r[:, parent], local_p[:, i]
                 )
-        return global_p.astype(dtype), global_r.astype(dtype)
+        return global_p.astype(np.float32), global_r.astype(np.float32)
 
     def end_site_positions(
         self, joint_index: int, include_nonroot_translation: bool = False,

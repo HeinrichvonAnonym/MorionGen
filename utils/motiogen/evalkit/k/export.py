@@ -53,7 +53,7 @@ def target_template(method):
     return cal['names'][:count],np.asarray(cal['neutral_joints'])[:count],cal['parents'][:count]
 
 
-def retarget(reference,method,policy='legacy',root_anchor='source_root'):
+def retarget(reference,method):
     """Source/reference world is Y-up. Outputs target FK and explicit retarget losses."""
     reference=resample(reference,CONFIG['profiles'][method]['fps'])
     names,rest,parents=target_template(method)
@@ -67,12 +67,6 @@ def retarget(reference,method,policy='legacy',root_anchor='source_root'):
     indices={n:i for i,n in enumerate(sn)}
     rotation_indices={n:i for i,n in enumerate(rn)}
     source_for=[target_alias.get(n,n) for n in names]
-    if policy not in ('legacy','topology_v2','direction_v3'):
-        raise ValueError('Unknown retarget policy: '+policy)
-    mapping_receipt={}
-    if policy!='legacy':
-        from .retargeting import spine_mapping
-        source_for,mapping_receipt=spine_mapping(reference,names,rest,parents,source_for,sn)
     r=np.broadcast_to(np.eye(3),(len(reference.times),len(names),3,3)).copy()
     supported=np.zeros(len(names),bool);bases=np.broadcast_to(np.eye(3),(len(names),3,3)).copy()
     for j,name in enumerate(source_for):
@@ -106,26 +100,11 @@ def retarget(reference,method,policy='legacy',root_anchor='source_root'):
     root=reference.positions[:,indices['pelvis']]
     for j,parent in enumerate(parents):
         p[:,j]=root if parent<0 else p[:,parent]+np.einsum('tij,j->ti',r[:,parent],rest[j]-rest[parent])
-    transfer_receipt={}
-    if policy=='direction_v3':
-        from .trunk_transfer import transfer
-        p,r,transfer_receipt=transfer(reference,sn,names,source_for,rest,parents,r,root)
-    root_receipt={'policy':root_anchor,'origin':'project retargeting objective'}
-    if root_anchor=='hip_midpoint':
-        from .root_alignment import anchor_target,hip_midpoint
-        if reference.provenance.get('scope')=='isolated_head_thorax_on_template_body':
-            raise ValueError('Hip-midpoint export requires observed body geometry')
-        p,delta=anchor_target(p,names,hip_midpoint(reference.positions,sn))
-        root_receipt.update(maximum_shift_m=float(np.linalg.norm(delta,axis=1).max()),
-                            preserved='target offsets, rotations and source bilateral hip midpoint')
-    elif root_anchor!='source_root':
-        raise ValueError('Unknown root anchor: '+root_anchor)
     discrepancies={n:float(np.nanmedian(np.linalg.norm(p[:,j]-reference.positions[:,indices[s]],axis=-1)))
                    for j,(n,s) in enumerate(zip(names,source_for)) if s in indices}
     if reference.provenance.get('scope') == 'isolated_head_thorax_on_template_body':
         supported &= np.asarray([s in ('head','spine3') for s in source_for])
     return Motion(p,names,reference.times,method,r,names,{'retarget_bases':bases.tolist(),
-        'retarget_policy':policy,'spine_mapping':mapping_receipt,'trunk_transfer':transfer_receipt,'root_anchor':root_receipt,
         'source_observed_joint_mask':supported.tolist(),'prior_joints':[n for n,v in zip(names,supported) if not v],
         'position_median_error_m':discrepancies,'shape':'fixed_target_template',
         'precision_scope':'target_rig_conversion; anatomical transfer accuracy separately measured'}),parents
@@ -153,10 +132,6 @@ def serialize(motion,parents,out):
     # The predictor receives only validity metadata, never reference rotations or retarget bases.
     provenance = {'prior_joints':list(motion.provenance['prior_joints']), 'shape':'fixed_target_template',
                   'origin':'controlled_format_degradation', 'reference_scope':motion.provenance.get('precision_scope')}
-    if motion.provenance.get('retarget_policy','legacy')!='legacy':
-        provenance['retarget_policy']=motion.provenance['retarget_policy']
-    if motion.provenance.get('root_anchor',{}).get('policy')=='hip_midpoint':
-        provenance['root_anchor']='source_bilateral_hip_midpoint; project retargeting objective'
     if method=='chois':
         rename={'left_wrist':'left_wrist_body','right_wrist':'right_wrist_body'}
         provenance['prior_joints']=[rename.get(n,n) for n in provenance['prior_joints']]+['left_wrist','right_wrist']

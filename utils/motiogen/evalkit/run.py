@@ -97,11 +97,8 @@ def muscle_split(frames):
     if 'residual_positive' not in frames or 'muscle_effort' not in frames:
         return {}
     eff = frames['muscle_effort']; i, pos = muscle_residual(frames)
-    eligible = ~pos
-    if 'k_force_eligible' in frames:
-        eligible = eligible & np.asarray(frames['k_force_eligible'],bool)[i]
-    return {'primary_muscle_effort_sum_a2_mean': float(eff[eligible].mean()) if eligible.any() else None,
-            'primary_frames': int(eligible.sum()), 'forced_muscle_effort_sum_a2_mean': float(eff.mean()),
+    return {'primary_muscle_effort_sum_a2_mean': float(eff[~pos].mean()) if (~pos).any() else None,
+            'primary_frames': int((~pos).sum()), 'forced_muscle_effort_sum_a2_mean': float(eff.mean()),
             'forced_frames': int(len(eff)), 'forced_residual_positive_share': float(pos.mean()),
             'forced_residual_bw_p95': float(np.percentile(frames['residual_bw'][i][pos], 95)) if pos.any() else 0.}
 
@@ -120,10 +117,10 @@ def add_forced(out):
     return rec
 
 
-def ergo_dim(run, work, f, masks, sel, src, method, prompt, object_free, frames, k_config=None):
+def ergo_dim(run, work, f, masks, sel, src, method, prompt, object_free, frames):
     """RULA / REBA classes of one fit (f: fit_mod.fit result); adds the ergo_* arrays to frames, returns the summary."""
     from .k import load as load_k, evaluate as evaluate_k
-    k = evaluate_k(load_k(run, method, config=k_config), config=k_config)
+    k = evaluate_k(load_k(run, method))
     e = ergo.score(work/'model.osim', f['times'], f['labels'], f['coords'], masks, sel, src, ('unknown', None, None),
                    ergo.object_free(prompt) if object_free is None else object_free, f['unmeasurable'], k_result=k, arm_valid=f['arm_valid'])
     frames.update({f'ergo_{k}': v for k, v in e.items() if k != 'source_mode'})
@@ -158,16 +155,15 @@ def add_dims(run, out, dims, object_free=None, source=None):
     out = Path(out).resolve(); work = out/'work'; rec = json.loads((out/'evalkit.json').read_text()); r = rec['receipt']
     frames = dict(np.load(out/'frames.npz', allow_pickle=True))
     sel = frames['scored']
-    k_config = r.get('k_config')
     if 'ergo' in dims:
-        f = fit_mod.fit(run, work, r['mass_kg'], r['floor_m'], config=k_config)
+        f = fit_mod.fit(run, work, r['mass_kg'], r['floor_m'])
         if not np.array_equal(f['times'], frames['times']):
             raise ValueError('cached fit does not match frames.npz')
         masks = {s: {k: frames[f'contact_{s}_{k}'] for k in LANDMARKS} for s in SIDES}
         variant = r['reference'] if isinstance(r['reference'], str) else None
         method = r['method'] or (variant.split('__')[0] if variant else None)
-        rec['ergo'] = ergo_dim(run, work, f, masks, sel, source or load_k(run, config=k_config).legacy(), method, r['prompt'],
-                               object_free, frames, k_config=k_config)
+        rec['ergo'] = ergo_dim(run, work, f, masks, sel, source or load_k(run).legacy(), method, r['prompt'],
+                               object_free, frames)
         r['method'] = method
         r['object_free'] = bool(ergo.object_free(r['prompt']) if object_free is None else object_free)
     if 'muscle' in dims:
@@ -179,19 +175,19 @@ def add_dims(run, out, dims, object_free=None, source=None):
     return rec
 
 
-def foot_offset(run, work, mass, floor, source=None, k_config=None):
+def foot_offset(run, work, mass, floor, source=None):
     """Fit (cached in work) and fit.foot_offset of one run: the per-clip input of the floor correction."""
     import opensim as osim
     import biomech
     from .k import load as load_k
     osim.Logger.setLevelString('error')
-    f = fit_mod.fit(run, work, mass, floor, config=k_config)
+    f = fit_mod.fit(run, work, mass, floor)
     kin = biomech.body_kinematics(osim.Model(str(Path(work)/'model.osim')), f['labels'], f['coords'])
-    return fit_mod.foot_offset(*(source or load_k(run, config=k_config).legacy()), kin, f['times']), f, kin
+    return fit_mod.foot_offset(*(source or load_k(run).legacy()), kin, f['times']), f, kin
 
 
 def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dims=DIMS, source=None, object_free=None,
-             reach_task=None, offset_reference=None, k_config=None):
+             reach_task=None, offset_reference=None):
     """run: directory with motion.npz (canonical Z-up joints). floor: floor height (m, canonical Z) of this motion.
     reference: floor-reference variant (spec.reference_offsets) or {side: {landmark: m}} offsets above the floor.
     method: ergo neutral key (default: the reference variant). prompt: task text (None: object-free).
@@ -205,8 +201,8 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
     start = time.time(); out = Path(out).resolve(); work = out/'work'
     variant = reference if isinstance(reference, str) else None
     offsets = reference_offsets(reference) if variant else reference
-    src = source or load_k(run, config=k_config).legacy()
-    offset, f, kin = foot_offset(run, work, mass, floor, src, k_config=k_config)
+    src = source or load_k(run).legacy()
+    offset, f, kin = foot_offset(run, work, mass, floor, src)
     delta = 0. if offset_reference is None else offset['mean']-offset_reference
     floor_eval = floor+delta
     ref = absolute_reference(offsets, floor_eval)
@@ -220,24 +216,11 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
               'lowest_elevation_m': res['lowest_elevation'], 'state': res['state'],
               **{f'contact_{s}_{k}': res['masks'][s][k] for s in SIDES for k in LANDMARKS},
               **{f'elevation_{s}_{k}': res['elevation'][s][k] for s in SIDES for k in LANDMARKS}}
-    for category in ['region_angle_valid','region_registered_valid','region_position_valid']:
-        frames.update({f'k_{category}_{region}':mask for region,mask in f.get(category,{}).items()})
-    if f.get('region_registered_valid'):
-        frames['k_force_eligible'] = np.logical_and.reduce([
-            f[category][region] for category in ['region_registered_valid','region_position_valid']
-            for region in f[category]])
     from .k import load as load_k, evaluate as evaluate_k
     from .k.posture import summary as k_summary
     summary = {'ik': {**f['receipt']['ik_marker_error'], 'unmeasurable_share': float(f['unmeasurable'][sel].mean()),
                       'arm_source_fidelity':f['receipt']['arm_quality']},
-               'k': k_summary(evaluate_k(load_k(run, method, config=k_config), config=k_config))}
-    if 'ik_marker_error_scope' in f['receipt']:
-        summary['ik']['error_scope'] = f['receipt']['ik_marker_error_scope']
-        summary['k_downstream_support'] = {
-            'force_eligible_share':float(frames['k_force_eligible'][sel].mean()),
-            'scope':'registered angular and spatial input fidelity required in every model region; force and muscle accuracy require independent validation',
-            'residual_statistics':'all-frame diagnostics; per-frame eligibility saved separately',
-            'muscle_primary':'residual-negative and K-force-eligible frames; forced result retains all solved frames'}
+               'k': k_summary(evaluate_k(load_k(run, method)))}
     if 'residual' in dims:
         positive = residual.judge(res) if SPEC['residual']['tau_bw'] else None
         if positive is not None:
@@ -251,7 +234,7 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
                                'state_share': {k: float(np.mean(res['state'][sel] == k)) for k in ('event', 'contact', 'flight')}}
     if 'ergo' in dims:
         method = method or (variant.split('__')[0] if variant else None)
-        summary['ergo'] = ergo_dim(run, work, f, res['masks'], sel, src, method, prompt, object_free, frames, k_config=k_config)
+        summary['ergo'] = ergo_dim(run, work, f, res['masks'], sel, src, method, prompt, object_free, frames)
     if 'muscle' in dims:
         summary['muscle'] = muscle_dim(work, times, sel, frames)
     if 'kinematic' in dims:
@@ -266,9 +249,5 @@ def evaluate(run, out, floor, reference, mass=75., method=None, prompt=None, dim
                'fit_prepare': fit_mod.PREPARE, 'contact_margin_m': residual.C['contact_margin_m'],
                'object_free': None if 'ergo' not in dims else bool(ergo.object_free(prompt) if object_free is None else object_free),
                'commit': _commit(), 'seconds': round(time.time()-start, 1)}
-    if k_config is not None:
-        from .k.config import resolve_config
-        receipt['k_config'] = resolve_config(k_config)
-        receipt['k_support_scope'] = f['receipt'].get('support_scope')
     (out/'evalkit.json').write_text(json.dumps({'receipt': receipt, **summary}, indent=1))
     return summary

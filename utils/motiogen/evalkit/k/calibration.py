@@ -8,9 +8,7 @@ CLOSD = ['Pelvis','L_Hip','R_Hip','Torso','L_Knee','R_Knee','Spine','L_Ankle','R
 UPRIGHT=np.array([[0.,0.,1.],[1.,0.,0.],[0.,1.,0.]])
 
 
-def model_basis(motion,source,config=None):
-    from .config import resolve_config
-    settings=resolve_config(config)
+def model_basis(motion,source):
     path=ROOT/'config/evalkit_k_calibration'/f'{motion.method}.json'
     if motion.rotations is None or not path.exists():return None,{'status':'source_orientation_unavailable'}
     cal=json.loads(path.read_text())
@@ -50,7 +48,7 @@ def model_basis(motion,source,config=None):
         errors.append(np.degrees(np.arccos(np.clip(cosine,-1,1))))
     finite=np.concatenate(errors) if errors else np.array([]);finite=finite[np.isfinite(finite)]
     p95=float(np.percentile(finite,95)) if len(finite) else None
-    tolerance=settings['calibration']['native_bone_tolerance_deg']
+    tolerance=CONFIG['calibration']['native_bone_tolerance_deg']
     frame_valid=np.all(np.asarray(errors)<=tolerance,axis=0) if errors else np.zeros(len(motion.times),bool)
     record={'status':'model_rest_convention_supported' if p95 is not None and p95<=tolerance else 'model_rest_convention_mismatch',
             'source':str(path.relative_to(ROOT)),'sha256':digest(path),'bone_direction_p95_deg':p95,
