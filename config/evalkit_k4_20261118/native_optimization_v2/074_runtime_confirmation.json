@@ -1,0 +1,9 @@
+{
+  "hypothesis": "Confirm the freshly recomputed full K entrypoint matches the accepted frozen-native replay; unchanged native solver/domain/geometry, new whole-body SO3 and native-multiple export.",
+  "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/independent_sentinels_v6/fits/rotation_temporal_search_pelvis/074/kimodo",
+  "condition": "pelvis_continuity",
+  "reference_access": false,
+  "acceptance": "Independent original R, fixed masks and original clock; same target and temporal gates",
+  "promotion": "none; 017 regression retained",
+  "new_holdout_uses": 0
+}

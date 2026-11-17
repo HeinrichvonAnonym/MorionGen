@@ -1,0 +1,8 @@
+{
+  "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/074/kimodo/candidate",
+  "method": "kimodo",
+  "mass_kg": 75.0,
+  "floor_m": -1.0694006471749507e-05,
+  "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/native_optimization_20261118_v2/runtime_confirmation_074",
+  "fit_config": "/home/heinrich/MorionGen/config/evalkit_k4_20261118/native_optimization_v2/pelvis_continuity.json"
+}
