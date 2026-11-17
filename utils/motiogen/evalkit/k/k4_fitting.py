@@ -65,7 +65,7 @@ def fit(run,work,mass,floor,config):
         receipt=json.loads(receipt_path.read_text())
         if receipt['key']!=key:raise ValueError('K4 cache identity changed; use a new output directory')
         with np.load(out/'fit.npz') as z:return {**{k:z[k] for k in z.files},'receipt':receipt}
-    geometry=build(motion,out/'model.osim',mass,settings['independent_geometry'],settings.get('marker_registration','legacy'))
+    geometry=build(motion,out/'model.osim',mass,settings['independent_geometry'],settings.get('marker_registration','legacy'),settings.get('joint_centres','scaled_asset'))
     if settings.get('diagnostic_domain'):
         from .diagnostic_domain import apply
         domain=apply(out/'model.osim',settings['diagnostic_domain'])
@@ -95,7 +95,12 @@ def fit(run,work,mass,floor,config):
         from .refinement import refine
         if len(nt)!=len(points) or not np.allclose(nt,np.arange(len(points))/fps,atol=1e-6):
             raise ValueError('Native IK/input clocks differ')
-        native,refinement=refine(out/'model.osim',labels,native,points,names,settings['refinement'])
+        body_targets={};body_target_receipt={'status':'not_requested'}
+        if settings['refinement'].get('native_frame_weight',0):
+            from .body_frames import targets
+            body_targets,body_target_receipt=targets(motion)
+        native,refinement=refine(out/'model.osim',labels,native,points,names,settings['refinement'],body_targets)
+        refinement['body_target_source']=body_target_receipt
         write_coordinates(out/'coordinates_refined_native.mot',nt,labels,native)
         (out/'refinement.json').write_text(json.dumps(refinement,indent=2)+'\n')
     if settings.get('postprocess','legacy_lowpass')=='native_preserving':
@@ -123,7 +128,8 @@ def fit(run,work,mass,floor,config):
     if settings.get('head_neck'):
         if settings['head_neck']!='attached_head_neck_v1':raise ValueError('Unknown head/neck policy')
         from .head_neck import attach,combine
-        head_definition,head=attach(motion,out/'model.osim',labels,consistent,physical_times)
+        head_definition,head=attach(motion,out/'model.osim',labels,consistent,physical_times,
+            attachment_policy=settings.get('head_neck_attachment','registered_chest'))
         _,head_before=attach(motion,out/'model.osim',labels,pre_root_coordinates,physical_times,fixed_definition=head_definition)
         # Fixed attachment/lengths must be identical across root-only compensation.
         if not np.allclose(head['offsets'],head_before['offsets'],equal_nan=True):

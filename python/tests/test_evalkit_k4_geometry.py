@@ -63,3 +63,35 @@ class GeometryTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+class DeclaredCentresTests(unittest.TestCase):
+    def test_declared_centres_survive_save_and_keep_model_constraints(self):
+        import biomech
+        from motiogen.evalkit.k.rig_geometry import transport
+        run=Path(json.loads((ROOT/'config/k_degradation_20261117/freeze.json').read_text())['run'])
+        m=load(run/'inputs/022/kimodo/candidate','kimodo',config=ROOT/'config/evalkit_k4_20261117/input.json')
+        with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs/20261117_k4') as temp:
+            a=build(m,Path(temp)/'a.osim',75,True,'owned_joint_frame')
+            b=build(m,Path(temp)/'b.osim',75,True,'owned_joint_frame','declared_rig')
+            self.assertEqual(a['joint_domain'],b['joint_domain'])
+            model=osim.Model(str(Path(temp)/'b.osim'));state=model.initSystem()
+            for joint,record in b['joint_centres']['changes'].items():
+                np.testing.assert_allclose(biomech._child_origin(model,state,joint),record['target_neutral_world_m'],atol=1e-10)
+            self.assertLess(max(b['marker_joint_frame_offset_m'].values()),1e-9)
+            # The geometry depends on the declared rig, not sampled poses.
+            other=copy.deepcopy(m);other.positions[:]=0
+            c=build(other,Path(temp)/'c.osim',75,True,'owned_joint_frame','declared_rig')
+            self.assertEqual(b['joint_centres'],c['joint_centres'])
+
+    def test_expanded_domain_is_explicit_and_leaves_other_constraints(self):
+        from motiogen.evalkit.k.diagnostic_domain import apply
+        import biomech
+        with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs/20261117_k4') as temp:
+            path=Path(temp)/'model.osim';model=osim.Model(str(biomech.MODEL));model.printToXML(str(path))
+            policy={'base':'release_subtalar_original_range','scope':'counterfactual_kinematic_only','coordinate_ranges_deg':{'arm_flex_r':[-90,160]}}
+            result=apply(path,policy);restored=osim.Model(str(path));cs=restored.getCoordinateSet()
+            self.assertAlmostEqual(np.rad2deg(cs.get('arm_flex_r').getRangeMax()),160)
+            self.assertEqual(cs.get('arm_flex_l').getRangeMax(),model.getCoordinateSet().get('arm_flex_l').getRangeMax())
+            self.assertEqual(set(result['changes']),{'subtalar_angle_l','subtalar_angle_r','arm_flex_r'})
+            self.assertIn('no anatomical',result['scope'])
+            with self.assertRaises(ValueError):apply(path,{**policy,'scope':'promoted'})

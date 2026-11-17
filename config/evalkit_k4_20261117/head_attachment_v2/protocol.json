@@ -1,0 +1,13 @@
+{
+  "version":"k4-fixed-cervical-attachment-2",
+  "body_source":"strict_domain_head_v1/fits; existing body coordinates unchanged",
+  "body_conditions":["registered_head_control","registered_head_range_diagnostic"],
+  "panel":"config/evalkit_k4_20261117/strict_v1/sentinels.json",
+  "change":"registered_chest -> input_fixed_offset; one constant torso-local attachment estimated from D neck observations and fixed rig link",
+  "hypothesis":"Separate constant attachment bias from body pose error, retain model-FK chain and all D-only constraints",
+  "comparisons":["D-R","F-D","F-R"],
+  "new_holdout_uses":0,
+  "range_status":"diagnostic only; user asked for physiological basis, no promotion authorization",
+  "promotion":"none",
+  "limits":{"workers":1,"numerical_threads":1,"min_free_gib":80}
+}

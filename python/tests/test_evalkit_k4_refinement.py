@@ -44,3 +44,32 @@ class RefinementTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+class JointTargetTests(unittest.TestCase):
+    def test_known_deep_flexion_explicit_angle_objective(self):
+        from motiogen.degradation.metrics import angle
+        m=osim.Model(str(biomech.MODEL));state=m.initSystem();cs=m.getCoordinateSet()
+        labels=[cs.get(i).getName() for i in range(cs.getSize())]
+        row=np.array([cs.get(i).getValue(state)*(180/np.pi if cs.get(i).getMotionType()==1 else 1) for i in range(cs.getSize())])
+        for side in ('l','r'):
+            row[labels.index('hip_flexion_'+side)]=70
+            row[labels.index('knee_angle_'+side)]=110
+            row[labels.index('elbow_flex_'+side)]=90
+        goal=np.tile(row,(2,1));p,n,goal=model_fk(biomech.MODEL,labels,goal,direct_couplers=True,return_coordinates=True)
+        start=goal.copy()
+        for name in ('knee_angle_r','elbow_flex_l'):start[:,labels.index(name)]-=8
+        q,receipt=refine(biomech.MODEL,labels,start,p,n,{'max_nfev':30,'include_pelvis_line':True,
+                 'joint_angle_weight':1.,'target_violation_weight':3.,'target_margin_fraction':.8})
+        f,_=model_fk(biomech.MODEL,labels,q,direct_couplers=True)
+        for side,a,b,c in [('right','hip','knee','ankle'),('left','shoulder','elbow','wrist')]:
+            i,j,k=[n.index(side+'_'+x) for x in (a,b,c)]
+            delta=angle(f[:,i]-f[:,j],f[:,k]-f[:,j])-angle(p[:,i]-p[:,j],p[:,k]-p[:,j])
+            self.assertLess(abs(delta).max(),.2)
+        self.assertTrue(all(x['after_loss']<=x['before_loss'] for x in receipt['frames']))
+
+class AbsoluteJacobianTests(unittest.TestCase):
+    def test_known_derivatives_at_zero_and_bounds(self):
+        from motiogen.evalkit.k.refinement import bounded_jacobian
+        fun=lambda x:np.array([np.sin(x[0])+2*x[1],x[0]*x[1]])
+        j=bounded_jacobian(fun,np.array([1e-9,2.]),np.array([0.,-3]),np.array([4.,2.]),1e-5)
+        np.testing.assert_allclose(j,[[1,2],[2,1e-9]],atol=1e-9)

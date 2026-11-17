@@ -67,7 +67,10 @@ def body_frames(model_path,labels,coordinates):
     return np.asarray(origins),np.asarray(rotations),np.asarray(chests) if chests else None
 
 
-def attach(motion,model_path,labels,coordinates,times,fixed_definition=None):
+def attach(motion,model_path,labels,coordinates,times,fixed_definition=None,attachment_policy='registered_chest'):
+    if fixed_definition is not None:attachment_policy=fixed_definition.get('attachment_policy',attachment_policy)
+    if attachment_policy not in ('registered_chest','input_fixed_offset','input_fixed_offset_position_profile'):
+        raise ValueError('Unknown fixed head/neck attachment policy')
     body_origin,body_rotation,registered_chest=body_frames(model_path,labels,coordinates)
     native=native_frames(motion);rig=motion.provenance.get('input_rig');idx={n:i for i,n in enumerate(motion.names)}
     observed=np.stack([np.stack([np.interp(times,motion.times,motion.positions[:,j,k]) for k in range(3)],1)
@@ -88,6 +91,15 @@ def attach(motion,model_path,labels,coordinates,times,fixed_definition=None):
         if registered_chest is None:raise ValueError('Declared-rig chain requires a registered model chest anchor')
         origin=registered_chest;base_source=body_rotation@transport;base_rotation=base_source@bases[chest]
         offsets=[rest[j]-rest[i] for i,j in zip(chain[:-1],chain[1:])]
+        attachment=None
+        if attachment_policy=='input_fixed_offset':
+            neck_observed=observed[:,idx['neck']]
+            delta=neck_observed-body_origin-np.einsum('tij,j->ti',base_rotation,offsets[0])
+            local_estimates=np.einsum('tij,tj->ti',body_rotation.swapaxes(-1,-2),delta)
+            attachment=(np.asarray(fixed_definition['attachment_local_m']) if fixed_definition is not None
+                        else np.nanmedian(local_estimates,axis=0))
+            if not np.isfinite(attachment).all():raise ValueError('Fixed cervical attachment unidentifiable')
+            origin=body_origin+np.einsum('tij,j->ti',body_rotation,attachment)
         source_rotations=[interpolate_rotations(motion.times,native['frames'][:,j],times) for j in chain]
         relative_target=source_rotations[0].swapaxes(-1,-2)@source_rotations[-1]
         desired=[base_rotation]
@@ -106,6 +118,15 @@ def attach(motion,model_path,labels,coordinates,times,fixed_definition=None):
             'source_frame_bases':bases[chain].tolist(),'body_to_source_transport':transport.tolist(),
             'targets':'internal observed world frames; head relative fitted chest; no R access',
             'scope':'fixed kinematic chain; full head world rotation discrepancy remains a separate diagnostic'}
+        definition['attachment_policy']=attachment_policy
+        if attachment is not None:
+            definition.update(attachment_local_m=attachment.tolist(),
+                attachment='input-estimated cervical base fixed on fitted torso',
+                attachment_estimation='componentwise median of D neck minus FK rest link, expressed in fitted torso; one constant for entire clip',
+                attachment_support_frames=int(np.isfinite(local_estimates).all(-1).sum()),
+                attachment_local_spread_p95_m=np.nanpercentile(np.linalg.norm(local_estimates-attachment,axis=-1),95).item(),
+                source_names=chain_names.copy())
+            chain_names[0]='cervical_base';definition['names']=chain_names
     else:
         chest_name='Spine3' if 'Spine3' in idx else 'spine3'
         chest_obs=observed[:,idx[chest_name]];neck_obs=observed[:,idx['neck']];head_obs=observed[:,idx['head']]
@@ -126,6 +147,7 @@ def attach(motion,model_path,labels,coordinates,times,fixed_definition=None):
         p,r=forward(origin,base_rotation,offsets,local);chain_names=['chest','neck','head']
         source_frames=r;relative=np.full((len(times),3,3),np.nan);rotation_valid=np.zeros(len(times),bool)
         definition={'version':'attached-head-neck-1','names':chain_names,'offsets_m':np.asarray(offsets).tolist(),
+            'attachment_policy':'input_fixed_offset_position_profile',
             'source':'input segment-length medians; estimated constant attachment from D and fitted torso',
             'attachment_local_m':attachment.tolist(),'attachment':'fixed on fitted torso',
             'targets':'observed head-neck direction; axial twist gauge unobserved',

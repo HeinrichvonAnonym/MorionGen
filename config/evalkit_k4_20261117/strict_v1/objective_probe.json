@@ -1,0 +1,50 @@
+{
+  "version": "k4-original-domain-objective-probe-1",
+  "windows": [
+    "000",
+    "015",
+    "022",
+    "074"
+  ],
+  "frames": "First, middle, last D frame, fixed before fitting; diagnostic samples only, no full-window acceptance",
+  "hypothesis": "Explicit elbow/knee geometric-angle targets and target violation penalties may improve original-domain feasibility; old direction/position objective does not directly constrain joint-angle error; 074 has identical large knee error across conditions despite pose changes, test absolute finite-difference steps near zero coordinate bounds independently.",
+  "shared_refinement": {
+    "position_scale_m": 0.05,
+    "direction_scale_deg": 5,
+    "position_weight": 1,
+    "continuity_weight": 0,
+    "max_nfev": 100,
+    "include_pelvis_line": true
+  },
+  "conditions": {
+    "original": {},
+    "joint_angles": {
+      "joint_angle_weight": 1
+    },
+    "joint_angles_targets": {
+      "joint_angle_weight": 1,
+      "target_violation_weight": 3,
+      "target_margin_fraction": 0.8
+    },
+    "absolute_jacobian": {
+      "jacobian": "absolute_central",
+      "jacobian_step_rad": 1e-05
+    },
+    "joint_angles_targets_absolute": {
+      "joint_angle_weight": 1,
+      "target_violation_weight": 3,
+      "target_margin_fraction": 0.8,
+      "jacobian": "absolute_central",
+      "jacobian_step_rad": 1e-05
+    }
+  },
+  "parameter_basis": "Joint angles use the same 5 degree engineering scale. Violation weight3 and 80% target margin are explicit exploratory settings, not validated standards. Absolute angular step1e-5rad is an explicit numerical stability probe, compared at same model/objective.",
+  "domain": "Original asset ranges; existing subtalar DOFs released within their original ranges, as in saved v2 control; no range expansion",
+  "new_holdout_uses": 0,
+  "limits": {
+    "workers": 1,
+    "numerical_threads": 1,
+    "min_free_gib": 80
+  },
+  "promotion": "none"
+}

@@ -71,3 +71,25 @@ class HeadNeckTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+class FixedNativeAttachmentTests(unittest.TestCase):
+    def test_fixed_attachment_changes_origin_not_lengths_or_joint_targets(self):
+        names=['left_hip','right_hip','spine3','neck','head'];rest=np.array([[.1,0,0],[-.1,0,0],[0,1,0],[0,1.2,0],[0,1.4,0]])
+        rotations=np.tile(np.eye(3),(3,5,1,1));times=np.arange(3.)
+        rig={'names':names,'parents':[-1,-1,-1,2,3],'neutral_joints':rest.tolist(),
+             'decoded_native_right_basis':np.tile(np.eye(3),(5,1,1)).tolist(),'segment_frame_basis':np.tile(np.eye(3),(5,1,1)).tolist()}
+        motion=Motion(np.tile(rest,(3,1,1)),names,times,'known',rotations,names,{'input_rig':rig})
+        transport=np.array([[0,0,1],[0,1,0],[-1,0,0]])
+        body_rotation=np.tile(transport.T,(3,1,1));body_origin=np.tile([.1,.9,.1],(3,1))
+        registered=np.tile([.1,1,.1],(3,1))
+        with patch('motiogen.evalkit.k.head_neck.body_frames',return_value=(body_origin,body_rotation,registered)):
+            old,base=attach(motion,None,[],np.empty((3,0)),times)
+            definition,fit=attach(motion,None,[],np.empty((3,0)),times,attachment_policy='input_fixed_offset')
+        np.testing.assert_allclose(fit['positions'][:,1:],motion.positions[:,3:],atol=1e-14)
+        np.testing.assert_allclose(fit['offsets'],base['offsets'])
+        np.testing.assert_allclose(fit['local_rotations'],base['local_rotations'])
+        self.assertEqual(definition['names'][0],'cervical_base')
+        with patch('motiogen.evalkit.k.head_neck.body_frames',return_value=(body_origin+[.2,0,0],body_rotation,registered+[.2,0,0])):
+            before,h=attach(motion,None,[],np.empty((3,0)),times,fixed_definition=definition)
+        self.assertEqual(before['attachment_local_m'],definition['attachment_local_m'])
+        np.testing.assert_allclose(h['positions']-fit['positions'],np.broadcast_to([.2,0,0],h['positions'].shape))
