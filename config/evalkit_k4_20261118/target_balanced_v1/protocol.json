@@ -1,0 +1,22 @@
+{
+  "version": "target-balanced-1",
+  "source_commit": "d6461b9",
+  "hypothesis": "017 pelvis/shoulder tradeoff may be weighted least-squares accepting a local target violation. Penalize per-target input errors uniformly rather than choosing a pelvis weight for this window. Isolate pose versus physical direction-error continuity.",
+  "model_boundary": "No new ranges or geometry changes",
+  "records": [
+    {
+      "window": "017",
+      "method": "chois"
+    }
+  ],
+  "conditions": [
+    "pose",
+    "temporal"
+  ],
+  "selection": "Runtime objective uses D only; no window selector. Independent R and original clock acceptance after fitting.",
+  "next_gate": "If target candidate succeeds, same settings on fixed six sentinels plus 070; preserve every failing candidate.",
+  "cpu_processes": 3,
+  "numerical_threads": 1,
+  "min_free_GiB": 80,
+  "new_holdout_uses": 0
+}
