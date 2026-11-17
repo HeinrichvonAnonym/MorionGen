@@ -1,0 +1,21 @@
+{
+  "version": "k4-independent-domain-3",
+  "conditions": [
+    "independent_highflex"
+  ],
+  "strict_scoring": true,
+  "authorization": "User explicitly authorized independent kinematic ranges with per-range and coupling validation on 2026-11-17",
+  "hypothesis": "Zero-auxiliary endpoint still misses full folding because model joint axes and bone vectors differ. Determine endpoint auxiliary angles from fixed FK geometry, then test full sentinel windows.",
+  "old_counterparts": {
+    "independent_highflex": "registered_head_range_diagnostic"
+  },
+  "prior_candidate_folder": "strict_domain_head_v1",
+  "coupling_policy": "C1 Hermite140..180, auxiliary endpoint from fixed-model FK collinearity; no D pose or R access; end rotations bounded\u00b145deg; original range preserved with dense spline checks; engineering geometry, not physiological validation.",
+  "new_holdout_uses": 0,
+  "promotion": "none until full656 acceptance",
+  "limits": {
+    "workers": 1,
+    "numerical_threads": 1,
+    "min_free_gib": 80
+  }
+}

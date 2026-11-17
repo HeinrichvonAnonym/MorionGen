@@ -24,7 +24,7 @@ class CouplingExtensionTests(unittest.TestCase):
             domain(old,cfg['kinematic_domain'])
             import shutil
             shutil.copyfile(old,new)
-            receipt=apply(new,{'version':'knee_auxiliary_hermite_v1','boundary_deg':140.,'end_deg':180.,'grid_deg':.1})
+            receipt=apply(new,{'version':'knee_auxiliary_hermite_v2','boundary_deg':140.,'end_deg':180.,'grid_deg':.1})
             model=osim.Model(str(old));state=model.initSystem();cs=model.getCoordinateSet();labels=[cs.get(i).getName() for i in range(cs.getSize())]
             row=np.array([cs.get(n).getDefaultValue()*(180/np.pi if cs.get(n).getMotionType()==1 else 1) for n in labels])
             q=np.tile(row,(5,1))
