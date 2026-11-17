@@ -1,0 +1,17 @@
+{
+  "version": "k4-independent-domain-4",
+  "conditions": [
+    "hip_domain",
+    "hip_domain_targets"
+  ],
+  "strict_scoring": true,
+  "hypothesis": "Hip-range control reduces074 three-frame error; full-window check required. Paired explicit angle/target-hinge objective tests whether017 residual is an objective tradeoff. Fourfold penalty outside80% of5deg/5cm goals is an engineering candidate, no guarantee of success.",
+  "source_probe": "independent_hip_probe_v1",
+  "new_holdout_uses": 0,
+  "promotion": "none until full656 acceptance",
+  "limits": {
+    "workers": 3,
+    "numerical_threads": 1,
+    "min_free_gib": 80
+  }
+}
