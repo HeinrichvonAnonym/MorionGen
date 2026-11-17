@@ -4,12 +4,12 @@ from motiogen.evalkit.k.model_domain import prepare,PROFILES
 OUT=BASE/'evalkit_k36_domain_20261117'
 
 def run_domain(task):
- row,profile=task;work=OUT/profile/row['window'];work.mkdir(parents=True,exist_ok=True)
+ row,profile,*options=task;overrides=dict(options[0]) if options else {};destination=Path(overrides.pop('_output',OUT));work=destination/profile/row['window'];work.mkdir(parents=True,exist_ok=True)
  assert shutil.disk_usage(OUT).free>80*1024**3
  import opensim as osim
  osim.Logger.setLevelString('error');z=np.load(row['kinematics']);t=z['times'];labels=list(z['labels']);names=list(z['names']);initial=z['coordinates'];source=z['source'];model=work/'model.osim'
  initial,domain=prepare(row['model'],model,labels,initial,profile)
- settings={**SETTINGS,'foot_weight':1.,'max_nfev':100};selected,raw,receipt=refine_legs(model,t,labels,initial,source,names,settings)
+ settings={**SETTINGS,'foot_weight':1.,'max_nfev':100,**overrides};selected,raw,receipt=refine_legs(model,t,labels,initial,source,names,settings)
  old=np.load(row['comparison']);D=old['D'];R=old['R'];F=old[row['fit_key']];assert np.allclose(t,old['times'])
  fits={};masks={}
  for key,q in [('baseline',initial),('candidate',raw),('selected',selected)]:

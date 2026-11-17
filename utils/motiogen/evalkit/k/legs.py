@@ -77,7 +77,10 @@ def refine_legs(model_path,times,labels,data,source,names,settings):
             if previous is not None:seeds.append(np.clip(previous,lo,hi))
             solutions=[least_squares(lambda x:residual(x,0.),x,bounds=(lo,hi),max_nfev=settings['max_nfev']) for x in seeds]
             proximal=min(solutions,key=lambda s:float(s.fun@s.fun)).x
-            joint=[least_squares(lambda x:residual(x,settings['foot_weight']),x,bounds=(lo,hi),max_nfev=settings['max_nfev']) for x in [seed,proximal]]
+            joint_seeds=[seed,proximal]
+            if settings.get('continue_joint_branch',False) and previous is not None:
+                joint_seeds.insert(0,np.clip(previous,lo,hi))
+            joint=[least_squares(lambda x:residual(x,settings['foot_weight']),x,bounds=(lo,hi),max_nfev=settings['max_nfev']) for x in joint_seeds]
             best=min(joint,key=lambda s:float(s.fun@s.fun)).x
             optimized.append(best);previous=best
         values=PchipInterpolator(times[indices],np.asarray(optimized),axis=0)(times)
