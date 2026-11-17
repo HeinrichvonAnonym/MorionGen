@@ -1,0 +1,12 @@
+{
+  "protected_count": 610,
+  "protected_changed": [],
+  "frozen_implementation_changed": [],
+  "frozen_config_unchanged": true,
+  "full_controller_pid": 241358,
+  "candidate_controller_pid": 241633,
+  "full_children": 6,
+  "candidate_children": 2,
+  "disk_free_GiB": 837.2341423034668,
+  "new_holdout_uses": 0
+}

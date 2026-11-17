@@ -1,0 +1,76 @@
+{
+  "joints": {
+    "ankle_l": {
+      "type": "PinJoint",
+      "coordinates": {
+        "ankle_angle_l": {
+          "range_rad": [
+            -1.5707963267948966,
+            1.5707963267948966
+          ],
+          "locked": false,
+          "clamped": true,
+          "dependent": false
+        }
+      },
+      "classification": "one_axis_geodesic_equivalent"
+    },
+    "ankle_r": {
+      "type": "PinJoint",
+      "coordinates": {
+        "ankle_angle_r": {
+          "range_rad": [
+            -1.5707963267948966,
+            1.5707963267948966
+          ],
+          "locked": false,
+          "clamped": true,
+          "dependent": false
+        }
+      },
+      "classification": "one_axis_geodesic_equivalent"
+    },
+    "subtalar_l": {
+      "type": "PinJoint",
+      "coordinates": {
+        "subtalar_angle_l": {
+          "range_rad": [
+            -1.5707963267948966,
+            1.5707963267948966
+          ],
+          "locked": false,
+          "clamped": true,
+          "dependent": false
+        }
+      },
+      "classification": "one_axis_geodesic_equivalent"
+    },
+    "subtalar_r": {
+      "type": "PinJoint",
+      "coordinates": {
+        "subtalar_angle_r": {
+          "range_rad": [
+            -1.5707963267948966,
+            1.5707963267948966
+          ],
+          "locked": false,
+          "clamped": true,
+          "dependent": false
+        }
+      },
+      "classification": "one_axis_geodesic_equivalent"
+    }
+  },
+  "sweep_deg": [
+    -90,
+    -75,
+    -50,
+    0,
+    50,
+    75,
+    90
+  ],
+  "fk_finite": true,
+  "constraint_functions_unchanged": true,
+  "scope": "Symmetric independent kinematic domain only. Existing one-axis joints have no new polynomial extrapolation; no physiological or force qualification."
+}
