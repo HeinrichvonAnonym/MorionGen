@@ -1,12 +1,13 @@
 """K4 runtime input fidelity; no reference-based accuracy qualification."""
 import numpy as np
+from .timebase import supported
 
 
 def assess(motion,times,positions,names):
     source_names=list(motion.legacy()[1]);source=motion.positions
     goal=np.stack([np.stack([np.interp(times,motion.times,source[:,source_names.index(name),axis])
                             for axis in range(3)],1) for name in names],1)
-    time_valid=(times>=motion.times[0])&(times<=motion.times[-1])
+    time_valid=supported(times,motion.times[0],motion.times[-1])
     observed=np.isfinite(goal).all(-1)&time_valid[:,None]
     finite=np.isfinite(positions).all(-1)&observed
     error=np.linalg.norm(positions-goal,axis=-1)

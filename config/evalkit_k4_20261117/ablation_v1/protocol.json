@@ -1,0 +1,48 @@
+{
+  "version": "k4-ablation-1",
+  "selection": "Complete common baseline -> existing fixed-panel selector; selected before any factorial fits",
+  "conditions": [
+    "g0_s0",
+    "g0_s1",
+    "g1_s0",
+    "g1_s1",
+    "g1_s1_pelvis",
+    "g1_s1_subtalar",
+    "g1_s1_pelvis_subtalar"
+  ],
+  "controls": {
+    "shared_postprocess": "native_preserving",
+    "shared_constraints": "direct_couplers",
+    "root": "Each fit retains pre-root and post-root FK; same poses, translation only",
+    "legacy_common": "Original common result retained; filtered direct-coupler control isolates assembly; g0_s0 separates filtering/resampling from pose refinement"
+  },
+  "comparisons": [
+    "D-R",
+    "F-D",
+    "F-R"
+  ],
+  "score_clock": "Full D and original clocks retained; fixed baseline/D overlap additionally used for paired ablation",
+  "geometry": "Clip fixed; no topology or joint-domain changes",
+  "runtime_input": "D and declared rig/config/model only; R read after child exits",
+  "limits": {
+    "workers": 3,
+    "numerical_threads": 1,
+    "min_free_gib": 80
+  },
+  "foot_unlock_scan": "Diagnostic copies only; original coordinate ranges; no runtime policy change",
+  "new_holdout_uses": 0,
+  "directed_interventions": {
+    "fixed_background": "g1_s1; geometry, initial IK, postprocess, other weights and coordinate ranges unchanged",
+    "pelvis_line": "Add observed left/right hip-line direction at the same explicit 5-degree scale as other directions; D only",
+    "subtalar": "Release only the existing bilateral subtalar locks, retaining original asset ranges; diagnostic, not force qualified",
+    "factorial": "Neither / pelvis only / subtalar only / both",
+    "reason": "Saved 000 Kimodo probe: pelvis-line drift and right-hip saturation appear during refinement; fixed-proximal foot scan shows subtalar restriction contributes"
+  },
+  "scoring_additions": {
+    "pelvis_line": "Independently score the observed left/right hip-line direction and temporal error for all conditions; original frozen baseline score files unchanged",
+    "clock_boundary_roundoff_s": 1e-09,
+    "clock_scope": "Numerical equality at sample boundaries only; actual out-of-interval frames remain unavailable",
+    "ik_clock_roundtrip_limit_s": 1e-06
+  },
+  "numerical_bug_fix": "Old IK MOT endpoint 4.96666667 produced +3.33 ns against D and skipped final root correction. Verify IK/D frame correspondence, restore native D times and bind physical output endpoints to D; 1 ns float-boundary equality is separate and alone insufficient. All new conditions share this correction; old probe is preserved."
+}

@@ -1,5 +1,6 @@
 """Input-only global translation after pose fitting; no reference offsets."""
 import numpy as np
+from .timebase import supported
 
 
 def compensate(model_path, times, labels, coordinates, motion):
@@ -11,7 +12,7 @@ def compensate(model_path, times, labels, coordinates, motion):
     index={n:i for i,n in enumerate(motion.names)}
     observed=(motion.positions[:,index['left_hip']]+motion.positions[:,index['right_hip']])/2
     target=np.stack([np.interp(times,motion.times,observed[:,j]) for j in range(3)],1)
-    valid=(times>=motion.times[0])&(times<=motion.times[-1])&np.isfinite(target).all(-1)
+    valid=supported(times,motion.times[0],motion.times[-1])&np.isfinite(target).all(-1)
     model_mid=(before[:,names.index('left_hip')]+before[:,names.index('right_hip')])/2
     shift=np.where(valid[:,None],target-model_mid,0.)
     changed=np.array(coordinates,copy=True)

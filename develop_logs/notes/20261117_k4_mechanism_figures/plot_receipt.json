@@ -1,0 +1,12 @@
+{
+  "scope": "D-clock original-reference plot; no fitting or parameter selection",
+  "D_frames": 150,
+  "plotted_frames": 150,
+  "files": {
+    "Common": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/diagnostics_v2/000/kimodo/common/stored.npz",
+    "Geometry + nominal IK": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/diagnostics_v2/000/kimodo/candidate/native_ik_direct.npz",
+    "Refinement, pre-root": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/diagnostics_v2/000/kimodo/candidate/pre_root.npz",
+    "Refinement, post-root": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/diagnostics_v2/000/kimodo/candidate/stored.npz"
+  },
+  "reference": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/degradation_20261117/source_v4/references/000.npz"
+}

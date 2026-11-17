@@ -26,5 +26,18 @@ class RootTests(unittest.TestCase):
         keep=[i for i in range(len(labels)) if i not in excluded]
         np.testing.assert_allclose(changed[:,keep],q[:,keep],atol=1e-8)
 
+    def test_endpoint_roundoff_does_not_skip_root_compensation(self):
+        from motiogen.evalkit.k.timebase import supported
+        m=osim.Model(str(biomech.MODEL));state=m.initSystem();cs=m.getCoordinateSet()
+        labels=[cs.get(i).getName() for i in range(cs.getSize())]
+        row=np.array([cs.get(i).getValue(state)*(180/np.pi if cs.get(i).getMotionType()==1 else 1) for i in range(cs.getSize())])
+        q=np.tile(row,(2,1));times=np.array([10.,10.1]);ft=times.copy();ft[-1]=np.nextafter(ft[-1],np.inf)
+        p,names=model_fk(biomech.MODEL,labels,q,assemble=False)
+        motion=Motion(p+np.array([.1,.2,-.3]),names,times,'test_input')
+        _,result=compensate(biomech.MODEL,ft,labels,q,motion)
+        self.assertTrue(result['valid'].all())
+        np.testing.assert_allclose(result['after'],motion.positions,atol=1e-8)
+        self.assertFalse(supported([times[-1]+1e-4],times[0],times[-1])[0])
+
 
 if __name__=='__main__':unittest.main()

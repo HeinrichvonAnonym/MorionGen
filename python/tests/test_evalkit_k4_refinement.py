@@ -27,5 +27,20 @@ class RefinementTests(unittest.TestCase):
         self.assertLess(np.linalg.norm(q-p),np.linalg.norm(before-p)*.2)
         self.assertTrue(all(r['after_loss']<=r['before_loss']+1e-9 for r in receipt['frames']))
 
+    def test_pelvis_line_diagnostic_uses_existing_input_hip_positions(self):
+        m=osim.Model(str(biomech.MODEL));state=m.initSystem();cs=m.getCoordinateSet()
+        labels=[cs.get(i).getName() for i in range(cs.getSize())]
+        row=np.array([cs.get(i).getValue(state)*(180/np.pi if cs.get(i).getMotionType()==1 else 1) for i in range(cs.getSize())])
+        for s in ('l','r'):
+            row[labels.index('knee_angle_'+s)]=35;row[labels.index('elbow_flex_'+s)]=30
+        p,names,q=model_fk(biomech.MODEL,labels,np.tile(row,(2,1)),return_coordinates=True)
+        start=q.copy();start[:,labels.index('pelvis_rotation')]+=8
+        solved,_=refine(biomech.MODEL,labels,start,p,names,{'max_nfev':20,'include_pelvis_line':True})
+        final,_=model_fk(biomech.MODEL,labels,solved,direct_couplers=True)
+        initial,_=model_fk(biomech.MODEL,labels,start,direct_couplers=True)
+        from motiogen.degradation.metrics import angle
+        line=lambda x:x[:,names.index('right_hip')]-x[:,names.index('left_hip')]
+        self.assertLess(float(angle(line(final),line(p)).max()),float(angle(line(initial),line(p)).max())*.2)
+
 
 if __name__=='__main__':unittest.main()

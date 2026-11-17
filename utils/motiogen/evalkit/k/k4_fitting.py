@@ -66,12 +66,20 @@ def fit(run,work,mass,floor,config):
         if receipt['key']!=key:raise ValueError('K4 cache identity changed; use a new output directory')
         with np.load(out/'fit.npz') as z:return {**{k:z[k] for k in z.files},'receipt':receipt}
     geometry=build(motion,out/'model.osim',mass,settings['independent_geometry'])
+    if settings.get('diagnostic_domain'):
+        from .diagnostic_domain import apply
+        domain=apply(out/'model.osim',settings['diagnostic_domain'])
+        geometry['diagnostic_domain']=domain
+        for name,change in domain['changes'].items():geometry['joint_domain'][name]['locked']=change['locked_after']
+        geometry['joint_domain_source']='Original asset plus explicit diagnostic lock changes; original ranges retained'
     points,names,fps=motion.legacy()
     biomech.write_trc(points,names,fps,out/'markers.trc')
     weights={n:w for n,w in biomech.WEIGHTS.items() if n in biomech.MARKERS or n in geometry['registered_axial_markers']}
     (out/'ik').mkdir(exist_ok=True)
     biomech.inverse_kinematics(out/'model.osim',out/'markers.trc',out/'ik/ik.mot',0.,(len(points)-1)/fps,weights)
     nt,labels,native=biomech.read_storage(out/'ik/ik.mot')
+    from .timebase import native_clock
+    nt,clock_receipt=native_clock(nt,motion.times)
     refinement=None
     if settings['solver']=='direction_position_refinement':
         from .refinement import refine
@@ -86,15 +94,17 @@ def fit(run,work,mass,floor,config):
         if refinement is not None:raise ValueError('Refined coordinates require explicit native-preserving resampling')
         times,labels,coordinates=biomech.write_coordinates(out/'ik/ik.mot',out/'coordinates.mot')
     direct=settings.get('constraint_policy','assembly')=='direct_couplers'
+    physical_times=(np.linspace(motion.times[0],motion.times[-1],len(times))
+                    if settings.get('postprocess')=='native_preserving' else times+motion.times[0])
     fitted,fitted_names,consistent=model_fk(out/'model.osim',labels,coordinates,return_coordinates=True,direct_couplers=direct)
     pre_root=fitted.copy();pre_root_coordinates=consistent.copy();root_shift=np.zeros((len(times),3));root_valid=np.zeros(len(times),bool)
     if settings['root_policy']=='input_hip_midpoint':
         from .root import compensate
-        consistent,root=compensate(out/'model.osim',times+motion.times[0],labels,consistent,motion)
+        consistent,root=compensate(out/'model.osim',physical_times,labels,consistent,motion)
         fitted=root['after'];root_shift=root['shift_m'];root_valid=root['valid']
     write_coordinates(out/'coordinates_filtered_unassembled.mot',times,labels,coordinates)
     write_coordinates(out/'coordinates.mot',times,labels,consistent)
-    values={'times':times+motion.times[0],'labels':np.asarray(labels),'coords':consistent,
+    values={'times':physical_times,'labels':np.asarray(labels),'coords':consistent,
             'coordinates_filtered_unassembled':coordinates,
             'positions':fitted,'positions_pre_root':pre_root,'coordinates_pre_root':pre_root_coordinates,
             'root_shift_m':root_shift,'root_compensation_valid':root_valid,
@@ -118,6 +128,8 @@ def fit(run,work,mass,floor,config):
              'resampling':settings.get('postprocess','legacy_lowpass'),
              'root_policy':settings['root_policy'],'refinement_ran':refinement is not None,
              'output_dt_s':float(np.median(np.diff(times))),
+             'clock_boundary_roundoff_s':1e-9,
+             'native_clock':clock_receipt,
              'input_fidelity_scope':'Per-input-point engineering fidelity; separate from independent end-to-end accuracy',
              'native_head_thorax_scope':native_frames_result.get('scope',native_frames_result.get('reason'))}
     receipt_path.write_text(json.dumps(receipt,indent=2)+'\n')

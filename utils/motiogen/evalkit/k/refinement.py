@@ -22,7 +22,9 @@ def refine(model_path, labels, coordinates, points, names, settings):
            for a,b in [('hip','knee'),('knee','ankle'),('ankle','foot'),('shoulder','elbow'),('elbow','wrist')]]
     hip=[ni['left_hip'],ni['right_hip']];shoulder=[ni['left_shoulder'],ni['right_shoulder']]
     def vectors(p):
-        return np.vstack([p[b]-p[a] for a,b in edges]+[p[shoulder].mean(0)-p[hip].mean(0),p[shoulder[1]]-p[shoulder[0]]])
+        values=[p[b]-p[a] for a,b in edges]+[p[shoulder].mean(0)-p[hip].mean(0),p[shoulder[1]]-p[shoulder[0]]]
+        if settings.get('include_pelvis_line',False):values.append(p[hip[1]]-p[hip[0]])
+        return np.vstack(values)
     def unit(v):return v/np.maximum(np.linalg.norm(v,axis=-1,keepdims=True),1e-9)
     label_index={n:i for i,n in enumerate(labels)}
     active=[n for n in labels if cs.contains(n) and not cs.get(n).getDefaultLocked()

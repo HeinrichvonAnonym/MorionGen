@@ -1,0 +1,23 @@
+{
+  "version": "k4-fit-1",
+  "status": "diagnostic intervention only; not a promoted runtime configuration",
+  "independent_geometry": true,
+  "solver": "direction_position_refinement",
+  "constraint_policy": "direct_couplers",
+  "postprocess": "native_preserving",
+  "root_policy": "input_hip_midpoint",
+  "refinement": {
+    "position_scale_m": 0.05,
+    "direction_scale_deg": 5,
+    "position_weight": 0.25,
+    "continuity_weight": 0.02,
+    "max_nfev": 12,
+    "parameter_source": "explicit engineering candidate; development ablation required",
+    "include_pelvis_line": true
+  },
+  "joint_domain": "original asset; global translations and heading free",
+  "scope": "kinematic-only candidate; original-model ranges and locks retained",
+  "force_eligible": false,
+  "condition": "g1_s1_pelvis_subtalar",
+  "diagnostic_domain": "release_subtalar_original_range"
+}

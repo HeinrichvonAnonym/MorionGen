@@ -26,5 +26,16 @@ class ConstraintTests(unittest.TestCase):
         np.testing.assert_allclose(data[:,0],[179.,180.,181.])
         np.testing.assert_allclose(data[:,1],[.2,.3,.4])
 
+    def test_actual_ik_decimal_roundtrip_preserves_declared_clock(self):
+        from motiogen.evalkit.k.timebase import native_clock,supported
+        absolute=10.8999891+np.arange(150)/30
+        stored=np.round(np.arange(150)/30,8)
+        canonical,receipt=native_clock(stored,absolute)
+        self.assertGreater(receipt['max_roundtrip_error_s'],1e-9)
+        times,_=resample_native(canonical,['pelvis_tx'],np.zeros((150,1)))
+        physical=np.linspace(absolute[0],absolute[-1],len(times))
+        self.assertEqual(physical[-1],absolute[-1]);self.assertTrue(supported(physical,absolute[0],absolute[-1]).all())
+        with self.assertRaisesRegex(ValueError,'roundtrip limit'):native_clock(stored+.0001,absolute)
+
 
 if __name__=='__main__':unittest.main()
