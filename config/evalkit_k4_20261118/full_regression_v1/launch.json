@@ -1,0 +1,28 @@
+{
+  "scope": "656 controlled-degradation development paths; original-R independent acceptance",
+  "fit_commit": "17b4416",
+  "control_commit": "dd9532e",
+  "manifest_commit": "7953c86",
+  "process_id": 235731,
+  "automation_id": "k4-656",
+  "progress_at_snapshot": {
+    "state": "running",
+    "expected": 656,
+    "finished": 10,
+    "completed": 10,
+    "failed": 0,
+    "passed": 10
+  },
+  "preservation_before": {
+    "checked": 610,
+    "changed": [],
+    "new_holdout_uses": 0
+  },
+  "new_holdout_uses": 0,
+  "remaining_fresh_fits_at_launch": 635,
+  "estimated_hours_from_20_completed_jobs": 13.36,
+  "free_gib": 841.9599838256836,
+  "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1",
+  "report": "/home/heinrich/MorionGen/docs/20261118_k4_full_regression.html",
+  "log": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_full/runner.log"
+}

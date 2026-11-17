@@ -1,0 +1,149 @@
+[
+  {
+    "record": "000_kimodo",
+    "run": "candidate_pool_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "015_kimodo",
+    "run": "candidate_pool_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "017_chois",
+    "run": "candidate_pool_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "022_kimodo",
+    "run": "candidate_pool_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "069_kimodo",
+    "run": "candidate_pool_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "070_chois",
+    "run": "candidate_pool_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "074_kimodo",
+    "run": "candidate_pool_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "015_ardy",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "015_chois",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "015_closd",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "015_dart",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "015_motionlcm",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "015_omnicontrol",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "015_primal",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "022_motionlcm",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "022_omnicontrol",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "069_ardy",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "069_chois",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "069_closd",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "069_dart",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  },
+  {
+    "record": "069_primal",
+    "run": "candidate_pool_panel_20261118_v1",
+    "D_clock": "passed",
+    "R_clock": "passed",
+    "failures": []
+  }
+]
