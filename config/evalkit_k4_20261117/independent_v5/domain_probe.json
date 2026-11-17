@@ -1,0 +1,67 @@
+{
+  "version": "k4-hip-domain-probe-2",
+  "hypothesis": "Full-window v4 finds a local error block missed by isolated first/middle/last frames. At frame24 left hip flexion175 and axial90 both hit bounds. Separate additional range effects from initialization using unchanged fixed geometry and source-v4 fit.",
+  "conditions": {
+    "unchanged": {},
+    "axial_180": {
+      "hip_rotation_l": [
+        -180,
+        180
+      ],
+      "hip_rotation_r": [
+        -180,
+        180
+      ]
+    },
+    "flexion_180": {
+      "hip_flexion_l": [
+        -180,
+        180
+      ],
+      "hip_flexion_r": [
+        -180,
+        180
+      ]
+    },
+    "both_180": {
+      "hip_rotation_l": [
+        -180,
+        180
+      ],
+      "hip_rotation_r": [
+        -180,
+        180
+      ],
+      "hip_flexion_l": [
+        -180,
+        180
+      ],
+      "hip_flexion_r": [
+        -180,
+        180
+      ]
+    }
+  },
+  "seeds": [
+    "previous_fit",
+    "neutral"
+  ],
+  "refinement": {
+    "position_scale_m": 0.05,
+    "direction_scale_deg": 5,
+    "position_weight": 1.0,
+    "continuity_weight": 0,
+    "max_nfev": 100,
+    "parameter_source": "Paired domain diagnostic; common convergence budget 50 vs previous 12, same objective weights; observed convergence probe retained separately.",
+    "include_pelvis_line": true
+  },
+  "frames": "first,middle,last; fixed before fits",
+  "new_holdout_uses": 0,
+  "frame_indices": [
+    0,
+    24,
+    75,
+    149
+  ],
+  "frame_selection": "First/mid/last plus maximum D-only refinement loss in full v4 window, fixed before this probe; no original-R selection."
+}

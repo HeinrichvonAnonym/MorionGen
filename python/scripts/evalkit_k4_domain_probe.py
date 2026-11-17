@@ -30,11 +30,13 @@ def main():
     t,labels,q=biomech.read_storage(a.source/'coordinates_refined_native.mot')
     if len(q)!=len(points) or not np.allclose(t,motion.times-motion.times[0],atol=1e-8):
         raise ValueError('Native D clock and warm-start coordinates must coincide')
-    indices=[0,len(q)//2,len(q)-1]
+    indices=protocol.get('frame_indices',[0,len(q)//2,len(q)-1])
+    if not indices or any(type(i) is not int or not 0<=i<len(q) for i in indices):
+        raise ValueError('Declared probe frames are outside the input clock')
     identity={'commit':subprocess.check_output(['git','-C',str(ROOT),'rev-parse','HEAD']).decode().strip(),
               'source_model_sha256':hashlib.sha256((a.source/'model.osim').read_bytes()).hexdigest(),
               'protocol':protocol,'input_provenance':motion.provenance,'indices':indices,
-              'scope':'D-only three-frame diagnostic; no R or temporal acceptance; no promotion'}
+              'scope':'D-only isolated-frame diagnostic; no R or temporal acceptance; no promotion'}
     (a.output/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
     rows=[]
     for condition,ranges in protocol['conditions'].items():

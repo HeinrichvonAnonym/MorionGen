@@ -1,4 +1,4 @@
-"""Independent original-R scoring of a D-only diagnostic; three frames, no acceptance."""
+"""Independent original-R scoring of isolated D-only diagnostic frames, no acceptance."""
 import argparse,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
