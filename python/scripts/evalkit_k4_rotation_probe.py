@@ -37,13 +37,15 @@ def main():
     if definition_file.exists():
         definition=json.loads(definition_file.read_text());definition_source=str(definition_file)
     else:
-        native_after,_=compensate(model,t+motion.times[0],labels,q,motion)
+        _,_,consistent=model_fk(model,labels,q,direct_couplers=True,return_coordinates=True)
+        native_after,_=compensate(model,t+motion.times[0],labels,consistent,motion)
         definition,_=attach(motion,model,labels,native_after,t+motion.times[0],attachment_policy='input_fixed_offset')
         definition_source='D-only calibration at native clock; shared unchanged by all replay conditions'
     (a.output/'head_neck_model.json').write_text(json.dumps(definition,indent=2)+'\n')
     for condition,times,coordinates in conditions:
         physical=times+motion.times[0]
-        after,root=compensate(model,physical,labels,coordinates,motion)
+        _,_,consistent=model_fk(model,labels,coordinates,direct_couplers=True,return_coordinates=True)
+        after,root=compensate(model,physical,labels,consistent,motion)
         _,names=model_fk(model,labels,after,direct_couplers=True)
         _,chain=attach(motion,model,labels,after,physical,fixed_definition=definition)
         points,names=combine(root['after'],names,chain)

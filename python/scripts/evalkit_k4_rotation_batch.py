@@ -1,5 +1,5 @@
 """Replay a preregistered panel with at most three single-thread numerical workers."""
-import argparse,concurrent.futures,json,os,shutil,subprocess,sys
+import argparse,concurrent.futures,hashlib,json,os,shutil,subprocess,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 
@@ -7,7 +7,12 @@ ROOT=Path(__file__).resolve().parents[2]
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--protocol',type=Path,required=True);p.add_argument('--workers',type=int,default=3);a=p.parse_args()
     if not 1<=a.workers<=3:raise ValueError('One to three workers required')
-    protocol=json.loads(a.protocol.read_text());out=Path(protocol['output']);out.mkdir(parents=True,exist_ok=False)
+    protocol=json.loads(a.protocol.read_text())
+    for path,expected in protocol['implementation_sha256'].items():
+        if hashlib.sha256((ROOT/path).read_bytes()).hexdigest()!=expected:raise ValueError('Frozen implementation changed: '+path)
+    for row in protocol['records']:
+        if hashlib.sha256((Path(row['fit'])/'model.osim').read_bytes()).hexdigest()!=row['model_sha256']:raise ValueError('Frozen model changed')
+    out=Path(protocol['output']);out.mkdir(parents=True,exist_ok=False)
     (out/'protocol.json').write_text(a.protocol.read_text())
     env=dict(os.environ,OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1',MKL_NUM_THREADS='1',PYTHONPATH=str(ROOT/'utils')+':'+str(ROOT/'utils/motiogen'))
     def run(row):
