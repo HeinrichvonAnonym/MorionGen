@@ -1,0 +1,9 @@
+{
+  "version": "target-balanced-regression-1",
+  "config": "temporal.json",
+  "selection": "regression_seven.json",
+  "scope": "Fresh full K fits on seven predeclared development inputs, same algorithm/config for all. R scored only after fitting. No input or geometry intervention.",
+  "gates": "Frozen continuous/full/source jump masks, original R, raw and common lengths, fixed D support, D-R/F-D/F-R; native/wholeSO3/nativegrid checked separately",
+  "promotion": "none until consistent full656 regression",
+  "new_holdout_uses": 0
+}
