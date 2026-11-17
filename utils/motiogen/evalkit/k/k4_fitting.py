@@ -7,13 +7,17 @@ from .motion import load
 from .fixed_geometry import build
 
 
-def model_fk(model_path,labels,coordinates,assemble=True,return_coordinates=False):
+def model_fk(model_path,labels,coordinates,assemble=True,return_coordinates=False,direct_couplers=False):
     import opensim as osim
     import biomech
     model=osim.Model(str(model_path));state=model.initSystem();points=[];consistent=[]
+    if direct_couplers:
+        from .constraints import couplers,synchronize
+        bindings=couplers(model,state)
     for row in coordinates:
         biomech._set(model,state,labels,row)
-        if assemble:model.assemble(state)
+        if direct_couplers:synchronize(state,bindings)
+        elif assemble:model.assemble(state)
         model.realizePosition(state)
         points.append([biomech._child_origin(model,state,joint) for joint,_,_ in biomech.MARKERS.values()])
         consistent.append([model.getCoordinateSet().get(name).getValue(state)*(180/np.pi if model.getCoordinateSet().get(name).getMotionType()==1 else 1) for name in labels])
@@ -28,10 +32,28 @@ def write_coordinates(path,times,labels,coordinates):
     table.addTableMetaDataString('inDegrees','yes');osim.STOFileAdapter.write(table,str(path))
 
 
+def resample_native(times,labels,coordinates,rate=100.):
+    """Preserve native samples as targets, unwrap only the free heading chart.
+
+    Use a uniform grid including both boundaries. Actual spacing is recorded;
+    no endpoint extrapolation or time shift is introduced.
+    """
+    data=np.array(coordinates,copy=True)
+    if 'pelvis_rotation' in labels:
+        j=list(labels).index('pelvis_rotation');data[:,j]=np.rad2deg(np.unwrap(np.deg2rad(data[:,j])))
+    n=max(1,int(round((times[-1]-times[0])*rate)))
+    new=np.linspace(times[0],times[-1],n+1)
+    return new,np.stack([np.interp(new,times,c) for c in data.T],1)
+
+
 def fit(run,work,mass,floor,config):
     import biomech
     settings=json.loads(Path(config).read_text()) if not isinstance(config,dict) else dict(config)
     if settings.get('version')!='k4-fit-1':raise ValueError('Unsupported K4 fit configuration')
+    if settings.get('solver') not in ('nominal_model_marker_IK','direction_position_refinement'):
+        raise ValueError('Unsupported K4 solver')
+    if settings.get('root_policy') not in ('IK','input_hip_midpoint'):
+        raise ValueError('Unsupported K4 root policy')
     motion=load(run,settings.get('method'),config=ROOT/'config/evalkit_k4_20261117/input.json')
     out=Path(work);out.mkdir(parents=True,exist_ok=True)
     key={'inputs':motion.provenance['inputs'],'config':settings,'mass_kg':mass,'floor_m':floor,
@@ -49,18 +71,54 @@ def fit(run,work,mass,floor,config):
     weights={n:w for n,w in biomech.WEIGHTS.items() if n in biomech.MARKERS or n in geometry['registered_axial_markers']}
     (out/'ik').mkdir(exist_ok=True)
     biomech.inverse_kinematics(out/'model.osim',out/'markers.trc',out/'ik/ik.mot',0.,(len(points)-1)/fps,weights)
-    times,labels,coordinates=biomech.write_coordinates(out/'ik/ik.mot',out/'coordinates.mot')
-    fitted,fitted_names,consistent=model_fk(out/'model.osim',labels,coordinates,return_coordinates=True)
+    nt,labels,native=biomech.read_storage(out/'ik/ik.mot')
+    refinement=None
+    if settings['solver']=='direction_position_refinement':
+        from .refinement import refine
+        if len(nt)!=len(points) or not np.allclose(nt,np.arange(len(points))/fps,atol=1e-6):
+            raise ValueError('Native IK/input clocks differ')
+        native,refinement=refine(out/'model.osim',labels,native,points,names,settings['refinement'])
+        write_coordinates(out/'coordinates_refined_native.mot',nt,labels,native)
+        (out/'refinement.json').write_text(json.dumps(refinement,indent=2)+'\n')
+    if settings.get('postprocess','legacy_lowpass')=='native_preserving':
+        times,coordinates=resample_native(nt,labels,native)
+    else:
+        if refinement is not None:raise ValueError('Refined coordinates require explicit native-preserving resampling')
+        times,labels,coordinates=biomech.write_coordinates(out/'ik/ik.mot',out/'coordinates.mot')
+    direct=settings.get('constraint_policy','assembly')=='direct_couplers'
+    fitted,fitted_names,consistent=model_fk(out/'model.osim',labels,coordinates,return_coordinates=True,direct_couplers=direct)
+    pre_root=fitted.copy();pre_root_coordinates=consistent.copy();root_shift=np.zeros((len(times),3));root_valid=np.zeros(len(times),bool)
+    if settings['root_policy']=='input_hip_midpoint':
+        from .root import compensate
+        consistent,root=compensate(out/'model.osim',times+motion.times[0],labels,consistent,motion)
+        fitted=root['after'];root_shift=root['shift_m'];root_valid=root['valid']
     write_coordinates(out/'coordinates_filtered_unassembled.mot',times,labels,coordinates)
     write_coordinates(out/'coordinates.mot',times,labels,consistent)
     values={'times':times+motion.times[0],'labels':np.asarray(labels),'coords':consistent,
             'coordinates_filtered_unassembled':coordinates,
-            'positions':fitted,'names':np.asarray(fitted_names),'position_finite':np.isfinite(fitted).all(-1)}
+            'positions':fitted,'positions_pre_root':pre_root,'coordinates_pre_root':pre_root_coordinates,
+            'root_shift_m':root_shift,'root_compensation_valid':root_valid,
+            'names':np.asarray(fitted_names),'position_finite':np.isfinite(fitted).all(-1)}
     np.savez_compressed(out/'fit.npz',**values)
+    from .quality import assess
+    quality=assess(motion,values['times'],fitted,fitted_names)
+    np.savez_compressed(out/'input_fidelity.npz',times=values['times'],**quality)
+    from .native_frames import read as native_frames
+    native_frames_result=native_frames(motion)
+    if native_frames_result['status']=='declared_native_frames':
+        np.savez_compressed(out/'native_head_thorax.npz',times=motion.times,
+                            head_relative_thorax=native_frames_result['head_relative_thorax'],
+                            valid=native_frames_result['head_relative_valid'])
     receipt={'key':key,'version':settings['version'],'geometry':geometry,
              'scope':'constraint-assembled model FK; no independent head joint; native rotations reported separately',
              'kinematic_only':True,'force_eligible':False,'clock_origin_s':float(motion.times[0]),
              'input_rig_status':motion.provenance['input_geometry'],
-             'coordinate_contract':'coordinates.mot contains constraint-assembled coordinates; original filtered coordinates preserved separately'}
+             'coordinate_contract':'coordinates.mot satisfies declared model constraints; pre-root and pre-constraint coordinates preserved separately',
+             'constraint_policy':settings.get('constraint_policy','assembly'),
+             'resampling':settings.get('postprocess','legacy_lowpass'),
+             'root_policy':settings['root_policy'],'refinement_ran':refinement is not None,
+             'output_dt_s':float(np.median(np.diff(times))),
+             'input_fidelity_scope':'Per-input-point engineering fidelity; separate from independent end-to-end accuracy',
+             'native_head_thorax_scope':native_frames_result.get('scope',native_frames_result.get('reason'))}
     receipt_path.write_text(json.dumps(receipt,indent=2)+'\n')
     return {**values,'receipt':receipt}
