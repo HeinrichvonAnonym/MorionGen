@@ -1,0 +1,2159 @@
+{
+  "windows": 82,
+  "methods": {
+    "motionlcm": {
+      "denominator": 82,
+      "versions": {
+        "legacy": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 5.065151786252893,
+              "worst_window_p95_cm": 13.304186328362366,
+              "windows_p95_above_5cm": 47,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "shoulders": {
+              "median_window_p95_cm": 15.817507382628564,
+              "worst_window_p95_cm": 22.384627094676166,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "trunk": {
+              "median_window_p95_cm": 10.571515529826584,
+              "worst_window_p95_cm": 15.489329357629874,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "hands": {
+              "median_window_p95_cm": 18.354419579830648,
+              "worst_window_p95_cm": 30.423895786310673,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "knees": {
+              "median_window_p95_cm": 11.172219114669076,
+              "worst_window_p95_cm": 21.692137818792386,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "feet": {
+              "median_window_p95_cm": 11.846085083349113,
+              "worst_window_p95_cm": 19.98322203929361,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 31268,
+              "total_points": 31268
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 0.006946377320069877,
+              "worst_window_p95_deg": 0.5686507083409822
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 7.134409433154593,
+              "worst_window_p95_deg": 18.628374270085743
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 7.192732385079533,
+              "worst_window_p95_deg": 32.390508453999324
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 0.022469031536091442,
+              "worst_window_p95_deg": 2.0206422714551673
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 0.023480489202216126,
+              "worst_window_p95_deg": 1.608914630319391
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 0.00578678558674252,
+              "worst_window_p95_deg": 0.4606722093914076
+            },
+            "left_shank": {
+              "median_window_p95_deg": 0.007586900234227919,
+              "worst_window_p95_deg": 0.4619266887435566
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 0.00836004777434365,
+              "worst_window_p95_deg": 2.1409825381075187
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 0.020723899916932596,
+              "worst_window_p95_deg": 2.096585223369988
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 0.024155478222329045,
+              "worst_window_p95_deg": 1.6306884358260498
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 0.007269003630122466,
+              "worst_window_p95_deg": 1.7856566226954453
+            },
+            "right_shank": {
+              "median_window_p95_deg": 0.009370513603241133,
+              "worst_window_p95_deg": 0.8161970380831938
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 0.00977476561882596,
+              "worst_window_p95_deg": 0.9480357339666765
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 5.066372448688632,
+              "worst_window_p95_cm": 13.303476895436603
+            },
+            "shoulders": {
+              "median_window_p95_cm": 15.932747769479345,
+              "worst_window_p95_cm": 22.38445839114161
+            },
+            "trunk": {
+              "median_window_p95_cm": 10.571529146456644,
+              "worst_window_p95_cm": 16.027223335002063
+            },
+            "hands": {
+              "median_window_p95_cm": 18.405886536689138,
+              "worst_window_p95_cm": 30.471194576197828
+            },
+            "knees": {
+              "median_window_p95_cm": 11.173950556186604,
+              "worst_window_p95_cm": 21.69209187565867
+            },
+            "feet": {
+              "median_window_p95_cm": 11.843640841632837,
+              "worst_window_p95_cm": 19.983619257077073
+            }
+          },
+          "position_transport_within_0_01cm_windows": 0,
+          "geometry_budget_1cm_1deg_windows": 0,
+          "engineering_5cm_5deg_windows": 0
+        },
+        "candidate": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 0.0,
+              "worst_window_p95_cm": 0.0,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.0,
+              "worst_window_p95_cm": 0.0,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.0,
+              "worst_window_p95_cm": 0.0,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "hands": {
+              "median_window_p95_cm": 0.0,
+              "worst_window_p95_cm": 0.0,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "knees": {
+              "median_window_p95_cm": 0.0,
+              "worst_window_p95_cm": 0.0,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "feet": {
+              "median_window_p95_cm": 0.0,
+              "worst_window_p95_cm": 0.0,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 31268,
+              "total_points": 31268
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 0.008078422548192854,
+              "worst_window_p95_cm": 0.5939412718362784
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.008964880299395595,
+              "worst_window_p95_cm": 0.612961745521994
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.00693915614341513,
+              "worst_window_p95_cm": 0.5556248056657286
+            },
+            "hands": {
+              "median_window_p95_cm": 0.019663714098125427,
+              "worst_window_p95_cm": 0.816283637922859
+            },
+            "knees": {
+              "median_window_p95_cm": 0.006666853206442143,
+              "worst_window_p95_cm": 0.7400805636190544
+            },
+            "feet": {
+              "median_window_p95_cm": 0.005067085025891053,
+              "worst_window_p95_cm": 0.8268392735737868
+            }
+          },
+          "position_transport_within_0_01cm_windows": 82,
+          "geometry_budget_1cm_1deg_windows": 82,
+          "engineering_5cm_5deg_windows": 82
+        }
+      },
+      "status": "review_complete"
+    },
+    "omnicontrol": {
+      "denominator": 82,
+      "versions": {
+        "legacy": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 5.063544606509293,
+              "worst_window_p95_cm": 13.30432755148536,
+              "windows_p95_above_5cm": 47,
+              "valid_points": 15470,
+              "total_points": 15470
+            },
+            "shoulders": {
+              "median_window_p95_cm": 15.802120755785067,
+              "worst_window_p95_cm": 22.38469671453381,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15470,
+              "total_points": 15470
+            },
+            "trunk": {
+              "median_window_p95_cm": 10.571536290514004,
+              "worst_window_p95_cm": 15.488744212777359,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15470,
+              "total_points": 15470
+            },
+            "hands": {
+              "median_window_p95_cm": 18.357305898535724,
+              "worst_window_p95_cm": 30.428852535617764,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15470,
+              "total_points": 15470
+            },
+            "knees": {
+              "median_window_p95_cm": 11.172726445212872,
+              "worst_window_p95_cm": 21.692157094703155,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15470,
+              "total_points": 15470
+            },
+            "feet": {
+              "median_window_p95_cm": 11.835880481511158,
+              "worst_window_p95_cm": 19.983447730052,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 30940,
+              "total_points": 30940
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 0.007255189069791234,
+              "worst_window_p95_deg": 8.557191324458058
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 7.148927858372661,
+              "worst_window_p95_deg": 18.6285058331579
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 7.245987243962204,
+              "worst_window_p95_deg": 32.397126304181505
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 0.022653192836529328,
+              "worst_window_p95_deg": 5.142365945279135
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 0.02353030814957361,
+              "worst_window_p95_deg": 9.56111251260047
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 0.006171282253662626,
+              "worst_window_p95_deg": 1.4324623675320534
+            },
+            "left_shank": {
+              "median_window_p95_deg": 0.008707879839858296,
+              "worst_window_p95_deg": 3.961119397760933
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 0.008577210657966707,
+              "worst_window_p95_deg": 8.310089381528439
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 0.020740721262116502,
+              "worst_window_p95_deg": 9.605752566298445
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 0.02389432042350786,
+              "worst_window_p95_deg": 6.752093170700656
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 0.007460268825140013,
+              "worst_window_p95_deg": 1.9407040634714197
+            },
+            "right_shank": {
+              "median_window_p95_deg": 0.009718410571838209,
+              "worst_window_p95_deg": 1.0316212593039948
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 0.009936005843301454,
+              "worst_window_p95_deg": 8.45121028344197
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 5.063717668954817,
+              "worst_window_p95_cm": 13.30365751498603
+            },
+            "shoulders": {
+              "median_window_p95_cm": 15.929158219601167,
+              "worst_window_p95_cm": 22.384514221780247
+            },
+            "trunk": {
+              "median_window_p95_cm": 10.571532768674212,
+              "worst_window_p95_cm": 16.097969097633353
+            },
+            "hands": {
+              "median_window_p95_cm": 18.416567882156308,
+              "worst_window_p95_cm": 30.48600836197125
+            },
+            "knees": {
+              "median_window_p95_cm": 11.174019138332007,
+              "worst_window_p95_cm": 21.692119437306335
+            },
+            "feet": {
+              "median_window_p95_cm": 11.831048773616697,
+              "worst_window_p95_cm": 20.05021296591688
+            }
+          },
+          "position_transport_within_0_01cm_windows": 0,
+          "geometry_budget_1cm_1deg_windows": 0,
+          "engineering_5cm_5deg_windows": 0
+        },
+        "candidate": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 7.04550877683733e-06,
+              "worst_window_p95_cm": 0.0023532784801621543,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15470,
+              "total_points": 15470
+            },
+            "shoulders": {
+              "median_window_p95_cm": 9.06684251678125e-06,
+              "worst_window_p95_cm": 0.002262908752010011,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15470,
+              "total_points": 15470
+            },
+            "trunk": {
+              "median_window_p95_cm": 5.287102749781753e-06,
+              "worst_window_p95_cm": 0.0011475903053211026,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15470,
+              "total_points": 15470
+            },
+            "hands": {
+              "median_window_p95_cm": 1.135872197600441e-05,
+              "worst_window_p95_cm": 0.0027757679374919636,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15470,
+              "total_points": 15470
+            },
+            "knees": {
+              "median_window_p95_cm": 6.157445558591137e-06,
+              "worst_window_p95_cm": 0.0014412716478912867,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15470,
+              "total_points": 15470
+            },
+            "feet": {
+              "median_window_p95_cm": 7.315299016811785e-06,
+              "worst_window_p95_cm": 0.002056216272548676,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 30940,
+              "total_points": 30940
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 3.0356069516962897e-05,
+              "worst_window_p95_deg": 0.002514056548890647
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 5.672857429469467e-06,
+              "worst_window_p95_deg": 0.0024885327282708914
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 1.8021076228393158e-05,
+              "worst_window_p95_deg": 0.002484190384959742
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 1.581146181652948e-05,
+              "worst_window_p95_deg": 0.0009018039545167561
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 2.0162676608231988e-05,
+              "worst_window_p95_deg": 0.00048266041067082145
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 7.07300412150077e-06,
+              "worst_window_p95_deg": 0.0013757132333037717
+            },
+            "left_shank": {
+              "median_window_p95_deg": 8.092993406208581e-06,
+              "worst_window_p95_deg": 0.0008256881163309874
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 2.1483821014374298e-05,
+              "worst_window_p95_deg": 0.002090680399318915
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 1.559997933854123e-05,
+              "worst_window_p95_deg": 0.0006411556690982569
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 1.9005620700142968e-05,
+              "worst_window_p95_deg": 0.000977986769533693
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 5.6853790408938e-06,
+              "worst_window_p95_deg": 0.0012233528706354843
+            },
+            "right_shank": {
+              "median_window_p95_deg": 6.838592035859669e-06,
+              "worst_window_p95_deg": 0.0014230265150841663
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 2.1304542671946894e-05,
+              "worst_window_p95_deg": 0.0017995412917229782
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 0.007651632719456354,
+              "worst_window_p95_cm": 0.6008637492362111
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.00897952569001169,
+              "worst_window_p95_cm": 0.6130695307251091
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.007003811699032329,
+              "worst_window_p95_cm": 0.5556155665469424
+            },
+            "hands": {
+              "median_window_p95_cm": 0.019881491276918406,
+              "worst_window_p95_cm": 0.8212717393228265
+            },
+            "knees": {
+              "median_window_p95_cm": 0.00671125703072149,
+              "worst_window_p95_cm": 0.8669037538396901
+            },
+            "feet": {
+              "median_window_p95_cm": 0.005076886189369979,
+              "worst_window_p95_cm": 0.8323695999718342
+            }
+          },
+          "position_transport_within_0_01cm_windows": 81,
+          "geometry_budget_1cm_1deg_windows": 82,
+          "engineering_5cm_5deg_windows": 82
+        }
+      },
+      "status": "review_complete"
+    },
+    "ardy": {
+      "denominator": 82,
+      "versions": {
+        "legacy": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 15.788064090684655,
+              "worst_window_p95_cm": 24.39646073766955,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "shoulders": {
+              "median_window_p95_cm": 12.921484067392498,
+              "worst_window_p95_cm": 16.678045817595617,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "trunk": {
+              "median_window_p95_cm": 9.750484227663264,
+              "worst_window_p95_cm": 14.879804822628477,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "hands": {
+              "median_window_p95_cm": 14.801255047412115,
+              "worst_window_p95_cm": 31.773416982082203,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "knees": {
+              "median_window_p95_cm": 5.279954304739791,
+              "worst_window_p95_cm": 11.602935316520881,
+              "windows_p95_above_5cm": 46,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "feet": {
+              "median_window_p95_cm": 6.235778850925241,
+              "worst_window_p95_cm": 13.057684684047363,
+              "windows_p95_above_5cm": 52,
+              "valid_points": 31268,
+              "total_points": 31268
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 0.006946377349612107,
+              "worst_window_p95_deg": 0.5686507083409957
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 7.271780866980653,
+              "worst_window_p95_deg": 14.62992633346383
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 3.1675481654439355,
+              "worst_window_p95_deg": 22.872271372132936
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 0.022469031536563364,
+              "worst_window_p95_deg": 2.0206422714551673
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 0.02348048919534458,
+              "worst_window_p95_deg": 1.6089146303193984
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 0.0057867855794120565,
+              "worst_window_p95_deg": 0.4606722093905777
+            },
+            "left_shank": {
+              "median_window_p95_deg": 0.007586900260497407,
+              "worst_window_p95_deg": 0.46192668874352005
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 0.00836004777324683,
+              "worst_window_p95_deg": 2.1409825381070244
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 0.020723899934526016,
+              "worst_window_p95_deg": 2.096585223370176
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 0.024155478229843944,
+              "worst_window_p95_deg": 1.6306884358258429
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 0.007269003608196734,
+              "worst_window_p95_deg": 1.785656622695437
+            },
+            "right_shank": {
+              "median_window_p95_deg": 0.009370513645335483,
+              "worst_window_p95_deg": 0.8161970380832029
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 0.009774765601708753,
+              "worst_window_p95_deg": 0.9480357339674804
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 15.788080260427776,
+              "worst_window_p95_cm": 24.39639833871011
+            },
+            "shoulders": {
+              "median_window_p95_cm": 13.058720086384731,
+              "worst_window_p95_cm": 16.688452154392746
+            },
+            "trunk": {
+              "median_window_p95_cm": 9.819506446953838,
+              "worst_window_p95_cm": 14.890406154254164
+            },
+            "hands": {
+              "median_window_p95_cm": 14.791346589336634,
+              "worst_window_p95_cm": 31.778680684083678
+            },
+            "knees": {
+              "median_window_p95_cm": 5.273775827847081,
+              "worst_window_p95_cm": 12.590968343034733
+            },
+            "feet": {
+              "median_window_p95_cm": 6.243690829818464,
+              "worst_window_p95_cm": 13.723358715688741
+            }
+          },
+          "position_transport_within_0_01cm_windows": 0,
+          "geometry_budget_1cm_1deg_windows": 0,
+          "engineering_5cm_5deg_windows": 0
+        },
+        "candidate": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 2.404005866642567e-06,
+              "worst_window_p95_cm": 0.0029611652335587947,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.004040286196648325,
+              "worst_window_p95_cm": 0.10090408772231285,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.0019795470477767516,
+              "worst_window_p95_cm": 0.02573991610593073,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "hands": {
+              "median_window_p95_cm": 0.004176065030673841,
+              "worst_window_p95_cm": 0.10090408774639135,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "knees": {
+              "median_window_p95_cm": 1.2129209491663477e-06,
+              "worst_window_p95_cm": 0.0032587291032925353,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 15634,
+              "total_points": 15634
+            },
+            "feet": {
+              "median_window_p95_cm": 1.629746419154011e-06,
+              "worst_window_p95_cm": 0.004006480687182258,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 31268,
+              "total_points": 31268
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 0.0024747355898120174,
+              "worst_window_p95_deg": 0.03023818277105536
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 0.0008066980312328295,
+              "worst_window_p95_deg": 0.015738695724966438
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2324247208646046e-06
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.532502134531078e-06
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.0725256367784169e-06
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 0.0080784339004882,
+              "worst_window_p95_cm": 0.5938336871692939
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.011505871210794463,
+              "worst_window_p95_cm": 0.6156579413266962
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.00757409896867023,
+              "worst_window_p95_cm": 0.5556179603756404
+            },
+            "hands": {
+              "median_window_p95_cm": 0.025070957079805663,
+              "worst_window_p95_cm": 0.8114855677084352
+            },
+            "knees": {
+              "median_window_p95_cm": 0.0066668363804390455,
+              "worst_window_p95_cm": 0.7400408530173622
+            },
+            "feet": {
+              "median_window_p95_cm": 0.005067382121901786,
+              "worst_window_p95_cm": 0.8268611837147826
+            }
+          },
+          "position_transport_within_0_01cm_windows": 58,
+          "geometry_budget_1cm_1deg_windows": 82,
+          "engineering_5cm_5deg_windows": 82
+        }
+      },
+      "status": "review_complete"
+    },
+    "chois": {
+      "denominator": 82,
+      "versions": {
+        "legacy": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 5.065668824541026,
+              "worst_window_p95_cm": 13.308630503445475,
+              "windows_p95_above_5cm": 47,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "shoulders": {
+              "median_window_p95_cm": 15.9332363981543,
+              "worst_window_p95_cm": 22.385001073463187,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "trunk": {
+              "median_window_p95_cm": 10.571526894688635,
+              "worst_window_p95_cm": 17.98764942744624,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "hands": {
+              "median_window_p95_cm": 18.365218173485307,
+              "worst_window_p95_cm": 30.380071325462865,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "knees": {
+              "median_window_p95_cm": 11.173615271220612,
+              "worst_window_p95_cm": 21.691910019881284,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "feet": {
+              "median_window_p95_cm": 11.845406065257823,
+              "worst_window_p95_cm": 19.983195169677877,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 46892,
+              "total_points": 46892
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 0.0074759989956123245,
+              "worst_window_p95_deg": 1.2830172592800286
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 7.136241154029226,
+              "worst_window_p95_deg": 18.628296361911943
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 7.197475296066477,
+              "worst_window_p95_deg": 32.414826470812784
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 0.02133028701985208,
+              "worst_window_p95_deg": 4.942867214650908
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 0.022867315124856864,
+              "worst_window_p95_deg": 5.14417405636004
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 0.005640384903875775,
+              "worst_window_p95_deg": 0.9399522161585583
+            },
+            "left_shank": {
+              "median_window_p95_deg": 0.007285802140507184,
+              "worst_window_p95_deg": 0.6746589884336808
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 0.008351161778664424,
+              "worst_window_p95_deg": 1.656608346587181
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 0.021135352633272826,
+              "worst_window_p95_deg": 4.353111020629191
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 0.02351682238292923,
+              "worst_window_p95_deg": 1.4982461339820592
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 0.007477395239568286,
+              "worst_window_p95_deg": 4.14444948949939
+            },
+            "right_shank": {
+              "median_window_p95_deg": 0.009717223930569913,
+              "worst_window_p95_deg": 1.9328241384120852
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 0.009769556435478957,
+              "worst_window_p95_deg": 2.5061478640932817
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 5.065893537738698,
+              "worst_window_p95_cm": 13.304560678705883
+            },
+            "shoulders": {
+              "median_window_p95_cm": 15.933228640273903,
+              "worst_window_p95_cm": 22.384605414709352
+            },
+            "trunk": {
+              "median_window_p95_cm": 10.571559506624455,
+              "worst_window_p95_cm": 18.017633607285514
+            },
+            "hands": {
+              "median_window_p95_cm": 18.37230285315281,
+              "worst_window_p95_cm": 30.46347668084366
+            },
+            "knees": {
+              "median_window_p95_cm": 11.174060085332107,
+              "worst_window_p95_cm": 21.69213413219559
+            },
+            "feet": {
+              "median_window_p95_cm": 11.845693350235518,
+              "worst_window_p95_cm": 20.747839969225463
+            }
+          },
+          "position_transport_within_0_01cm_windows": 0,
+          "geometry_budget_1cm_1deg_windows": 0,
+          "engineering_5cm_5deg_windows": 0
+        },
+        "candidate": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 1.1832736123176198e-09,
+              "worst_window_p95_cm": 0.00040549719410602747,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.004002622356187487,
+              "worst_window_p95_cm": 0.10090596730934384,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.0019866630828889436,
+              "worst_window_p95_cm": 0.025736352764875625,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "hands": {
+              "median_window_p95_cm": 0.0040025429434078705,
+              "worst_window_p95_cm": 0.10090596730962864,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "knees": {
+              "median_window_p95_cm": 1.6808476963503879e-09,
+              "worst_window_p95_cm": 0.00010008080886057527,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "feet": {
+              "median_window_p95_cm": 2.3758338542579764e-09,
+              "worst_window_p95_cm": 0.00010278585044650586,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 46892,
+              "total_points": 46892
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 0.0024936649752362364,
+              "worst_window_p95_deg": 0.030239132822362482
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 0.00072935749600476,
+              "worst_window_p95_deg": 0.016423668136084167
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 0.0040846642021834315,
+              "worst_window_p95_cm": 0.5531813648879058
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.0068557362811502345,
+              "worst_window_p95_cm": 0.5252148973447605
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.004550737412413652,
+              "worst_window_p95_cm": 0.46999474469736174
+            },
+            "hands": {
+              "median_window_p95_cm": 0.013670527127407293,
+              "worst_window_p95_cm": 0.6259446419008784
+            },
+            "knees": {
+              "median_window_p95_cm": 0.0033342662685894634,
+              "worst_window_p95_cm": 0.4935033247354138
+            },
+            "feet": {
+              "median_window_p95_cm": 0.0030579433883794705,
+              "worst_window_p95_cm": 0.7569942056067984
+            }
+          },
+          "position_transport_within_0_01cm_windows": 61,
+          "geometry_budget_1cm_1deg_windows": 82,
+          "engineering_5cm_5deg_windows": 82
+        }
+      },
+      "status": "review_complete"
+    },
+    "closd": {
+      "denominator": 82,
+      "versions": {
+        "legacy": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 5.268727879514398,
+              "worst_window_p95_cm": 11.254378376192584,
+              "windows_p95_above_5cm": 53,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "shoulders": {
+              "median_window_p95_cm": 18.889936403428425,
+              "worst_window_p95_cm": 25.434652378012565,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "trunk": {
+              "median_window_p95_cm": 9.115362034239805,
+              "worst_window_p95_cm": 16.192267606682666,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "hands": {
+              "median_window_p95_cm": 21.54582495458071,
+              "worst_window_p95_cm": 34.3328167048956,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "knees": {
+              "median_window_p95_cm": 9.475065409380502,
+              "worst_window_p95_cm": 19.080893165799765,
+              "windows_p95_above_5cm": 66,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "feet": {
+              "median_window_p95_cm": 10.584766012358386,
+              "worst_window_p95_cm": 18.629831700841923,
+              "windows_p95_above_5cm": 72,
+              "valid_points": 46892,
+              "total_points": 46892
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 0.007475999014598399,
+              "worst_window_p95_deg": 1.283017259280058
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 7.076020793204774,
+              "worst_window_p95_deg": 14.74352910406571
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 29.025235045217443,
+              "worst_window_p95_deg": 77.79822233642297
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 0.02133028703587682,
+              "worst_window_p95_deg": 4.942867214650908
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 0.022867315143657963,
+              "worst_window_p95_deg": 5.144174056360191
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 0.005640384942609314,
+              "worst_window_p95_deg": 0.9399522161590088
+            },
+            "left_shank": {
+              "median_window_p95_deg": 0.00728580213977048,
+              "worst_window_p95_deg": 0.6746589884335974
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 0.008351161767343667,
+              "worst_window_p95_deg": 1.656608346586934
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 0.02113535262933164,
+              "worst_window_p95_deg": 4.353111020629103
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 0.023516822385272862,
+              "worst_window_p95_deg": 1.4982461339821906
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 0.007477395168495025,
+              "worst_window_p95_deg": 4.144449489499483
+            },
+            "right_shank": {
+              "median_window_p95_deg": 0.0097172239259798,
+              "worst_window_p95_deg": 1.9328241384118194
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 0.009769556386914822,
+              "worst_window_p95_deg": 2.506147864093359
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 5.2686403092968845,
+              "worst_window_p95_cm": 11.254379170980823
+            },
+            "shoulders": {
+              "median_window_p95_cm": 18.890681866012734,
+              "worst_window_p95_cm": 25.435846262893413
+            },
+            "trunk": {
+              "median_window_p95_cm": 9.115582030875462,
+              "worst_window_p95_cm": 16.52820886519104
+            },
+            "hands": {
+              "median_window_p95_cm": 21.554098738991787,
+              "worst_window_p95_cm": 34.34137879480428
+            },
+            "knees": {
+              "median_window_p95_cm": 9.475572534417317,
+              "worst_window_p95_cm": 19.080903987420523
+            },
+            "feet": {
+              "median_window_p95_cm": 10.584765327314598,
+              "worst_window_p95_cm": 18.2095994970025
+            }
+          },
+          "position_transport_within_0_01cm_windows": 0,
+          "geometry_budget_1cm_1deg_windows": 0,
+          "engineering_5cm_5deg_windows": 0
+        },
+        "candidate": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 1.1832736123176198e-09,
+              "worst_window_p95_cm": 0.00040549719410602747,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.004002622356187487,
+              "worst_window_p95_cm": 0.10090596730934384,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.0019866630828889436,
+              "worst_window_p95_cm": 0.025736352764875625,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "hands": {
+              "median_window_p95_cm": 0.0040025429434078705,
+              "worst_window_p95_cm": 0.10090596730962864,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "knees": {
+              "median_window_p95_cm": 1.6808476963503879e-09,
+              "worst_window_p95_cm": 0.00010008080886057527,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "feet": {
+              "median_window_p95_cm": 2.3758338542579764e-09,
+              "worst_window_p95_cm": 0.00010278585044650586,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 46892,
+              "total_points": 46892
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 0.0024936649752362364,
+              "worst_window_p95_deg": 0.030239132822362482
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 0.00072935749600476,
+              "worst_window_p95_deg": 0.016423668136084167
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 0.0040846642021834315,
+              "worst_window_p95_cm": 0.5531813648879058
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.0068557362811502345,
+              "worst_window_p95_cm": 0.5252148973447605
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.004550737412413652,
+              "worst_window_p95_cm": 0.46999474469736174
+            },
+            "hands": {
+              "median_window_p95_cm": 0.013670527127407293,
+              "worst_window_p95_cm": 0.6259446419008784
+            },
+            "knees": {
+              "median_window_p95_cm": 0.0033342662685894634,
+              "worst_window_p95_cm": 0.4935033247354138
+            },
+            "feet": {
+              "median_window_p95_cm": 0.0030579433883794705,
+              "worst_window_p95_cm": 0.7569942056067984
+            }
+          },
+          "position_transport_within_0_01cm_windows": 61,
+          "geometry_budget_1cm_1deg_windows": 82,
+          "engineering_5cm_5deg_windows": 82
+        }
+      },
+      "status": "review_complete"
+    },
+    "dart": {
+      "denominator": 82,
+      "versions": {
+        "legacy": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 6.722601089644433,
+              "worst_window_p95_cm": 15.65017025905291,
+              "windows_p95_above_5cm": 68,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "shoulders": {
+              "median_window_p95_cm": 13.42866711972325,
+              "worst_window_p95_cm": 19.057182558745268,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "trunk": {
+              "median_window_p95_cm": 10.189288946880218,
+              "worst_window_p95_cm": 18.277852302595743,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "hands": {
+              "median_window_p95_cm": 15.01061849603121,
+              "worst_window_p95_cm": 26.97117130502931,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "knees": {
+              "median_window_p95_cm": 11.015535333869892,
+              "worst_window_p95_cm": 20.666724807342447,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "feet": {
+              "median_window_p95_cm": 11.84889438357414,
+              "worst_window_p95_cm": 21.642305832826974,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 46892,
+              "total_points": 46892
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 0.007475999028742889,
+              "worst_window_p95_deg": 1.2830172592807334
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 6.998420871054725,
+              "worst_window_p95_deg": 19.09880004172459
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 5.191330568451686,
+              "worst_window_p95_deg": 27.51843287813471
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 0.021330287006757445,
+              "worst_window_p95_deg": 4.942867214650823
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 0.022867315131279816,
+              "worst_window_p95_deg": 5.144174056360121
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 0.005640384899344927,
+              "worst_window_p95_deg": 0.939952216158763
+            },
+            "left_shank": {
+              "median_window_p95_deg": 0.007285802104532045,
+              "worst_window_p95_deg": 0.6746589884332647
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 0.008351161781421604,
+              "worst_window_p95_deg": 1.6566083465869934
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 0.021135352618828845,
+              "worst_window_p95_deg": 4.353111020629063
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 0.02351682239072933,
+              "worst_window_p95_deg": 1.49824613398221
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 0.007477395232403567,
+              "worst_window_p95_deg": 4.144449489499479
+            },
+            "right_shank": {
+              "median_window_p95_deg": 0.009717223919235764,
+              "worst_window_p95_deg": 1.9328241384120968
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 0.009769556414989371,
+              "worst_window_p95_deg": 2.5061478640932044
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 6.724501368653469,
+              "worst_window_p95_cm": 15.654982559342612
+            },
+            "shoulders": {
+              "median_window_p95_cm": 13.462860421288674,
+              "worst_window_p95_cm": 19.05810826727831
+            },
+            "trunk": {
+              "median_window_p95_cm": 10.18959319969511,
+              "worst_window_p95_cm": 18.308115158624865
+            },
+            "hands": {
+              "median_window_p95_cm": 14.998482529237876,
+              "worst_window_p95_cm": 27.03257477060211
+            },
+            "knees": {
+              "median_window_p95_cm": 11.01606350776244,
+              "worst_window_p95_cm": 20.666691108281135
+            },
+            "feet": {
+              "median_window_p95_cm": 11.857341153207557,
+              "worst_window_p95_cm": 21.870681843430678
+            }
+          },
+          "position_transport_within_0_01cm_windows": 0,
+          "geometry_budget_1cm_1deg_windows": 0,
+          "engineering_5cm_5deg_windows": 0
+        },
+        "candidate": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 1.1832736123176198e-09,
+              "worst_window_p95_cm": 0.00040549719410602747,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.004002622356187487,
+              "worst_window_p95_cm": 0.10090596730934384,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.0019866630828889436,
+              "worst_window_p95_cm": 0.025736352764875625,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "hands": {
+              "median_window_p95_cm": 0.0040025429434078705,
+              "worst_window_p95_cm": 0.10090596730962864,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "knees": {
+              "median_window_p95_cm": 1.6808476963503879e-09,
+              "worst_window_p95_cm": 0.00010008080886057527,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "feet": {
+              "median_window_p95_cm": 2.3758338542579764e-09,
+              "worst_window_p95_cm": 0.00010278585044650586,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 46892,
+              "total_points": 46892
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 0.0024936649752362364,
+              "worst_window_p95_deg": 0.030239132822362482
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 0.00072935749600476,
+              "worst_window_p95_deg": 0.016423668136084167
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 0.0040846642021834315,
+              "worst_window_p95_cm": 0.5531813648879058
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.0068557362811502345,
+              "worst_window_p95_cm": 0.5252148973447605
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.004550737412413652,
+              "worst_window_p95_cm": 0.46999474469736174
+            },
+            "hands": {
+              "median_window_p95_cm": 0.013670527127407293,
+              "worst_window_p95_cm": 0.6259446419008784
+            },
+            "knees": {
+              "median_window_p95_cm": 0.0033342662685894634,
+              "worst_window_p95_cm": 0.4935033247354138
+            },
+            "feet": {
+              "median_window_p95_cm": 0.0030579433883794705,
+              "worst_window_p95_cm": 0.7569942056067984
+            }
+          },
+          "position_transport_within_0_01cm_windows": 61,
+          "geometry_budget_1cm_1deg_windows": 82,
+          "engineering_5cm_5deg_windows": 82
+        }
+      },
+      "status": "review_complete"
+    },
+    "kimodo": {
+      "denominator": 82,
+      "versions": {
+        "legacy": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 7.788756988287243,
+              "worst_window_p95_cm": 12.869005012899082,
+              "windows_p95_above_5cm": 63,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "shoulders": {
+              "median_window_p95_cm": 8.786023898222385,
+              "worst_window_p95_cm": 17.10735631235208,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "trunk": {
+              "median_window_p95_cm": 8.76295939698758,
+              "worst_window_p95_cm": 15.989408933393657,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "hands": {
+              "median_window_p95_cm": 9.68866395706782,
+              "worst_window_p95_cm": 19.308657098156182,
+              "windows_p95_above_5cm": 80,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "knees": {
+              "median_window_p95_cm": 7.54919680438625,
+              "worst_window_p95_cm": 11.25815169543568,
+              "windows_p95_above_5cm": 77,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "feet": {
+              "median_window_p95_cm": 8.51078452382005,
+              "worst_window_p95_cm": 14.737546667185804,
+              "windows_p95_above_5cm": 78,
+              "valid_points": 46892,
+              "total_points": 46892
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 17.100602358499227,
+              "worst_window_p95_deg": 17.54233792353384
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 9.50145131668259,
+              "worst_window_p95_deg": 13.387185754239256
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 2.352855550231175,
+              "worst_window_p95_deg": 17.41097383621029
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 0.02133028699301332,
+              "worst_window_p95_deg": 4.942867214650828
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 0.02286731512843941,
+              "worst_window_p95_deg": 5.144174056360186
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 0.00564038484473345,
+              "worst_window_p95_deg": 0.939952216158763
+            },
+            "left_shank": {
+              "median_window_p95_deg": 0.007285802176482323,
+              "worst_window_p95_deg": 0.6746589884338888
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 0.008351161800308551,
+              "worst_window_p95_deg": 1.6566083465870873
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 0.021135352641765644,
+              "worst_window_p95_deg": 4.353111020629152
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 0.023516822366653818,
+              "worst_window_p95_deg": 1.4982461339823219
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 0.007477395286088746,
+              "worst_window_p95_deg": 4.144449489499525
+            },
+            "right_shank": {
+              "median_window_p95_deg": 0.009717223920107914,
+              "worst_window_p95_deg": 1.9328241384121085
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 0.009769556406640158,
+              "worst_window_p95_deg": 2.506147864093195
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 7.789320649064874,
+              "worst_window_p95_cm": 12.870175459511083
+            },
+            "shoulders": {
+              "median_window_p95_cm": 8.785406724471725,
+              "worst_window_p95_cm": 16.960733962100917
+            },
+            "trunk": {
+              "median_window_p95_cm": 8.763117706731656,
+              "worst_window_p95_cm": 16.349742884050247
+            },
+            "hands": {
+              "median_window_p95_cm": 9.687785120434077,
+              "worst_window_p95_cm": 19.34016574471256
+            },
+            "knees": {
+              "median_window_p95_cm": 7.5718036593386575,
+              "worst_window_p95_cm": 11.877959519105637
+            },
+            "feet": {
+              "median_window_p95_cm": 8.514885480455362,
+              "worst_window_p95_cm": 14.737554001006604
+            }
+          },
+          "position_transport_within_0_01cm_windows": 0,
+          "geometry_budget_1cm_1deg_windows": 0,
+          "engineering_5cm_5deg_windows": 0
+        },
+        "candidate": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 1.1832597322923778e-09,
+              "worst_window_p95_cm": 0.00040549719410602747,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.004002622356187487,
+              "worst_window_p95_cm": 0.10090596730934384,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.0019866630828889436,
+              "worst_window_p95_cm": 0.025736352764875625,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "hands": {
+              "median_window_p95_cm": 0.0040025429434078705,
+              "worst_window_p95_cm": 0.10090596730962864,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "knees": {
+              "median_window_p95_cm": 1.6808476963503879e-09,
+              "worst_window_p95_cm": 0.00010008080886057527,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23446,
+              "total_points": 23446
+            },
+            "feet": {
+              "median_window_p95_cm": 2.3758338542579764e-09,
+              "worst_window_p95_cm": 0.00010278585044650586,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 46892,
+              "total_points": 46892
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 0.0024936649752362364,
+              "worst_window_p95_deg": 0.030239132822362482
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 0.00072935749600476,
+              "worst_window_p95_deg": 0.016423668136084167
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 0.004084664202369771,
+              "worst_window_p95_cm": 0.5531813648879058
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.0068557362811502345,
+              "worst_window_p95_cm": 0.5252148973447605
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.004550737412413652,
+              "worst_window_p95_cm": 0.46999474469736174
+            },
+            "hands": {
+              "median_window_p95_cm": 0.013670527127407293,
+              "worst_window_p95_cm": 0.6259446419008784
+            },
+            "knees": {
+              "median_window_p95_cm": 0.0033342662685894634,
+              "worst_window_p95_cm": 0.4935033247354138
+            },
+            "feet": {
+              "median_window_p95_cm": 0.0030579433883794705,
+              "worst_window_p95_cm": 0.7569942056067984
+            }
+          },
+          "position_transport_within_0_01cm_windows": 61,
+          "geometry_budget_1cm_1deg_windows": 82,
+          "engineering_5cm_5deg_windows": 82
+        }
+      },
+      "status": "review_complete"
+    },
+    "primal": {
+      "denominator": 82,
+      "versions": {
+        "legacy": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 5.06574994527599,
+              "worst_window_p95_cm": 13.30877544122983,
+              "windows_p95_above_5cm": 47,
+              "valid_points": 23118,
+              "total_points": 23118
+            },
+            "shoulders": {
+              "median_window_p95_cm": 15.944885558861003,
+              "worst_window_p95_cm": 22.38500513998082,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23118,
+              "total_points": 23118
+            },
+            "trunk": {
+              "median_window_p95_cm": 10.571463871664486,
+              "worst_window_p95_cm": 16.06210497395543,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23118,
+              "total_points": 23118
+            },
+            "hands": {
+              "median_window_p95_cm": 18.359848720982413,
+              "worst_window_p95_cm": 30.41574357237425,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23118,
+              "total_points": 23118
+            },
+            "knees": {
+              "median_window_p95_cm": 11.172970795652118,
+              "worst_window_p95_cm": 21.691748409142374,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 23118,
+              "total_points": 23118
+            },
+            "feet": {
+              "median_window_p95_cm": 11.845627731886237,
+              "worst_window_p95_cm": 19.978986274994114,
+              "windows_p95_above_5cm": 82,
+              "valid_points": 46236,
+              "total_points": 46236
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 0.00726567758615863,
+              "worst_window_p95_deg": 0.983061533398238
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 7.136415937392047,
+              "worst_window_p95_deg": 18.62683850372426
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 7.19803739010106,
+              "worst_window_p95_deg": 32.433736317262856
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 0.02056776809829199,
+              "worst_window_p95_deg": 3.8754970120131347
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 0.022643801493547944,
+              "worst_window_p95_deg": 3.9212011004638603
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 0.005602043149761621,
+              "worst_window_p95_deg": 0.6453291407428496
+            },
+            "left_shank": {
+              "median_window_p95_deg": 0.006901622417364115,
+              "worst_window_p95_deg": 0.4545019606589533
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 0.008400713216586284,
+              "worst_window_p95_deg": 0.9395084724165875
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 0.021075938531179478,
+              "worst_window_p95_deg": 3.419384720087282
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 0.02241839185601372,
+              "worst_window_p95_deg": 1.3187427414191462
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 0.006986470999293888,
+              "worst_window_p95_deg": 3.204289841035189
+            },
+            "right_shank": {
+              "median_window_p95_deg": 0.00922221694810721,
+              "worst_window_p95_deg": 1.5437711154487697
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 0.009812423747958671,
+              "worst_window_p95_deg": 1.9054858634033773
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 5.065970952288625,
+              "worst_window_p95_cm": 13.305097240403523
+            },
+            "shoulders": {
+              "median_window_p95_cm": 15.822833112945444,
+              "worst_window_p95_cm": 22.38466739425271
+            },
+            "trunk": {
+              "median_window_p95_cm": 10.571487267288168,
+              "worst_window_p95_cm": 15.48966807355349
+            },
+            "hands": {
+              "median_window_p95_cm": 18.317703685187677,
+              "worst_window_p95_cm": 30.486816297307968
+            },
+            "knees": {
+              "median_window_p95_cm": 11.17305019603155,
+              "worst_window_p95_cm": 21.691709989030084
+            },
+            "feet": {
+              "median_window_p95_cm": 11.846358955221879,
+              "worst_window_p95_cm": 19.978861553712967
+            }
+          },
+          "position_transport_within_0_01cm_windows": 0,
+          "geometry_budget_1cm_1deg_windows": 0,
+          "engineering_5cm_5deg_windows": 0
+        },
+        "candidate": {
+          "positions": {
+            "head_neck": {
+              "median_window_p95_cm": 1.1895996648827196e-09,
+              "worst_window_p95_cm": 0.0004054979174571151,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23118,
+              "total_points": 23118
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.004004684893004358,
+              "worst_window_p95_cm": 0.10090289952760224,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23118,
+              "total_points": 23118
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.0019727513489925363,
+              "worst_window_p95_cm": 0.02573835728393653,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23118,
+              "total_points": 23118
+            },
+            "hands": {
+              "median_window_p95_cm": 0.0040046039888909125,
+              "worst_window_p95_cm": 0.10090289952677294,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23118,
+              "total_points": 23118
+            },
+            "knees": {
+              "median_window_p95_cm": 1.6866556028337041e-09,
+              "worst_window_p95_cm": 0.0001000836051778754,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 23118,
+              "total_points": 23118
+            },
+            "feet": {
+              "median_window_p95_cm": 2.3839040638325394e-09,
+              "worst_window_p95_cm": 0.00010278647935886585,
+              "windows_p95_above_5cm": 0,
+              "valid_points": 46236,
+              "total_points": 46236
+            }
+          },
+          "computed_windows": 82,
+          "groups": 16,
+          "directions": {
+            "head_neck_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "trunk_axis": {
+              "median_window_p95_deg": 0.002495649335596827,
+              "worst_window_p95_deg": 0.03023922370144638
+            },
+            "shoulder_line": {
+              "median_window_p95_deg": 0.0007297169239702411,
+              "worst_window_p95_deg": 0.01645036696843242
+            },
+            "left_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "left_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "left_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            },
+            "right_upper_arm": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.4787793334710982e-06
+            },
+            "right_forearm": {
+              "median_window_p95_deg": 1.2074182697257333e-06,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_thigh": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_shank": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 1.2074182697257333e-06
+            },
+            "right_foot_axis": {
+              "median_window_p95_deg": 8.537736462515939e-07,
+              "worst_window_p95_deg": 8.537736462515939e-07
+            }
+          },
+          "source_clock": {
+            "head_neck": {
+              "median_window_p95_cm": 0.004115301526406708,
+              "worst_window_p95_cm": 0.5542029852526487
+            },
+            "shoulders": {
+              "median_window_p95_cm": 0.006711579890962618,
+              "worst_window_p95_cm": 0.5253563244858718
+            },
+            "trunk": {
+              "median_window_p95_cm": 0.004443724899567213,
+              "worst_window_p95_cm": 0.4723020252816007
+            },
+            "hands": {
+              "median_window_p95_cm": 0.012434345675944942,
+              "worst_window_p95_cm": 0.6272606525429585
+            },
+            "knees": {
+              "median_window_p95_cm": 0.0033033140523424298,
+              "worst_window_p95_cm": 0.4946145287848013
+            },
+            "feet": {
+              "median_window_p95_cm": 0.0030618599074817565,
+              "worst_window_p95_cm": 0.7703939324742426
+            }
+          },
+          "position_transport_within_0_01cm_windows": 61,
+          "geometry_budget_1cm_1deg_windows": 82,
+          "engineering_5cm_5deg_windows": 82
+        }
+      },
+      "status": "review_complete"
+    }
+  },
+  "k_runs": 0,
+  "overall_acceptance": "passed_for_declared_sampled_geometry_and_native_frame_transport; source_jump_tolerance_separate; unobservable_components_excluded_explicitly",
+  "failures": [],
+  "independent_verification": {
+    "records": 656,
+    "max_head_neck_window_p95_deg": 0.22895673166001204,
+    "source_jump_windows": 16,
+    "protected_files": 184,
+    "changed": []
+  }
+}

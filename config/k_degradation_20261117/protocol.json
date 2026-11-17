@@ -1,0 +1,207 @@
+{
+  "version": "degradation-alignment-1",
+  "status": "degradation accepted for declared metrics and information scope; K unchanged",
+  "reference": "82 registered CoLLaboratE development windows; native BVH geometry, not anatomical truth",
+  "coordinates": {
+    "unit": "metres from published BVH cm geometry convention",
+    "world": "Y-up proper rotations",
+    "translation": "animated local channels replace OFFSET on supplied axes; OFFSET retained elsewhere",
+    "rotation": "intrinsic channel order; float64 FK"
+  },
+  "scoring": {
+    "main": "R sampled without filtering at D timestamps",
+    "temporal": "D interpolated back to original timestamps inside common interval; boundary frames counted separately",
+    "positions": "world and pelvis-relative, separate left/right endpoints",
+    "bone_normalization": "reference fixed median lengths enter scoring only",
+    "rotation": "declared fixed rest-frame transport; single-bone twist and leaf gauge are assumptions, not anatomical observations",
+    "numeric_position_preservation_tolerance_cm": 0.01,
+    "numeric_threshold_scope": "numerical transport check, not biomechanical standard"
+  },
+  "promotion": {
+    "overall": "degradation gate passed; no K fitting or optimization executed",
+    "fitter_allowed": false,
+    "new_holdout_runs": 0,
+    "fitter_allowed_reason": "this task is degradation-only; runtime K must explicitly consume the declared custom rig in the next phase"
+  },
+  "proven_information_loss": [
+    {
+      "profiles": [
+        "motionlcm",
+        "omnicontrol"
+      ],
+      "quantity": "independent head axial rotation",
+      "evidence": "two R inputs with identical retained positions and different head rotation produce identical D; unit test test_head_twist_is_actually_removed"
+    },
+    {
+      "profiles": "all",
+      "quantity": "arbitrary motion between output sampling instants",
+      "evidence": "sampling is non-injective; practical loss measured by original-clock reconstruction; no assertion that all observed temporal error is irreducible"
+    }
+  ],
+  "unresolved_conversion": [
+    "residual effects of compressed spine/shoulder/neck chains require per-window evidence",
+    "anatomical frame interpretation is independent of native matrix preservation",
+    "stock SMPL-X mesh and CLoSD physics are outside the declared custom-rig kinematics test",
+    "palm/finger/sole/heel observables not established by wrist and toe-point metrics"
+  ],
+  "sources": {
+    "motionlcm": {
+      "source_evidence": [
+        {
+          "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/MotionLCM/mld/data/humanml/scripts/motion_process.py",
+          "sha256": "ed6ad469ec9d359a2a96b9b239c17c6acd99b484665e33a9e72ff270f00c0983"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
+          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026"
+        }
+      ],
+      "registered_contract": "config/gold_k_20261115/degradations.json",
+      "fixed_template_is_format_requirement": "not established for all profiles; remains experiment choice"
+    },
+    "omnicontrol": {
+      "source_evidence": [
+        {
+          "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/OmniControl/data_loaders/humanml/scripts/motion_process.py",
+          "sha256": "88e0299c8cd599166665a1923be9bbd3eb1667c7b7bb5a63ce325d3b35741edc"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
+          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026"
+        }
+      ],
+      "registered_contract": "config/gold_k_20261115/degradations.json",
+      "fixed_template_is_format_requirement": "not established for all profiles; remains experiment choice"
+    },
+    "ardy": {
+      "source_evidence": [
+        {
+          "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/ardy/ardy/postprocess.py",
+          "sha256": "646a495330548dbaca4911bf02fef33bec8b09e90da939161fc4258a7db843d4"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
+          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/config/evalkit_k_calibration/ardy.json",
+          "sha256": "31dcf01f96f43a142d1346bf687d96c3adfe5a60639cb49f52418337fa3c8063"
+        }
+      ],
+      "registered_contract": "config/gold_k_20261115/degradations.json",
+      "fixed_template_is_format_requirement": "not established for all profiles; remains experiment choice"
+    },
+    "chois": {
+      "source_evidence": [
+        {
+          "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/chois_release/manip/data/long_cano_traj_dataset.py",
+          "sha256": "2792f6d962a7354a76b110ece0cda9162f686e2c9bcb42b6c77c06fd5afc9618"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
+          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/config/evalkit_k_calibration/chois.json",
+          "sha256": "02800f92c53540d07d1af1ff31b2def832f4299dcea7cf223e4bed3e1f3e6804"
+        }
+      ],
+      "registered_contract": "config/gold_k_20261115/degradations.json",
+      "fixed_template_is_format_requirement": "not established for all profiles; remains experiment choice"
+    },
+    "closd": {
+      "source_evidence": [
+        {
+          "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/CLoSD/closd/utils/smpllib/smpllib/smpl_local_robot.py",
+          "sha256": "7ca65bf74197e50804d24ea5b20edb3c57747662e5b85fe41d954faeff45c8cc"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
+          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/config/evalkit_k_calibration/closd.json",
+          "sha256": "5de072c4575a222704c46e7e1a62460faa407fd2a599854696e31b5c91d72744"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/utils/motiogen/closd_native.py",
+          "sha256": "11f7ff612cba172b3ebfc1b877719c8a0662b39560848f43b7e7267854ee7a59"
+        }
+      ],
+      "registered_contract": "config/gold_k_20261115/degradations.json",
+      "fixed_template_is_format_requirement": "not established for all profiles; remains experiment choice"
+    },
+    "dart": {
+      "source_evidence": [
+        {
+          "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/DART/utils/smpl_utils.py",
+          "sha256": "ec20124b489cf9f084fd13186190ba9376139f3366e3d33e4194c9906d8899dd"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
+          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/config/evalkit_k_calibration/dart.json",
+          "sha256": "54a610c925db4dfdbcc9c17e5f9f9e4796fffa255808c2e784d68997ec3443ca"
+        }
+      ],
+      "registered_contract": "config/gold_k_20261115/degradations.json",
+      "fixed_template_is_format_requirement": "not established for all profiles; remains experiment choice"
+    },
+    "kimodo": {
+      "source_evidence": [
+        {
+          "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/kimodo/kimodo/exports/motion_io.py",
+          "sha256": "93abc68cecbfe3ac4193550cf5dbf2abfdb2d108e8b7677352b9e892cfa32403"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
+          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/config/evalkit_k_calibration/kimodo.json",
+          "sha256": "89f00fe8cddabf2b9905b499d842112c52dc04a7936c62c0ead2a3eb17d40aab"
+        },
+        {
+          "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/kimodo/docs/source/user_guide/output_formats.md",
+          "sha256": "f3f9dcdc1fa21846469791d59977f5d06213225aea63960f9001654379ea163d"
+        }
+      ],
+      "registered_contract": "config/gold_k_20261115/degradations.json",
+      "fixed_template_is_format_requirement": "not established for all profiles; remains experiment choice"
+    },
+    "primal": {
+      "source_evidence": [
+        {
+          "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/baselines/PRIMAL/primal/utils/data_io.py",
+          "sha256": "7d96b5763643c75ba2bfb80d26b8028d4c8ac2b21eeb8c9049df6569d9e42c20"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/utils/motiogen/evalkit/k/motion.py",
+          "sha256": "e36db9e1bc933460f755cb1e4e415b1fb8c424adecab5b68011586c4bbdc7026"
+        },
+        {
+          "path": "/home/heinrich/MorionGen/config/evalkit_k_calibration/primal.json",
+          "sha256": "3851c0cc6e3c8a7a92a7b7928cfb7473d713d95f2e229f1e2897860809d201e6"
+        }
+      ],
+      "registered_contract": "config/gold_k_20261115/degradations.json",
+      "fixed_template_is_format_requirement": "not established for all profiles; remains experiment choice"
+    }
+  },
+  "user_confirmed_geometry_policy": "2026-11-17: per-source fixed rest rig allowed; declare complete input configuration",
+  "geometry_contract": {
+    "scope": "kinematic format/channel experiment with explicit custom source-shaped rig",
+    "fixed": "one neutral_joints array per entire window, no per-frame lengths",
+    "native_parameters": "DART/PRIMAL pose matrices/axis-angle retained; stock SMPL-X mesh geometry superseded by input_rig.json; placeholder betas do not define the custom rig",
+    "runtime_boundary": "only declared D and input_rig.json are inputs; R and scores stored in separate directories",
+    "dtype": "float64 geometry and rotations; OmniControl decoder float32; quantization to other production dtypes not assumed equivalent"
+  },
+  "acceptance": {
+    "sampled_geometry": "82x8 complete; per-region errors and coverage retained",
+    "native_rotation_scope": "declared native coordinate transfer; no anatomical calibration claim",
+    "temporal_tolerance": "User confirmed source-jump errors can be separate tolerance items; R-only >25cm body point or >45deg root/head/spine per source frame; affected D intervals plus one output frame on both sides",
+    "keep_K_unchanged": true
+  }
+}
