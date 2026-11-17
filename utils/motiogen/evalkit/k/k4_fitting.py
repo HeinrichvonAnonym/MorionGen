@@ -56,10 +56,13 @@ def fit(run,work,mass,floor,config):
         raise ValueError('Unsupported K4 root policy')
     if settings.get('hip_rotation_resampling') and settings.get('postprocess')!='native_preserving':
         raise ValueError('Hip joint interpolation requires native-preserving postprocessing')
+    if settings.get('rotation_resampling'):
+        if settings.get('hip_rotation_resampling') or settings.get('postprocess')!='native_preserving' or settings['rotation_resampling']!='whole_body_so3':
+            raise ValueError('Select one explicit native-preserving rotation resampling policy')
     motion=load(run,settings.get('method'),config=ROOT/'config/evalkit_k4_20261117/input.json')
     out=Path(work);out.mkdir(parents=True,exist_ok=True)
     key={'inputs':motion.provenance['inputs'],'config':settings,'mass_kg':mass,'floor_m':floor,
-         'model_sha256':digest(biomech.MODEL),'implementation':{p.name:digest(p) for p in sorted(Path(__file__).parent.glob('*.py'))},
+         'model_sha256':digest(biomech.MODEL),'implementation':{str(p.relative_to(Path(__file__).parent)):digest(p) for p in sorted(Path(__file__).parent.rglob('*.py'))},
          'input_config_sha256':digest(ROOT/'config/evalkit_k4_20261117/input.json'),
          'biomech_sha256':digest(biomech.__file__)}
     receipt_path=out/'receipt.json'
@@ -118,6 +121,9 @@ def fit(run,work,mass,floor,config):
             if settings['hip_rotation_resampling']!='joint_slerp':raise ValueError('Unknown hip resampling policy')
             from .rotation_resampling import hip_slerp
             coordinates,rotation_resampling=hip_slerp(out/'model.osim',labels,native,nt,times,coordinates)
+        elif settings.get('rotation_resampling')=='whole_body_so3':
+            from .resampling import interpolate_rotations
+            coordinates,rotation_resampling=interpolate_rotations(out/'model.osim',labels,native,nt,times,coordinates)
     else:
         if refinement is not None:raise ValueError('Refined coordinates require explicit native-preserving resampling')
         times,labels,coordinates=biomech.write_coordinates(out/'ik/ik.mot',out/'coordinates.mot')
