@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[2];sys.path[:0]=[str(ROOT/'utils'),str(ROO
 import opensim as osim
 osim.Logger.setLevelString('error')
 import biomech
-from motiogen.evalkit.k.k4_fitting import model_fk,resample_native
+from motiogen.evalkit.k.k4_fitting import resample_native
 from motiogen.evalkit.k.resampling import audit_model,interpolate_rotations
 from motiogen.evalkit.k.resampling.model import _matrix
 from motiogen.evalkit.k.constraints import couplers,synchronize
@@ -14,6 +14,7 @@ from motiogen.evalkit.k.constraints import couplers,synchronize
 
 class WholeRotationTests(unittest.TestCase):
     def setUp(self):
+        (ROOT/'develop_logs/test_runs/20261118_k4_rotation').mkdir(parents=True,exist_ok=True)
         self.temp=tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs/20261118_k4_rotation')
         self.path=Path(self.temp.name)/'model.osim';m=osim.Model(str(biomech.MODEL))
         c=m.updCoordinateSet().get('pelvis_rotation');c.setRangeMin(-20);c.setRangeMax(20)
@@ -79,6 +80,12 @@ class WholeRotationTests(unittest.TestCase):
         self.assertEqual(r['counts']['back']['fallback_intervals'],1)
         np.testing.assert_array_equal(out[:,cols],linear[:,cols])
         self.assertTrue(np.isfinite(out).all())
+    def test_half_turn_retains_explicit_coordinate_path(self):
+        q=np.tile(self.row,(2,1));q[:,self.labels.index('pelvis_rotation')]=[0,180]
+        out,r,_,linear=self.run_case(q)
+        self.assertEqual(r['counts']['ground_pelvis']['fallback_intervals'],1)
+        self.assertEqual(r['fallback_intervals']['ground_pelvis'][0]['reason'],'half_turn_path_ambiguous')
+        np.testing.assert_array_equal(out[:,self.labels.index('pelvis_rotation')],linear[:,self.labels.index('pelvis_rotation')])
     def test_missing_coordinate_is_rejected_without_filling(self):
         q=np.tile(self.row,(2,1));q[1,self.labels.index('hip_flexion_l')]=np.nan
         with self.assertRaisesRegex(ValueError,'Finite'):self.run_case(q)

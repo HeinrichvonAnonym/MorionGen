@@ -40,6 +40,7 @@ def main():
     axes[0,0].legend(fontsize=8);axes[1,0].set_xlabel('Seconds from fixed-window start');axes[1,1].set_xlabel('Seconds from fixed-window start')
     fig.suptitle(f"{a.window} {a.method}: identical native fit / model / input-root policy",fontsize=14)
     a.output.parent.mkdir(parents=True,exist_ok=True);fig.savefig(a.output.with_suffix('.svg'));fig.savefig(a.output.with_suffix('.png'),dpi=150);plt.close(fig)
+    svg=a.output.with_suffix('.svg');svg.write_text('\n'.join(line.rstrip() for line in svg.read_text().splitlines())+'\n')
 
 
 if __name__=='__main__':main()

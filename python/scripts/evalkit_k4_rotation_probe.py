@@ -27,8 +27,13 @@ def main():
     if not native_file.exists():native_file=a.fit/'ik/ik.mot'
     t,labels,q=biomech.read_storage(native_file);t,clock=native_clock(t,motion.times)
     new,linear=resample_native(t,labels,q);model=a.fit/'model.osim'
-    corrected,receipt=hip_slerp(model,labels,q,t,new,linear)
-    conditions=[('native',t,q),('linear',new,linear),('hip_slerp',new,corrected)]
+    conditions=[('native',t,q),('linear',new,linear)]
+    try:
+        corrected,receipt=hip_slerp(model,labels,q,t,new,linear)
+        conditions.append(('hip_slerp',new,corrected))
+    except ValueError as error:
+        if not a.whole_body or str(error)!='Canonical hip chart exceeds declared independent domain':raise
+        receipt={'legacy_control_failures':{'hip_slerp':str(error)}}
     if a.whole_body:
         from motiogen.evalkit.k.resampling import interpolate_rotations
         whole,whole_receipt=interpolate_rotations(model,labels,q,t,new,linear)

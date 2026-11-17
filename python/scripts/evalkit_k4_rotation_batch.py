@@ -22,7 +22,12 @@ def main():
             try:
                 if shutil.disk_usage(out).free<80*1024**3:raise RuntimeError('80 GiB reserve reached')
                 subprocess.run([sys.executable,str(ROOT/'python/scripts/evalkit_k4_rotation_probe.py'),'--fit',row['fit'],'--input',row['input'],'--output',str(dest),'--window',w,'--method',m,'--whole-body'],env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+                replay=json.loads((dest/'receipt.json').read_text())
+                receipt['legacy_control_failures']=replay.get('legacy_control_failures',{})
                 for condition in protocol['conditions']:
+                    if condition in receipt['legacy_control_failures']:
+                        if condition not in protocol.get('optional_controls',[]):raise RuntimeError('Required replay condition failed: '+condition)
+                        continue
                     subprocess.run([sys.executable,str(ROOT/'python/scripts/evalkit_k4_ablation_score.py'),'--fits',str(dest/'views'/condition),'--baseline',protocol['baseline'],'--output',str(out/'scores'/condition),'--window',w,'--method',m,'--strict'],env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
                 receipt['status']='completed'
             except Exception as error:receipt.update(status='failed',error=repr(error))
