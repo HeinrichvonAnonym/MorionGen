@@ -51,7 +51,7 @@ def attach(motion, source):
         'native_frames':'declared_coordinate_transport_only','stock_mesh_fk_compatible':False}
 
 
-def geometry_targets(motion):
+def geometry_targets(motion,shoulder_width_source='declared_or_observed'):
     """Separate fixed rest dimensions from observable positional segment lengths."""
     rig=motion.provenance.get('input_rig')
     if rig:
@@ -74,4 +74,16 @@ def geometry_targets(motion):
             (p('left_shoulder')[0]+p('right_shoulder')[0]-p('left_hip')[0]-p('right_hip')[0])/2))
     else:
         result['neutral_trunk_length']='unidentified; retain explicit model prior, never infer from max endpoint span'
+    if shoulder_width_source not in ('declared_or_observed','observed_rigid_median'):
+        raise ValueError('Unknown fixed shoulder width policy')
+    if shoulder_width_source=='observed_rigid_median':
+        index={n:i for i,n in enumerate(motion.names)}
+        width=np.linalg.norm(motion.positions[:,index['left_shoulder']]-motion.positions[:,index['right_shoulder']],axis=-1)
+        valid=np.isfinite(width)&(width>1e-6)
+        if valid.sum()<2:raise ValueError('Insufficient observed shoulder geometry')
+        result['rigid_shoulder_width']={'source':'D shoulder-centre separation median',
+            'previous_target_m':result['lengths_m']['shoulder_width'],'observed_frames':int(valid.sum()),
+            'total_frames':len(width),'quantiles_m':np.percentile(width[valid],[0,5,50,95,100]).tolist(),
+            'scope':'Clip-fixed effective width of rigid torso; articulated source clavicles are reduced, not treated as anatomical calibration'}
+        result['lengths_m']['shoulder_width']=float(np.median(width[valid]))
     return result

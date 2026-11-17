@@ -52,6 +52,9 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
     lo=np.array([cs.get(n).getRangeMin() for n in active]);hi=np.array([cs.get(n).getRangeMax() for n in active])
     cols=[label_index[n] for n in active]
     handles=[cs.get(n) for n in active]
+    neutral=np.array([h.getDefaultValue() for h in handles])
+    extra_start=settings.get('extra_start','none')
+    if extra_start not in ('none','neutral_knee_if_target_failed'):raise ValueError('Unknown refinement restart policy')
     position_scale=float(settings.get('position_scale_m',.05))
     direction_scale=2*np.sin(np.deg2rad(float(settings.get('direction_scale_deg',5)))/2)
     jw=float(settings.get('joint_angle_weight',0.))
@@ -62,7 +65,7 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
     for body,target_rotation in orientation_targets.items():
         if target_rotation.shape!=(len(coordinates),3,3):raise ValueError('Native body target clock/layout mismatch')
         if body not in ('pelvis','torso'):raise ValueError('Undeclared body target')
-    result=np.array(coordinates,copy=True);receipts=[];previous=None
+    result=np.array(coordinates,copy=True);receipts=[];previous=None;knee_seed_tables=None
     for frame,(row,goal) in enumerate(zip(coordinates,target)):
         if not np.isfinite(goal).all():
             receipts.append({'status':'input_missing','selected':'nominal'});previous=None;continue
@@ -101,7 +104,7 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
         starts=[('nominal_start',x0)]
         if previous is not None:starts.append(('continuity_start',np.clip(previous,lo+1e-9,hi-1e-9)))
         attempts=[]
-        for name,start in starts:
+        def attempt(name,start):
             jacobian=settings.get('jacobian','relative_forward')
             if jacobian not in ('relative_forward','absolute_central'):raise ValueError('Unknown Jacobian policy')
             options=({'jac':lambda x:bounded_jacobian(residual,x,lo,hi,float(settings.get('jacobian_step_rad',1e-5)))}
@@ -113,12 +116,37 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
                              'optimality':float(opt.optimality),'cost_with_continuity':float(opt.cost),
                              'input_loss':loss})
             if np.isfinite(loss):candidates.append((name,opt.x,loss))
+        for name,start in starts:attempt(name,start)
+        restart_triggered=False
+        if extra_start=='neutral_knee_if_target_failed':
+            best=min(candidates,key=lambda c:c[2]);p=evaluate(best[1])
+            direction_error=np.linalg.norm(unit(vectors(p))-gu,axis=-1)/direction_scale
+            position_error=np.linalg.norm((p-p[hip].mean(0))-gp,axis=-1)/position_scale
+            angle_error=abs(joint_angles(p)-ga)/np.deg2rad(float(settings.get('direction_scale_deg',5)))
+            restart_triggered=bool(max(direction_error.max(),position_error.max(),angle_error.max())>1.)
+            if restart_triggered:
+                start=neutral.copy()
+                if knee_seed_tables is None:
+                    from .initialization import seed_definitions
+                    _,seed_info=seed_definitions(model_path,points,names)
+                    knee_seed_tables=seed_info['knee_mapping']
+                for side,long_side,angle_index in [('l','left',0),('r','right',2)]:
+                    name='knee_angle_'+side
+                    if name in active:
+                        table=knee_seed_tables.get(long_side)
+                        if table:
+                            index=int(np.argmin(abs(np.asarray(table['geometric_flexion_deg'])-np.rad2deg(ga[angle_index]))))
+                            start[active.index(name)]=np.deg2rad(table['coordinate_deg'][index])
+                        else:start[active.index(name)]=x0[active.index(name)]
+                attempt('neutral_knee_start',np.clip(start,lo+1e-9,hi-1e-9))
         name,chosen,loss=min(candidates,key=lambda c:c[2])
         evaluate(chosen)
         for j,label in enumerate(labels):
             c=cs.get(label);result[frame,j]=c.getValue(state)*(180/np.pi if c.getMotionType()==1 else 1)
         previous=np.deg2rad(result[frame,cols])
-        receipts.append({'status':'computed','selected':name,'before_loss':initial_loss,'after_loss':loss,'attempts':attempts})
+        receipts.append({'status':'computed','selected':name,'before_loss':initial_loss,'after_loss':loss,'attempts':attempts,
+                         'extra_start_triggered':restart_triggered})
     return result,{'frames':receipts,'active_coordinates':active,'settings':settings,
+                   'neutral_restart_knee_mapping':knee_seed_tables,
                    'native_target_bodies':list(orientation_targets),'scope':'experimental local direction/position refinement; full-window regression gates required',
                    'candidate_selection':'input-only objective; nominal retained as a per-frame candidate'}

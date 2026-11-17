@@ -73,3 +73,21 @@ class AbsoluteJacobianTests(unittest.TestCase):
         fun=lambda x:np.array([np.sin(x[0])+2*x[1],x[0]*x[1]])
         j=bounded_jacobian(fun,np.array([1e-9,2.]),np.array([0.,-3]),np.array([4.,2.]),1e-5)
         np.testing.assert_allclose(j,[[1,2],[2,1e-9]],atol=1e-9)
+
+class RestartTests(unittest.TestCase):
+    def test_restart_uses_observed_knee_geometry_and_retains_default(self):
+        m=osim.Model(str(biomech.MODEL));state=m.initSystem();cs=m.getCoordinateSet()
+        labels=[cs.get(i).getName() for i in range(cs.getSize())]
+        row=np.array([cs.get(n).getValue(state)*(180/np.pi if cs.get(n).getMotionType()==1 else 1) for n in labels])
+        for side in ('l','r'):
+            row[labels.index('knee_angle_'+side)]=100;row[labels.index('elbow_flex_'+side)]=45
+        p,n,q=model_fk(biomech.MODEL,labels,np.tile(row,(2,1)),direct_couplers=True,return_coordinates=True)
+        settings={'max_nfev':1,'include_pelvis_line':True,'extra_start':'neutral_knee_if_target_failed'}
+        _,perfect=refine(biomech.MODEL,labels,q,p,n,settings)
+        self.assertFalse(any(f['extra_start_triggered'] for f in perfect['frames']))
+        start=q.copy();start[:,labels.index('knee_angle_l')]=10
+        _,receipt=refine(biomech.MODEL,labels,start,p,n,settings)
+        self.assertTrue(receipt['frames'][0]['extra_start_triggered'])
+        self.assertIn('neutral_knee_start',[a['start'] for a in receipt['frames'][0]['attempts']])
+        self.assertLess(abs(receipt['neutral_restart_knee_mapping']['left']['seed_deg']-100),1.)
+        self.assertTrue(all(f['after_loss']<=f['before_loss']+1e-9 for f in receipt['frames']))

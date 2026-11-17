@@ -28,10 +28,12 @@ def scale_bodies(model, factors, mass):
     state=model.initSystem();model.scale(state,scales,True,mass)
 
 
-def build(motion,out,mass,independent_geometry=False,marker_registration='legacy',joint_centres='scaled_asset'):
+def build(motion,out,mass,independent_geometry=False,marker_registration='legacy',joint_centres='scaled_asset',shoulder_width_source='declared_or_observed'):
     import opensim as osim
     import biomech
-    targets=geometry_targets(motion);lengths=targets['lengths_m']
+    targets=geometry_targets(motion,shoulder_width_source);lengths=targets['lengths_m']
+    if shoulder_width_source!='declared_or_observed' and (not independent_geometry or joint_centres!='scaled_asset'):
+        raise ValueError('Observed rigid shoulder width requires independent geometry and scaled-asset centres')
     if any(not np.isfinite(v) or v<=1e-6 for v in lengths.values()):
         raise ValueError('Fixed geometry unavailable: missing or degenerate input segments')
     model=osim.Model(str(biomech.MODEL));state=model.initSystem();base=measure(model,state)

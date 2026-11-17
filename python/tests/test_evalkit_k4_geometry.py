@@ -39,6 +39,26 @@ class GeometryTests(unittest.TestCase):
         p=load(self.run_data/'inputs/000/motionlcm/candidate','motionlcm',config=self.input_config)
         self.assertEqual(read(p)['status'],'unavailable')
 
+    def test_effective_rigid_shoulder_width_is_fixed_and_input_only(self):
+        from motiogen.evalkit.k.input_rig import geometry_targets
+        m=load(self.run_data/'inputs/017/chois/candidate','chois',config=self.input_config)
+        old=geometry_targets(m);new=geometry_targets(m,'observed_rigid_median')
+        indices=[m.names.index(n) for n in ('left_shoulder','right_shoulder')]
+        expected=np.median(np.linalg.norm(m.positions[:,indices[0]]-m.positions[:,indices[1]],axis=-1))
+        self.assertAlmostEqual(new['lengths_m']['shoulder_width'],expected)
+        self.assertGreater(abs(old['lengths_m']['shoulder_width']-expected),.04)
+        self.assertEqual(old['lengths_m']['rest_hip_to_shoulder_midpoint'],new['lengths_m']['rest_hip_to_shoulder_midpoint'])
+        with tempfile.TemporaryDirectory(dir=self.scratch) as temp:
+            path=Path(temp)/'model.osim'
+            result=build(m,path,75,True,'owned_joint_frame',shoulder_width_source='observed_rigid_median')
+            self.assertAlmostEqual(result['after']['shoulder_width'],expected,places=8)
+            restored=osim.Model(str(path));state=restored.initSystem()
+            from motiogen.evalkit.k.fixed_geometry import measure
+            self.assertAlmostEqual(measure(restored,state)['shoulder_width'],expected,places=8)
+        # Changing the root or reference metadata cannot change clip-fixed width.
+        moved=copy.deepcopy(m);moved.positions+=np.array([1.,2.,3.]);moved.provenance['reference']='UNREADABLE'
+        self.assertAlmostEqual(geometry_targets(moved,'observed_rigid_median')['lengths_m']['shoulder_width'],expected)
+
     def test_owned_joint_markers_match_fk_after_serialization(self):
         import biomech
         from motiogen.evalkit.k.k4_fitting import model_fk

@@ -1,0 +1,18 @@
+{
+  "version": "k4-independent-domain-5",
+  "conditions": [
+    "complete_domain",
+    "complete_restart",
+    "complete_restart_width"
+  ],
+  "strict_scoring": true,
+  "hypothesis": "074 frame24 needs both broader hip coordinate domain and alternate initial branch. Full six sentinels separate domain-only from D-triggered neutral/knee restart; subsequent width control changes only fixed rigid shoulder width.017 D shoulder width35.4cm versus rest-rig40.3cm is a reduced-model mismatch hypothesis.015 v4 regression must be recovered, not averaged away.",
+  "restart": "Trigger from D direction, position or joint-angle normalized error>1; knee seed from current fixed-model FK table and D geometry. Existing candidates retained, final full-window temporal review required.",
+  "new_holdout_uses": 0,
+  "promotion": "none until full656 acceptance",
+  "limits": {
+    "workers": 3,
+    "numerical_threads": 1,
+    "min_free_gib": 80
+  }
+}
