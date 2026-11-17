@@ -30,13 +30,13 @@ def one(task):
  atomic(result,report);print(row['window_key'],row['method'],report['status'],round(report['seconds'],1),report.get('reason',''),flush=True);return str(result)
 
 def main():
- parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,required=True);parser.add_argument('--pilot',action='store_true');parser.add_argument('--full',action='store_true');parser.add_argument('--variants',default='g0s0,g1s0,g0s1,g1s1');a=parser.parse_args();a.out.mkdir(exist_ok=True)
+ parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,required=True);parser.add_argument('--workers',type=int,default=3);parser.add_argument('--pilot',action='store_true');parser.add_argument('--full',action='store_true');parser.add_argument('--variants',default='g0s0,g1s0,g0s1,g1s1');a=parser.parse_args();a.out.mkdir(exist_ok=True)
  rows=read(OUT/'exports.json');rows=[r for r in rows if r['selected'] or a.full]
  if a.pilot:rows=[r for r in rows if r['method']=='kimodo' and r['window_key']=='074']
  frozen={'implementation':implementation_key(),'config':read(ROOT/CONFIG),'rows':[(r['method'],r['window_key']) for r in rows],'variants':a.variants,'runner':digest(__file__),'inputs':{str(r['common']):digest(r['common']) for r in rows},'scope':'fixed development, same-input comparison, no holdout'}
  p=a.out/'freeze.json'
  if p.exists():assert read(p)==frozen,'Use a new output directory'
  else:atomic(p,frozen)
- with ProcessPoolExecutor(max_workers=min(3,len(rows))) as pool:results=list(pool.map(one,[(r,a.out,a.variants.split(',')) for r in rows]))
+ with ProcessPoolExecutor(max_workers=min(a.workers,3,len(rows))) as pool:results=list(pool.map(one,[(r,a.out,a.variants.split(',')) for r in rows]))
  atomic(a.out/'index.json',results)
 if __name__=='__main__':main()

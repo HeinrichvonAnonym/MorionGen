@@ -32,7 +32,8 @@
     "direction_weight": 11.462792813026674,
     "position_weight": 20.0,
     "continuity_weight": 0.02,
-    "max_nfev": 100
+    "max_nfev": 100,
+    "joint_pelvis_torso": true
   },
   "leg_optimizer": {
     "root_relative_positions": true,

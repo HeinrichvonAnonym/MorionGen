@@ -32,6 +32,8 @@ def refine(model_path,motion,times,labels,data,settings):
     targets={n:point(n) for n in names}
     groups=[('pelvis',['pelvis_tilt','pelvis_list','pelvis_rotation'],['hip_l','hip_r'],['left_hip','right_hip']),
             ('torso',['lumbar_extension','lumbar_bending','lumbar_rotation'],['hip_l','hip_r','acromial_l','acromial_r'],['left_hip','right_hip','left_shoulder','right_shoulder'])]
+    if settings.get('joint_pelvis_torso',False):
+        groups=[('torso',groups[0][1]+groups[1][1],groups[1][2],groups[1][3])]
     for side,s in [('left','l'),('right','r')]:
         groups.extend([(side+'_arm',[n+'_'+s for n in ['arm_flex','arm_add','arm_rot','elbow_flex']],
                         [n+'_'+s for n in ['acromial','elbow','radius_hand']],[side+'_'+n for n in ['shoulder','elbow','wrist']]),
@@ -41,7 +43,10 @@ def refine(model_path,motion,times,labels,data,settings):
     constraint_receipt=coordinate_contract(model,state,[n for _,coords,_,_ in groups for n in coords])
     diagnostics={};previous={}
     def directions(a,group):
-        if group=='torso':return unit(np.stack([.5*(a[2]+a[3]-a[0]-a[1]),a[3]-a[2]]))
+        if group=='torso':
+            axes=[.5*(a[2]+a[3]-a[0]-a[1]),a[3]-a[2]]
+            if settings.get('joint_pelvis_torso',False):axes.append(a[1]-a[0])
+            return unit(np.stack(axes))
         return unit(np.diff(a,axis=0))
     for group,coord_names,joints,source_names in groups:
         if settings.get('independent_coordinates_only',False):
