@@ -19,27 +19,51 @@ def atomic(path,value):
     temporary.write_text(json.dumps(value,indent=2,allow_nan=False)+'\n');temporary.replace(path)
 
 
+def execution_workers(protocol, protocol_hash, original_identity, amendment):
+    """A scheduling amendment cannot replace any scientific protocol field."""
+    if amendment is None:
+        if not 1<=protocol['workers']<=3:raise ValueError('Original protocol allows at most three workers')
+        return protocol['workers']
+    allowed={'version','protocol_sha256','original_runner_sha256','output','max_workers','authorization'}
+    if set(amendment)!=allowed or amendment['version']!='k4-execution-amendment-1':
+        raise ValueError('Invalid execution-only amendment')
+    if not original_identity or amendment['protocol_sha256']!=protocol_hash or original_identity['protocol_sha256']!=protocol_hash:
+        raise ValueError('Execution amendment protocol mismatch')
+    if amendment['original_runner_sha256']!=original_identity['runner_sha256'] or amendment['output']!=protocol['output']:
+        raise ValueError('Execution amendment run identity mismatch')
+    if not isinstance(amendment['max_workers'],int) or not 1<=amendment['max_workers']<=8:
+        raise ValueError('User-authorized maximum is eight workers')
+    return amendment['max_workers']
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--protocol',type=Path,required=True)
+    parser.add_argument('--execution-config',type=Path)
     a=parser.parse_args();p=json.loads(a.protocol.read_text())
     code=Path(p['fit_code_root']);control=Path(p['control_code_root']);out=Path(p['output']);base=Path(p['baseline_root'])
-    records=p['records'];workers=p['workers']
+    records=p['records']
     if len(records)!=656 or len({(r['window'],r['method']) for r in records})!=656:
         raise ValueError('Require all 656 unique registered paths')
     windows={r['window'] for r in records};methods={r['method'] for r in records}
     if len(windows)!=82 or len(methods)!=8 or {(r['window'],r['method']) for r in records}!={(w,m) for w in windows for m in methods}:
         raise ValueError('Require the complete 82 by 8 Cartesian product')
-    if not 1<=workers<=3:raise ValueError('At most three numerical workers')
     for path,expected in p['implementation_sha256'].items():
         if sha(path)!=expected:raise ValueError('Frozen implementation changed: '+path)
     config=Path(p['fit_config']);settings=json.loads(config.read_text())
     if sha(config)!=p['fit_config_sha256']:raise ValueError('Frozen configuration changed')
     out.mkdir(parents=True,exist_ok=True)
     identity={'protocol_sha256':sha(a.protocol),'runner_sha256':sha(__file__)}
-    if (out/'identity.json').exists() and json.loads((out/'identity.json').read_text())!=identity:
+    previous=json.loads((out/'identity.json').read_text()) if (out/'identity.json').exists() else None
+    amendment=json.loads(a.execution_config.read_text()) if a.execution_config else None
+    workers=execution_workers(p,identity['protocol_sha256'],previous,amendment)
+    if previous and previous!=identity and amendment is None:
         raise ValueError('Full regression identity changed')
-    atomic(out/'identity.json',identity)
+    if previous is None:atomic(out/'identity.json',identity)
+    if amendment is not None:
+        epochs=out/'execution_epochs';epochs.mkdir(exist_ok=True)
+        atomic(epochs/(str(time.time_ns())+'.json'),dict(original_identity=previous,execution_identity=identity,
+            effective_workers=workers,amendment=amendment,amendment_sha256=sha(a.execution_config)))
     if not (out/'protocol.json').exists():shutil.copyfile(a.protocol,out/'protocol.json')
     # Wait only for the existing panel workers; no concurrent extra numerical pool.
     if p.get('wait_for'):
