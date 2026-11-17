@@ -114,3 +114,16 @@ CHOIS 的 body wrist 与额外 hand point 分开保留。`Motion.legacy_aliases(
 输出使用 `kinematic_model.osim`、`kinematic_coordinates.mot`、`kinematic_fit.npz` 和独立收据。返回 `output_kind=kinematic_only`、`force_eligible=False`，拟合坐标依赖扩展模型及连续性先验；这些结果不进入现有肌肉／受力流水线。常规模型留在 `nominal/`，原输入要求及标准接口保持原值。
 
 11 个固定开发窗口、八格式回归中接受 21/22 条腿；074 左腿仍回退。主误差完整对照退化前 R，逐指标输入保真另报。完整 82×8 新模型拟合及新的留出验证尚未运行。详细对照、姿态收益和位置代价见 `develop_logs/notes/20261117_evalkit_k36_domain.md`。
+
+### K3.7: continuous hip-flexion chart
+
+`config/evalkit_k37_20261117/kinematic_config.json` explicitly selects the
+`hip_flexion_chart` copied-model profile through the existing kinematic-only API.
+It changes only hip-flexion bounds relative to K3.6, admitting a continuous
+rotation representation over −360..360 degrees. The interval is an engineering
+coordinate domain, not an anatomical range. Model geometry, input requirements,
+solver settings, whole-window guards and default pipelines remain unchanged.
+The 074 development result separates old candidate, old fallback and new
+accepted output; its residual world-position error is retained alongside
+root-relative error. Evidence and regression scope are in the K3.7 acceptance
+file and `develop_logs/notes/20261117_evalkit_k37_074.md`.

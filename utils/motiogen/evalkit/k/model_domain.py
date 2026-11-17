@@ -12,6 +12,14 @@ PROFILES={
  'combined':{'ranges':{'knee_angle':(0,175),'hip_flexion':(-90,175),'hip_adduction':(-90,90),'hip_rotation':(-120,120),'ankle_angle':(-90,90),'subtalar_angle':(-90,90)},'unlock':['subtalar_angle']},
 }
 
+# Kinematic-only continuous hip-flexion chart. The wider interval admits both
+# previously excluded orientations and equivalent +/-360 degree representations;
+# it is deliberately not described as an anatomical joint range.
+PROFILES['hip_flexion_chart']={
+    'ranges':{**PROFILES['combined']['ranges'],'hip_flexion':(-360,360)},
+    'unlock':list(PROFILES['combined']['unlock']),
+}
+
 
 def prepare(source,destination,labels,coordinates,profile):
     import opensim as osim

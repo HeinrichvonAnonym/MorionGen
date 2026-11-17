@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/heinrich/MorionGen/python/scripts/evalkit_k37_probe.py", line 25, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/home/heinrich/MorionGen/python/scripts/evalkit_k37_probe.py", line 21, in main
+    if path.exists():assert read(path)==frozen,'Frozen experiment differs; select a new --out directory'
+                            ^^^^^^^^^^^^^^^^^^
+AssertionError: Frozen experiment differs; select a new --out directory

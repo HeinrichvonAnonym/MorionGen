@@ -11,9 +11,15 @@ for name in ['hip_chart','ankle_chart','both_charts']:
  PROBES[name]=spec
 PROFILES.update(PROBES)
 def main():
+ global DEST
+ parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,default=DEST)
+ DEST=parser.parse_args().out
+ for key in ['OPENBLAS_NUM_THREADS','OMP_NUM_THREADS','MKL_NUM_THREADS']:assert os.environ.get(key)=='1'
  DEST.mkdir(exist_ok=True);row=next(r for r in inventory() if r['window']=='074')
  frozen={'row':row,'profiles':PROBES,'parameters':PARAMETERS,'inputs':{row[k]:digest(row[k]) for k in ['model','comparison','kinematics']},'protected':{str(p.relative_to(ROOT)):digest(p) for d in ['config','plans'] for p in (ROOT/d).rglob('*') if p.is_file()},'implementation':implementation_key(),'runner':digest(__file__),'scope':'kinematic coordinate-domain diagnosis; no anatomical or force claim; no holdout'}
- atomic(DEST/'freeze.json',frozen)
+ path=DEST/'freeze.json'
+ if path.exists():assert read(path)==frozen,'Frozen experiment differs; select a new --out directory'
+ else:atomic(path,frozen)
  with ProcessPoolExecutor(max_workers=3) as pool:results=list(pool.map(run_domain,[(row,p,{**PARAMETERS,'_output':str(DEST)}) for p in PROBES]))
  atomic(DEST/'index.json',results)
 if __name__=='__main__':main()
