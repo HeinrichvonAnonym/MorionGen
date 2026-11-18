@@ -39,16 +39,21 @@ def main():
     sha=lambda file:hashlib.sha256(Path(file).read_bytes()).hexdigest()
     rows=[]
     for key in sorted(keys):
+        task=a.candidate_run/'tasks'
+        task=task/a.condition/key/'status.json' if a.condition else task/key/'result.json'
+        if not task.exists() or json.loads(task.read_text()).get('status')!='completed':continue
         files={v:root/v/(key+'.json') for v in ['native','export']}
         if not all(p.exists() for p in files.values()):continue
         row=dict(key=key,views={},source_sha256={})
         for view,new in files.items():
             old=a.frozen_run/'scores'/view/new.name
-            current=json.loads(new.read_text());previous=json.loads(old.read_text())
+            new_bytes=new.read_bytes();old_bytes=old.read_bytes()
+            current=json.loads(new_bytes);previous=json.loads(old_bytes)
             changed=differences(boundary(previous),boundary(current))
             reference=Path(current['original_reference_file'])
             row['views'][view]=dict(exactly_equal=not changed,difference_count=len(changed),differences=changed)
-            for file in [old,new,reference]:row['source_sha256'][str(file)]=sha(file)
+            row['source_sha256'].update({str(old):hashlib.sha256(old_bytes).hexdigest(),
+                                        str(new):hashlib.sha256(new_bytes).hexdigest(),str(reference):sha(reference)})
         row['passed']=all(v['exactly_equal'] for v in row['views'].values());rows.append(row)
     result=dict(scope=__doc__,expected=len(keys),checked=len(rows),equal=sum(r['passed'] for r in rows),
                 pending=len(keys)-len(rows),records=rows,new_holdout_uses=0,
