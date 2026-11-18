@@ -19,6 +19,7 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ('fit','input','output'):p.add_argument('--'+name,type=Path,required=True)
     p.add_argument('--method',required=True)
+    p.add_argument('--equivalent-chart',action='store_true')
     p.add_argument('--coordinates',default='coordinates_trajectory_candidate.mot',choices=['coordinates_trajectory_candidate.mot','coordinates_before_trajectory.mot'])
     a=p.parse_args()
     if a.output.exists():raise ValueError('Use a new diagnostic output')
@@ -27,6 +28,10 @@ def main():
     if saved['key']['inputs']!=motion.provenance['inputs']:raise ValueError('Input identity changed')
     settings=saved['key']['config']['trajectory_refinement']
     times,labels,q=biomech.read_storage(a.fit/a.coordinates)
+    chart=None
+    if a.equivalent_chart:
+        from motiogen.evalkit.k.rotation_chart import rechart
+        q,chart=rechart(a.fit/'model.osim',labels,q)
     observed,names,_=motion.legacy();observed=np.array(observed,copy=True)
     for name in motion.legacy_prior_names():
         if name in names:observed[:,list(names).index(name)]=np.nan
@@ -54,7 +59,7 @@ def main():
             trials.append(dict(alpha=alpha,squared_cost=float(value@value),max_coordinate_step_deg=float(np.rad2deg(abs(candidate-x)).max())))
         controls.append(dict(name=label,iterations=int(result[2]),stop_code=int(result[1]),
                              linear_residual_norm=float(result[3]),estimated_condition=float(result[6]) if result[6] is not None else None,trials=trials))
-    result=dict(source_fit=str(a.fit),source_coordinates=a.coordinates,initial_squared_cost=float(residual@residual),
+    result=dict(source_fit=str(a.fit),source_coordinates=a.coordinates,seed_chart=chart,initial_squared_cost=float(residual@residual),
                 active_coordinates=active,gradient_max_abs=float(abs(gradient).max()),top_gradients=rows,
                 column_norm_percentiles=np.percentile(norms,[0,25,50,75,100]).tolist(),linearized_controls=controls,
                 source_sha256={n:hashlib.sha256((a.fit/n).read_bytes()).hexdigest() for n in ['model.osim',a.coordinates,'receipt.json']},

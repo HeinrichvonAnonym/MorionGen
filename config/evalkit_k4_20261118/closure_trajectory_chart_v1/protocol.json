@@ -1,0 +1,13 @@
+{
+  "version": "k4-trajectory-chart-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "conditions": [
+    "control",
+    "interior_chart"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "077 forward_expanded stops with left shoulder coordinates near flex160/add-120deg; same physical rotation has interior legal representative flex-20/add-60/rot0deg. Exact FK-preserving rechart of saved stalled candidate moves only2 shoulder frames, max body FK error2.8e-16m, bounded linear halfstep reduces same D objective3981.108 to1285.171 vs oldchart3981.098. Test rechart of the common pre-trajectory seed, not reuse current R-selected output. Range, structure, geometry and feature objective unchanged.",
+  "preregistration": "073/077/000 MotionLCM x original/equivalent interior chart =6,20 objective evaluation budget each. Rechart only audited independent three-axis joints; native seed physical FK checked unchanged each run. No Euler-smoothing objective, no new observation or score mask, R independent scoring."
+}

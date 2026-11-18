@@ -51,6 +51,11 @@ def problem(model_path, labels, coordinates, observed, names, times, settings):
 
 
 def refine(model_path, labels, coordinates, observed, names, times, settings):
+    chart=None
+    if settings.get('equivalent_seed_chart'):
+        if settings['equivalent_seed_chart']!='max_margin_v1':raise ValueError('Unknown equivalent seed chart')
+        from .rotation_chart import rechart
+        coordinates,chart=rechart(model_path,labels,coordinates)
     objective,x0,seed,cols,active=problem(model_path,labels,coordinates,observed,names,times,settings)
     lower,upper=objective.lower,objective.upper
     r0=objective.residual(x0);initial=float(np.dot(r0,r0))
@@ -67,7 +72,7 @@ def refine(model_path, labels, coordinates, observed, names, times, settings):
     receipt=dict(settings=settings,active_coordinates=active,initial_squared_residual=initial,candidate_squared_residual=cost,
                  selected='joint_trajectory' if accepted else 'input_seed',optimizer_success=bool(fit.success),optimizer_status=int(fit.status),
                  message=str(fit.message),nfev=int(fit.nfev),njev=int(fit.njev),optimality=float(fit.optimality),
-                 solver=solver,iterations=fit.get('history',[]),
+                 solver=solver,iterations=fit.get('history',[]),seed_chart=chart,
                  supported_features_per_frame=objective.mask.sum(1).tolist(),
                  scope='Fixed model; all native frames optimized jointly using D positions, directions and geometric angles. Rate is derivative of fitted-minus-input unit directions, never raw motion speed or Euler differences. R is absent. Cost acceptance is not accuracy qualification.')
     return candidate if accepted else seed, candidate, receipt
