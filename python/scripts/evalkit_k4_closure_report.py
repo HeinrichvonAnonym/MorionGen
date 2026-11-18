@@ -15,6 +15,7 @@ def main():
     p.add_argument('--rotation-replay',type=Path,action='append',default=[])
     p.add_argument('--selection-review',type=Path)
     p.add_argument('--reachability',type=Path)
+    p.add_argument('--real-run',type=Path)
     p.add_argument('--output',type=Path,required=True)
     a=p.parse_args();groups=defaultdict(list);completed=passed=execution_failed=0
     for path in sorted((a.frozen_run/'tasks').glob('*/result.json')):
@@ -103,16 +104,42 @@ def main():
             success=sum(r.get('choice',{}).get(tag,{}).get('independent_R_passed',False) for r in records)
             rows.append(f'<tr><td>{label}</td><td>{success}/{len(records)}</td><td>{capable-success}</td></tr>')
         sections.append(f'<section><h3>候选能力与输入选择分开评价</h3><p>{len(records)}个开发组合中，{capable}组已有至少一个独立验收通过的候选。运行时选择仅使用D；选择后由评分端检查R。各组合候选来源不完全一致，此表属于选择机制诊断，统一候选库迁移仍需完成。</p><table><tr><th>选择规则</th><th>选中结果通过</th><th>已有通过候选却漏选</th></tr>'+''.join(rows)+'</table></section>')
+    if a.real_run:
+        rows=[]
+        audit=json.loads((a.real_run/'input_audit.json').read_text())
+        for item in audit['rows']:
+            folder=a.real_run/item['method'];status=json.loads((folder/'status.json').read_text()) if (folder/'status.json').exists() else {}
+            state={'completed':'拟合与保真报告已生成','failed':'执行失败'}.get(status.get('status'),'运行中')
+            source='原生旋转存在；共同段坐标声明待接通' if item['raw_segment_rotations'] and not item['declared_rig'] else '位置输入；独立段旋转不可用'
+            detail='拟合完成后生成逐部位保真度'
+            if (folder/'fidelity.json').exists():
+                fidelity=json.loads((folder/'fidelity.json').read_text());parts=[]
+                def stat_cell(stat):
+                    value=stat.get('p95')
+                    return ('未知' if value is None else f'{value:.4f}')+f'（{stat.get("n",0)}/{stat.get("denominator",0)}）'
+                for view,metrics in fidelity['views'].items():
+                    body=[]
+                    for kind in ('directions_deg','joint_angles_deg'):
+                        for name,stat in metrics[kind].items():
+                            body.append(f'<tr><td>{esc(metric_label(name))}</td><td>{stat_cell(stat)}°</td><td>—</td></tr>')
+                    for name,values in metrics['positions_cm'].items():
+                        body.append(f'<tr><td>{esc(metric_label(name))}</td><td>{stat_cell(values["world"])}cm</td><td>{stat_cell(values["common_length_world"])}cm</td></tr>')
+                    for name,values in metrics['temporal'].items():
+                        body.append(f'<tr><td>{esc(metric_label(name))}变化率</td><td>{stat_cell(values["direction_rate_vector_error_deg_s"])}°/s</td><td>—</td></tr>')
+                    parts.append(f'<details><summary>{esc(view)}：F−D P95／有效帧数</summary><table><tr><th>指标</th><th>原始几何</th><th>统一D骨长</th></tr>'+''.join(body)+'</table></details>')
+                detail=''.join(parts)
+            rows.append(f'<tr><td>{esc(item["method"])}</td><td>{item["frames"]}</td><td>{esc(state)}</td><td>{esc(status.get("selected","待选择"))}</td><td>{esc(source)}</td><td>{detail}</td></tr>')
+        sections.append('<section><h3>八份真实基线输出：单独检验F−D</h3><p>读取核查8/8成功。它们没有配对原动作R，不计入656路端到端结果；原生／实际导出保真度与文件回读分别记录。六旋转格式的数据实际存在，当前接口缺少旧样例的共同段坐标转换声明，不能把该工程缺口写成数据无旋转。详情中的分母保留完整输入时钟；未知项和拟合缺测继续保留。</p><div class="scroll"><table><tr><th>格式</th><th>输入帧</th><th>进度</th><th>选择</th><th>旋转接口状态</th><th>F−D详情</th></tr>'+''.join(rows)+'</table></div></section>')
     timestamp=datetime.now(timezone.utc).astimezone(__import__('zoneinfo').ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds')
     document='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>K4 新增失败与独立优化</title><style>
 body{font:16px/1.65 system-ui,sans-serif;color:#173346;background:#f5f8fa;margin:0}main{max-width:1450px;margin:auto;padding:28px}h1{font-size:30px}h2{margin-top:36px}section,.card{background:white;border:1px solid #d6e2e7;border-radius:8px;padding:20px;margin:20px 0}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:9px;border-bottom:1px solid #dde6eb;text-align:left;vertical-align:top}th{background:#edf3f6}.passed{color:#167252}.failed{color:#ad4136}summary{cursor:pointer}details{max-width:500px;overflow-wrap:anywhere}.muted{color:#546c79}a{color:#136c9e}@media print{body{background:white}main{padding:0}.scroll{overflow:visible}table{font-size:10px}section{break-inside:avoid}details{display:block}}
 </style><main><h1>K4：新增失败与独立优化</h1>'''
     document+=f'<p class="muted">快照：{esc(timestamp)}。离线可阅读全部嵌入结果；在线仅冻结回归总进度自动刷新，候选表以本快照为准。</p>'
     document+='<p>目标是按退化前原动作逐窗口验收。姿态、位置、时序、覆盖及实际导出共同决定通过；原生拟合改善需要继续检查采样点之间的运动。</p>'
-    document+=f'<div class="card"><b id="live">冻结回归：{completed}/656完成，{passed}通过，{completed-passed}指标未通过，{execution_failed}执行失败。</b><p><a href="20261118_k4_full_regression.html">打开冻结656路完整报告</a> · <a href="20261118_k4_rotation_comparison.html">查看既有旋转对照动画</a></p></div>'
-    document+='<h2>因果证据与剩余问题</h2><section><p><b>002：</b>足端固定几何改善原生膝足偏差，反向＋变化率候选在Kimodo完整通过；其他格式和动作继续迁移。</p><p><b>008：</b>位置链长代理在MotionLCM、OmniControl通过；中立长度仍属于明确估计，其他姿态单独检验。</p><p><b>010：</b>原生近伸直阶段出现髋—距下补偿分支切换。反向候选改善原生结果，导出中间状态仍突跳。新增跨关节协调已在固定轨迹的隔离实验通过，以模型FK产生插入帧；已通过的运行入口及其他候选见下表，跨格式迁移继续验收。</p><p><b>新增肩躯干与膝足失败：</b>持续前倾／肩线倾斜、深屈膝下分别验证固定几何、范围和求解。触边是诊断线索，配对实验才用于因果判断。</p></section>'
+    document+=f'<div class="card"><b id="live">冻结回归：{completed}/656完成，{passed}通过，{completed-passed}指标未通过，{execution_failed}执行失败。</b><p><a href="20261118_k4_full_regression.html">打开冻结656路完整报告</a> · <a href="20261118_k4_rotation_comparison.html">查看既有旋转对照动画</a> · <a href="20261118_k4_coordinated_path_comparison.html">查看新协调路径与原动作时钟动画</a></p></div>'
+    document+='<h2>因果证据与剩余问题</h2><section><p><b>002：</b>六旋转格式已在反向＋变化率候选通过局部验收。两位置格式采用输入估计的片段内固定足端，再配合已有链长代理，通过完整原生／导出及两套时钟；足端单因素保留为肩线边界失败对照。统一候选选择与广泛迁移继续检验。</p><p><b>008：</b>位置链长代理在MotionLCM、OmniControl通过；中立长度仍属于明确估计，其他姿态单独检验。</p><p><b>010：</b>原生近伸直阶段出现髋—距下补偿分支切换。反向候选改善原生结果，导出中间状态仍突跳。新增跨关节协调已在固定轨迹的隔离实验通过，以模型FK产生插入帧；已通过的运行入口及其他候选见下表，跨格式迁移继续验收。</p><p><b>新增肩躯干与膝足失败：</b>持续前倾／肩线倾斜、深屈膝下分别验证固定几何、范围和求解。触边是诊断线索，配对实验才用于因果判断。</p></section>'
     if a.rotation_replay:
-        document+='<section><h3>本轮路径与支持标记核查</h3><p><b>032：</b>保持原生拟合不变，全身协调路径在Kimodo、MotionLCM通过两套时钟及文件回读；原SO(3)导出在R时钟仍有时序超标。</p><p><b>010 CHOIS：</b>进一步查到节点别名错误：先验手端点与真实wrist_body腕点在统一命名后发生支持标记混淆，旧路径求解因此整段跳过。此前“缺腕观测”的阶段解释已修正。新版本让位置与支持元数据共用别名映射；原始输入与评分口径保持。此前部分目标及腿部限定候选完整保留，新的完整支持回放见下表。</p><p><b>073、077：</b>整段目标小幅下降仍未通过时序，求解上限耗尽与数值收敛分别报告。新有界线性子问题候选独立验证；默认配置尚未晋升。</p></section>'
+        document+='<section><h3>本轮路径与支持标记核查</h3><p><b>032：</b>保持原生拟合不变，全身协调路径在Kimodo、MotionLCM通过两套时钟及文件回读；原SO(3)导出在R时钟仍有时序超标。</p><p><b>010 CHOIS：</b>进一步查到节点别名错误：先验手端点与真实wrist_body腕点在统一命名后发生支持标记混淆，旧路径求解因此整段跳过。此前“缺腕观测”的阶段解释已修正。新版本让位置与支持元数据共用别名映射；原始输入与评分口径保持。此前部分目标及腿部限定候选完整保留，新的完整支持回放见下表。</p><p><b>073、077：</b>073通过链长几何、整段目标及肩轴向域的配对对照获得完整通过候选；077进一步通过保持FK的等价欧拉坐标切换解除局部求解障碍。局部验收与数值收敛分别报告，优化预算耗尽仍保留；默认配置尚未晋升，23组合统一候选库正在检验运行时能否选对结果。</p></section>'
     completion_note='全部656路已完成，以下保留最终失败清单。' if completed+execution_failed==656 else '运行未结束，以下为已经评分的失败，尚未运行项保留在656总分母内。'
     document+='<h2>冻结版本的未通过窗口</h2><p>同一动作的八种格式是配对条件。'+completion_note+'</p><div class="scroll"><table><tr><th>窗口</th><th>失败路数</th><th>格式</th><th>姿态／位置</th><th>时序</th></tr>'+''.join(table)+'</table></div>'
     document+='<h2>独立候选：逐条件验收</h2>'+''.join(sections)

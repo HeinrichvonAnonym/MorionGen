@@ -1,0 +1,44 @@
+....................................................................{'window': '1', 'method': 'known', 'condition': 'candidate', 'status': 'completed'}
+{'window': '0', 'method': 'known', 'condition': 'candidate', 'status': 'completed'}
+{'window': '2', 'method': 'known', 'condition': 'candidate', 'status': 'completed'}
+{'window': '3', 'method': 'known', 'condition': 'candidate', 'status': 'completed'}
+{'window': '5', 'method': 'known', 'condition': 'candidate', 'status': 'completed'}
+{'window': '4', 'method': 'known', 'condition': 'candidate', 'status': 'completed'}
+/home/heinrich/MorionGen/python/tests/test_evalkit_k4_parallel_runner.py:33: ResourceWarning: unclosed file <_io.TextIOWrapper name='/home/heinrich/MorionGen/develop_logs/test_runs/20261117_k4/tmplfn1a01w/output/.controller.lock' mode='a' encoding='UTF-8'>
+  runner.main()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.................................
+               MODEL: RajagopalLaiUhlrich2023
+         coordinates: 39
+              forces: 97
+           actuators: 97
+             muscles: 80
+            analyses: 0
+              probes: 0
+              bodies: 22
+              joints: 22
+         constraints: 2
+             markers: 80
+         controllers: 0
+  contact geometries: 0
+misc modelcomponents: 0
+
+               MODEL: RajagopalLaiUhlrich2023
+         coordinates: 39
+              forces: 97
+           actuators: 97
+             muscles: 80
+            analyses: 0
+              probes: 0
+              bodies: 22
+              joints: 22
+         constraints: 2
+             markers: 80
+         controllers: 0
+  contact geometries: 0
+misc modelcomponents: 0
+.........
+----------------------------------------------------------------------
+Ran 110 tests in 65.313s
+
+OK
