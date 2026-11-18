@@ -18,6 +18,7 @@ def main():
     p.add_argument('--real-run',type=Path)
     p.add_argument('--real-geometry-run',type=Path)
     p.add_argument('--unified-run',type=Path)
+    p.add_argument('--actual-ablation-run',type=Path,action='append',default=[])
     p.add_argument('--output',type=Path,required=True)
     a=p.parse_args();groups=defaultdict(list);completed=passed=execution_failed=0
     for path in sorted((a.frozen_run/'tasks').glob('*/result.json')):
@@ -155,6 +156,16 @@ def main():
                 detail=fidelity_details(fidelity) if fidelity.exists() else '拟合及评分待完成'
                 rows.append(f'<tr><td>{esc(entry["method"])}</td><td>{esc(condition)}</td><td>{esc({"completed":"完成","failed":"执行失败"}.get(state.get("status"),"运行中" if folder.exists() else "等待执行"))}</td><td>{"通过" if audit.get("passed") else "待完成" if not audit else "未通过"}</td><td>{detail}</td></tr>')
         sections.append('<section><h3>真实位置输入：固定几何单因素对照</h3><p>control与total_proxy使用同一真实生成动作，仅改变有效链长估计的稳定性规则。前三级脊柱逐段检查，派生肩中点末段的变化传播到总链长；估计保持片段内固定，中立长度仍未知。两条件均保留，F−D保真度与受控原动作验收分开；此处没有配对R。</p><div class="scroll"><table><tr><th>格式</th><th>条件</th><th>进度</th><th>实际回读</th><th>原生／导出F−D</th></tr>'+''.join(rows)+'</table></div></section>')
+    for run in a.actual_ablation_run:
+        protocol=json.loads((run/'protocol.json').read_text());rows=[]
+        for entry in protocol['records']:
+            for condition in protocol['conditions']:
+                folder=run/condition/entry['method']
+                status=json.loads((folder/'status.json').read_text()) if (folder/'status.json').exists() else {}
+                state={'completed':'执行与评分完成','failed':'执行失败'}.get(status.get('status'),'运行中' if folder.exists() else '等待执行')
+                fidelity=folder/'fidelity.json';detail=fidelity_details(fidelity) if fidelity.exists() else '完整窗口拟合与评分待完成'
+                rows.append(f'<tr><td>{esc(entry["method"])}</td><td>{esc(condition)}</td><td>{esc(state)}</td><td>{detail}</td></tr>')
+        sections.append(f'<section><h3>真实输出机制对照：{esc(run.name)}</h3><p>输入固定、条件预登记；已有候选与控制都保留。结果只有F−D，不进入656路的原动作通过率。几何框架或固定中心估计保留假设属性，不新增旋转观测资格。</p><details><summary>本组假设与控制变量</summary><pre>{esc(json.dumps({k:protocol.get(k) for k in ["hypothesis","factors","scoring"]},ensure_ascii=False,indent=2))}</pre></details><div class="scroll"><table><tr><th>格式</th><th>条件</th><th>进度</th><th>完整窗口F−D</th></tr>'+''.join(rows)+'</table></div></section>')
     timestamp=datetime.now(timezone.utc).astimezone(__import__('zoneinfo').ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds')
     document='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>K4 新增失败与独立优化</title><style>
 body{font:16px/1.65 system-ui,sans-serif;color:#173346;background:#f5f8fa;margin:0}main{max-width:1450px;margin:auto;padding:28px}h1{font-size:30px}h2{margin-top:36px}section,.card{background:white;border:1px solid #d6e2e7;border-radius:8px;padding:20px;margin:20px 0}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:9px;border-bottom:1px solid #dde6eb;text-align:left;vertical-align:top}th{background:#edf3f6}.passed{color:#167252}.failed{color:#ad4136}summary{cursor:pointer}details{max-width:500px;overflow-wrap:anywhere}.muted{color:#546c79}a{color:#136c9e}@media print{body{background:white}main{padding:0}.scroll{overflow:visible}table{font-size:10px}section{break-inside:avoid}details{display:block}}

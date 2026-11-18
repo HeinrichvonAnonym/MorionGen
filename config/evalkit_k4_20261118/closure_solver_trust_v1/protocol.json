@@ -1,0 +1,83 @@
+{
+  "version": "k4-trajectory-numerical-trust-1",
+  "records": [
+    {
+      "window": "000",
+      "method": "motionlcm",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/000/motionlcm/candidate",
+      "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_trajectory_chart_20261118_v1/fits/interior_chart/000/motionlcm",
+      "scope": "controlled_R",
+      "input_hashes": {
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/000/motionlcm/candidate/motion.npz": "90bdb60156c3914915f0c95c4f52a5eeaa5f03ecb337ff0910bc067c4256017f",
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/000/motionlcm/candidate/k_provenance.json": "cc35d3a594c1469b3cec2fa09f7fa0691c7325e1ed5a7be0f8c2e0517ec656fe"
+      },
+      "source_sha256": {
+        "model.osim": "7b45d1eb9050ed22964426cc098c0087e1eecdf16c7d4730f3cdb508eda36265",
+        "coordinates_before_trajectory.mot": "5716a411e54d4e570958217069b8a7795fcded7ffaa3caf87e3dcbb8d57430cf",
+        "receipt.json": "a8cf1066e7e10b7394d840c5ddb2a7d098c03a40116c7be558b3f6f576847362"
+      }
+    },
+    {
+      "window": "073",
+      "method": "motionlcm",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/073/motionlcm/candidate",
+      "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_trajectory_chart_20261118_v1/fits/interior_chart/073/motionlcm",
+      "scope": "controlled_R",
+      "input_hashes": {
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/073/motionlcm/candidate/motion.npz": "644c0708c4f7aa10acb9c968e1c0ee27af5bf96e907d2d08be0734a470d3917b",
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/073/motionlcm/candidate/k_provenance.json": "cc35d3a594c1469b3cec2fa09f7fa0691c7325e1ed5a7be0f8c2e0517ec656fe"
+      },
+      "source_sha256": {
+        "model.osim": "d5d1babfb5eafa32adfd2072fdd647bf8ed8d3c06f5f783ce54c95920d477e6f",
+        "coordinates_before_trajectory.mot": "5f36f280405cbbdd93fae9deddbad4bdb1679c2dab08faef0a27e4787806d53b",
+        "receipt.json": "a09da60c064d8bada2ab66145c3ed30e2fa238ab56be9f5f7777257c8610f222"
+      }
+    },
+    {
+      "window": "077",
+      "method": "motionlcm",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/077/motionlcm/candidate",
+      "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_trajectory_chart_20261118_v1/fits/interior_chart/077/motionlcm",
+      "scope": "controlled_R",
+      "input_hashes": {
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/077/motionlcm/candidate/motion.npz": "43c981abe51839d88d664b589fed4f089ec6dbdeaf51d1056cc1e7ad2ae5d77d",
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/077/motionlcm/candidate/k_provenance.json": "cc35d3a594c1469b3cec2fa09f7fa0691c7325e1ed5a7be0f8c2e0517ec656fe"
+      },
+      "source_sha256": {
+        "model.osim": "ce9b0cbdb0ef73753d01891347e16ea134b5a95d22d76cadeb5bf8ec0e4c482e",
+        "coordinates_before_trajectory.mot": "6182558b445603a4237fe38437af7639b036811cb9ee50489752ef7d58567c95",
+        "receipt.json": "617a2a375d51ec96faf7156e6a701f34e238ef1617b39f5aca065cbbde6189ff"
+      }
+    },
+    {
+      "window": "actual",
+      "method": "omnicontrol",
+      "input": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_omnicontrol_demo_5d316f25/motion.npz",
+      "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_real_centres_20261118_v1/position_centres/omnicontrol/fit",
+      "scope": "actual_FD",
+      "input_hashes": {
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_omnicontrol_demo_5d316f25/motion.npz": "5bf4699d1903fb6e10bf6931c166b35062e13512e65d405ba167180a36bfc487"
+      },
+      "source_sha256": {
+        "model.osim": "d43f47f1bef315328ff3cd6ebfef07f5f978cede6d3f4193608de5a0569907f7",
+        "coordinates_before_trajectory.mot": "827807598990062ed4b7e9222f810adb62377207961059413f24c31e93f301b5",
+        "receipt.json": "c2a88fb71aec64c29d69926ccf0fd07bc33573ad96738a917ee28ca6d7902f78"
+      }
+    }
+  ],
+  "conditions": [
+    "control",
+    "step15",
+    "damping001",
+    "step15_damping001"
+  ],
+  "controlled_paths": 12,
+  "actual_paths": 4,
+  "workers": 1,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Saved Omni centre trajectory accepted coordinate increments up to0.95rad, repeatedly backtracked and exhausted20 evaluations; every bounded linear subproblem hit50 iterations. Isolate numerical local-model reliability from geometry/domain/targets by step cap15deg and scaled linear damping0.01 in2x2 factorial.",
+  "parameters": "15deg and0.01 are explicit unvalidated engineering candidate values, not physiological ranges or new target tolerances. Regularization affects only trial steps; true objective line search remains unchanged.",
+  "controlled_factors": "Same fixed model, native pre-trajectory seed, input support, objective,20 evaluations,coordinate ranges/coupling,root/head/output pipeline. No originalR used in replay. First source control must reproduce saved fit before solver improvements are interpreted.",
+  "scoring": "Controlled000/073/077: full native/export D/R original-reference acceptance, D-R/F-D/F-R and raw/common geometry. ActualOmni: F-D only, separate denominator; no R. All candidates and failures preserved."
+}

@@ -1,0 +1,9 @@
+{
+  "pid": 282105,
+  "paused_seconds": 3.0910189151763916,
+  "existing_workers_kept_running": [
+    "291958"
+  ],
+  "borrowed_unused_slots": 1,
+  "scope": "Only dispatcher briefly paused, active fit child untouched, max numerical8"
+}

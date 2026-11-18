@@ -7,6 +7,7 @@ for name in ['closure_legs_20261118_v1','closure_path_runtime_20261118_v1','clos
 for name in ['closure_path_residual_20261118_v1','closure_path_partial_20261118_v1','closure_path_partial_legs_20261118_v1','closure_path_alias_20261118_v1']:
  args+=['--rotation-replay',str(b/name)]
 args+=['--unified-run',str(b/'full_regression_20261118_unified_v2')]
+args+=['--actual-ablation-run',str(b/'closure_real_centres_20261118_v1')]
 args+=['--real-run',str(b/'closure_real_fidelity_20261118_v1'),'--real-geometry-run',str(b/'closure_real_geometry_20261118_v1')]
 args+=['--selection-review',str(b/'closure_selection_audit_20261118_v2/review.json'),'--reachability',str(b/'closure_reachability_20261118_v1'),'--output','docs/20261118_k4_failure_closure.html']
 subprocess.run(args,check=True)
