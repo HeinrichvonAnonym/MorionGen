@@ -52,7 +52,9 @@ def refine_path(model_path, labels, native, native_times, coordinates, output_ti
         raise ValueError('Coordinated path changed a native coordinate')
     receipt.update(version=settings['version'],native_knots=len(knots),inserted_frames=int((~fixed).sum()),
         inserted_supported_frames=int((np.isfinite(targets).all((1,2))&~fixed).sum()),
+        inserted_computed_frames=sum(r['status']=='computed' for i,r in enumerate(receipt['frames']) if not fixed[i]),
+        observation_policy=settings['refinement'].get('observation_policy','complete_body_v1'),
         scope='Fixed native coordinates; joint-coupled inserted-frame fit on unchanged model; no R',
         targets='Linear fitted native body positions gated by D support; approximate interpolation path, not observed motion',
-        fallback='Missing supported body targets retain original SO(3) interpolation, with unchanged output coverage')
+        fallback='Frames failing the declared observation policy retain original SO(3) interpolation; partial policy omits unsupported targets and requires both hip centres. Output coverage is unchanged.')
     return result,receipt

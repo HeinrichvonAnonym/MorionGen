@@ -103,6 +103,12 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
         if transport_weight<0 or not np.isfinite(transport_weight) or transport_rate<=0 or not np.isfinite(transport_rate):
             raise ValueError('Finite nonnegative transport weight and positive rate scale required')
     temporal_active=bool(tw or rate_weight or transport_weight)
+    observation_policy=settings.get('observation_policy','complete_body_v1')
+    if observation_policy not in ('complete_body_v1','partial_body_v1'):
+        raise ValueError('Unknown refinement observation policy')
+    partial=observation_policy=='partial_body_v1'
+    if partial and (temporal_active or extra_start!='none'):
+        raise ValueError('Partial-body path refinement currently requires independent-frame targets and no knee restart')
     if temporal_active:
         times=np.asarray(times)
         if times.shape!=(len(coordinates),) or not np.isfinite(times).all() or np.any(np.diff(times)<=0) or rate_scale<=0:
@@ -122,12 +128,17 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
             result.append(np.array([[rot.get(i,j) for j in range(3)] for i in range(3)]))
         return result
     for frame,(row,goal) in enumerate(zip(coordinates,target)):
-        if not np.isfinite(goal).all():
+        position_valid=np.isfinite(goal).all(-1)
+        if (not position_valid[hip].all() or (not partial and not position_valid.all())):
             receipts.append({'status':'input_missing','selected':'nominal'});previous=None;previous_direction_error=None
             previous_body_rotations=None;previous_input_directions=None;continue
         biomech._set(model,state,labels,row)
         x0=np.clip(np.deg2rad(row[cols]),lo+1e-9,hi-1e-9)
         gu=unit(vectors(goal));gp=goal-goal[hip].mean(0);ga=joint_angles(goal)
+        direction_valid=np.isfinite(gu).all(-1)&(np.linalg.norm(vectors(goal),axis=-1)>1e-9)
+        angle_valid=np.array([position_valid[a] and position_valid[b] and position_valid[c]
+                             and min(np.linalg.norm(goal[a]-goal[b]),np.linalg.norm(goal[c]-goal[b]))>1e-9
+                             for a,b,c in triples])
         transported=[]
         if transport_weight and previous_body_rotations is not None:
             for side,edge,joint in [(0,0,0),(1,5,2)]:
@@ -143,11 +154,15 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
         def residual(x,continuity=True):
             p=evaluate(x);u=unit(vectors(p));local=p-p[hip].mean(0)
             directional=(u-gu)/direction_scale;positional=(local-gp)/position_scale
+            if partial:
+                directional=np.where(direction_valid[:,None],directional,0.)
+                positional=np.where(position_valid[:,None],positional,0.)
             weighted=directional.copy()
             if settings.get('include_pelvis_line',False):weighted[-1]*=pelvis_weight
             terms=[weighted.ravel(),(pw*positional).ravel()]
             if jw:
                 angular=(joint_angles(p)-ga)/np.deg2rad(float(settings.get('direction_scale_deg',5)))
+                if partial:angular=np.where(angle_valid,angular,0.)
                 terms.append(jw*angular)
             if vw:
                 # Emphasize each declared input target; score/reference never enter.
@@ -240,6 +255,9 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
         if transport_weight:
             previous_body_rotations=body_rotations();previous_input_directions=gu.copy()
         receipts.append({'status':'computed','selected':name,'before_loss':initial_loss,'after_loss':loss,'attempts':attempts,
+                         'supported_position_targets':int(position_valid.sum()),
+                         'supported_direction_targets':int(direction_valid.sum()),
+                         'supported_angle_targets':int(angle_valid.sum()),
                          'selection_loss':selected_loss,
                          'leg_axial_transport_weights':[float(x[2]) for x in transported],
                          'extra_start_triggered':restart_triggered})

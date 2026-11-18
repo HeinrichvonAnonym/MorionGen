@@ -36,3 +36,29 @@ def test_coordinated_fk_restores_inserted_pose_and_keeps_native_coordinates():
     np.testing.assert_allclose(actual[1],points[0],atol=1e-6)
     assert receipt['inserted_frames']==1 and receipt['native_knots']==2
     np.testing.assert_equal(initial[1,labels.index('knee_angle_l')],10)
+
+
+def test_prior_wrists_do_not_disable_observed_leg_path():
+    import opensim as osim
+    import biomech
+    from motiogen.evalkit.k.k4_fitting import model_fk
+    from motiogen.evalkit.k.motion import Motion
+    model=osim.Model(str(biomech.MODEL));state=model.initSystem();cs=model.getCoordinateSet()
+    labels=[cs.get(i).getName() for i in range(cs.getSize())]
+    row=np.array([cs.get(n).getValue(state)*(180/np.pi if cs.get(n).getMotionType()==1 else 1) for n in labels])
+    row[labels.index('knee_angle_l')]=60
+    native=np.tile(row,(2,1));points,names,native=model_fk(biomech.MODEL,labels,native,direct_couplers=True,return_coordinates=True)
+    motion=Motion(points,names,np.array([10.,10.1]),'known_fk',provenance={'degradation':{'prior_joints':['left_wrist','right_wrist']}})
+    initial=np.tile(native[0],(3,1));initial[1,labels.index('knee_angle_l')]=10
+    cfg={'version':'fixed_native_anchors_v1','refinement':{'max_nfev':30,'continuity_weight':0,
+         'active_coordinates':['knee_angle_l'],'joint_angle_weight':1.}}
+    old,old_receipt=refine_path(biomech.MODEL,labels,native,np.array([0.,.1]),initial,np.array([0.,.05,.1]),motion,cfg)
+    np.testing.assert_array_equal(old,initial)
+    assert old_receipt['frames'][1]['status']=='input_missing'
+    cfg['refinement']['observation_policy']='partial_body_v1'
+    q,receipt=refine_path(biomech.MODEL,labels,native,np.array([0.,.1]),initial,np.array([0.,.05,.1]),motion,cfg)
+    np.testing.assert_array_equal(q[[0,2]],native)
+    actual,_=model_fk(biomech.MODEL,labels,q,direct_couplers=True)
+    np.testing.assert_allclose(actual[1],points[0],atol=1e-6)
+    assert receipt['frames'][1]['supported_position_targets']==len(names)-2
+    assert receipt['frames'][1]['supported_angle_targets']==2
