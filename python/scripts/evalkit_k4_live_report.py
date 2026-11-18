@@ -104,7 +104,7 @@ def ablation_document(data):
     title='K4 · 656 路完整候选消融'
     details=''
     def verdict(value):return '通过' if value is True else '未通过' if value is False else '未知'
-    status_names={'pending':'待验','running':'计算中','completed':'已独立验收','inapplicable':'不适用','failed':'执行失败','execution_failed':'执行失败'}
+    status_names={'pending':'待验','running':'计算中','completed':'已独立验收','evaluated':'已独立验收','inapplicable':'不适用','failed':'执行失败','execution_failed':'执行失败'}
     for row in data.get('rows',[]) if data.get('available') else []:
         label=' · '.join(str(row.get(k,'未知')) for k in ('window','method'))
         selector=row.get('selector',{})
