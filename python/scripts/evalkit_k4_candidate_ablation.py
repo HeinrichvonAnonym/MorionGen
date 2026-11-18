@@ -320,7 +320,9 @@ def main():
     i.add_argument('--cache',type=Path,action='append',required=True)
     for name in ('run','snapshot'):
         q=sub.add_parser(name);q.add_argument('--run',type=Path,required=True)
-        if name=='run':q.add_argument('--workers',type=int,default=1);q.add_argument('--audit-only',action='store_true');q.add_argument('--once',action='store_true')
+        if name=='run':
+            q.add_argument('--workers',type=int,default=1);q.add_argument('--audit-only',action='store_true');q.add_argument('--once',action='store_true')
+            q.add_argument('--controller-amendment',type=Path)
     a=p.parse_args()
     if a.command=='prepare':return prepare(a)
     if a.command=='variant':return variant(a)
@@ -332,15 +334,37 @@ def main():
     e.verify()
     identity=dict(runner_sha256=sha(__file__),accounting_sha256=sha(ROOT/'utils/motiogen/evalkit/reporting/candidate_ablation.py'),protocol_sha256=sha(a.run/'protocol.json'),
         audit_reuse_index_sha256=sha(a.run/'audit_reuse_index.json') if (a.run/'audit_reuse_index.json').exists() else None)
-    if (a.run/'identity.json').exists() and read(a.run/'identity.json')!=identity:raise ValueError('Freeze experiment implementation before resuming')
-    atomic(a.run/'identity.json',identity)
+    identity_file=a.run/'identity.json'
+    previous=read(identity_file) if identity_file.exists() else None
+    epochs=sorted((a.run/'execution_epochs').glob('*.json'))
+    effective=read(epochs[-1])['execution_identity'] if epochs else previous
+    if effective and effective!=identity:
+        if a.controller_amendment is None:raise ValueError('Explicit controller-only amendment required')
+        amendment=read(a.controller_amendment);old=Path(amendment['previous_runner'])
+        if sha(old)!=effective['runner_sha256'] or amendment['new_runner_sha256']!=identity['runner_sha256']:
+            raise ValueError('Controller amendment identity mismatch')
+        if {k:v for k,v in effective.items() if k!='runner_sha256'}!={k:v for k,v in identity.items() if k!='runner_sha256'}:
+            raise ValueError('Controller amendment cannot change protocol, accounting or reuse contracts')
+        def without_main(path):
+            tree=ast.parse(Path(path).read_text());tree.body=[n for n in tree.body if not(isinstance(n,ast.FunctionDef) and n.name=='main')]
+            return ast.dump(tree)
+        if without_main(old)!=without_main(__file__):raise ValueError('Controller amendment changed candidate execution or scoring')
+        atomic(a.run/'execution_epochs'/(str(time.time_ns())+'.json'),dict(original_identity=previous,
+            execution_identity=identity,amendment=amendment,scope='Controller progress publication only; every candidate fitting/reuse/scoring function unchanged.'))
+    elif previous is None:atomic(identity_file,identity)
     while True:
         e.snapshot()
         # Existing candidate bodies are reviewed first; no new fit required.
         keys=list(e.routes);keys.sort(key=lambda k:(k not in e.selectors,k))
         with ThreadPoolExecutor(max_workers=a.workers) as pool:
-            for f in as_completed([pool.submit(e.run_route,key,a.audit_only) for key in keys]):
-                f.result();e.snapshot()
+            from concurrent.futures import wait,FIRST_COMPLETED
+            pending={pool.submit(e.run_route,key,a.audit_only) for key in keys}
+            published=-1;published_at=0
+            while pending:
+                done,pending=wait(pending,timeout=5,return_when=FIRST_COMPLETED)
+                for f in done:f.result()
+                if (len(e.states)!=published and time.time()-published_at>=5) or time.time()-published_at>=30:
+                    e.snapshot();published=len(e.states);published_at=time.time()
         s=e.snapshot()
         if s['fully_evaluated_routes']==656:
             e.verify();atomic(a.run/'completion.json',dict(fully_evaluated_routes=656,all_candidates_passed_routes=s['all_candidates_passed_routes'],new_holdout_uses=0));break
