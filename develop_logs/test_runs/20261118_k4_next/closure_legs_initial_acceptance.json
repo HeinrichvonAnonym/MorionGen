@@ -1,0 +1,665 @@
+{
+  "expected": 20,
+  "completed": 4,
+  "passed": 3,
+  "pending": 16,
+  "execution_failed": 0,
+  "promotion": "none",
+  "policy_sha256": "26975f87079206cf2b512287896951140f7dceb57d879c3717c1523598c09d26",
+  "scope": "Full fixed development windows; R-only independent acceptance; exact frozen policy; F-D fidelity separate from F-R; no split changes",
+  "records": [
+    {
+      "window": "052",
+      "method": "kimodo",
+      "condition": "control",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_legs_20261118_v1/fits/control/052/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 6.938893903907228e-16,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "2d4a5821435947c6f0b84776c36ed015f368b0160b2ad207ac74cdf72a135d96",
+          "coordinates.mot": "e5a58cb1245114cbee838d16ea95ea96a7e7069cd801aefe98f73bb93dde3282",
+          "fit.npz": "e2e8f1a18679d1c9732787bc4867353de485a64971a22682f93489e4a8dfedbf",
+          "receipt.json": "c95fcad75491ade8fe7c0bfead0506abbc49fcf7488fd1c11e7ab4227d24ac04"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": false,
+      "failures": [
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 6.303517800390288,
+          "target": 5.0
+        },
+        {
+          "view": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 7.580042643977565,
+          "target": 5.0
+        },
+        {
+          "view": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 6.304509854060493,
+          "target": 5.0
+        },
+        {
+          "view": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 7.582617896062048,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 6.303517800390261,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 7.580042643977587,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 6.3045182208044,
+          "target": 5.0
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 7.582608221394259,
+          "target": 5.0
+        }
+      ],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": false,
+      "frozen_failures": [
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 6.303517800390288,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 7.580042643977565,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 6.304509854060493,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 7.582617896062048,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 6.303517800390261,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 7.580042643977587,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 6.3045182208044,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 7.582608221394259,
+          "target": 5.0
+        }
+      ],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/052_kimodo/summary.json"
+    },
+    {
+      "window": "052",
+      "method": "kimodo",
+      "condition": "foot_domain",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_legs_20261118_v1/fits/foot_domain/052/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 8.049116928532385e-16,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "166846e14936c032e96598a7c8638750470a627079d8d18da614e4a5795fd664",
+          "coordinates.mot": "584aceaeea12184b2ba6637180592c26310802b10ce950e145c21cbebf052243",
+          "fit.npz": "fbfd939a5d0bf8de6b2a550149e2b1c8934f4aba49330d325868d6dc8ffa5af1",
+          "receipt.json": "403916d4ef02de56634c55f39438d7c3c2a5814410e574d252704c8b32000fed"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": false,
+      "frozen_failures": [
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 6.303517800390288,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 7.580042643977565,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 6.304509854060493,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 7.582617896062048,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 6.303517800390261,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 7.580042643977587,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 6.3045182208044,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 7.582608221394259,
+          "target": 5.0
+        }
+      ],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/052_kimodo/summary.json"
+    },
+    {
+      "window": "052",
+      "method": "kimodo",
+      "condition": "foot_geometry",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_legs_20261118_v1/fits/foot_geometry/052/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 7.216449660063518e-16,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "74856345292874908f25129cdfa1684d5401b556a7712d4b57189981cdb32de5",
+          "coordinates.mot": "03d5e31b6d51929115ef24a4e9a992bffe11c5843993ad2f1db5c66e2637b132",
+          "fit.npz": "94c3ab3838309781e81fe84055838f9b5289bf88db002b0334feb078ceff4dc1",
+          "receipt.json": "4daba8fa4b88feb015980af24db95d2cac0a2d97cdf8857581354b7b8f4be17f"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": false,
+      "frozen_failures": [
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 6.303517800390288,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 7.580042643977565,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 6.304509854060493,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 7.582617896062048,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 6.303517800390261,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 7.580042643977587,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 6.3045182208044,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 7.582608221394259,
+          "target": 5.0
+        }
+      ],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/052_kimodo/summary.json"
+    },
+    {
+      "window": "052",
+      "method": "kimodo",
+      "condition": "geometry_domain",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_legs_20261118_v1/fits/geometry_domain/052/kimodo",
+        "frames": 597,
+        "time_max_abs_s": 1.7763568394002505e-15,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 7.632783294297951e-16,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "54e1f1ae6bbd5898fd9d9452407b771e7d2d1e0250d36b66a6ef066ccd5c311e",
+          "coordinates.mot": "43b4033f21b1fe4994d5103079049617f91d89e55fd3c989d09341f867d3532f",
+          "fit.npz": "6e74e7ec1d800a87ef82cb1aa79ce58cdfadd692aef6fea4d72a7eda9e7d38ba",
+          "receipt.json": "a2ad798f6352b795e00bba4ce08dfcf79fb38e1e42e5beb85d71723ba357c90a"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": false,
+      "frozen_failures": [
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 6.303517800390288,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 7.580042643977565,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 6.304509854060493,
+          "target": 5.0
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 7.582617896062048,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 6.303517800390261,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 150,
+          "scored": 150,
+          "denominator": 150,
+          "p95": 7.580042643977587,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_shank",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 6.3045182208044,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 448,
+          "scored": 448,
+          "denominator": 451,
+          "p95": 7.582608221394259,
+          "target": 5.0
+        }
+      ],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/052_kimodo/summary.json"
+    },
+    {
+      "window": "052",
+      "method": "kimodo",
+      "condition": "reverse_rate1",
+      "status": "pending"
+    },
+    {
+      "window": "052",
+      "method": "motionlcm",
+      "condition": "control",
+      "status": "pending"
+    },
+    {
+      "window": "052",
+      "method": "motionlcm",
+      "condition": "foot_domain",
+      "status": "pending"
+    },
+    {
+      "window": "052",
+      "method": "motionlcm",
+      "condition": "foot_geometry",
+      "status": "pending"
+    },
+    {
+      "window": "052",
+      "method": "motionlcm",
+      "condition": "geometry_domain",
+      "status": "pending"
+    },
+    {
+      "window": "052",
+      "method": "motionlcm",
+      "condition": "reverse_rate1",
+      "status": "pending"
+    },
+    {
+      "window": "063",
+      "method": "kimodo",
+      "condition": "control",
+      "status": "pending"
+    },
+    {
+      "window": "063",
+      "method": "kimodo",
+      "condition": "foot_domain",
+      "status": "pending"
+    },
+    {
+      "window": "063",
+      "method": "kimodo",
+      "condition": "foot_geometry",
+      "status": "pending"
+    },
+    {
+      "window": "063",
+      "method": "kimodo",
+      "condition": "geometry_domain",
+      "status": "pending"
+    },
+    {
+      "window": "063",
+      "method": "kimodo",
+      "condition": "reverse_rate1",
+      "status": "pending"
+    },
+    {
+      "window": "063",
+      "method": "motionlcm",
+      "condition": "control",
+      "status": "pending"
+    },
+    {
+      "window": "063",
+      "method": "motionlcm",
+      "condition": "foot_domain",
+      "status": "pending"
+    },
+    {
+      "window": "063",
+      "method": "motionlcm",
+      "condition": "foot_geometry",
+      "status": "pending"
+    },
+    {
+      "window": "063",
+      "method": "motionlcm",
+      "condition": "geometry_domain",
+      "status": "pending"
+    },
+    {
+      "window": "063",
+      "method": "motionlcm",
+      "condition": "reverse_rate1",
+      "status": "pending"
+    }
+  ]
+}

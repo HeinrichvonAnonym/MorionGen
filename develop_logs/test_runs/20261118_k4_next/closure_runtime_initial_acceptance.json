@@ -1,0 +1,366 @@
+{
+  "expected": 9,
+  "completed": 2,
+  "passed": 1,
+  "pending": 7,
+  "execution_failed": 0,
+  "promotion": "none",
+  "policy_sha256": "26975f87079206cf2b512287896951140f7dceb57d879c3717c1523598c09d26",
+  "scope": "Full fixed development windows; R-only independent acceptance; exact frozen policy; F-D fidelity separate from F-R; no split changes",
+  "records": [
+    {
+      "window": "010",
+      "method": "ardy",
+      "condition": "reverse",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_path_runtime_20261118_v1/fits/reverse/010/ardy",
+        "frames": 221,
+        "time_max_abs_s": 5.551115123125783e-17,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.7763568394002505e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "b7cd9f50c75a168ac6e4029fc927c42f801151d66468a2934f57b0d61bca9ec6",
+          "coordinates.mot": "19b023ea7ded855ddb739006450fd9c39eb1987e05ae02b84bd25a8040a50930",
+          "fit.npz": "1da4f6f3987315c1d1b7d972b0e11155895b3824f78b54feb6bf676c77600824",
+          "receipt.json": "44991e70e2a4e6f2c06075510b9485c4be9718207ec01abec1ecac7e9850e87a"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": false,
+      "failures": [
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 19.821789166436627,
+          "candidate": 31.22222128000466,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/output_step_deg",
+          "status": "failed",
+          "baseline": 1.9214599928408902,
+          "candidate": 36.14154994494077,
+          "increase_limit": 5.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "view": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 22.00274777751548,
+          "candidate": 59.31139190717049,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        }
+      ],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": false,
+      "frozen_failures": [
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.795231804090211e-12,
+          "candidate": 19.829017836471273,
+          "increase_limit": 10.0,
+          "expected_observed": 44,
+          "scored": 44
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.2564684179324857e-12,
+          "candidate": 21.2170386595566,
+          "increase_limit": 10.0,
+          "expected_observed": 44,
+          "scored": 44
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 19.821789166436627,
+          "candidate": 30.990977220487327,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.795231804090211e-12,
+          "candidate": 19.829017836471287,
+          "increase_limit": 10.0,
+          "expected_observed": 44,
+          "scored": 44
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.2564684179324857e-12,
+          "candidate": 21.217038659556653,
+          "increase_limit": 10.0,
+          "expected_observed": 44,
+          "scored": 44
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 199,
+          "scored": 199,
+          "denominator": 202,
+          "p95": 8.737723255993288,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 19.821789166436627,
+          "candidate": 31.624983308717024,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 20.90731953718956,
+          "candidate": 37.834591429166046,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/output_step_deg",
+          "status": "failed",
+          "baseline": 1.9214599928408902,
+          "candidate": 25.702227778559255,
+          "increase_limit": 5.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 22.00274777751548,
+          "candidate": 788.6317417992065,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        }
+      ],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/010_ardy/summary.json"
+    },
+    {
+      "window": "010",
+      "method": "ardy",
+      "condition": "reverse_path",
+      "status": "completed",
+      "export_audit": {
+        "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_path_runtime_20261118_v1/fits/reverse_path/010/ardy",
+        "frames": 221,
+        "time_max_abs_s": 5.551115123125783e-17,
+        "coordinate_max_abs_native_units": 5.684341886080802e-14,
+        "saved_body_fk_max_abs_m": 1.7763568394002505e-15,
+        "passed": true,
+        "source_sha256": {
+          "model.osim": "b7cd9f50c75a168ac6e4029fc927c42f801151d66468a2934f57b0d61bca9ec6",
+          "coordinates.mot": "3e1090fca7412fc73ba081c64056f2e02285fa86bdba63d45fe2758d9e6b2c26",
+          "fit.npz": "d303f1e5a61f62461131ea13e883678ad1c86e695055a4f9c5fc1476929a8993",
+          "receipt.json": "e3406cdcf86476d3f474b32e1ee32ad6b9d6e919e5d9fe6b26addfe71b63e230"
+        },
+        "scope": "Actual runtime coordinate file readback versus saved NPZ coordinates, physical clock and body FK; no reference or resampling.",
+        "implementation_sha256": "db5686ea3f11a46bdf4b67b8dc336ed74c1bd072ee4c9b420c1f48d76bcfd06d"
+      },
+      "passed": true,
+      "failures": [],
+      "frozen_selected": "balanced_targets",
+      "frozen_passed": false,
+      "frozen_failures": [
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.795231804090211e-12,
+          "candidate": 19.829017836471273,
+          "increase_limit": 10.0,
+          "expected_observed": 44,
+          "scored": 44
+        },
+        {
+          "condition": "native",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.2564684179324857e-12,
+          "candidate": 21.2170386595566,
+          "increase_limit": 10.0,
+          "expected_observed": 44,
+          "scored": 44
+        },
+        {
+          "condition": "native",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 19.821789166436627,
+          "candidate": 30.990977220487327,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.795231804090211e-12,
+          "candidate": 19.829017836471287,
+          "increase_limit": 10.0,
+          "expected_observed": 44,
+          "scored": 44
+        },
+        {
+          "condition": "export",
+          "clock": "D_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 1.2564684179324857e-12,
+          "candidate": 21.217038659556653,
+          "increase_limit": 10.0,
+          "expected_observed": 44,
+          "scored": 44
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "directions_deg/left_foot_axis",
+          "status": "target_failed",
+          "expected_observed": 199,
+          "scored": 199,
+          "denominator": 202,
+          "p95": 8.737723255993288,
+          "target": 5.0
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_thigh/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 19.821789166436627,
+          "candidate": 31.624983308717024,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_shank/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 20.90731953718956,
+          "candidate": 37.834591429166046,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/output_step_deg",
+          "status": "failed",
+          "baseline": 1.9214599928408902,
+          "candidate": 25.702227778559255,
+          "increase_limit": 5.0,
+          "expected_observed": 198,
+          "scored": 198
+        },
+        {
+          "condition": "export",
+          "clock": "R_clock",
+          "metric": "left_foot_axis/direction_rate_vector_error_deg_s",
+          "status": "failed",
+          "baseline": 22.00274777751548,
+          "candidate": 788.6317417992065,
+          "increase_limit": 10.0,
+          "expected_observed": 198,
+          "scored": 198
+        }
+      ],
+      "frozen_summary_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_v1/tasks/010_ardy/summary.json"
+    },
+    {
+      "window": "010",
+      "method": "ardy",
+      "condition": "reverse_rate1_path",
+      "status": "pending"
+    },
+    {
+      "window": "002",
+      "method": "kimodo",
+      "condition": "reverse",
+      "status": "pending"
+    },
+    {
+      "window": "002",
+      "method": "kimodo",
+      "condition": "reverse_path",
+      "status": "pending"
+    },
+    {
+      "window": "002",
+      "method": "kimodo",
+      "condition": "reverse_rate1_path",
+      "status": "pending"
+    },
+    {
+      "window": "000",
+      "method": "kimodo",
+      "condition": "reverse",
+      "status": "pending"
+    },
+    {
+      "window": "000",
+      "method": "kimodo",
+      "condition": "reverse_path",
+      "status": "pending"
+    },
+    {
+      "window": "000",
+      "method": "kimodo",
+      "condition": "reverse_rate1_path",
+      "status": "pending"
+    }
+  ]
+}
