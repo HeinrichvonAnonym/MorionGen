@@ -1,0 +1,27 @@
+{
+  "version": "k4-closure-pool-transfer-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "conditions": [
+    "pool"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Validate one input-only candidate bank, including original2, independent rig centres/arm domain/forward and reverse coordinated paths, position geometry/foot geometry/joint trajectory and equivalent chart. Use observed-then-path ranking audited on17 diagnostic combinations. Candidate existence and actual runtime selection are independently checked. Pending077 mechanism candidates retain their experimental status; this is transfer evidence, not final656 freeze.",
+  "preregistration": "Unchanged23 combination transfer panel from original20+8 dedup. One bank for every input; applicability only by declared input_rig, never window/method ID. Every applicable candidate is computed and retained. Same5deg/5cm/temporal selection limits, no reference metrics or source-jump reference labels in selector; R only external scoring.",
+  "sources": {
+    "rig_centres": "closure_v1/torso/registered_centres.json",
+    "rig_arm_domain_centres": "closure_arm_domain_v1/domain_centres.json",
+    "rig_reverse_leg_path": "closure_formats_v1/reverse_path.json",
+    "rig_reverse_rate_leg_path": "closure_formats_v1/reverse_rate1_path.json",
+    "reverse_full_path": "closure_upper_temporal_v1/reverse_fullpath.json",
+    "position_chain": "closure_trajectory_geometry_v1/native_chain.json",
+    "position_fixed_foot_chain": "closure_position_foot_chain_v1/chain.json",
+    "position_trajectory": "closure_trajectory_chart_v1/control.json",
+    "position_trajectory_chart": "closure_trajectory_chart_v1/interior_chart.json"
+  },
+  "old_candidates_preserved": [
+    "pelvis_continuity",
+    "balanced_targets"
+  ]
+}

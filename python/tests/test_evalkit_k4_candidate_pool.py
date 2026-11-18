@@ -29,14 +29,17 @@ def test_candidate_entrypoint_retains_failures_selects_whole_clip_and_keys_cache
         return {**values,'receipt':receipt}
     monkeypatch.setattr('motiogen.evalkit.k.k4_fitting.fit',fake_fit)
     candidates={name:dict(version='k4-fit-1',export_clock='native_multiple',label=name,bias=bias)
-                for name,bias in [('biased',.1),('exact',0),('failed',0)]}
+                for name,bias in [('biased',.1),('exact',0),('failed',0),('rig_only',0)]}
     settings=dict(version='k4-candidate-pool-1',candidates=candidates,
+                  candidate_requirements={'rig_only':{'input_rig':'required'}},
                   selection_thresholds=dict(angle_deg=5,position_cm=5,direction_rate_deg_s=10,added_step_deg=5))
     out=tmp_path/'fit'
     result=candidate_pool.fit('declared-D',out,75,0,settings)
     selection=result['receipt']['candidate_selection']
     assert selection['selected']=='exact' and not selection['per_frame_switching']
     assert 'failed' in selection['failures']
+    assert selection['inapplicable']['rig_only']['declared_input_rig_present'] is False
+    assert 'rig_only' not in calls and 'rig_only' not in selection['failures']
     assert (out/'model.osim').read_text()=='exact'
     assert (out/'candidates/biased/model.osim').read_text()=='biased'
     np.testing.assert_array_equal(result['positions'],positions)

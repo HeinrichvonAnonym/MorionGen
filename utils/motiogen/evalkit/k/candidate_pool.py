@@ -32,8 +32,18 @@ def fit(run, work, mass, floor, settings):
             raise ValueError('K4 candidate-bank cache identity changed; use a new output directory')
         with np.load(out/'fit.npz') as z:
             return {**{k:z[k] for k in z.files},'receipt':receipt}
-    qualities, failures, receipts = {}, {}, {}
+    requirements=settings.get('candidate_requirements',{})
+    if set(requirements)-set(candidates):raise ValueError('Requirements name an undeclared candidate')
+    for rule in requirements.values():
+        if set(rule)!={'input_rig'} or rule['input_rig'] not in ('required','absent'):
+            raise ValueError('Candidate eligibility must use declared input fields')
+    qualities, failures, receipts, skipped = {}, {}, {}, {}
     for name, config in candidates.items():
+        rule=requirements.get(name)
+        if rule and bool(motion.provenance.get('input_rig'))!=(rule['input_rig']=='required'):
+            skipped[name]={'status':'inapplicable','requirement':rule,
+                           'declared_input_rig_present':bool(motion.provenance.get('input_rig'))}
+            continue
         folder = out/'candidates'/name
         try:
             candidate = dict(config, method=motion.method)
@@ -51,7 +61,7 @@ def fit(run, work, mass, floor, settings):
         except (ValueError,RuntimeError) as error:
             failures[name] = {'type':type(error).__name__,'message':str(error)}
     if not qualities:
-        (out/'candidate_failures.json').write_text(json.dumps(failures,indent=2)+'\n')
+        (out/'candidate_failures.json').write_text(json.dumps({'failures':failures,'inapplicable':skipped},indent=2)+'\n')
         raise RuntimeError('All candidates failed; see candidate_failures.json')
     selected = choose(qualities)
     for source in (out/'candidates'/selected).iterdir():
@@ -62,7 +72,7 @@ def fit(run, work, mass, floor, settings):
             shutil.copytree(source,destination,dirs_exist_ok=True)
         else:
             shutil.copyfile(source,destination)
-    selection = {'selected':selected,'qualities':qualities,'failures':failures,
+    selection = {'selected':selected,'qualities':qualities,'failures':failures,'inapplicable':skipped,
                  'rule':('lexicographic: observed missing/failures, path missing/failures, observed worst/mean ratios, path worst/mean ratios, declaration order'
                          if settings.get('selection_policy')=='observed_then_path_v1' else
                          'lexicographic: missing supported observations, failed targets, worst normalized error, mean normalized error, declaration order'),
