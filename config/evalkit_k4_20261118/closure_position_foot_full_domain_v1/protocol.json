@@ -1,0 +1,29 @@
+{
+  "version": "position-foot-full-domain-diagnostic-1",
+  "records": [
+    {
+      "window": "002",
+      "method": "motionlcm",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/002/motionlcm/candidate",
+      "fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/motionlcm",
+      "audit_output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_foot_full_domain_20261118_v1/motionlcm/domain",
+      "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_foot_full_domain_20261118_v1/motionlcm/reachability.json",
+      "model_sha256": "15cf720757f197cab48b6d2f932ae0efa693f2b1ab230b3c74d3b983abe423b7"
+    },
+    {
+      "window": "002",
+      "method": "omnicontrol",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/002/omnicontrol/candidate",
+      "fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/omnicontrol",
+      "audit_output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_foot_full_domain_20261118_v1/omnicontrol/domain",
+      "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_foot_full_domain_20261118_v1/omnicontrol/reachability.json",
+      "model_sha256": "d9f867b254b82e45e996fa1b0b3744b31ed879cbde2b4c865de3d0dadb3cea3d"
+    }
+  ],
+  "workers": 1,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Expanded\u00b190 model retains sampled terminal foot-direction residual9-11deg even after proximal leg release. Audit ankle/subtalar full revolutions, then repeat current-vs-full-domain reachability to distinguish chart restriction from fixed geometry and local convergence. Diagnostic only; no runtime promotion.",
+  "boundary": "Existing joints/axes/geometry/couplings unchanged; numerical full-domain sweep0.1deg before sampled FK search. No physiological or force interpretation.",
+  "domain_config": "/home/heinrich/MorionGen/config/evalkit_k4_20261118/closure_position_foot_full_domain_v1/domain.json"
+}

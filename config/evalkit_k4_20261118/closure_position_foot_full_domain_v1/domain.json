@@ -1,0 +1,24 @@
+{
+  "kinematic_domain": {
+    "base": "preserve_existing",
+    "scope": "independent_kinematic",
+    "coordinate_ranges_deg": {
+      "ankle_angle_l": [
+        -180,
+        180
+      ],
+      "ankle_angle_r": [
+        -180,
+        180
+      ],
+      "subtalar_angle_l": [
+        -180,
+        180
+      ],
+      "subtalar_angle_r": [
+        -180,
+        180
+      ]
+    }
+  }
+}
