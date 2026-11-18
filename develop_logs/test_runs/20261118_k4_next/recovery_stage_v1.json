@@ -1,0 +1,9 @@
+{
+  "protected": 610,
+  "changed": [],
+  "new_holdout_uses": 0,
+  "recovery_code": "17ca387",
+  "candidate_code": "773e438",
+  "arm_audit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_arm_domain_audit_v1/audit.json",
+  "arm_audit_sha256": "88961a97d38862acfc81eaa3da6ca5f80fdeda5236318f47a23f66dac8c30747"
+}
