@@ -237,7 +237,7 @@ class Experiment:
             dest=self.run/'cells'/key/name;dest.mkdir(parents=True,exist_ok=True)
             fit,rejections=self.find_fit(route,name);t=self.templates[name]
             # Never compete with the frozen selector for a not-yet-finished route.
-            if fit is None and (audit_only or key not in self.selectors):continue
+            if fit is None and (audit_only or (key not in self.selectors and not getattr(self,'independent_after_selector_stop',False))):continue
             attempt=dest/('attempt_'+str(time.time_ns()));attempt.mkdir()
             try:
                 if fit is None:
@@ -323,14 +323,24 @@ def main():
         if name=='run':
             q.add_argument('--workers',type=int,default=1);q.add_argument('--audit-only',action='store_true');q.add_argument('--once',action='store_true')
             q.add_argument('--controller-amendment',type=Path)
+            q.add_argument('--independent-after-selector-stop',action='store_true')
     a=p.parse_args()
     if a.command=='prepare':return prepare(a)
     if a.command=='variant':return variant(a)
     if a.command=='index-audits':return index_audits(a)
     e=Experiment(a.run)
     if a.command=='snapshot':e.snapshot();return
-    if not 1<=a.workers<=3:raise ValueError('Ablation allocation at most three; total task budget fourteen')
+    if not 1<=a.workers<=14:raise ValueError('Total numerical task budget fourteen')
     lock=(a.run/'.controller.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+    if a.independent_after_selector_stop:
+        # Hold the old controller lock throughout: no competing selector restart.
+        selector_lock=(e.frozen/'.controller.lock').open('a')
+        fcntl.flock(selector_lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        if read(e.frozen/'progress.json').get('state')!='validation_stage_failed':
+            raise ValueError('Independent scheduling requires the preserved failed selector gate')
+        e.independent_after_selector_stop=True
+    elif a.workers>3:
+        raise ValueError('Expanded allocation requires exclusive stopped-selector ownership')
     e.verify()
     identity=dict(runner_sha256=sha(__file__),accounting_sha256=sha(ROOT/'utils/motiogen/evalkit/reporting/candidate_ablation.py'),protocol_sha256=sha(a.run/'protocol.json'),
         audit_reuse_index_sha256=sha(a.run/'audit_reuse_index.json') if (a.run/'audit_reuse_index.json').exists() else None)
@@ -346,16 +356,27 @@ def main():
         if {k:v for k,v in effective.items() if k!='runner_sha256'}!={k:v for k,v in identity.items() if k!='runner_sha256'}:
             raise ValueError('Controller amendment cannot change protocol, accounting or reuse contracts')
         def without_main(path):
-            tree=ast.parse(Path(path).read_text());tree.body=[n for n in tree.body if not(isinstance(n,ast.FunctionDef) and n.name=='main')]
+            tree=ast.parse(Path(path).read_text())
+            tree.body=[n for n in tree.body if not(isinstance(n,ast.FunctionDef) and n.name=='main')]
+            # The sole candidate-loop change releases scheduling dependency;
+            # fitting, cache validation, scoring and acceptance remain exact.
+            before=ast.dump(ast.parse('fit is None and (audit_only or key not in self.selectors)',mode='eval').body)
+            after=ast.parse("fit is None and (audit_only or (key not in self.selectors and not getattr(self,'independent_after_selector_stop',False)))",mode='eval').body
+            class SchedulingPredicate(ast.NodeTransformer):
+                def visit_If(self,node):
+                    if ast.dump(node.test)==before:node.test=after
+                    return self.generic_visit(node)
+            tree=SchedulingPredicate().visit(tree)
             return ast.dump(tree)
         if without_main(old)!=without_main(__file__):raise ValueError('Controller amendment changed candidate execution or scoring')
         atomic(a.run/'execution_epochs'/(str(time.time_ns())+'.json'),dict(original_identity=previous,
-            execution_identity=identity,amendment=amendment,scope='Controller progress publication only; every candidate fitting/reuse/scoring function unchanged.'))
+            execution_identity=identity,amendment=amendment,workers=a.workers,
+            scope='Scheduling allocation and exclusive stopped-selector independence; fitting/reuse/scoring unchanged.'))
     elif previous is None:atomic(identity_file,identity)
     while True:
         e.snapshot()
         # Existing candidate bodies are reviewed first; no new fit required.
-        keys=list(e.routes);keys.sort(key=lambda k:(k not in e.selectors,k))
+        keys=list(e.routes);keys.sort(key=lambda k:(not(e.selectors.get(k,{}).get('passed') is False),k not in e.selectors,k))
         with ThreadPoolExecutor(max_workers=a.workers) as pool:
             from concurrent.futures import wait,FIRST_COMPLETED
             pending={pool.submit(e.run_route,key,a.audit_only) for key in keys}

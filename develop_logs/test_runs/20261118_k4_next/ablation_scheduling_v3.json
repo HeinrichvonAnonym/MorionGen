@@ -1,0 +1,11 @@
+{
+  "previous_runner": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/candidate_ablation_controller_v2_checkout/python/scripts/evalkit_k4_candidate_ablation.py",
+  "previous_runner_sha256": "577df55f52afe6caa7e1ce6c607afacd7439e99be6f51c83bfd1437e38f457b8",
+  "new_runner_sha256": "0979439585940e4e3f22fbe65d25555352c0fc301e8d57323f96ecca963e061f",
+  "max_workers": 14,
+  "independent_after_selector_stop": true,
+  "protocol_sha256": "1fbfedf524a65c196d8a17da932a220e5a08b45d3f72a5d26ef17712da293208",
+  "numerical_contract": "All code outside main identical after the one explicit scheduling predicate replacement; fit, export, scoring and cache contracts unchanged.",
+  "tests": "6 passed",
+  "authorization": "User requested maximum feasible acceleration; use already authorized fourteen workers first. Sixteen is not enabled."
+}
