@@ -4,7 +4,8 @@ from scipy import sparse
 
 
 class TrajectoryObjective:
-    def __init__(self, feature, target, times, scales, rate_indices, rate_scale, rate_weight, lower, upper, step=1e-5):
+    def __init__(self, feature, target, times, scales, rate_indices, rate_scale, rate_weight, lower, upper, step=1e-5,
+                 violation_groups=(),violation_weight=0.,violation_margin=.8):
         self.feature=feature;self.target=np.asarray(target,float);self.times=np.asarray(times,float)
         self.scales=np.asarray(scales,float);self.indices=np.asarray(rate_indices,int)
         self.lower=np.asarray(lower,float);self.upper=np.asarray(upper,float);self.step=float(step)
@@ -15,6 +16,11 @@ class TrajectoryObjective:
         if not np.isfinite([rate_scale,rate_weight,step]).all() or rate_scale<=0 or rate_weight<0 or step<=0:raise ValueError('Invalid rate or difference scale')
         if self.lower.shape!=self.upper.shape or np.any(self.lower>=self.upper):raise ValueError('Nondegenerate coordinate domain required')
         self.n,self.k=self.target.shape;self.q=len(self.lower);self.mask=np.isfinite(self.target)
+        self.groups=[np.arange(start,end) for start,end in violation_groups]
+        self.violation_weight=float(violation_weight);self.violation_margin=float(violation_margin)
+        if not np.isfinite([violation_weight,violation_margin]).all() or violation_weight<0 or violation_margin<=0:
+            raise ValueError('Finite nonnegative target weight and positive margin required')
+        if any(not len(g) or g[0]<0 or g[-1]>=self.k for g in self.groups):raise ValueError('Invalid observable feature group')
         self.local_weight=self.mask/self.scales
         pair=self.mask[1:,self.indices]&self.mask[:-1,self.indices]
         self.rate_weight=pair*rate_weight/rate_scale
@@ -35,7 +41,11 @@ class TrajectoryObjective:
 
     def residual(self,x):
         error=np.where(self.mask,self.values(x)-self.target,0.)
-        return np.r_[(error*self.local_weight).ravel(),self.transport@error.ravel()]
+        terms=[(error*self.local_weight).ravel(),self.transport@error.ravel()]
+        if self.violation_weight:
+            normalized=error/self.scales
+            terms.append(np.array([self.violation_weight*np.maximum(np.linalg.norm(normalized[:,g],axis=-1)-self.violation_margin,0)*self.mask[:,g].all(-1) for g in self.groups]).T.ravel())
+        return np.concatenate(terms)
 
     def jacobian(self,x):
         x=np.asarray(x,float).reshape(self.n,self.q);blocks=[]
@@ -47,4 +57,16 @@ class TrajectoryObjective:
                 columns.append((self.feature(i,right)-self.feature(i,left))/(right[j]-left[j]))
             blocks.append(np.stack(columns,axis=1))
         feature_jac=sparse.block_diag(blocks,format='csr')
-        return sparse.vstack([sparse.diags(self.local_weight.ravel())@feature_jac,self.transport@feature_jac],format='csr')
+        terms=[sparse.diags(self.local_weight.ravel())@feature_jac,self.transport@feature_jac]
+        if self.violation_weight:
+            error=np.where(self.mask,self.values(x)-self.target,0.)/self.scales
+            rows=[];cols=[];data=[]
+            for i in range(self.n):
+                for j,g in enumerate(self.groups):
+                    norm=np.linalg.norm(error[i,g])
+                    if norm>self.violation_margin and self.mask[i,g].all():
+                        rows.extend([i*len(self.groups)+j]*len(g));cols.extend(i*self.k+g)
+                        data.extend(self.violation_weight*error[i,g]/norm/self.scales[g])
+            operator=sparse.csr_matrix((data,(rows,cols)),shape=(self.n*len(self.groups),self.n*self.k))
+            terms.append(operator@feature_jac)
+        return sparse.vstack(terms,format='csr')

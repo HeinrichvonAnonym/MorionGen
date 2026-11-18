@@ -1,0 +1,183 @@
+{
+  "records": [
+    {
+      "run": "closure_path_residual_20261118_v1",
+      "window": "010",
+      "method": "chois",
+      "conditions": {
+        "native": {
+          "D": "passed",
+          "R": "passed"
+        },
+        "whole_native_grid": {
+          "D": "passed",
+          "R": "failed"
+        },
+        "coordinated": {
+          "D": "passed",
+          "R": "failed"
+        }
+      }
+    },
+    {
+      "run": "closure_path_residual_20261118_v1",
+      "window": "032",
+      "method": "kimodo",
+      "conditions": {
+        "native": {
+          "D": "passed",
+          "R": "passed"
+        },
+        "whole_native_grid": {
+          "D": "passed",
+          "R": "failed"
+        },
+        "coordinated": {
+          "D": "passed",
+          "R": "passed"
+        }
+      }
+    },
+    {
+      "run": "closure_path_residual_20261118_v1",
+      "window": "032",
+      "method": "motionlcm",
+      "conditions": {
+        "native": {
+          "D": "passed",
+          "R": "passed"
+        },
+        "whole_native_grid": {
+          "D": "passed",
+          "R": "failed"
+        },
+        "coordinated": {
+          "D": "passed",
+          "R": "passed"
+        }
+      }
+    },
+    {
+      "run": "closure_path_partial_20261118_v1",
+      "window": "010",
+      "method": "chois",
+      "conditions": {
+        "native": {
+          "D": "passed",
+          "R": "passed"
+        },
+        "whole_native_grid": {
+          "D": "passed",
+          "R": "failed"
+        },
+        "coordinated": {
+          "D": "passed",
+          "R": "failed"
+        }
+      }
+    },
+    {
+      "run": "closure_path_partial_20261118_v1",
+      "window": "032",
+      "method": "kimodo",
+      "conditions": {
+        "native": {
+          "D": "passed",
+          "R": "passed"
+        },
+        "whole_native_grid": {
+          "D": "passed",
+          "R": "failed"
+        },
+        "coordinated": {
+          "D": "passed",
+          "R": "passed"
+        }
+      }
+    },
+    {
+      "run": "closure_path_partial_20261118_v1",
+      "window": "032",
+      "method": "motionlcm",
+      "conditions": {
+        "native": {
+          "D": "passed",
+          "R": "passed"
+        },
+        "whole_native_grid": {
+          "D": "passed",
+          "R": "failed"
+        },
+        "coordinated": {
+          "D": "passed",
+          "R": "passed"
+        }
+      }
+    },
+    {
+      "run": "closure_path_partial_legs_20261118_v1",
+      "window": "010",
+      "method": "chois",
+      "conditions": {
+        "native": {
+          "D": "passed",
+          "R": "passed"
+        },
+        "whole_native_grid": {
+          "D": "passed",
+          "R": "failed"
+        },
+        "coordinated": {
+          "D": "passed",
+          "R": "passed"
+        }
+      }
+    },
+    {
+      "run": "closure_path_partial_legs_20261118_v1",
+      "window": "032",
+      "method": "kimodo",
+      "conditions": {
+        "native": {
+          "D": "passed",
+          "R": "passed"
+        },
+        "whole_native_grid": {
+          "D": "passed",
+          "R": "failed"
+        },
+        "coordinated": {
+          "D": "passed",
+          "R": "passed"
+        }
+      }
+    },
+    {
+      "run": "closure_path_partial_legs_20261118_v1",
+      "window": "032",
+      "method": "motionlcm",
+      "conditions": {
+        "native": {
+          "D": "passed",
+          "R": "passed"
+        },
+        "whole_native_grid": {
+          "D": "passed",
+          "R": "failed"
+        },
+        "coordinated": {
+          "D": "passed",
+          "R": "passed"
+        }
+      }
+    }
+  ],
+  "protected_count": 610,
+  "changed_protected": [],
+  "new_holdout_uses": 0,
+  "source_hashes": {
+    "closure_path_partial_20261118_v1": "fab8f744bca6a6afaaa119339f3418654c687485154d0f91776deb36dbc8e692",
+    "closure_path_partial_legs_20261118_v1": "70b1c8bc0d38825f705e19b4c5f737910a2778c98333a70721461b88b1b420dc",
+    "closure_path_residual_20261118_v1": "60deccb820ae0f54f1c1f2f6828157c2b2a644a543a971c095e58bbd09bf2d2a"
+  }
+}

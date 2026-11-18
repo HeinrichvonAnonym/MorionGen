@@ -1,0 +1,15 @@
+{
+  "version": "k4-trajectory-balance-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "conditions": [
+    "bounded",
+    "fallback",
+    "balanced"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "073 bounded solver substantially improves temporal error but terminates on approximate linear non-descent and trades right-upper-arm pose beyond5deg. Separate projected-gradient fallback from target-group excess penalty with existing5deg/5cm scales and0.8margin/weight4. R only independent scoring.",
+  "preregistration": "Same073/077 MotionLCM and000Kimodo3 combinations x3=9. Shared original-domain seed/geometry/input,20 objective evaluations. Group target penalty is an explicit engineering objective change; no acceptance/mask change.",
+  "qualification": "Monotone actual-objective line search creates candidates only; fixed original-R targets/temporal/coverage gate. No anatomical or force qualification."
+}

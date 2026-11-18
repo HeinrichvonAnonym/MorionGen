@@ -25,6 +25,11 @@ def solve(objective,x0,settings):
         step=scale*linear.x;descent=float(gradient@step)
         entry={'cost_before':cost,'linear_status':int(linear.status),'linear_iterations':int(linear.nit),
                'projected_gradient_max':optimality,'gradient_dot_step':descent,'trials':[]}
+        if settings.get('projected_gradient_fallback',False) and (not np.isfinite(step).all() or descent>=0):
+            step=np.clip(x-gradient/np.maximum(norms**2,1.),lower,upper)-x
+            descent=float(gradient@step)
+            entry.update(step_source='projected_diagonal_gradient',fallback_gradient_dot_step=descent)
+        else:entry['step_source']='bounded_linear_least_squares'
         accepted=False
         if np.isfinite(step).all() and descent<0:
             for attempt in range(12):

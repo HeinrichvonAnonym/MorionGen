@@ -98,3 +98,24 @@ def test_bounded_joint_solver_respects_domain_and_evaluation_limit():
     result=solve(obj,np.zeros_like(truth),{'max_nfev':3})
     assert result.nfev<=3 and (result.x<=.15).all() and (result.x>=obj.lower[0]).all()
     assert np.linalg.norm(result.fun)<=np.linalg.norm(obj.residual(np.zeros_like(truth)))
+
+
+def test_projected_fallback_rejects_non_descent_linear_solver_step(monkeypatch):
+    from scipy.optimize import OptimizeResult
+    from motiogen.evalkit.k.trajectory_solver import solve
+    obj,truth=fixture();initial=truth+.1
+    monkeypatch.setattr('motiogen.evalkit.k.trajectory_solver.lsq_linear',lambda *a,**kw:OptimizeResult(x=np.ones(len(initial)),status=0,nit=50))
+    result=solve(obj,initial,{'max_nfev':4,'projected_gradient_fallback':True})
+    assert result.history[0]['step_source']=='projected_diagonal_gradient'
+    assert np.linalg.norm(result.fun)<np.linalg.norm(obj.residual(initial))
+
+
+def test_target_group_violation_jacobian_and_missing_support():
+    original,truth=fixture();target=original.target.copy();target[1,1:]=np.nan
+    obj=TrajectoryObjective(original.feature,target,original.times,original.scales,original.indices,.2,.5,[-2],[2],
+        violation_groups=[(0,1),(1,3)],violation_weight=4,violation_margin=.8)
+    x=truth+.2;columns=[]
+    for i in range(len(x)):
+        delta=np.eye(len(x))[i]*1e-6;columns.append((obj.residual(x+delta)-obj.residual(x-delta))/(2e-6))
+    np.testing.assert_allclose(obj.jacobian(x).toarray(),np.stack(columns,1),atol=1e-6,rtol=2e-6)
+    assert obj.residual(x)[-8:].reshape(4,2)[1,1]==0

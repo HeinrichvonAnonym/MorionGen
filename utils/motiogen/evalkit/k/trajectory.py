@@ -42,7 +42,10 @@ def problem(model_path, labels, coordinates, observed, names, times, settings):
         synchronize(state,bindings);model.realizePosition(state)
         return features(np.array([biomech._child_origin(model,state,j) for j in joints]))
     objective=TrajectoryObjective(feature,goals,times,scales,np.arange(np_,np_+nd),
-        np.deg2rad(float(settings.get('direction_rate_scale_deg_s',10))),float(settings.get('direction_rate_weight',1)),lower,upper)
+        np.deg2rad(float(settings.get('direction_rate_scale_deg_s',10))),float(settings.get('direction_rate_weight',1)),lower,upper,
+        violation_groups=[(i,i+3) for i in range(0,np_+nd,3)]+[(i,i+1) for i in range(np_+nd,np_+nd+4)],
+        violation_weight=float(settings.get('target_violation_weight',0)),
+        violation_margin=float(settings.get('target_margin_fraction',.8)))
     x0=np.clip(np.deg2rad(seed[:,cols]),lower+1e-9,upper-1e-9).ravel()
     return objective,x0,seed,cols,active
 

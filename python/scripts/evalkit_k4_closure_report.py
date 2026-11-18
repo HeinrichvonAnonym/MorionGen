@@ -111,6 +111,8 @@ body{font:16px/1.65 system-ui,sans-serif;color:#173346;background:#f5f8fa;margin
     document+='<p>目标是按退化前原动作逐窗口验收。姿态、位置、时序、覆盖及实际导出共同决定通过；原生拟合改善需要继续检查采样点之间的运动。</p>'
     document+=f'<div class="card"><b id="live">冻结回归：{completed}/656完成，{passed}通过，{completed-passed}指标未通过，{execution_failed}执行失败。</b><p><a href="20261118_k4_full_regression.html">打开冻结656路完整报告</a> · <a href="20261118_k4_rotation_comparison.html">查看既有旋转对照动画</a></p></div>'
     document+='<h2>因果证据与剩余问题</h2><section><p><b>002：</b>足端固定几何改善原生膝足偏差，反向＋变化率候选在Kimodo完整通过；其他格式和动作继续迁移。</p><p><b>008：</b>位置链长代理在MotionLCM、OmniControl通过；中立长度仍属于明确估计，其他姿态单独检验。</p><p><b>010：</b>原生近伸直阶段出现髋—距下补偿分支切换。反向候选改善原生结果，导出中间状态仍突跳。新增跨关节协调已在固定轨迹的隔离实验通过，以模型FK产生插入帧；已通过的运行入口及其他候选见下表，跨格式迁移继续验收。</p><p><b>新增肩躯干与膝足失败：</b>持续前倾／肩线倾斜、深屈膝下分别验证固定几何、范围和求解。触边是诊断线索，配对实验才用于因果判断。</p></section>'
+    if a.rotation_replay:
+        document+='<section><h3>本轮路径与支持标记核查</h3><p><b>032：</b>保持原生拟合不变，全身协调路径在Kimodo、MotionLCM通过两套时钟及文件回读；原SO(3)导出在R时钟仍有时序超标。</p><p><b>010 CHOIS：</b>进一步查到节点别名错误：先验手端点与真实wrist_body腕点在统一命名后发生支持标记混淆，旧路径求解因此整段跳过。此前“缺腕观测”的阶段解释已修正。新版本让位置与支持元数据共用别名映射；原始输入与评分口径保持。此前部分目标及腿部限定候选完整保留，新的完整支持回放见下表。</p><p><b>073、077：</b>整段目标小幅下降仍未通过时序，求解上限耗尽与数值收敛分别报告。新有界线性子问题候选独立验证；默认配置尚未晋升。</p></section>'
     completion_note='全部656路已完成，以下保留最终失败清单。' if completed+execution_failed==656 else '运行未结束，以下为已经评分的失败，尚未运行项保留在656总分母内。'
     document+='<h2>冻结版本的未通过窗口</h2><p>同一动作的八种格式是配对条件。'+completion_note+'</p><div class="scroll"><table><tr><th>窗口</th><th>失败路数</th><th>格式</th><th>姿态／位置</th><th>时序</th></tr>'+''.join(table)+'</table></div>'
     document+='<h2>独立候选：逐条件验收</h2>'+''.join(sections)
