@@ -1,0 +1,23 @@
+{
+  "audit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/completion_audit_656_20261118_v1.json",
+  "audit_sha256": "a1852d59b0b4afe86488be398efd72cee3306536c85c40507d098eb9ec67b0bb",
+  "snapshot": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_snapshot_final656_20261118_v1.json",
+  "snapshot_sha256": "94ad8477f547507d8006b10b9aa34d30fe34d9c40147491d0799baf5e2cbee2e",
+  "counts": {
+    "expected": 656,
+    "completed": 656,
+    "passed": 562,
+    "execution_failed": 0,
+    "failed_windows": 15,
+    "failure_categories": {
+      "pose_and_timing": 25,
+      "pose_only": 38,
+      "timing_only": 31
+    },
+    "protection": {
+      "checked": 610,
+      "changed": [],
+      "new_holdout_uses": 0
+    }
+  }
+}

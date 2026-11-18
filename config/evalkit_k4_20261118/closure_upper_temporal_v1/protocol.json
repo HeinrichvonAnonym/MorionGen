@@ -1,0 +1,22 @@
+{
+  "version": "k4-closure-upper-temporal-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "conditions": [
+    "forward",
+    "reverse",
+    "reverse_rate1",
+    "reverse_fullpath"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Late failures have distinct native and export stages. Shared fixed geometry: forward vs reverse vs reverse rate isolates traversal/rate; reverse vs reverse_fullpath isolates interpolation with exact native anchors. Whole-body independent angular coordinates allowed; translations and dependent/locked DOFs excluded by the existing fitter.",
+  "selection": "Same condition set for all rows; IDs only dispatch; D-only fit and path targets, R-only independent acceptance; no per-frame or per-window policy",
+  "preregistration": "7 complete windows-format combinations x 4 conditions = 28; includes previously passing 000; original manifests unchanged",
+  "interpretation": "Whole-body coordinated targets are a declared path assumption, not added observations. If native error persists, interpolation cannot repair the anchors.",
+  "resources": {
+    "workers": 1,
+    "numeric_threads": 1,
+    "disk_reserve_GiB": 80
+  }
+}
