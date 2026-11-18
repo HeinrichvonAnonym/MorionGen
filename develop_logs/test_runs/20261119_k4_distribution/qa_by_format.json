@@ -1,0 +1,12 @@
+{
+  "snapshot_sha256": "19b675ee9d62cb171f18bc7449704714d64c62d8a9df14f917bf4db2adc25bb4",
+  "complete_routes": 124,
+  "routes_with_pass": 123,
+  "candidates": 1244,
+  "points": 38277,
+  "partition_exact": true,
+  "quantiles_recomputed": true,
+  "unobservable_not_zero": true,
+  "inline_figures": 16,
+  "http_status": 200
+}
