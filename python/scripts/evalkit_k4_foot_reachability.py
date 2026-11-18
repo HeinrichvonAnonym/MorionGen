@@ -28,6 +28,7 @@ def main():
         ap.add_argument('--'+n, type=Path, required=True)
     ap.add_argument('--method', required=True)
     ap.add_argument('--side', choices=['left','right'], required=True)
+    ap.add_argument('--direction-seed',action='store_true',help='Additional input thigh/shank-frame initialization; keeps original starts')
     a = ap.parse_args()
     osim.Logger.setLevelString('error')
     motion = load(a.input,a.method,config=ROOT/'config/evalkit_k4_20261117/input.json')
@@ -50,6 +51,10 @@ def main():
         handles = [model.updCoordinateSet().get(n) for n in coordinate_names]
         lower = np.array([h.getRangeMin() for h in handles]);upper = np.array([h.getRangeMax() for h in handles])
         joints = [n+'_'+suffix for n in ['hip','walker_knee','ankle','mtp']]
+        seeder=None
+        if a.direction_seed:
+            from motiogen.evalkit.k.leg_seed import LegDirectionSeeder
+            seeder=LegDirectionSeeder(path,labels,side)
         def fk(frame,x):
             biomech._set(model,state,labels,q[frame])
             for h,value in zip(handles,x):h.setValue(state,float(value),False)
@@ -80,17 +85,34 @@ def main():
                 p=fk(frame,x)
                 return np.concatenate(((unit(np.diff(p,axis=0))-unit(np.diff(g,axis=0))).ravel()/np.deg2rad(5),
                     ((p[1:]-p[0])-(g[1:]-g[0])).ravel()/.05))
-            candidates=[]
-            for start in (seed,fixed):
+            starts=[('native_seed',seed),('native_fixed_foot',fixed)];direction_diagnostic=None
+            if seeder is not None:
+                aligned,direction_diagnostic=seeder.seed(q[frame],g[:3])
+                if aligned is not None:
+                    aligned=np.clip(np.deg2rad(aligned[indices]),lower+1e-9,upper-1e-9)
+                    def aligned_foot_residual(x):
+                        trial=aligned.copy();trial[-2:]=x;p=fk(frame,trial)
+                        return unit(p[3]-p[2])-target_direction
+                    best_aligned=min((np.array([x,y]) for x in grid[0] for y in grid[1]),key=lambda x:float(np.dot(aligned_foot_residual(x),aligned_foot_residual(x))))
+                    foot=least_squares(aligned_foot_residual,np.clip(best_aligned,lower[-2:]+1e-9,upper[-2:]-1e-9),bounds=(lower[-2:],upper[-2:]),
+                        jac=lambda x:bounded_jacobian(aligned_foot_residual,x,lower[-2:],upper[-2:],1e-5),max_nfev=100)
+                    aligned[-2:]=foot.x;direction_diagnostic['aligned_foot']=metrics(fk(frame,aligned),g)
+                    direction_diagnostic['aligned_deg']=np.rad2deg(aligned).tolist()
+                    starts.append(('input_direction_frame',aligned))
+            candidates=[];attempts=[]
+            for name,start in starts:
                 result=least_squares(released_residual,start,bounds=(lower,upper),
                     jac=lambda x:bounded_jacobian(released_residual,x,lower,upper,1e-5),max_nfev=150)
                 candidates.append(result)
-            selected=min(candidates,key=lambda r:float(np.dot(r.fun,r.fun)))
+                attempts.append(dict(seed=name,cost=float(result.cost),success=bool(result.success),nfev=int(result.nfev)))
+            selected_index=min(range(len(candidates)),key=lambda i:float(np.dot(candidates[i].fun,candidates[i].fun)))
+            selected=candidates[selected_index]
             rows.append(dict(policy=policy,frame=int(frame),time_s=float(motion.times[frame]),
                 current=metrics(fk(frame,seed),g),fixed_proximal=metrics(fk(frame,fixed),g),released_proximal=metrics(fk(frame,selected.x),g),
                 grid_best_foot_angle_deg=grid_error,seed_deg=np.rad2deg(seed).tolist(),fixed_deg=np.rad2deg(fixed).tolist(),
                 released_deg=np.rad2deg(selected.x).tolist(),bounds_deg=np.rad2deg([lower,upper]).tolist(),
-                released_success=bool(selected.success),released_cost=float(selected.cost)))
+                released_success=bool(selected.success),released_cost=float(selected.cost),attempts=attempts,
+                direction_seed=direction_diagnostic,selected_seed=attempts[selected_index]['seed']))
     data=dict(scope='D-only sampled geometric reachability; current proximal pose retained in fixed scan; released fit changes only six ipsilateral independent leg coordinates. No global lower-bound claim.',
               selection='Three uniformly spaced valid frames plus three largest current D foot-direction residuals, same frames in both models',
               input_hashes=motion.provenance['inputs'],method=a.method,side=side,coordinate_names=coordinate_names,

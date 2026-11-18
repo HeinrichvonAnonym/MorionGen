@@ -1,0 +1,40 @@
+{
+  "version": "position-leg-direction-seed-1",
+  "records": [
+    {
+      "window": "002",
+      "method": "motionlcm",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/002/motionlcm/candidate",
+      "fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/motionlcm",
+      "domain_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_foot_full_domain_20261118_v1/motionlcm/domain",
+      "side": "left",
+      "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_leg_seed_20261118_v1/002_motionlcm.json",
+      "source_sha256": {
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/motionlcm/model.osim": "15cf720757f197cab48b6d2f932ae0efa693f2b1ab230b3c74d3b983abe423b7",
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_foot_full_domain_20261118_v1/motionlcm/domain/model.osim": "13fa0560ad622bf0a57d3b83a094254b3149caada36026533d2d6a5656002e3b",
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/motionlcm/coordinates_refined_native.mot": "22c8bd78d3b4c7c22847816ae88bacf1cb381d8e6347ce24de4fd5c5c932abe5"
+      }
+    },
+    {
+      "window": "002",
+      "method": "omnicontrol",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/002/omnicontrol/candidate",
+      "fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/omnicontrol",
+      "domain_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_foot_full_domain_20261118_v1/omnicontrol/domain",
+      "side": "left",
+      "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_leg_seed_20261118_v1/002_omnicontrol.json",
+      "source_sha256": {
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/omnicontrol/model.osim": "d9f867b254b82e45e996fa1b0b3744b31ed879cbde2b4c865de3d0dadb3cea3d",
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_foot_full_domain_20261118_v1/omnicontrol/domain/model.osim": "712392b030655f6db59ab3517b553f04c9c336be19ef2c65270da7519dad880c",
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/omnicontrol/coordinates_refined_native.mot": "7042e4628742830d131eda3ddda72c5f56556e949b592f84c8b697e6a81e7dc7"
+      }
+    }
+  ],
+  "workers": 1,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Full ankle/subtalar revolutions did not remove local sampled residual. Add D thigh/shank-frame initialized hip/knee with model knee map before deciding fixed-geometry incompatibility. Keep original starts and same D-only frame rule; audit analytic initialization against knownFK; no runtime promotion or R.",
+  "selection": "3 uniformly spaced valid frames plus3 largest control D foot-direction residuals; unchanged between models. Sampled diagnosis only, no global impossibility proof.",
+  "script_sha256": "7ae6457b6be18b11f321cfb604c2b94df6ec584d5fd1b4b7e851004ba645e030",
+  "direction_seed": true
+}
