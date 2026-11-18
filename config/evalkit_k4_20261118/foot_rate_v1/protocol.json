@@ -1,0 +1,18 @@
+{
+  "version": "k4-foot-rate-1",
+  "conditions": [
+    "control",
+    "rate1",
+    "rate4"
+  ],
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "hypothesis": "After declared foot geometry resolves002 pose/position errors, penalize excess derivative of F-minus-D direction error at fixed geometry/domain to test native temporal residual; keep010 export failure independently scored.",
+  "weights": "Reuse previously registered direction-rate excess weights 1 and4, margin .8 at10deg/s; engineering candidates, not validated optima",
+  "runtime": "D clock and unit direction errors only; same configuration for all records; no ID rule or R in fit",
+  "native_export_boundary": "Raw fitted FK and actual exported FK assessed separately on D and R clocks; improved native result cannot waive export failure",
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "max_candidate_workers": 2,
+  "frozen_regression_workers": 6
+}
