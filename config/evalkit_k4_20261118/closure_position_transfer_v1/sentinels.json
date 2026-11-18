@@ -1,0 +1,22 @@
+{
+  "records": [
+    {
+      "window": "010",
+      "method": "motionlcm"
+    },
+    {
+      "window": "010",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "073",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "077",
+      "method": "omnicontrol"
+    }
+  ],
+  "new_holdout_uses": 0,
+  "scope": "Supplemental mechanism/format transfer; unchanged fixed development windows, not replacement of23 panel"
+}

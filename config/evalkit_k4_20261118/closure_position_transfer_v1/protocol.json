@@ -1,0 +1,17 @@
+{
+  "version": "k4-position-trajectory-transfer-1",
+  "conditions": [
+    "chain",
+    "trajectory_chart",
+    "trajectory_chart_path"
+  ],
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "010 position formats still have native trunk/shoulder temporal failure under previous traversal candidates. Compare common position-chain geometry native solver with existing joint trajectory/equivalent chart, then add fixed-native full-body path. Transfer073/077 from MotionLCM to OmniControl without method-specific parameters.",
+  "factors": "chain versus trajectory_chart changes whole-native trajectory solve and declared post-seed shoulder domain as an already independently tested bundle; no claim of single-factor attribution. trajectory_chart versus trajectory_chart_path isolates interpolation at identical native solution/geometry; verify native anchor hashes and FK. Native direction/position, export path and roundtrip independently accepted.",
+  "boundary": "D only in fitting/selection; R only independent score; frozen5deg/5cm/full denominators/source jump strata. No action-ID runtime branch, no new range or structural intervention. All candidates/fallback retained.",
+  "source_pool": "config/evalkit_k4_20261118/closure_pool_transfer_v1/pool.json",
+  "source_pool_sha256": "c4b6dd192abf7ea549417c81d6da98c5c95d06b36d3f3a9f07e2c683aab1671e"
+}
