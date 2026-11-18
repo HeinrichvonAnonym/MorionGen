@@ -1,0 +1,54 @@
+{
+  "052": {
+    "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_reachability_20261118_v1/052.json",
+    "sha256": "a4ba5ddbc9b72c8fa05e5977a76a004047fa5937d0613ed3a4ffd36113cd8a04",
+    "only_coordinate_ranges_differ": true,
+    "changed_ranges": {
+      "ankle_angle_r": [
+        "-0.87266462599716477 0.87266462599716477",
+        "-1.5707963267948966 1.5707963267948966"
+      ],
+      "subtalar_angle_r": [
+        "-1.3089969389957472 1.3089969389957472",
+        "-1.5707963267948966 1.5707963267948966"
+      ],
+      "ankle_angle_l": [
+        "-0.87266462599716477 0.87266462599716477",
+        "-1.5707963267948966 1.5707963267948966"
+      ],
+      "subtalar_angle_l": [
+        "-1.3089969389957472 1.3089969389957472",
+        "-1.5707963267948966 1.5707963267948966"
+      ]
+    },
+    "fixed_proximal_invariant": true,
+    "same_seed_FK_invariant": true
+  },
+  "063": {
+    "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_reachability_20261118_v1/063.json",
+    "sha256": "1f1c0169927c52d2a8ff5dcea513245ad65f7b733b33516fec27144d7f794846",
+    "only_coordinate_ranges_differ": true,
+    "changed_ranges": {
+      "ankle_angle_r": [
+        "-0.87266462599716477 0.87266462599716477",
+        "-1.5707963267948966 1.5707963267948966"
+      ],
+      "subtalar_angle_r": [
+        "-1.3089969389957472 1.3089969389957472",
+        "-1.5707963267948966 1.5707963267948966"
+      ],
+      "ankle_angle_l": [
+        "-0.87266462599716477 0.87266462599716477",
+        "-1.5707963267948966 1.5707963267948966"
+      ],
+      "subtalar_angle_l": [
+        "-1.3089969389957472 1.3089969389957472",
+        "-1.5707963267948966 1.5707963267948966"
+      ]
+    },
+    "fixed_proximal_invariant": true,
+    "same_seed_FK_invariant": true
+  },
+  "implementation_commit": "a47eb9c",
+  "script_sha256": "4ce8e9fdf1b4930245ab9ea3585834d7163c7022b37b26f68344ebd324ef404a"
+}
