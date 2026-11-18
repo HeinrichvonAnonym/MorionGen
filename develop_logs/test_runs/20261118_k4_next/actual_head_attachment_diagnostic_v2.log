@@ -1,0 +1,5 @@
+conditionalP95proof 49 11 True
+current_separate_medians neck 9.284202155737086 head 9.29324535417993 offset 0.0
+direct_neck_median neck 9.397582909646948 head 9.776015999108527 offset 1.5362721502790158
+direct_neck_mean neck 8.456765167237611 head 8.869655753478693 offset 1.515513191592515
+head_length_term_cm 2.7344523212943432 all_frame_radius_bound_cm 8.662422115968372

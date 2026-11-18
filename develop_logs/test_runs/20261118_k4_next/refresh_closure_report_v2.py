@@ -12,6 +12,7 @@ args+=['--budget-review','develop_logs/test_runs/20261118_k4_next/candidate_budg
 visual=Path('docs/20261118_k4_pool_comparison_v2.html')
 if visual.exists():args+=['--pool-visual',str(visual)]
 args+=['--unified-run',str(b/'full_regression_20261118_budget_v3'),'--unified-live-port','8768']
+args+=['--actual-path-run',str(b/'closure_actual_path_20261118_v1')]
 args+=['--actual-ablation-run',str(b/'closure_real_centres_20261118_v1')]
 args+=['--real-run',str(b/'closure_real_fidelity_20261118_v1'),'--real-geometry-run',str(b/'closure_real_geometry_20261118_v1')]
 args+=['--selection-review',str(b/'closure_selection_audit_20261118_v2/review.json'),'--reachability',str(b/'closure_reachability_20261118_v1'),'--output','docs/20261118_k4_failure_closure.html']

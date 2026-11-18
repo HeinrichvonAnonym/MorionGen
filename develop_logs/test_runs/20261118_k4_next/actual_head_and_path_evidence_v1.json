@@ -1,0 +1,13 @@
+{
+  "frozen_runtime": "dfe82393261902b4b4003c6b0943ca146176d279",
+  "sources": {
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/actual_head_attachment_diagnostic_v1.json": "08504d120d4bc90ebacb2fa4f8ef0f176094bbd847237cfdf1e10af7e2f80f49",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/actual_head_attachment_diagnostic_v2.json": "dbab0528b00e67066158c9dc4f4da3d94880233b4b16ff50262c05561df3e497",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/actual_head_objective_probe_v1/protocol.json": "5035fa7638dca7a600cec5519a213b86bf5c28da1e8dc182228d8cfefc87469c",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/actual_head_objective_probe_v1/completion.json": "41b1c834b08aebe3ca4e9689ebe65bbc627ef6270f455286c31c2100c87f77cd",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_actual_path_20261118_v1/completion.json": "e017bea2a25babc5f828d831984d8d878ff593a3a4006994f043684c28402b00",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/actual_path_v1_review.json": "514770ef84bbfc3dbdd4600c1fdd4d47460d0fbf506b7625f9ab56051606d221",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/solver_trust_v2_actual_final.json": "b2400ee9142df0ef8e99391dd4a23768236ecd7e30038397b820aaf51b276dd7"
+  },
+  "scope": "Actual inputs, F-D only; controlled656 results unchanged; head probes are conditional local diagnostics, no promotion"
+}

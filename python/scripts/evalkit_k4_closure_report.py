@@ -4,6 +4,7 @@ from collections import defaultdict
 from datetime import datetime,timezone
 import html
 import json
+import importlib.util
 from pathlib import Path
 
 
@@ -23,8 +24,11 @@ def main():
     p.add_argument('--pool-visual',type=Path)
     p.add_argument('--evidence-report',type=Path)
     p.add_argument('--actual-ablation-run',type=Path,action='append',default=[])
+    p.add_argument('--actual-path-run',type=Path,action='append',default=[])
     p.add_argument('--output',type=Path,required=True)
     a=p.parse_args();groups=defaultdict(list);completed=passed=execution_failed=0
+    helper=Path(__file__).resolve().parents[2]/'utils/motiogen/evalkit/reporting/fidelity.py'
+    spec=importlib.util.spec_from_file_location('fidelity_report',helper);fidelity_report=importlib.util.module_from_spec(spec);spec.loader.exec_module(fidelity_report)
     for path in sorted((a.frozen_run/'tasks').glob('*/result.json')):
         r=json.loads(path.read_text())
         if r['status']!='completed':execution_failed+=1;continue
@@ -47,6 +51,8 @@ def main():
             return ('未知' if value is None else f'{value:.4f}')+f'（{stat.get("n",0)}/{stat.get("denominator",0)}）'
         for view,metrics in fidelity['views'].items():
             body=[]
+            quality=fidelity_report.quality_groups(metrics['input_quality'])
+            failure_summary=f'原生观测指标：{len(quality["observed_failures"])}项未通过；'+(f'插值路径：{len(quality["path_failures"])}项未通过' if quality['has_inserted_samples'] else '本视图无插入采样点')
             for kind in ('directions_deg','joint_angles_deg'):
                 for name,stat in metrics[kind].items():
                     body.append(f'<tr><td>{esc(metric_label(name))}</td><td>{stat_cell(stat)}°</td><td>—</td></tr>')
@@ -54,7 +60,7 @@ def main():
                 body.append(f'<tr><td>{esc(metric_label(name))}</td><td>{stat_cell(values["world"])}cm</td><td>{stat_cell(values["common_length_world"])}cm</td></tr>')
             for name,values in metrics['temporal'].items():
                 body.append(f'<tr><td>{esc(metric_label(name))}变化率</td><td>{stat_cell(values["direction_rate_vector_error_deg_s"])}°/s</td><td>—</td></tr>')
-            parts.append(f'<details><summary>{esc(view)}：F−D P95／有效帧数</summary><table><tr><th>指标</th><th>原始几何</th><th>统一D骨长</th></tr>'+''.join(body)+'</table></details>')
+            parts.append(f'<details><summary>{esc(view)}：{failure_summary}</summary><p>F−D P95／有效帧数；路径约束是插值假设。</p><details><summary>超标、覆盖与路径详情</summary><pre>{esc(json.dumps(quality,ensure_ascii=False,indent=2))}</pre></details><table><tr><th>指标</th><th>原始几何</th><th>统一D骨长</th></tr>'+''.join(body)+'</table></details>')
         return ''.join(parts)
     table=[]
     for w,rows in groups.items():
@@ -170,6 +176,13 @@ def main():
                 fidelity=folder/'fidelity.json';detail=fidelity_details(fidelity) if fidelity.exists() else '完整窗口拟合与评分待完成'
                 rows.append(f'<tr><td>{esc(entry["method"])}</td><td>{esc(condition)}</td><td>{esc(state)}</td><td>{detail}</td></tr>')
         sections.append(f'<section><h3>真实输出机制对照：{esc(run.name)}</h3><p>输入固定、条件预登记；已有候选与控制都保留。结果只有F−D，不进入656路的原动作通过率。几何框架或固定中心估计保留假设属性，不新增旋转观测资格。</p><details><summary>本组假设与控制变量</summary><pre>{esc(json.dumps({k:protocol.get(k) for k in ["hypothesis","factors","scoring"]},ensure_ascii=False,indent=2))}</pre></details><div class="scroll"><table><tr><th>格式</th><th>条件</th><th>进度</th><th>完整窗口F−D</th></tr>'+''.join(rows)+'</table></div></section>')
+    for run in a.actual_path_run:
+        protocol=json.loads((run/'protocol.json').read_text());completion=json.loads((run/'completion.json').read_text()) if (run/'completion.json').exists() else {}
+        state='执行与评分完成' if completion.get('status')=='completed' else '执行失败' if completion.get('status')=='failed' else '运行中'
+        before=Path(protocol['source_baseline'])/'fidelity.json';after=run/'fidelity.json'
+        rows=''.join(f'<tr><td>{label}</td><td>{fidelity_details(path) if path.exists() else "待完成"}</td></tr>' for label,path in [('原原生解／旧导出',before),('同原生解／协调导出',after)])
+        audit=run/'actual_export/audit.json';roundtrip=json.loads(audit.read_text()) if audit.exists() else {}
+        sections.append(f'<section><h3>真实{esc(protocol["method"])}：固定原生解的导出路径对照</h3><p>{state}。模型、原生关节坐标和头颈几何固定，仅改变插入采样点的FK路径。结果为F−D，独立于656原动作验收。原生分数完全一致：{completion.get("native_score_exactly_unchanged","待核查")}；实际回读：{"通过" if roundtrip.get("passed") else "待核查／未通过"}。</p><table><tr><th>路径</th><th>观测拟合与插值分别查看</th></tr>{rows}</table><details><summary>不变量与来源</summary><pre>{esc(json.dumps(completion,ensure_ascii=False,indent=2))}</pre></details></section>')
     timestamp=datetime.now(timezone.utc).astimezone(__import__('zoneinfo').ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds')
     document='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>K4 新增失败与独立优化</title><style>
 body{font:16px/1.65 system-ui,sans-serif;color:#173346;background:#f5f8fa;margin:0}main{max-width:1450px;margin:auto;padding:28px}h1{font-size:30px}h2{margin-top:36px}section,.card{background:white;border:1px solid #d6e2e7;border-radius:8px;padding:20px;margin:20px 0}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:9px;border-bottom:1px solid #dde6eb;text-align:left;vertical-align:top}th{background:#edf3f6}.passed{color:#167252}.failed{color:#ad4136}summary{cursor:pointer}details{max-width:500px;overflow-wrap:anywhere}.muted{color:#546c79}a{color:#136c9e}@media print{body{background:white}main{padding:0}.scroll{overflow:visible}table{font-size:10px}section{break-inside:avoid}details{display:block}}
