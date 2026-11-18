@@ -1,0 +1,132 @@
+{
+  "records": [
+    {
+      "window": "002",
+      "method": "motionlcm"
+    },
+    {
+      "window": "002",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "002",
+      "method": "kimodo"
+    },
+    {
+      "window": "002",
+      "method": "chois"
+    },
+    {
+      "window": "002",
+      "method": "primal"
+    },
+    {
+      "window": "002",
+      "method": "dart"
+    },
+    {
+      "window": "002",
+      "method": "closd"
+    },
+    {
+      "window": "002",
+      "method": "ardy"
+    },
+    {
+      "window": "010",
+      "method": "motionlcm"
+    },
+    {
+      "window": "010",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "010",
+      "method": "kimodo"
+    },
+    {
+      "window": "010",
+      "method": "chois"
+    },
+    {
+      "window": "010",
+      "method": "primal"
+    },
+    {
+      "window": "010",
+      "method": "dart"
+    },
+    {
+      "window": "010",
+      "method": "closd"
+    },
+    {
+      "window": "010",
+      "method": "ardy"
+    },
+    {
+      "window": "052",
+      "method": "motionlcm"
+    },
+    {
+      "window": "052",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "052",
+      "method": "kimodo"
+    },
+    {
+      "window": "052",
+      "method": "chois"
+    },
+    {
+      "window": "052",
+      "method": "primal"
+    },
+    {
+      "window": "052",
+      "method": "dart"
+    },
+    {
+      "window": "052",
+      "method": "closd"
+    },
+    {
+      "window": "052",
+      "method": "ardy"
+    },
+    {
+      "window": "063",
+      "method": "motionlcm"
+    },
+    {
+      "window": "063",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "063",
+      "method": "kimodo"
+    },
+    {
+      "window": "063",
+      "method": "chois"
+    },
+    {
+      "window": "063",
+      "method": "primal"
+    },
+    {
+      "window": "063",
+      "method": "dart"
+    },
+    {
+      "window": "063",
+      "method": "closd"
+    },
+    {
+      "window": "063",
+      "method": "ardy"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "version": "k4-closure-formats-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "conditions": [
+    "control",
+    "geometry_domain",
+    "reverse_path",
+    "reverse_rate1_path"
+  ],
+  "hypothesis": "Expand completed leg/rate/path mechanisms across all eight formats on the same four fixed windows; retain shared single-fit control, forward geometry/domain, reverse coordinated path, and reverse rate coordinated path. No window-specific candidate assignment.",
+  "selection": "All conditions run for every row; no default promotion or R-dependent runtime choice; independent R acceptance",
+  "preregistration": "Fixed before fitting; 32 inputs x 4 conditions = 128; original frozen656 and transfer23 manifests unchanged",
+  "resources": {
+    "workers": 3,
+    "numeric_threads": 1,
+    "disk_reserve_GiB": 80
+  },
+  "next": "Audit all four views/clocks and retain failures; evaluate input-only bank and fixed23 transfer before a new656."
+}
