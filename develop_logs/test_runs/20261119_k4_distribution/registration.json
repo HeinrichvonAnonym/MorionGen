@@ -1,0 +1,6 @@
+{
+  "snapshot": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/distribution_snapshot_20261119_v1/progress.json",
+  "sha256": "19b675ee9d62cb171f18bc7449704714d64c62d8a9df14f917bf4db2adc25bb4",
+  "complete_routes": 124,
+  "scope": "Completed routes, independently passing candidates. Export R-clock F-R, raw world positions and observable directions/angles, full windows. Points are window/candidate/metric summaries, no frame pooling; aliases counted once."
+}

@@ -1,0 +1,10 @@
+{
+  "unique_points": 38277,
+  "passing_candidates": 1244,
+  "complete_routes": 124,
+  "source_hashes_verified": true,
+  "median_p95_consistency": true,
+  "http_status": 200,
+  "embedded_figures": 2,
+  "visual_inspection": "Both rendered PNG layouts inspected; legends/labels nonoverlapping after adjustment."
+}
