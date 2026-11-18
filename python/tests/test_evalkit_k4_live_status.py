@@ -7,6 +7,49 @@ live=importlib.util.module_from_spec(spec);spec.loader.exec_module(live)
 
 
 class LiveStatus(unittest.TestCase):
+    def make_ablation(self):
+        return dict(expected_routes=656,applicable_cells=100,independently_evaluated_cells=80,
+                    candidate_passed_cells=60,candidate_metric_failed_cells=20,execution_failed_cells=1,pending_cells=19,
+                    fully_evaluated_routes=5,all_candidates_passed_routes=2,selector_evaluated_routes=10,
+                    selector_passed_routes=9,selector_missed_passing_routes=1,selector_comparison_complete_routes=5,
+                    per_candidate=[dict(name='candidate <A>',applicable=10,evaluated=8,passed=6,metric_failed=2,execution_failed=0,pending=2)],
+                    rows=[dict(window='000',method='a',selected='candidate <A>')])
+
+    def test_missing_ablation_is_unknown_not_zero_failures(self):
+        with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs/20261118_k4_next') as folder:
+            run=Path(folder);(run/'protocol.json').write_text(json.dumps(dict(workers=6,records=[])))
+            data=live.Results(run,run/'missing').ablation()
+            self.assertFalse(data['available']);self.assertNotIn('candidate_metric_failed_cells',data)
+            document=live.ablation_document(data)
+            self.assertIn('未知',document);self.assertNotIn('指标未通过 0',document)
+
+    def test_candidate_completion_and_selector_success_stay_separate(self):
+        with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs/20261118_k4_next') as folder:
+            run=Path(folder);(run/'protocol.json').write_text(json.dumps(dict(workers=6,records=[])))
+            progress=run/'progress.json';progress.write_text(json.dumps(self.make_ablation()));before=progress.read_bytes()
+            data=live.Results(run,run).ablation();document=live.ablation_document(data)
+            self.assertIn('独立验收完成 5/656',document)
+            self.assertIn('所有候选均通过 2/656',document)
+            self.assertIn('选择器输出验收：通过 9/656',document)
+            self.assertIn('指标未通过 20',document);self.assertIn('执行失败 1',document)
+            self.assertIn('6/10',document);self.assertIn('candidate &lt;A&gt;',document)
+            self.assertEqual(before,progress.read_bytes())
+
+    def test_partial_ablation_does_not_invent_complete_statistics(self):
+        with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs/20261118_k4_next') as folder:
+            run=Path(folder);(run/'protocol.json').write_text(json.dumps(dict(workers=6,records=[])))
+            (run/'progress.json').write_text('{"expected_routes":656,"fully_evaluated_routes":0}')
+            data=live.Results(run,run).ablation()
+            self.assertFalse(data['available']);self.assertNotIn('candidate_passed_cells',data)
+
+    def test_readonly_injection_labels_frozen_selector_table(self):
+        frozen='<html><h1>Frozen</h1><p>通过 12/656</p><table><th>通过／总数</th></table></html>'
+        result=live.enhance_report(frozen,dict(available=False,reason='未知'),'// test')
+        self.assertIn('选择器输出验收：通过 12/656',result)
+        self.assertIn('选择器通过／总数',result)
+        self.assertIn('id="k4-ablation"',result)
+        self.assertNotIn('选择器输出验收',frozen)
+
     def test_waiting_has_full_denominator_and_distinct_prerequisites(self):
         with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs/20261118_k4_next') as folder:
             run=Path(folder)
