@@ -1,0 +1,65 @@
+{
+  "code_commit": "dfe82393261902b4b4003c6b0943ca146176d279",
+  "files": [
+    {
+      "path": "utils/motiogen/evalkit/fit.py",
+      "old_sha256": "09aef4308fbce1e9514a1902cb81480741d3baffa59cf9f819c4b81f38840dff",
+      "new_sha256": "09aef4308fbce1e9514a1902cb81480741d3baffa59cf9f819c4b81f38840dff",
+      "identical": true
+    },
+    {
+      "path": "utils/motiogen/evalkit/k/fitting.py",
+      "old_sha256": "67132f3e05b7f5fd23c9bc635370b289d16824c0e7488763dcd2a7c73fcd7780",
+      "new_sha256": "ca2d1f75453fe4ab628cdc8fcfe8eef8026482ec5d627ba1172e2a5a8bfaef09",
+      "identical": false
+    },
+    {
+      "path": "utils/motiogen/evalkit/residual.py",
+      "old_sha256": "9da83734f2f9ae4d8a66a52ce40521c7995cd9bbc5349aafb88ab60b4bd3ca25",
+      "new_sha256": "9da83734f2f9ae4d8a66a52ce40521c7995cd9bbc5349aafb88ab60b4bd3ca25",
+      "identical": true
+    },
+    {
+      "path": "utils/motiogen/evalkit/muscle.py",
+      "old_sha256": "fd2b21496a476c4234358158a62608a9b7904a399241bf5bb119fd385b4949cc",
+      "new_sha256": "fd2b21496a476c4234358158a62608a9b7904a399241bf5bb119fd385b4949cc",
+      "identical": true
+    },
+    {
+      "path": "utils/motiogen/evalkit/ergo.py",
+      "old_sha256": "e29b12aa464cbd9a24a6d1f2bf47565d13737abbb904dea56550d2885f6b4334",
+      "new_sha256": "e29b12aa464cbd9a24a6d1f2bf47565d13737abbb904dea56550d2885f6b4334",
+      "identical": true
+    },
+    {
+      "path": "utils/motiogen/evalkit/run.py",
+      "old_sha256": "97b5c6d795a42ddaf97ed2f5f2ed47d586447afedcec34c648f50f2647e7ac85",
+      "new_sha256": "97b5c6d795a42ddaf97ed2f5f2ed47d586447afedcec34c648f50f2647e7ac85",
+      "identical": true
+    },
+    {
+      "path": "utils/motiogen/biomech.py",
+      "old_sha256": "3500fb7cdc6a59cd31882079732b1226b037840cf784871f2baa8ebb3ab3d027",
+      "new_sha256": "3500fb7cdc6a59cd31882079732b1226b037840cf784871f2baa8ebb3ab3d027",
+      "identical": true
+    },
+    {
+      "path": "utils/motiogen/evalkit/k/motion.py",
+      "old_sha256": "2bbdc14108a1b05accefd208559c5e08f411d29e4f5f7aaa9ee925ff67c78fd9",
+      "new_sha256": "4869df4d4f0d4629a51f13e2d0ce023851011f451a1035783a0cab7fdf469304",
+      "identical": false
+    }
+  ],
+  "tests": {
+    "run": 42,
+    "unittest_skipped": 7,
+    "final_errors": 0,
+    "initial_setup_errors": 2,
+    "reason": "Two missing disposable test parent directories in separate worktree; created only required test directories and reran. Seven legacy local-relative sample cases skipped; actual8 remains separately executed and incomplete."
+  },
+  "scope": "Legacy physical modules and facade unchanged. K fitting support-name bookkeeping corrected; same semantic aliases used for points and prior flags. Source names and missing-prior boundaries covered by K tests. Explicit K4 candidates retain kinematic-only qualification; no force or muscle batch accuracy claim.",
+  "logs": {
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_next/frozen_budget_interfaces_v3.log": "509933e0b85b7fcbfb19f302cff4ce2e255e5bd7243df8e3b8d3060d7c3d5549",
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_next/frozen_budget_interfaces_v3_retry.log": "c77a43d966004fbda6cdff95d92cdc0af5aa88ca939ce2aca9255df67f84174e"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "code_root": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout",
+  "code_commit": "dfe82393261902b4b4003c6b0943ca146176d279",
+  "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_real_fidelity_20261118_v1/closd/fit/candidates/position_trajectory",
+  "source_baseline": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_real_fidelity_20261118_v1/closd",
+  "source_sha256": {
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_real_fidelity_20261118_v1/closd/fit/candidates/position_trajectory/model.osim": "0167873e495ed378e6ae8b18528134647cce215ef7d41f9bfccca643ed114b92",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_real_fidelity_20261118_v1/closd/fit/candidates/position_trajectory/coordinates_refined_native.mot": "1e6bac8f2b6d430f124cf6febe791ba666a12fa26d186527745836c6ba03e11f",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_real_fidelity_20261118_v1/closd/fit/candidates/position_trajectory/receipt.json": "1f0a20c8f594169f2f6fd31f6b288ec8994bbff304a2192134e141282db2e521",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_real_fidelity_20261118_v1/closd/fit/candidates/position_trajectory/fit.npz": "9772496ad009a2401dc59dacceebadc1c7b7451fd4883a42b2710f3403736272",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_real_fidelity_20261118_v1/closd/fit/candidates/position_trajectory/head_neck_model.json": "0cce6909156b9885122545a53ab481519fef11b551ccfc9a5710684b732bcf7c",
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024631_closd_demo_228a80ac/motion.npz": "31699779ab2d3ad830e5fc7426f85c72562fd66472d254bd87403f8a6c20e38f",
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024631_closd_demo_228a80ac/native_physics.npz": "251bf2625e833bb17882c48b4f3b371972fb2ce0842641ccd5dd1428feeb0ae7"
+  },
+  "input": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024631_closd_demo_228a80ac/motion.npz",
+  "method": "closd",
+  "policy": "/home/heinrich/MorionGen/config/evalkit_k4_20261118/closure_actual_path_v1/policy.json",
+  "policy_sha256": "41d79bf7e51ce3e5f7e62cdf46391a75ba7795ea8cc5c7f3fd63c0111e67dfd5",
+  "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_actual_path_20261118_v1",
+  "scope": "Actual generated output only; fixed original native model/coordinates/head geometry; coordinated inserted FK path; no paired R. Same previously registered composed policy, no fitting or threshold change.",
+  "prespecified_comparison": "native equality, F-D pose/coverage/timing, export path quality and actual file roundtrip",
+  "workers": 1,
+  "promotion": "none"
+}

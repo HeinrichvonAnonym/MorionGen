@@ -1,0 +1,33 @@
+sssssss............................E...........E
+======================================================================
+ERROR: test_authorized_copy_expansion_preserves_coupling_functions (python.tests.test_evalkit_k4_original_domain.OriginalDomainTests.test_authorized_copy_expansion_preserves_coupling_functions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/tests/test_evalkit_k4_original_domain.py", line 22, in test_authorized_copy_expansion_preserves_coupling_functions
+    with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs/20261117_k4') as tmp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/heinrich/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/tempfile.py", line 871, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/heinrich/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/tempfile.py", line 385, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [Errno 2] No such file or directory: '/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/develop_logs/test_runs/20261117_k4/tmpz654shsa'
+
+======================================================================
+ERROR: test_preserve_domain_does_not_unlock_unrelated_joints (python.tests.test_evalkit_k4_export_clock.ExportClockTests.test_preserve_domain_does_not_unlock_unrelated_joints)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/tests/test_evalkit_k4_export_clock.py", line 32, in test_preserve_domain_does_not_unlock_unrelated_joints
+    with tempfile.TemporaryDirectory(dir=Path('develop_logs/test_runs/20261118_k4_native')) as tmp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/heinrich/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/tempfile.py", line 871, in __init__
+    self.name = mkdtemp(suffix, prefix, dir)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/heinrich/.local/share/uv/python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/tempfile.py", line 385, in mkdtemp
+    _os.mkdir(file, 0o700)
+FileNotFoundError: [Errno 2] No such file or directory: 'develop_logs/test_runs/20261118_k4_native/tmpq9npfznn'
+
+----------------------------------------------------------------------
+Ran 42 tests in 1.058s
+
+FAILED (errors=2, skipped=7)
