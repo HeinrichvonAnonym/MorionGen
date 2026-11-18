@@ -1,0 +1,9 @@
+{
+  "controller_pid": 282105,
+  "controller_cmd": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_composed_scheduler_v1_checkout/python/scripts/evalkit_k4_optimize.py --run /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117 --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_composed_pool_v1_checkout --config-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_composed_pool_v1_checkout/config/evalkit_k4_20261118/closure_composed_pool_v1 --output /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_composed_pool_20261118_v1 --workers 2 --resume ",
+  "purpose": "Borrow idle waiting capacity; no running numerical child interrupted",
+  "numeric_children_at_pause": [],
+  "test_exit_code": 0,
+  "controller_resumed": true,
+  "elapsed_s": 1.4186515808105469
+}

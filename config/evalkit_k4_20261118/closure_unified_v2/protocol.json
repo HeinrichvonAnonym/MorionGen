@@ -1,0 +1,15 @@
+{
+  "version": "k4-unified-closure-candidate-2",
+  "conditions": [
+    "pool"
+  ],
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "status": "Registered for final same-version development regression; requires ongoing transfer evidence before launch",
+  "source_pool_sha256": "08369f3b89405d531c8312af3452d8c2c741fa6adfb372064acdbb4bb2c20ad1",
+  "hypothesis": "Keep every original native and coordinated export candidate. Add total-chain geometry under the identical trajectory configuration; compute only when D establishes a different fixed target from the retained base. Same-target omission is an explicit equivalence rule, never based on R or fit errors.",
+  "boundaries": "One fresh frozen code/config for all656. Old source caches/results stay preserved; no final holdout use. All original and new native candidates, exports, failures and applicability decisions retained. All runtime choices use D only.",
+  "validation_stages": "27 registered transfer combinations, then38 pre-registered format gaps, then remaining591 of the fixed656. Each stage uses the same frozen implementation and full window, with unchanged scoring thresholds/support/time strata. These are development scheduling subsets, not dataset split changes."
+}

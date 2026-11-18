@@ -6,6 +6,7 @@ import numpy as np
 from .config import ROOT, digest
 from .motion import load
 from .candidate_quality import assess, choose
+from . import candidate_eligibility
 
 
 def fit(run, work, mass, floor, settings, *, native_provider=None):
@@ -39,11 +40,8 @@ def fit(run, work, mass, floor, settings, *, native_provider=None):
         with np.load(out/'fit.npz') as z:
             return {**{k:z[k] for k in z.files},'receipt':receipt}
     requirements=settings.get('candidate_requirements',{})
-    if set(requirements)-set(candidates):raise ValueError('Requirements name an undeclared candidate')
-    for rule in requirements.values():
-        if set(rule)!={'input_rig'} or rule['input_rig'] not in ('required','absent'):
-            raise ValueError('Candidate eligibility must use declared input fields')
-    qualities, failures, receipts, skipped, composed = {}, {}, {}, {}, {}
+    candidate_eligibility.validate(candidates,requirements)
+    qualities, failures, receipts, skipped, composed, eligibility = {}, {}, {}, {}, {}, {}
     def record(name,folder,values):
         if values['receipt']['key']['inputs'] != key['inputs']:
             raise ValueError('Candidate input identity differs')
@@ -55,10 +53,9 @@ def fit(run, work, mass, floor, settings, *, native_provider=None):
                               ranking_policy=settings.get('selection_policy','flat_v1'))
         receipts[name]=values['receipt']
     for name, config in candidates.items():
-        rule=requirements.get(name)
-        if rule and bool(motion.provenance.get('input_rig'))!=(rule['input_rig']=='required'):
-            skipped[name]={'status':'inapplicable','requirement':rule,
-                           'declared_input_rig_present':bool(motion.provenance.get('input_rig'))}
+        applicable,eligibility[name]=candidate_eligibility.assess(motion,name,candidates,requirements)
+        if not applicable:
+            skipped[name]=eligibility[name]
             continue
         folder = out/'candidates'/name
         try:
@@ -95,7 +92,7 @@ def fit(run, work, mass, floor, settings, *, native_provider=None):
         else:
             shutil.copyfile(source,destination)
     selection = {'selected':selected,'qualities':qualities,'failures':failures,'inapplicable':skipped,
-                 'composed_exports':composed,
+                 'composed_exports':composed,'eligibility':eligibility,
                  'rule':('lexicographic: observed missing/failures, path missing/failures, observed worst/mean ratios, path worst/mean ratios, declaration order'
                          if settings.get('selection_policy')=='observed_then_path_v1' else
                          'lexicographic: missing supported observations, failed targets, worst normalized error, mean normalized error, declaration order'),

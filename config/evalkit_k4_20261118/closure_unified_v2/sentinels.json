@@ -1,0 +1,113 @@
+{
+  "records": [
+    {
+      "window": "000",
+      "method": "kimodo"
+    },
+    {
+      "window": "008",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "010",
+      "method": "kimodo"
+    },
+    {
+      "window": "015",
+      "method": "ardy"
+    },
+    {
+      "window": "015",
+      "method": "chois"
+    },
+    {
+      "window": "015",
+      "method": "closd"
+    },
+    {
+      "window": "015",
+      "method": "dart"
+    },
+    {
+      "window": "015",
+      "method": "kimodo"
+    },
+    {
+      "window": "015",
+      "method": "motionlcm"
+    },
+    {
+      "window": "015",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "015",
+      "method": "primal"
+    },
+    {
+      "window": "017",
+      "method": "chois"
+    },
+    {
+      "window": "022",
+      "method": "kimodo"
+    },
+    {
+      "window": "022",
+      "method": "motionlcm"
+    },
+    {
+      "window": "022",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "069",
+      "method": "ardy"
+    },
+    {
+      "window": "069",
+      "method": "chois"
+    },
+    {
+      "window": "069",
+      "method": "closd"
+    },
+    {
+      "window": "069",
+      "method": "dart"
+    },
+    {
+      "window": "069",
+      "method": "kimodo"
+    },
+    {
+      "window": "069",
+      "method": "primal"
+    },
+    {
+      "window": "070",
+      "method": "chois"
+    },
+    {
+      "window": "074",
+      "method": "kimodo"
+    },
+    {
+      "window": "001",
+      "method": "motionlcm"
+    },
+    {
+      "window": "055",
+      "method": "motionlcm"
+    },
+    {
+      "window": "001",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "055",
+      "method": "omnicontrol"
+    }
+  ],
+  "scope": "Unchanged23 transfer combinations plus all4 altered fixed geometry targets. No old panel removal."
+}

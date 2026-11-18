@@ -1,0 +1,2052 @@
+{
+  "version": "k4-candidate-pool-1",
+  "status": "Explicit closure transfer candidate bank; no default promotion",
+  "candidates": {
+    "pelvis_continuity": {
+      "version": "k4-fit-1",
+      "status": "Explicit development candidate; full six-sentinel 017 regression retained; no default promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Registered v6 controls: pose residuals5deg/5cm; added-direction velocity scale10deg/s with weight0.25; pelvis-line weight2 is a separate engineering hypothesis. No R or per-window selector.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "pelvis_line_weight": 2.0
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "rotation_temporal_search_pelvis",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -75,
+            75
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -75,
+            75
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0
+    },
+    "balanced_targets": {
+      "version": "k4-fit-1",
+      "status": "Explicit development candidate, no default promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "target_balanced_temporal",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -75,
+            75
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -75,
+            75
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0
+    },
+    "rig_centres": {
+      "version": "k4-fit-1",
+      "status": "Independent fixed-foot geometry/domain ablation; no promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "registered_centres",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -75,
+            75
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -75,
+            75
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0,
+      "joint_centres": "declared_rig"
+    },
+    "rig_arm_domain_centres": {
+      "version": "k4-fit-1",
+      "status": "Independent temporal factor candidate, no promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8,
+        "traversal": "forward"
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "domain_centres",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -90,
+            90
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -90,
+            90
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ],
+          "ankle_angle_l": [
+            -90,
+            90
+          ],
+          "ankle_angle_r": [
+            -90,
+            90
+          ],
+          "arm_rot_l": [
+            -180,
+            180
+          ],
+          "arm_rot_r": [
+            -180,
+            180
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0,
+      "foot_geometry": "declared_rig",
+      "joint_centres": "declared_rig"
+    },
+    "rig_reverse_leg_path": {
+      "version": "k4-fit-1",
+      "status": "Independent temporal factor candidate, no promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8,
+        "traversal": "reverse"
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "reverse_path",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -90,
+            90
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -90,
+            90
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ],
+          "ankle_angle_l": [
+            -90,
+            90
+          ],
+          "ankle_angle_r": [
+            -90,
+            90
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0,
+      "foot_geometry": "declared_rig",
+      "coordinated_path": {
+        "version": "fixed_native_anchors_v1",
+        "refinement": {
+          "active_coordinates": [
+            "hip_flexion_l",
+            "hip_adduction_l",
+            "hip_rotation_l",
+            "knee_angle_l",
+            "ankle_angle_l",
+            "subtalar_angle_l",
+            "hip_flexion_r",
+            "hip_adduction_r",
+            "hip_rotation_r",
+            "knee_angle_r",
+            "ankle_angle_r",
+            "subtalar_angle_r"
+          ],
+          "position_weight": 1.0,
+          "position_scale_m": 0.05,
+          "direction_scale_deg": 5.0,
+          "include_pelvis_line": true,
+          "joint_angle_weight": 1.0,
+          "target_violation_weight": 4.0,
+          "target_margin_fraction": 0.8,
+          "continuity_weight": 0.0,
+          "max_nfev": 60
+        }
+      }
+    },
+    "rig_reverse_rate_leg_path": {
+      "version": "k4-fit-1",
+      "status": "Independent temporal factor candidate, no promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8,
+        "direction_rate_violation_weight": 1.0,
+        "direction_rate_margin_fraction": 0.8,
+        "traversal": "reverse"
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "reverse_rate1_path",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -90,
+            90
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -90,
+            90
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ],
+          "ankle_angle_l": [
+            -90,
+            90
+          ],
+          "ankle_angle_r": [
+            -90,
+            90
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0,
+      "foot_geometry": "declared_rig",
+      "coordinated_path": {
+        "version": "fixed_native_anchors_v1",
+        "refinement": {
+          "active_coordinates": [
+            "hip_flexion_l",
+            "hip_adduction_l",
+            "hip_rotation_l",
+            "knee_angle_l",
+            "ankle_angle_l",
+            "subtalar_angle_l",
+            "hip_flexion_r",
+            "hip_adduction_r",
+            "hip_rotation_r",
+            "knee_angle_r",
+            "ankle_angle_r",
+            "subtalar_angle_r"
+          ],
+          "position_weight": 1.0,
+          "position_scale_m": 0.05,
+          "direction_scale_deg": 5.0,
+          "include_pelvis_line": true,
+          "joint_angle_weight": 1.0,
+          "target_violation_weight": 4.0,
+          "target_margin_fraction": 0.8,
+          "continuity_weight": 0.0,
+          "max_nfev": 60
+        }
+      }
+    },
+    "reverse_full_path": {
+      "version": "k4-fit-1",
+      "status": "Independent temporal factor candidate, no promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8,
+        "traversal": "reverse"
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "reverse_fullpath",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -90,
+            90
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -90,
+            90
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ],
+          "ankle_angle_l": [
+            -90,
+            90
+          ],
+          "ankle_angle_r": [
+            -90,
+            90
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0,
+      "foot_geometry": "declared_rig",
+      "coordinated_path": {
+        "version": "fixed_native_anchors_v1",
+        "refinement": {
+          "position_weight": 1.0,
+          "position_scale_m": 0.05,
+          "direction_scale_deg": 5.0,
+          "include_pelvis_line": true,
+          "joint_angle_weight": 1.0,
+          "target_violation_weight": 4.0,
+          "target_margin_fraction": 0.8,
+          "continuity_weight": 0.0,
+          "max_nfev": 60
+        }
+      }
+    },
+    "position_chain": {
+      "version": "k4-fit-1",
+      "status": "Independent temporal factor candidate, no promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8,
+        "traversal": "forward"
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "native_chain",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -90,
+            90
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -90,
+            90
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ],
+          "ankle_angle_l": [
+            -90,
+            90
+          ],
+          "ankle_angle_r": [
+            -90,
+            90
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0,
+      "foot_geometry": "declared_rig",
+      "position_trunk_strategy": "observed_chain_proxy_v1"
+    },
+    "position_fixed_foot_chain": {
+      "version": "k4-fit-1",
+      "status": "Independent fixed-foot geometry/domain ablation; no promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "chain",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -90,
+            90
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -90,
+            90
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ],
+          "ankle_angle_l": [
+            -90,
+            90
+          ],
+          "ankle_angle_r": [
+            -90,
+            90
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0,
+      "foot_geometry": "declared_rig",
+      "position_foot_geometry": {
+        "version": "input_polar_envelope_v1",
+        "length_tolerance_m": 0.02
+      },
+      "position_trunk_strategy": "observed_chain_proxy_v1"
+    },
+    "position_trajectory": {
+      "version": "k4-fit-1",
+      "status": "Independent temporal factor candidate, no promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8,
+        "traversal": "forward"
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "control",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -90,
+            90
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -90,
+            90
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ],
+          "ankle_angle_l": [
+            -90,
+            90
+          ],
+          "ankle_angle_r": [
+            -90,
+            90
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0,
+      "foot_geometry": "declared_rig",
+      "trajectory_refinement": {
+        "version": "joint_trajectory_v1",
+        "position_scale_m": 0.05,
+        "angle_scale_deg": 5.0,
+        "direction_rate_scale_deg_s": 10.0,
+        "direction_rate_weight": 1.0,
+        "max_nfev": 20,
+        "solver": "bounded_gauss_newton",
+        "linear_max_iter": 50,
+        "linear_lsmr_maxiter": 500,
+        "projected_gradient_fallback": true,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8
+      },
+      "position_trunk_strategy": "observed_chain_proxy_v1",
+      "trajectory_kinematic_domain": {
+        "base": "preserve_existing",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_rot_l": [
+            -180,
+            180
+          ],
+          "arm_rot_r": [
+            -180,
+            180
+          ]
+        }
+      }
+    },
+    "position_trajectory_chart": {
+      "version": "k4-fit-1",
+      "status": "Independent temporal factor candidate, no promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8,
+        "traversal": "forward"
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "interior_chart",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -90,
+            90
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -90,
+            90
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ],
+          "ankle_angle_l": [
+            -90,
+            90
+          ],
+          "ankle_angle_r": [
+            -90,
+            90
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0,
+      "foot_geometry": "declared_rig",
+      "trajectory_refinement": {
+        "version": "joint_trajectory_v1",
+        "position_scale_m": 0.05,
+        "angle_scale_deg": 5.0,
+        "direction_rate_scale_deg_s": 10.0,
+        "direction_rate_weight": 1.0,
+        "max_nfev": 20,
+        "solver": "bounded_gauss_newton",
+        "linear_max_iter": 50,
+        "linear_lsmr_maxiter": 500,
+        "projected_gradient_fallback": true,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8,
+        "equivalent_seed_chart": "max_margin_v1"
+      },
+      "position_trunk_strategy": "observed_chain_proxy_v1",
+      "trajectory_kinematic_domain": {
+        "base": "preserve_existing",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_rot_l": [
+            -180,
+            180
+          ],
+          "arm_rot_r": [
+            -180,
+            180
+          ]
+        }
+      }
+    },
+    "forward_full_path": {
+      "version": "k4-fit-1",
+      "status": "Explicit development candidate, no default promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "target_balanced_temporal",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -75,
+            75
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -75,
+            75
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0,
+      "coordinated_path": {
+        "version": "fixed_native_anchors_v1",
+        "refinement": {
+          "position_weight": 1.0,
+          "position_scale_m": 0.05,
+          "direction_scale_deg": 5.0,
+          "include_pelvis_line": true,
+          "joint_angle_weight": 1.0,
+          "target_violation_weight": 4.0,
+          "target_margin_fraction": 0.8,
+          "continuity_weight": 0.0,
+          "max_nfev": 60
+        }
+      }
+    },
+    "position_total_proxy": {
+      "version": "k4-fit-1",
+      "status": "Independent temporal factor candidate, no promotion",
+      "independent_geometry": true,
+      "solver": "direction_position_refinement",
+      "constraint_policy": "direct_couplers",
+      "postprocess": "native_preserving",
+      "root_policy": "input_hip_midpoint",
+      "refinement": {
+        "position_scale_m": 0.05,
+        "direction_scale_deg": 5,
+        "position_weight": 1.0,
+        "continuity_weight": 0.02,
+        "max_nfev": 100,
+        "parameter_source": "Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.",
+        "include_pelvis_line": true,
+        "extra_start": "neutral_knee_if_target_failed",
+        "direction_continuity_weight": 0.25,
+        "direction_rate_scale_deg_s": 10.0,
+        "joint_angle_weight": 1.0,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8,
+        "traversal": "forward"
+      },
+      "joint_domain": "Explicit independent kinematic ranges; original asset limits reported separately",
+      "scope": "Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification",
+      "force_eligible": false,
+      "condition": "interior_chart",
+      "initialization": {
+        "strategy": "input_multistart",
+        "seeds": [
+          "nominal",
+          "knee",
+          "heading",
+          "heading_knee"
+        ],
+        "selection": "full_window_weighted_markers",
+        "parameter_source": "022 same-model D-only initialization controls; clip-level selection, fixed original IK weights",
+        "search_ranges_deg": {
+          "hip_flexion_l": [
+            -30,
+            175
+          ],
+          "hip_adduction_l": [
+            -50,
+            30
+          ],
+          "hip_rotation_l": [
+            -40,
+            40
+          ],
+          "hip_flexion_r": [
+            -30,
+            175
+          ],
+          "hip_adduction_r": [
+            -50,
+            30
+          ],
+          "hip_rotation_r": [
+            -40,
+            40
+          ]
+        }
+      },
+      "marker_registration": "owned_joint_frame",
+      "head_neck": "attached_head_neck_v1",
+      "kinematic_domain": {
+        "base": "release_subtalar_original_range",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_flex_l": [
+            -90,
+            160
+          ],
+          "hip_flexion_l": [
+            -180,
+            180
+          ],
+          "subtalar_angle_l": [
+            -90,
+            90
+          ],
+          "arm_flex_r": [
+            -90,
+            160
+          ],
+          "hip_flexion_r": [
+            -180,
+            180
+          ],
+          "subtalar_angle_r": [
+            -90,
+            90
+          ],
+          "knee_angle_l": [
+            0,
+            180
+          ],
+          "knee_angle_r": [
+            0,
+            180
+          ],
+          "hip_adduction_l": [
+            -90,
+            90
+          ],
+          "hip_rotation_l": [
+            -180,
+            180
+          ],
+          "hip_adduction_r": [
+            -90,
+            90
+          ],
+          "hip_rotation_r": [
+            -180,
+            180
+          ],
+          "ankle_angle_l": [
+            -90,
+            90
+          ],
+          "ankle_angle_r": [
+            -90,
+            90
+          ]
+        }
+      },
+      "head_neck_attachment": "input_fixed_offset",
+      "kinematic_coupling": {
+        "version": "knee_auxiliary_hermite_v2",
+        "boundary_deg": 140.0,
+        "end_deg": 180.0,
+        "grid_deg": 0.1
+      },
+      "shoulder_width_source": "observed_rigid_median",
+      "rotation_resampling": "whole_body_so3",
+      "export_clock": "native_multiple",
+      "resample_min_rate_hz": 100.0,
+      "foot_geometry": "declared_rig",
+      "trajectory_refinement": {
+        "version": "joint_trajectory_v1",
+        "position_scale_m": 0.05,
+        "angle_scale_deg": 5.0,
+        "direction_rate_scale_deg_s": 10.0,
+        "direction_rate_weight": 1.0,
+        "max_nfev": 20,
+        "solver": "bounded_gauss_newton",
+        "linear_max_iter": 50,
+        "linear_lsmr_maxiter": 500,
+        "projected_gradient_fallback": true,
+        "target_violation_weight": 4.0,
+        "target_margin_fraction": 0.8,
+        "equivalent_seed_chart": "max_margin_v1"
+      },
+      "position_trunk_strategy": "observed_chain_total_proxy_v1",
+      "trajectory_kinematic_domain": {
+        "base": "preserve_existing",
+        "scope": "independent_kinematic",
+        "coordinate_ranges_deg": {
+          "arm_rot_l": [
+            -180,
+            180
+          ],
+          "arm_rot_r": [
+            -180,
+            180
+          ]
+        }
+      }
+    }
+  },
+  "selection_thresholds": {
+    "angle_deg": 5.0,
+    "position_cm": 5.0,
+    "direction_rate_deg_s": 10.0,
+    "added_step_deg": 5.0
+  },
+  "selection_include_export_path": true,
+  "selection_policy": "observed_then_path_v1",
+  "candidate_requirements": {
+    "rig_centres": {
+      "input_rig": "required"
+    },
+    "rig_arm_domain_centres": {
+      "input_rig": "required"
+    },
+    "rig_reverse_leg_path": {
+      "input_rig": "required"
+    },
+    "rig_reverse_rate_leg_path": {
+      "input_rig": "required"
+    },
+    "position_chain": {
+      "input_rig": "absent"
+    },
+    "position_fixed_foot_chain": {
+      "input_rig": "absent"
+    },
+    "position_trajectory": {
+      "input_rig": "absent"
+    },
+    "position_trajectory_chart": {
+      "input_rig": "absent"
+    },
+    "position_total_proxy": {
+      "input_rig": "absent",
+      "geometry_alternative_to": "position_trajectory_chart"
+    }
+  },
+  "coordinated_export_variants": {
+    "version": "fixed_native_anchors_v1",
+    "refinement": {
+      "position_weight": 1.0,
+      "position_scale_m": 0.05,
+      "direction_scale_deg": 5.0,
+      "include_pelvis_line": true,
+      "joint_angle_weight": 1.0,
+      "target_violation_weight": 4.0,
+      "target_margin_fraction": 0.8,
+      "continuity_weight": 0.0,
+      "max_nfev": 60
+    }
+  }
+}
