@@ -1,0 +1,10 @@
+import json,hashlib,shutil
+from pathlib import Path
+root=Path(__file__).resolve().parents[3];b=Path('/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117')
+audit=b/'position_geometry_eligibility_20261118_v1.json';d=json.loads(audit.read_text());rows=[{'window':r['window'],'method':r['method']} for r in d['records'] if r['geometry_target_changed']]
+assert len(rows)==4 and {(r['window'],r['method']) for r in rows}=={(w,m) for w in ['001','055'] for m in ['motionlcm','omnicontrol']}
+out=root/'config/evalkit_k4_20261118/closure_geometry_transfer_v1';out.mkdir(exist_ok=False)
+for condition in ['control','total_proxy']:shutil.copyfile(root/'config/evalkit_k4_20261118/closure_real_geometry_v1'/(condition+'.json'),out/(condition+'.json'))
+(out/'sentinels.json').write_text(json.dumps({'records':rows,'source':str(audit),'source_sha256':hashlib.sha256(audit.read_bytes()).hexdigest(),'selection':'All four changed fixed geometry targets in input-only164 eligibility audit. No R errors used to select subset. All original windows and masks retained.'},indent=2)+'\n')
+(out/'protocol.json').write_text(json.dumps({'version':'k4-position-total-proxy-transfer-1','strict_scoring':True,'native_export_scoring':True,'conditions':['control','total_proxy'],'new_holdout_uses':0,'promotion':'none','hypothesis':'Only eligibility for fixed total-chain estimate changes; same native solver, initializations, chart, domain, root and export. Four altered development combinations selected by D-only eligibility audit, not by R error. Keep all candidates, including regressions.','acceptance':'Original R independent score, frozen5deg/5cm, native/export D/R clocks, fixed support and source-jump strata, actual file readback; preserve all D-R/F-D/F-R and raw/common geometry.','unchanged_target_count':160,'unchanged_scope':'Proxy values unchanged in other160 position inputs is an input-target invariance result, not final fit qualification; all656 still required.'},indent=2)+'\n')
+print('Registered4 combinations x2 conditions')

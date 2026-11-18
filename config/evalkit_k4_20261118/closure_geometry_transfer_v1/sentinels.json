@@ -1,0 +1,23 @@
+{
+  "records": [
+    {
+      "window": "001",
+      "method": "motionlcm"
+    },
+    {
+      "window": "055",
+      "method": "motionlcm"
+    },
+    {
+      "window": "001",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "055",
+      "method": "omnicontrol"
+    }
+  ],
+  "source": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/position_geometry_eligibility_20261118_v1.json",
+  "source_sha256": "a428358ee188f2c8a942e971b2e6b4166a1bef1d6064b105d69a2ee39fdb56f0",
+  "selection": "All four changed fixed geometry targets in input-only164 eligibility audit. No R errors used to select subset. All original windows and masks retained."
+}

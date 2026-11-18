@@ -1,0 +1,15 @@
+{
+  "version": "k4-position-total-proxy-transfer-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "conditions": [
+    "control",
+    "total_proxy"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Only eligibility for fixed total-chain estimate changes; same native solver, initializations, chart, domain, root and export. Four altered development combinations selected by D-only eligibility audit, not by R error. Keep all candidates, including regressions.",
+  "acceptance": "Original R independent score, frozen5deg/5cm, native/export D/R clocks, fixed support and source-jump strata, actual file readback; preserve all D-R/F-D/F-R and raw/common geometry.",
+  "unchanged_target_count": 160,
+  "unchanged_scope": "Proxy values unchanged in other160 position inputs is an input-target invariance result, not final fit qualification; all656 still required."
+}
