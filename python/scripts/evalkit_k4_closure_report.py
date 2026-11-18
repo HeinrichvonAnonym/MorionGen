@@ -16,6 +16,7 @@ def main():
     p.add_argument('--selection-review',type=Path)
     p.add_argument('--reachability',type=Path)
     p.add_argument('--real-run',type=Path)
+    p.add_argument('--real-geometry-run',type=Path)
     p.add_argument('--output',type=Path,required=True)
     a=p.parse_args();groups=defaultdict(list);completed=passed=execution_failed=0
     for path in sorted((a.frozen_run/'tasks').glob('*/result.json')):
@@ -33,6 +34,22 @@ def main():
                'direction_rate_vector_error_deg_s':'方向变化率误差','output_step_deg':'最大角步长',
                'directions_deg':'方向角','positions_cm':'位置','joint_angles_deg':'几何夹角','world':'世界坐标'}
         return '／'.join(names.get(part,names.get(part.split('_')[0],'')+names.get('_'.join(part.split('_')[1:]),part)) for part in value.split('/'))
+    def fidelity_details(file):
+        fidelity=json.loads(file.read_text());parts=[]
+        def stat_cell(stat):
+            value=stat.get('p95')
+            return ('未知' if value is None else f'{value:.4f}')+f'（{stat.get("n",0)}/{stat.get("denominator",0)}）'
+        for view,metrics in fidelity['views'].items():
+            body=[]
+            for kind in ('directions_deg','joint_angles_deg'):
+                for name,stat in metrics[kind].items():
+                    body.append(f'<tr><td>{esc(metric_label(name))}</td><td>{stat_cell(stat)}°</td><td>—</td></tr>')
+            for name,values in metrics['positions_cm'].items():
+                body.append(f'<tr><td>{esc(metric_label(name))}</td><td>{stat_cell(values["world"])}cm</td><td>{stat_cell(values["common_length_world"])}cm</td></tr>')
+            for name,values in metrics['temporal'].items():
+                body.append(f'<tr><td>{esc(metric_label(name))}变化率</td><td>{stat_cell(values["direction_rate_vector_error_deg_s"])}°/s</td><td>—</td></tr>')
+            parts.append(f'<details><summary>{esc(view)}：F−D P95／有效帧数</summary><table><tr><th>指标</th><th>原始几何</th><th>统一D骨长</th></tr>'+''.join(body)+'</table></details>')
+        return ''.join(parts)
     table=[]
     for w,rows in groups.items():
         pose=sorted({x['metric'] for row in rows for x in row['failed_metrics'] if x['status']=='target_failed'})
@@ -116,29 +133,27 @@ def main():
         audit=json.loads((a.real_run/'input_audit.json').read_text())
         for item in audit['rows']:
             folder=a.real_run/item['method'];status=json.loads((folder/'status.json').read_text()) if (folder/'status.json').exists() else {}
-            state={'completed':'拟合与保真报告已生成','failed':'执行失败'}.get(status.get('status'),'运行中')
+            state={'completed':'拟合与保真报告已生成','failed':'执行失败'}.get(status.get('status'),'运行中' if folder.exists() else '等待执行')
             if not status and (folder/'fit/candidates').exists():
                 state+=f'：{len(list((folder/"fit/candidates").glob("*/receipt.json")))}个候选拟合已保存'
             source='原生旋转存在；共同段坐标声明待接通' if item['raw_segment_rotations'] and not item['declared_rig'] else '位置输入；独立段旋转不可用'
             detail='拟合完成后生成逐部位保真度'
             if (folder/'fidelity.json').exists():
-                fidelity=json.loads((folder/'fidelity.json').read_text());parts=[]
-                def stat_cell(stat):
-                    value=stat.get('p95')
-                    return ('未知' if value is None else f'{value:.4f}')+f'（{stat.get("n",0)}/{stat.get("denominator",0)}）'
-                for view,metrics in fidelity['views'].items():
-                    body=[]
-                    for kind in ('directions_deg','joint_angles_deg'):
-                        for name,stat in metrics[kind].items():
-                            body.append(f'<tr><td>{esc(metric_label(name))}</td><td>{stat_cell(stat)}°</td><td>—</td></tr>')
-                    for name,values in metrics['positions_cm'].items():
-                        body.append(f'<tr><td>{esc(metric_label(name))}</td><td>{stat_cell(values["world"])}cm</td><td>{stat_cell(values["common_length_world"])}cm</td></tr>')
-                    for name,values in metrics['temporal'].items():
-                        body.append(f'<tr><td>{esc(metric_label(name))}变化率</td><td>{stat_cell(values["direction_rate_vector_error_deg_s"])}°/s</td><td>—</td></tr>')
-                    parts.append(f'<details><summary>{esc(view)}：F−D P95／有效帧数</summary><table><tr><th>指标</th><th>原始几何</th><th>统一D骨长</th></tr>'+''.join(body)+'</table></details>')
-                detail=''.join(parts)
+                detail=fidelity_details(folder/'fidelity.json')
             rows.append(f'<tr><td>{esc(item["method"])}</td><td>{item["frames"]}</td><td>{esc(state)}</td><td>{esc(status.get("selected","待选择"))}</td><td>{esc(source)}</td><td>{detail}</td></tr>')
         sections.append('<section><h3>八份真实基线输出：单独检验F−D</h3><p>读取核查8/8成功。它们没有配对原动作R，不计入656路端到端结果；原生／实际导出保真度与文件回读分别记录。六旋转格式的数据实际存在，当前接口缺少旧样例的共同段坐标转换声明，不能把该工程缺口写成数据无旋转。详情中的分母保留完整输入时钟；未知项和拟合缺测继续保留。</p><div class="scroll"><table><tr><th>格式</th><th>输入帧</th><th>进度</th><th>选择</th><th>旋转接口状态</th><th>F−D详情</th></tr>'+''.join(rows)+'</table></div></section>')
+    if a.real_geometry_run:
+        protocol=json.loads((a.real_geometry_run/'protocol.json').read_text());rows=[]
+        for entry in protocol['records']:
+            for condition in protocol['conditions']:
+                folder=a.real_geometry_run/condition/entry['method']
+                state=json.loads((folder/'status.json').read_text()) if (folder/'status.json').exists() else {}
+                auditfile=folder/'actual_export/audit.json'
+                audit=json.loads(auditfile.read_text()) if auditfile.exists() else {}
+                fidelity=folder/'fidelity.json'
+                detail=fidelity_details(fidelity) if fidelity.exists() else '拟合及评分待完成'
+                rows.append(f'<tr><td>{esc(entry["method"])}</td><td>{esc(condition)}</td><td>{esc({"completed":"完成","failed":"执行失败"}.get(state.get("status"),"运行中" if folder.exists() else "等待执行"))}</td><td>{"通过" if audit.get("passed") else "待完成" if not audit else "未通过"}</td><td>{detail}</td></tr>')
+        sections.append('<section><h3>真实位置输入：固定几何单因素对照</h3><p>control与total_proxy使用同一真实生成动作，仅改变有效链长估计的稳定性规则。前三级脊柱逐段检查，派生肩中点末段的变化传播到总链长；估计保持片段内固定，中立长度仍未知。两条件均保留，F−D保真度与受控原动作验收分开；此处没有配对R。</p><div class="scroll"><table><tr><th>格式</th><th>条件</th><th>进度</th><th>实际回读</th><th>原生／导出F−D</th></tr>'+''.join(rows)+'</table></div></section>')
     timestamp=datetime.now(timezone.utc).astimezone(__import__('zoneinfo').ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds')
     document='''<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>K4 新增失败与独立优化</title><style>
 body{font:16px/1.65 system-ui,sans-serif;color:#173346;background:#f5f8fa;margin:0}main{max-width:1450px;margin:auto;padding:28px}h1{font-size:30px}h2{margin-top:36px}section,.card{background:white;border:1px solid #d6e2e7;border-radius:8px;padding:20px;margin:20px 0}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:9px;border-bottom:1px solid #dde6eb;text-align:left;vertical-align:top}th{background:#edf3f6}.passed{color:#167252}.failed{color:#ad4136}summary{cursor:pointer}details{max-width:500px;overflow-wrap:anywhere}.muted{color:#546c79}a{color:#136c9e}@media print{body{background:white}main{padding:0}.scroll{overflow:visible}table{font-size:10px}section{break-inside:avoid}details{display:block}}
