@@ -1,0 +1,150 @@
+{
+  "files": [
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/latest.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/latest.json",
+      "sha256": "f1cd056a6969cf806f6ee94ed7c16b19dd86ba756a99f869de5f47044b55f121",
+      "bytes": 15691969
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_110605.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_110605.json",
+      "sha256": "d322a0c24c32e134e95b646f7dd9853e4385a32d8e07d09f3bd083428d9cdb07",
+      "bytes": 5093778
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_110800.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_110800.json",
+      "sha256": "0e1ce927ffca3b4d97de134d6afb20cf6887a4e8215f7400176ad281c05a2de6",
+      "bytes": 5452008
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_111008.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_111008.json",
+      "sha256": "bcbededfc83ae1193d429af48eba517675793178f495e21c99862c95656a0c4b",
+      "bytes": 5882795
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_111405.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_111405.json",
+      "sha256": "2c47f23d3c07bed1c2878f19ce48d5c4fd7abd35872dade0e637599300724a47",
+      "bytes": 6558186
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_111559.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_111559.json",
+      "sha256": "1b36f9514d4e6d2a9785a098da971a5fe154b9af018ccdcf2ef119748c76d2eb",
+      "bytes": 6870650
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_111811.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_111811.json",
+      "sha256": "cb5f3a60c7a87697293f6a7e261aebb1cbb264685516efde9eec06b65527d37d",
+      "bytes": 7082664
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_112238.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_112238.json",
+      "sha256": "68a8d24329e5945391e95e8b934d38fc0e4fb6c245c9225715be508ba856f84f",
+      "bytes": 7549492
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_112852.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_112852.json",
+      "sha256": "f70091ec879d1424ef5d0615c8c498b33e2f6f2b374169a092591bf2c30194ac",
+      "bytes": 8268971
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_113129.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_113129.json",
+      "sha256": "01b54db48a193d488431554af8c99ad565c4bd7a72cb335383a8ca0f3c8a295b",
+      "bytes": 8550334
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_113847.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_113847.json",
+      "sha256": "ddabb98f4d1cfa88f1b0d5f93ef337bc56f7f7ee0d78719e8e540f4619cb19e0",
+      "bytes": 9372902
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_114110.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_114110.json",
+      "sha256": "e5809446e13cd45498f3d7e1739a1423080b54002aa29b76888ac8c76c938742",
+      "bytes": 9517005
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_114509.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_114509.json",
+      "sha256": "92dfa09208927539b7190f0ad37f6c9bd348179887ef37b0a84a77b9d17f373a",
+      "bytes": 9698535
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_115106.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_115106.json",
+      "sha256": "d93d55153ad1364ac46d55a8e9d0e972a9cb3fc64991fe418a75018155d7b81d",
+      "bytes": 10010082
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_120223.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_120223.json",
+      "sha256": "e2458a106abdc6fb8972997bd61cc538a05bf66d73da220c6dc0ff786842a45f",
+      "bytes": 10832378
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_120947.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_120947.json",
+      "sha256": "d622e31c04f0f800e59d34e756b53de2a1c811b755b307ea78e082ddc07e4aca",
+      "bytes": 11268430
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_121508.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_121508.json",
+      "sha256": "f87b87763727a4d226f48ea7f468c8e91c972060a713ee7cc7596eac2062967e",
+      "bytes": 11627526
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_121718.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_121718.json",
+      "sha256": "e471f762870a38887da28a3713754c8d8d6f8130cb678c026e698ebda205c352",
+      "bytes": 11714302
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_124047.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_124047.json",
+      "sha256": "0f1d36ce4aaf72c7c19ccdbae12383cf1ac35b292bb05aba0a3dd46274c598a9",
+      "bytes": 13327651
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_131255.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_131255.json",
+      "sha256": "df97a8f5595819061a884b54dc0b938396c69af9673c51411f0160b952c6acc0",
+      "bytes": 14165235
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_133726.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_133726.json",
+      "sha256": "48fa92e28088638e2c80fbdc115640a786d496617905244426929ea30e9b3572",
+      "bytes": 14468859
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_134856.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_134856.json",
+      "sha256": "b62f19eb2ecb8f1b0dc63abf460854d6d791ed6d7148969389bbb95a8a421928",
+      "bytes": 14684187
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/snapshot_144859.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/snapshot_144859.json",
+      "sha256": "f1cd056a6969cf806f6ee94ed7c16b19dd86ba756a99f869de5f47044b55f121",
+      "bytes": 15691969
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/watch_latest.json",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/snapshots/watch_latest.json",
+      "sha256": "bd0b539d0ab96d2e1216f213983d6e5402f9f66560eeca78c85a85c2ce44e60d",
+      "bytes": 2000
+    }
+  ],
+  "data_lost": false,
+  "verified_identical": true
+}

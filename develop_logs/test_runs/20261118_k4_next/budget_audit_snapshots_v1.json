@@ -1,0 +1,22 @@
+[
+  {
+    "source": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/pool_candidates/review.json",
+    "preserved_snapshot": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/pool_candidates/review_frozen_budget_v1.json",
+    "sha256": "6352bab34c149247ad4fa8ae790178f5f3a837d5959e6f95a680e8ce6aa7bdb2"
+  },
+  {
+    "source": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/pool_candidates/requested_review.json",
+    "preserved_snapshot": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/pool_candidates/requested_review_frozen_budget_v1.json",
+    "sha256": "b53a333018020a730444552f68eda7f75d55b561298c8a58f5f46f1e44733660"
+  },
+  {
+    "source": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/composed_pool_candidates/review.json",
+    "preserved_snapshot": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/composed_pool_candidates/review_frozen_budget_v1.json",
+    "sha256": "c3e2ae4e19dcfe98013a1033a5ea677a80a8a51f1b3eb4f387b0ee5052a74ae8"
+  },
+  {
+    "source": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/composed_pool_candidates/requested_review.json",
+    "preserved_snapshot": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/composed_pool_candidates/requested_review_frozen_budget_v1.json",
+    "sha256": "f3b77049bc112dd0b7ac4e493cb1004cde161b56de7be7cb672e800445e815ba"
+  }
+]

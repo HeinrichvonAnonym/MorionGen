@@ -1,0 +1,72 @@
+{
+  "source_file": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_next/candidate_budget_diagnostic_v1.json",
+  "source_sha256": "853c58b4fb2cb276b756ec4b8b0366b992d4c758f8a82f3136e6e2f9590fdc5c",
+  "requests": [
+    {
+      "run": "closure_pool_transfer_20261118_v1",
+      "window": "069",
+      "method": "dart",
+      "candidate": "pelvis_continuity"
+    },
+    {
+      "run": "closure_pool_transfer_20261118_v1",
+      "window": "069",
+      "method": "kimodo",
+      "candidate": "pelvis_continuity"
+    },
+    {
+      "run": "closure_pool_transfer_20261118_v1",
+      "window": "069",
+      "method": "primal",
+      "candidate": "pelvis_continuity"
+    },
+    {
+      "run": "closure_pool_transfer_20261118_v1",
+      "window": "070",
+      "method": "chois",
+      "candidate": "forward_full_path"
+    },
+    {
+      "run": "closure_composed_pool_20261118_v1",
+      "window": "022",
+      "method": "omnicontrol",
+      "candidate": "pelvis_continuity"
+    },
+    {
+      "run": "closure_composed_pool_20261118_v1",
+      "window": "069",
+      "method": "ardy",
+      "candidate": "pelvis_continuity"
+    },
+    {
+      "run": "closure_composed_pool_20261118_v1",
+      "window": "069",
+      "method": "chois",
+      "candidate": "pelvis_continuity"
+    },
+    {
+      "run": "closure_composed_pool_20261118_v1",
+      "window": "069",
+      "method": "closd",
+      "candidate": "pelvis_continuity"
+    },
+    {
+      "run": "closure_composed_pool_20261118_v1",
+      "window": "069",
+      "method": "dart",
+      "candidate": "pelvis_continuity"
+    },
+    {
+      "run": "closure_composed_pool_20261118_v1",
+      "window": "069",
+      "method": "kimodo",
+      "candidate": "pelvis_continuity"
+    },
+    {
+      "run": "closure_composed_pool_20261118_v1",
+      "window": "069",
+      "method": "primal",
+      "candidate": "pelvis_continuity"
+    }
+  ]
+}

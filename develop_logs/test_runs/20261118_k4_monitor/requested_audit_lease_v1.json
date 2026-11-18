@@ -1,0 +1,126 @@
+{
+  "started_at": "2026-11-18T15:41:19.661623+08:00",
+  "controller_pid": 288821,
+  "scope": "Pause only waiting full-v2 controller; existing fitting children untouched. Sequential explicit candidate audit, no fitting.",
+  "full_review_before_sha256": {
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/pool_candidates/review.json": "6352bab34c149247ad4fa8ae790178f5f3a837d5959e6f95a680e8ce6aa7bdb2",
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/composed_pool_candidates/review.json": "c3e2ae4e19dcfe98013a1033a5ea677a80a8a51f1b3eb4f387b0ee5052a74ae8"
+  },
+  "progress_before": {
+    "state": "waiting_for_registered_runs",
+    "stage": null,
+    "expected": 656,
+    "finished": 0,
+    "completed": 0,
+    "failed": 0,
+    "passed": 0,
+    "waiting_for": [
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_pool_transfer_20261118_v1/completion.json",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_composed_pool_20261118_v1/completion.json",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_pool_transfer_20261118_v1",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_composed_pool_20261118_v1"
+    ]
+  },
+  "process_state_before": "State:\tS (sleeping)",
+  "process_starttime": "35329089",
+  "controller_cmdline_sha256": "4ddde329c5327edf8d5c194391bba5e6bcb5ec1bc94a01ece6a4427ac4cd3819",
+  "children_before": [],
+  "numerical_before": [
+    {
+      "pid": 286824,
+      "script": "evalkit_k4_run.py"
+    },
+    {
+      "pid": 287946,
+      "script": "evalkit_k4_run.py"
+    },
+    {
+      "pid": 292705,
+      "script": "evalkit_k4_run.py"
+    },
+    {
+      "pid": 294765,
+      "script": "evalkit_k4_trajectory_replay.py"
+    }
+  ],
+  "stop_sent_at": "2026-11-18T15:41:19.673431+08:00",
+  "process_state_stopped": "State:\tT (stopped)",
+  "children_after_stop": [],
+  "commands": [
+    {
+      "script": "pool_candidate_audit.py",
+      "started_at": "2026-11-18T15:41:19.684712+08:00",
+      "numerical_before": [
+        {
+          "pid": 286824,
+          "script": "evalkit_k4_run.py"
+        },
+        {
+          "pid": 287946,
+          "script": "evalkit_k4_run.py"
+        },
+        {
+          "pid": 292705,
+          "script": "evalkit_k4_run.py"
+        },
+        {
+          "pid": 294765,
+          "script": "evalkit_k4_trajectory_replay.py"
+        }
+      ],
+      "finished_at": "2026-11-18T15:41:43.625083+08:00",
+      "returncode": 0
+    },
+    {
+      "script": "composed_pool_candidate_audit.py",
+      "started_at": "2026-11-18T15:41:43.633672+08:00",
+      "numerical_before": [
+        {
+          "pid": 286824,
+          "script": "evalkit_k4_run.py"
+        },
+        {
+          "pid": 287946,
+          "script": "evalkit_k4_run.py"
+        },
+        {
+          "pid": 292705,
+          "script": "evalkit_k4_run.py"
+        },
+        {
+          "pid": 294765,
+          "script": "evalkit_k4_trajectory_replay.py"
+        }
+      ],
+      "finished_at": "2026-11-18T15:42:25.365131+08:00",
+      "returncode": 0
+    }
+  ],
+  "requested_outputs": {
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/pool_candidates/requested_review.json": {
+      "sha256": "b53a333018020a730444552f68eda7f75d55b561298c8a58f5f46f1e44733660",
+      "expected": 4,
+      "completed": 4,
+      "passed": 4,
+      "metric_failed": 0,
+      "pending": 0
+    },
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/composed_pool_candidates/requested_review.json": {
+      "sha256": "f3b77049bc112dd0b7ac4e493cb1004cde161b56de7be7cb672e800445e815ba",
+      "expected": 7,
+      "completed": 7,
+      "passed": 7,
+      "metric_failed": 0,
+      "pending": 0
+    }
+  },
+  "full_review_after_sha256": {
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/pool_candidates/review.json": "6352bab34c149247ad4fa8ae790178f5f3a837d5959e6f95a680e8ce6aa7bdb2",
+    "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/composed_pool_candidates/review.json": "c3e2ae4e19dcfe98013a1033a5ea677a80a8a51f1b3eb4f387b0ee5052a74ae8"
+  },
+  "full_reviews_unchanged": true,
+  "status": "completed",
+  "continue_sent_at": "2026-11-18T15:42:25.370422+08:00",
+  "resumed": true,
+  "finished_at": "2026-11-18T15:42:25.370481+08:00"
+}

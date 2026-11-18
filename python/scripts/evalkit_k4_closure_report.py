@@ -18,6 +18,10 @@ def main():
     p.add_argument('--real-run',type=Path)
     p.add_argument('--real-geometry-run',type=Path)
     p.add_argument('--unified-run',type=Path)
+    p.add_argument('--unified-live-port',type=int,default=8767)
+    p.add_argument('--budget-review',type=Path)
+    p.add_argument('--pool-visual',type=Path)
+    p.add_argument('--evidence-report',type=Path)
     p.add_argument('--actual-ablation-run',type=Path,action='append',default=[])
     p.add_argument('--output',type=Path,required=True)
     a=p.parse_args();groups=defaultdict(list);completed=passed=execution_failed=0
@@ -180,8 +184,18 @@ body{font:16px/1.65 system-ui,sans-serif;color:#173346;background:#f5f8fa;margin
             document+=f'<section><h3>新增几何证据：真实MotionLCM的固定模型匹配</h3><p>仅改变有效链长估计的准入规则，右肩F−D位置P95从{first["right_shoulder"]["world"]["p95"]:.3f}降到{second["right_shoulder"]["world"]["p95"]:.3f}cm；头／颈统一D骨长位置从{first["head"]["common_length_world"]["p95"]:.3f}降到{second["head"]["common_length_world"]["p95"]:.3f}cm。模型几何仍为片段内固定。此例支持派生肩中点的波动触发旧几何回退、进而影响拟合的解释。</p><p>这是单份真实输出的输入保真度对照，没有配对原动作R；两条件完整指标见后文。中立长度仍属未知，当前冻结候选库保持原值，开发集迁移及采样间路径另验。</p></section>'
     if a.unified_run and (a.unified_run/'progress.json').exists():
         progress=json.loads((a.unified_run/'progress.json').read_text())
+        active_protocol=json.loads((a.unified_run/'protocol.json').read_text())
+        active_title=esc(active_protocol.get('report_title','统一候选：完整656路'))
+        active_page=esc(Path(active_protocol['html_report']).name)
         states={'waiting_for_registered_runs':'等待前序实验及独立验收','running':'运行中','validation_stage_failed':'阶段未通过，后续待执行','completed':'本版本执行结束'}
-        document+=f'<section><h3>统一候选v2：完整656路</h3><p>{esc(states.get(progress.get("state"),progress.get("state")))}；已完成{progress.get("completed",0)}/656，通过{progress.get("passed",0)}/656，执行失败{progress.get("failed",0)}。这是同一新实现的完整开发回归，按27个统一检查、38个格式缺口、其余591路依次验收；每阶段保留全部分母。</p><p><a href="http://127.0.0.1:8767/docs/20261118_k4_unified_full_regression.html">打开统一v2动态报告</a> · <a href="20261118_k4_unified_full_regression.html">离线快照</a>。本卡片是本页生成时的快照；实时进度见动态报告。旧656结果继续单独保留。</p></section>'
+        document+=f'<section><h3>{active_title}</h3><p>{esc(states.get(progress.get("state"),progress.get("state")))}；已完成{progress.get("completed",0)}/656，通过{progress.get("passed",0)}/656，执行失败{progress.get("failed",0)}。这是同一新实现的完整开发回归，按27个统一检查、38个格式缺口、其余591路依次验收；每阶段保留全部分母。</p><p><a href="http://127.0.0.1:{a.unified_live_port}/docs/{active_page}">打开当前版本动态报告</a> · <a href="{active_page}">离线快照</a>。本卡片是本页生成时的快照；实时进度见动态报告。旧656结果继续单独保留。</p></section>'
+    if a.evidence_report and a.evidence_report.exists():
+        document+=f'<p><a href="{esc(a.evidence_report.name)}">打开当前版本逐路完整指标快照</a>：原生与实际导出、D／R时钟、三类误差及骨长口径可分别查看；保留656路完整分母。</p>'
+    if a.budget_review:
+        budget=json.loads(a.budget_review.read_text())['summary']
+        document+=f'<section><h3>候选计算预算：单独验证输入选择</h3><p>按预登记顺序，首个覆盖完整、所有输入及导出路径指标均低于原目标0.8倍的候选可以提前结束搜索；未满足时仍执行原完整池。只读回放{budget["records"]}条原生／组合配对记录，覆盖{budget["unique_window_format_pairs"]}个窗口—格式组合、{budget["unique_original_windows"]}个原始动作；独立验收{budget["passed"]}通过、{budget["failed"]}未通过、{budget["unknown"]}待验。候选数量节省尚不能换算实际运行时间。该功能在默认接口中关闭，在独立预算v3中显式启用；当前完整开发回归会验证实际执行和656路结果。旧完整池与全部已生成候选保留。</p></section>'
+    if a.pool_visual and a.pool_visual.exists():
+        document+=f'<p><a href="{esc(a.pool_visual.name)}">查看当前实际选择：原动作、退化输入、模型FK与旧冻结结果四组动画</a>。使用原动作时钟及共同世界坐标；各窗口验收和待完成数量在动画页中分别标明。</p>'
     document+='<h2>因果证据与剩余问题</h2><section><p><b>002：</b>六旋转格式已在反向＋变化率候选通过局部验收。两位置格式采用输入估计的片段内固定足端，再配合已有链长代理，通过完整原生／导出及两套时钟；足端单因素保留为肩线边界失败对照。统一候选选择与广泛迁移继续检验。</p><p><b>008：</b>位置链长代理在MotionLCM、OmniControl通过；中立长度仍属于明确估计，其他姿态单独检验。</p><p><b>010：</b>原生近伸直阶段出现髋—距下补偿分支切换。反向候选改善原生结果，导出中间状态仍突跳。新增跨关节协调已在固定轨迹的隔离实验通过，以模型FK产生插入帧；已通过的运行入口及其他候选见下表，跨格式迁移继续验收。</p><p><b>新增肩躯干与膝足失败：</b>持续前倾／肩线倾斜、深屈膝下分别验证固定几何、范围和求解。触边是诊断线索，配对实验才用于因果判断。</p></section>'
     if a.rotation_replay:
         document+='<section><h3>本轮路径与支持标记核查</h3><p><b>032：</b>保持原生拟合不变，全身协调路径在Kimodo、MotionLCM通过两套时钟及文件回读；原SO(3)导出在R时钟仍有时序超标。</p><p><b>010 CHOIS：</b>进一步查到节点别名错误：先验手端点与真实wrist_body腕点在统一命名后发生支持标记混淆，旧路径求解因此整段跳过。此前“缺腕观测”的阶段解释已修正。新版本让位置与支持元数据共用别名映射；原始输入与评分口径保持。此前部分目标及腿部限定候选完整保留，新的完整支持回放见下表。</p><p><b>073、077：</b>073通过链长几何、整段目标及肩轴向域的配对对照获得完整通过候选；077进一步通过保持FK的等价欧拉坐标切换解除局部求解障碍。局部验收与数值收敛分别报告，优化预算耗尽仍保留；默认配置尚未晋升，23组合统一候选库正在检验运行时能否选对结果。</p></section>'

@@ -1,0 +1,18 @@
+{
+  "manifest": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/relocation_v1.json",
+  "sha256": "d2c10c2ef4f3fb01c4cdfceb4ee25a8eb3dab95cc7158beb540562b35090a33b",
+  "caches": [
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/pool_candidates",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/pool_candidates",
+      "bytes": 574449901,
+      "verified_identical": true
+    },
+    {
+      "logical_path": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/composed_pool_candidates",
+      "physical_path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/monitor_cache_20261118/composed_pool_candidates",
+      "bytes": 787175913,
+      "verified_identical": true
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "version": "k4-selected-pool-visuals-1",
+  "records": [
+    {
+      "window": "000",
+      "method": "kimodo"
+    },
+    {
+      "window": "008",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "010",
+      "method": "kimodo"
+    },
+    {
+      "window": "017",
+      "method": "chois"
+    },
+    {
+      "window": "022",
+      "method": "motionlcm"
+    },
+    {
+      "window": "070",
+      "method": "chois"
+    },
+    {
+      "window": "074",
+      "method": "kimodo"
+    }
+  ],
+  "scope": "Preselected paired typical/known-failure transfer cases; show all when completed, retain pending count. R clock, same world coordinates, current model FK and old frozen FK separately."
+}
