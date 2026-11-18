@@ -60,6 +60,8 @@ def fit(run,work,mass,floor,config):
     if settings.get('version')!='k4-fit-1':raise ValueError('Unsupported K4 fit configuration')
     if settings.get('solver') not in ('nominal_model_marker_IK','direction_position_refinement'):
         raise ValueError('Unsupported K4 solver')
+    if settings.get('trajectory_refinement') and settings['solver']!='direction_position_refinement':
+        raise ValueError('Trajectory refinement requires the direction-position native seed')
     if settings.get('root_policy') not in ('IK','input_hip_midpoint'):
         raise ValueError('Unsupported K4 root policy')
     if settings.get('hip_rotation_resampling') and settings.get('postprocess')!='native_preserving':
@@ -123,6 +125,17 @@ def fit(run,work,mass,floor,config):
             body_targets,body_target_receipt=targets(motion)
         native,refinement=refine(out/'model.osim',labels,native,points,names,settings['refinement'],body_targets,times=motion.times)
         refinement['body_target_source']=body_target_receipt
+        if settings.get('trajectory_refinement'):
+            if body_targets:raise ValueError('Trajectory objective has no native body-frame targets; select a compatible configuration')
+            from .trajectory import refine as refine_trajectory
+            write_coordinates(out/'coordinates_before_trajectory.mot',nt,labels,native)
+            observed=np.array(points,copy=True)
+            for prior in motion.provenance.get('degradation',{}).get('prior_joints',[]):
+                n=prior.removesuffix('_body')
+                if n in names:observed[:,names.index(n)]=np.nan
+            native,candidate,trajectory=refine_trajectory(out/'model.osim',labels,native,observed,names,motion.times,settings['trajectory_refinement'])
+            write_coordinates(out/'coordinates_trajectory_candidate.mot',nt,labels,candidate)
+            (out/'trajectory_refinement.json').write_text(json.dumps(trajectory,indent=2)+'\n')
         write_coordinates(out/'coordinates_refined_native.mot',nt,labels,native)
         (out/'refinement.json').write_text(json.dumps(refinement,indent=2)+'\n')
     rotation_resampling=None;export_clock_receipt={'policy':clock_policy}

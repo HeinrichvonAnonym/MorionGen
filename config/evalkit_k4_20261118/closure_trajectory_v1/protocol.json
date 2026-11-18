@@ -1,0 +1,21 @@
+{
+  "version": "k4-joint-native-trajectory-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "conditions": [
+    "control",
+    "trajectory_quarter",
+    "trajectory_one"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Jointly optimize all native poses on the same fixed model and ranges as forward control. Compare quarter/unit dimensionless weights on derivative of model-minus-input unit-direction error. No raw speed or Euler-coordinate smoothing. Test original-model feasibility before any additional domain changes.",
+  "selection": "Same conditions for all records; no reference motion, reference lengths or IDs enter fitting. Preserve pre-trajectory seed and optimized coordinates. Objective improvement only permits a candidate; independent R scoring decides accuracy.",
+  "parameter_basis": "5deg/5cm/10deg-per-second are existing engineering scales; .25 and1 are prospective objective-weight ablations, not physiological constants; max20 evaluations is a compute cap recorded with convergence diagnostics.",
+  "preregistration": "Five fixed development combinations x three conditions =15.000 is a passing regression control. Existing23 and original656 unchanged.",
+  "resources": {
+    "workers": 1,
+    "numeric_threads": 1,
+    "disk_reserve_GiB": 80
+  }
+}
