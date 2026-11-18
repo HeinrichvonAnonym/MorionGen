@@ -41,13 +41,20 @@ def main():
     sections=[];runtime_010_passed=False
     for run in a.candidate_run:
         progress=run/'progress.json';review=run/'review.json'
+        candidate_stages=[]
+        for job in sorted((run/'tasks').glob('*/*/runtime_job.json')):
+            payload=json.loads(job.read_text());fit=Path(payload['output'])
+            if not (fit/'candidates').exists() or (job.parent/'status.json').exists():continue
+            ready=sorted(path.parent.name for path in (fit/'candidates').glob('*/receipt.json'))
+            candidate_stages.append(f'<li>{esc(job.parent.name)}：{len(ready)}个候选拟合已保存；整路选择及独立验收待完成。<details><summary>已保存候选</summary>{esc("、".join(ready) or "首个候选运行中")}</details></li>')
+        stage_html='<ul>'+''.join(candidate_stages)+'</ul>' if candidate_stages else ''
         if not review.exists():
             d=json.loads(progress.read_text()) if progress.exists() else {}
             n=sum(r['status']=='completed' for r in d.get('results',[]))
             expected=d.get('expected')
             if expected is None and (run/'panel.json').exists():
                 expected=len(json.loads((run/'panel.json').read_text())['records'])*len(json.loads((run/'protocol.json').read_text())['conditions'])
-            sections.append(f'<section><h3>{esc(run.name)}</h3><p>已完成{n}/{esc(expected or "待登记")}路；独立验收待完成。执行进度与通过数量分开统计。</p></section>');continue
+            sections.append(f'<section><h3>{esc(run.name)}</h3><p>已完成{n}/{esc(expected or "待登记")}路；独立验收待完成。执行进度与通过数量分开统计。</p>{stage_html}</section>');continue
         d=json.loads(review.read_text());rows=[]
         for r in d['records']:
             if r['window']=='010' and r['condition']=='reverse_path' and r.get('passed'):
@@ -58,7 +65,7 @@ def main():
                 columns.append(f'<td class="{esc(state)}">{esc({"passed":"通过","failed":"未通过","pending":"待完成"}.get(state,state))}</td>')
             failure='；'.join(f'{x["view"]}/{x["clock"]}: {x["metric"]} = {x.get("p95",x.get("candidate","覆盖不足"))}' for x in r.get('failures',[]))
             rows.append(f'<tr><td>{esc(r["window"])}</td><td>{esc(r["method"])}</td><td>{esc(r["condition"])}</td>{"".join(columns)}<td><details><summary>{"完整通过" if r.get("passed") else "查看未通过项"}</summary>{esc(failure or ("无超标项；仍需迁移回归" if r.get("passed") else "该条件尚未完成独立验收"))}</details></td></tr>')
-        sections.append(f'<section><h3>{esc(run.name)}</h3><p>已完成{d["completed"]}/{d["expected"]}路，其中验收通过{d["passed"]}路；执行失败{d["execution_failed"]}。候选均未晋升默认。</p><div class="scroll"><table><thead><tr><th>窗口</th><th>格式</th><th>条件</th><th>原生D时钟</th><th>原生R时钟</th><th>导出D时钟</th><th>导出R时钟</th><th>详情</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div></section>')
+        sections.append(f'<section><h3>{esc(run.name)}</h3><p>已完成{d["completed"]}/{d["expected"]}路，其中验收通过{d["passed"]}路；执行失败{d["execution_failed"]}。候选均未晋升默认。</p>{stage_html}<div class="scroll"><table><thead><tr><th>窗口</th><th>格式</th><th>条件</th><th>原生D时钟</th><th>原生R时钟</th><th>导出D时钟</th><th>导出R时钟</th><th>详情</th></tr></thead><tbody>{"".join(rows)}</tbody></table></div></section>')
     for replay in a.path_replay:
         receipt=replay/'acceptance.json'
         if not receipt.exists():continue
@@ -110,6 +117,8 @@ def main():
         for item in audit['rows']:
             folder=a.real_run/item['method'];status=json.loads((folder/'status.json').read_text()) if (folder/'status.json').exists() else {}
             state={'completed':'拟合与保真报告已生成','failed':'执行失败'}.get(status.get('status'),'运行中')
+            if not status and (folder/'fit/candidates').exists():
+                state+=f'：{len(list((folder/"fit/candidates").glob("*/receipt.json")))}个候选拟合已保存'
             source='原生旋转存在；共同段坐标声明待接通' if item['raw_segment_rotations'] and not item['declared_rig'] else '位置输入；独立段旋转不可用'
             detail='拟合完成后生成逐部位保真度'
             if (folder/'fidelity.json').exists():

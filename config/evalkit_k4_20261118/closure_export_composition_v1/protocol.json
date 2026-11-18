@@ -1,0 +1,40 @@
+{
+  "records": [
+    {
+      "window": "010",
+      "method": "motionlcm",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/010/motionlcm/candidate",
+      "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_transfer_20261118_v1/fits/chain/010/motionlcm",
+      "source_sha256": {
+        "receipt.json": "5b0ee5af024bb82d795c6f7ed5438ffdca089b12a02ca3ea7866d330ed8bbc08",
+        "model.osim": "676b1d7358a21bc4878f8c0dc22464133f81ee11c80050fc01828f4b92aa93bf",
+        "coordinates_refined_native.mot": "9537007c8dd2abbcf427b7c76f67b71f204ee18a49a85641474cc1629179e750",
+        "head_neck_model.json": "e2929409206ff0ae8217c04b308c61fd3ad32bf43bc2f6637795adedc526b43a",
+        "fit.npz": "b1fd4c1ddac8c495ffb7de9ce92585912e889792ac27afcb3cbc059353bd1612"
+      }
+    },
+    {
+      "window": "032",
+      "method": "motionlcm",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/032/motionlcm/candidate",
+      "source_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_torso_20261118_v1/fits/position_chain/032/motionlcm",
+      "source_sha256": {
+        "receipt.json": "7c946e7f6931809b7012b3fbe877f4d43c20234adf2ce924f61a631de3b2d8d8",
+        "model.osim": "ccc090a7152b6c74eca5eb111a956080e5844a0d33a2a555df161a3695bf93bd",
+        "coordinates_refined_native.mot": "261ff1c8a19ee7b23aaa26e1d937fa6d76b317ea15e6f35e12333d7a0d0d8e4a",
+        "head_neck_model.json": "306788f6d302de0dd8712479050ef37a3f0b19bd412f687d8357c8a014220933",
+        "fit.npz": "7db19d4b341438ee472d1c67414c2f1fb002caf046c4a7049050410cdca758cc"
+      }
+    }
+  ],
+  "conditions": [
+    "control",
+    "composed"
+  ],
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Input-chain geometry is already native-accepted for010/032 MotionLCM; isolate export-only composition with unchanged model, native coordinates and fixed head attachment. Reuse saved native fit without optimization or R access; independently score both controls and composed variants on frozen R.",
+  "scope": "Two full-window mechanism/integration checks; not uniform23/656 qualification"
+}

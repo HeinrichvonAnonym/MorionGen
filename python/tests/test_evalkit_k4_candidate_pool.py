@@ -10,7 +10,8 @@ from motiogen.evalkit.k.motion import Motion
 from motiogen.degradation.metrics import NAMES
 
 
-def test_candidate_entrypoint_retains_failures_selects_whole_clip_and_keys_cache(tmp_path,monkeypatch):
+@pytest.mark.parametrize('compose_export',[False,True])
+def test_candidate_entrypoint_retains_failures_selects_whole_clip_and_keys_cache(tmp_path,monkeypatch,compose_export):
     positions=np.tile(np.random.default_rng(2).normal(size=(1,len(NAMES),3)),(3,1,1))
     times=np.arange(3)/30
     motion=Motion(positions,NAMES,times,'motionlcm',provenance={'inputs':{'D':'input-hash'}})
@@ -33,6 +34,18 @@ def test_candidate_entrypoint_retains_failures_selects_whole_clip_and_keys_cache
     settings=dict(version='k4-candidate-pool-1',candidates=candidates,
                   candidate_requirements={'rig_only':{'input_rig':'required'}},
                   selection_thresholds=dict(angle_deg=5,position_cm=5,direction_rate_deg_s=10,added_step_deg=5))
+    if compose_export:
+        settings['coordinated_export_variants']={'version':'fixed_native_anchors_v1'}
+        def fake_export(observed,source,out,policy):
+            assert observed is motion
+            if source.name=='exact':raise RuntimeError('Export failed; keep the good native candidate')
+            out.mkdir(parents=True)
+            values={'times':times,'names':np.array(NAMES),'positions':positions+.2}
+            np.savez_compressed(out/'fit.npz',**values)
+            receipt={'key':{'inputs':motion.provenance['inputs']}}
+            (out/'receipt.json').write_text(json.dumps(receipt))
+            return {**values,'receipt':receipt}
+        monkeypatch.setattr('motiogen.evalkit.k.path_variant.build',fake_export)
     out=tmp_path/'fit'
     result=candidate_pool.fit('declared-D',out,75,0,settings)
     selection=result['receipt']['candidate_selection']
@@ -40,6 +53,10 @@ def test_candidate_entrypoint_retains_failures_selects_whole_clip_and_keys_cache
     assert 'failed' in selection['failures']
     assert selection['inapplicable']['rig_only']['declared_input_rig_present'] is False
     assert 'rig_only' not in calls and 'rig_only' not in selection['failures']
+    if compose_export:
+        assert 'biased__coordinated' in selection['qualities']
+        assert 'exact__coordinated' in selection['failures']
+        assert selection['composed_exports']['exact']['base_candidate_retained']
     assert (out/'model.osim').read_text()=='exact'
     assert (out/'candidates/biased/model.osim').read_text()=='biased'
     np.testing.assert_array_equal(result['positions'],positions)
