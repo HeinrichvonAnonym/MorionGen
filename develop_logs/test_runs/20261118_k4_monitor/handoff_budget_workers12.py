@@ -31,6 +31,9 @@ def inspect(pid,stage):
  return {'parent':parent,'children':children,'stage':stage,'stage_count':len(stagekeys),'progress':{k:prog[k] for k in ['stage','finished','completed','passed','failed']}}
 def main():
  a=argparse.ArgumentParser();a.add_argument('--pid',type=int,default=301370);a.add_argument('--stage',default='format_completion38');a.add_argument('--execute',action='store_true');a.add_argument('--wait',action='store_true');args=a.parse_args()
+ waiter_lock=(B/'monitor_cache_20261118/handoff_workers12_wait.lock').open('a')
+ fcntl.flock(waiter_lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+ print(json.dumps({'event':'waiting_started','pid':os.getpid(),'target_pid':args.pid,'stage':args.stage,'time':datetime.datetime.now().isoformat()}),flush=True)
  assert not (B/'monitor_cache_20261118/handoff_hold').exists(),'Handoff held by parent for short numerical test'
  if args.wait:
   while True:
@@ -39,6 +42,8 @@ def main():
     if args.pid not in processes():raise RuntimeError('Controller exited before safe handoff')
     progress=json.loads((RUN/'progress.json').read_text())
     if progress.get('state') in ('validation_stage_failed','completed'):raise RuntimeError('Stage gate stopped or run completed; preserve status')
+    if progress.get('stage')=='full_remaining':raise RuntimeError('Safe format_completion38 boundary missed; full_remaining already started, leave fitting untouched')
+    if (RUN/'stage_failure.json').exists():raise RuntimeError('Stage failure preserved; do not cross gate')
     time.sleep(5)
  assert sha(NEW_RUNNER)==NEW_RUNNER_SHA,'New scheduler changed'
  initial=inspect(args.pid,args.stage);print(json.dumps(initial),flush=True)
