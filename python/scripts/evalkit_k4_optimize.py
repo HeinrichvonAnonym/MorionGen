@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import sys
 import time
+import fcntl
 from concurrent.futures import ThreadPoolExecutor,as_completed
 
 
@@ -16,6 +17,7 @@ def main():
     for name in ('run','code-root','output'):ap.add_argument('--'+name,type=Path,required=True)
     ap.add_argument('--config-root',type=Path)
     ap.add_argument('--workers',type=int,default=1)
+    ap.add_argument('--resume',action='store_true')
     ap.add_argument('--wait-for',type=Path);ap.add_argument('--wait-pid',type=int)
     a=ap.parse_args();config=a.config_root or a.code_root/'config/evalkit_k4_20261117/optimization_v1'
     if not 1<=a.workers<=3:raise ValueError('At most three numerical subprocesses allowed')
@@ -27,12 +29,20 @@ def main():
             except ProcessLookupError:raise RuntimeError('Preceding run exited without completion')
         time.sleep(10)
     protocol=json.loads((config/'protocol.json').read_text());panel=json.loads((config/'sentinels.json').read_text())
-    a.output.mkdir(parents=True,exist_ok=False)
-    shutil.copyfile(config/'protocol.json',a.output/'protocol.json');shutil.copyfile(config/'sentinels.json',a.output/'panel.json')
+    a.output.mkdir(parents=True,exist_ok=a.resume)
+    lock=(a.output/'.controller.lock').open('a')
+    fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     identity={'code_commit':subprocess.check_output(['git','-C',str(a.code_root),'rev-parse','HEAD']).decode().strip(),
         'config_sha256':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in config.glob('*.json')},
         'workers':a.workers,'new_holdout_uses':0}
-    (a.output/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
+    if a.resume:
+        sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'utils'))
+        from motiogen.evalkit.experiment_recovery import prepare
+        results,jobs=prepare(a.output,a.code_root,config,a.run,identity,protocol,panel)
+    else:
+        shutil.copyfile(config/'protocol.json',a.output/'protocol.json');shutil.copyfile(config/'sentinels.json',a.output/'panel.json')
+        (a.output/'identity.json').write_text(json.dumps(identity,indent=2)+'\n')
+        results=[];jobs=[(row,condition) for row in panel['records'] for condition in protocol['conditions']]
     env={**os.environ,'OPENBLAS_NUM_THREADS':'1','OMP_NUM_THREADS':'1','MKL_NUM_THREADS':'1',
          'PYTHONPATH':str(a.code_root/'utils')+':'+str(a.code_root/'utils/motiogen')}
     def execute(row,condition):
@@ -77,13 +87,13 @@ def main():
             result.update(error=str(error),traceback=traceback.format_exc())
         (folder/'status.json').write_text(json.dumps(result,indent=2)+'\n')
         return result
-    results=[]
+    expected=len(panel['records'])*len(protocol['conditions'])
     with ThreadPoolExecutor(max_workers=a.workers) as pool:
-        futures=[pool.submit(execute,row,condition) for row in panel['records'] for condition in protocol['conditions']]
+        futures=[pool.submit(execute,row,condition) for row,condition in jobs]
         for future in as_completed(futures):
             result=future.result();results.append(result);print(result,flush=True)
             temporary=a.output/'progress.tmp'
-            temporary.write_text(json.dumps({'results':results,'expected':len(futures)},indent=2)+'\n')
+            temporary.write_text(json.dumps({'results':results,'expected':expected},indent=2)+'\n')
             temporary.replace(a.output/'progress.json')
     (a.output/'completion.json').write_text(json.dumps({'results':results,'expected':len(panel['records'])*len(protocol['conditions']),'promotion':'none'},indent=2)+'\n')
 
