@@ -2,6 +2,7 @@
 import argparse
 from concurrent.futures import ThreadPoolExecutor,as_completed
 import hashlib
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -22,7 +23,16 @@ def atomic(path,value):
 def execution_workers(protocol, protocol_hash, original_identity, amendment):
     """A scheduling amendment cannot replace any scientific protocol field."""
     if amendment is None:
-        if not 1<=protocol['workers']<=3:raise ValueError('Original protocol allows at most three workers')
+        if protocol.get('version')=='k4-full-frozen-regression-2':
+            budget=protocol.get('resource_budget',{})
+            if (set(budget)!={'max_workers','numerical_threads','minimum_free_GiB','authorization'}
+                    or not isinstance(budget['max_workers'],int) or not 1<=budget['max_workers']<=8
+                    or budget['numerical_threads']!=1 or budget['minimum_free_GiB']<80
+                    or not budget['authorization']):
+                raise ValueError('New protocol must declare the authorized resource budget')
+            if not isinstance(protocol['workers'],int) or not 1<=protocol['workers']<=budget['max_workers']:
+                raise ValueError('Worker count exceeds declared budget')
+        elif not 1<=protocol['workers']<=3:raise ValueError('Original protocol allows at most three workers')
         return protocol['workers']
     allowed={'version','protocol_sha256','original_runner_sha256','output','max_workers','authorization'}
     if set(amendment)!=allowed or amendment['version']!='k4-execution-amendment-1':
@@ -53,6 +63,8 @@ def main():
     config=Path(p['fit_config']);settings=json.loads(config.read_text())
     if sha(config)!=p['fit_config_sha256']:raise ValueError('Frozen configuration changed')
     out.mkdir(parents=True,exist_ok=True)
+    controller_lock=(out/'.controller.lock').open('a')
+    fcntl.flock(controller_lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     identity={'protocol_sha256':sha(a.protocol),'runner_sha256':sha(__file__)}
     previous=json.loads((out/'identity.json').read_text()) if (out/'identity.json').exists() else None
     amendment=json.loads(a.execution_config.read_text()) if a.execution_config else None

@@ -41,3 +41,13 @@ def test_live_denominators_and_record_whitelist(tmp_path):
     epochs = tmp_path/'execution_epochs'; epochs.mkdir()
     (epochs/'123.json').write_text(json.dumps(dict(effective_workers=8)))
     assert api.snapshot()['worker_limit'] == 8
+
+
+def test_new_protocol_declares_eight_worker_budget_without_changing_legacy():
+    protocol=dict(version='k4-full-frozen-regression-2',workers=8,resource_budget=dict(
+        max_workers=8,numerical_threads=1,minimum_free_GiB=80,authorization='User authorized at most8 CPU workers'))
+    assert runner.execution_workers(protocol,'new',None,None)==8
+    with pytest.raises(ValueError):runner.execution_workers(dict(workers=8),'old',None,None)
+    for change in ({'max_workers':9},{'numerical_threads':2},{'minimum_free_GiB':79},{'authorization':''}):
+        candidate=dict(protocol,resource_budget=dict(protocol['resource_budget'],**change))
+        with pytest.raises(ValueError):runner.execution_workers(candidate,'new',None,None)

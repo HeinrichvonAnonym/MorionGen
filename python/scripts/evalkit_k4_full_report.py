@@ -2,6 +2,7 @@
 import argparse
 import collections
 import hashlib
+import importlib.util
 import html
 import json
 from pathlib import Path
@@ -17,8 +18,11 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--run',type=Path,required=True);parser.add_argument('--code-root',type=Path,required=True)
     parser.add_argument('--record')
-    a=parser.parse_args();sys.path[:0]=[str(a.code_root/'utils'),str(a.code_root/'utils/motiogen')]
-    from motiogen.evalkit.k.strict_acceptance import assess
+    a=parser.parse_args()
+    acceptance_file=a.code_root/'utils/motiogen/evalkit/k/strict_acceptance.py'
+    spec=importlib.util.spec_from_file_location('frozen_acceptance',acceptance_file)
+    frozen=importlib.util.module_from_spec(spec);spec.loader.exec_module(frozen)
+    assess=frozen.assess
     policy=json.loads((a.code_root/'config/evalkit_k4_20261117/strict_v1/acceptance.json').read_text())
     protocol=json.loads((a.run/'protocol.json').read_text())
     if a.record:
@@ -103,7 +107,7 @@ def main():
     table=''.join(f"<tr><td>{m}</td><td>{c['passed']}/{c['total']}</td><td>{c['evaluated']}</td><td>{c['execution_failed']}</td><td>{c['pending']}</td></tr>" for m,c in counts.items())
     document='''<!doctype html><html lang="zh"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>K4 · 656 路原动作验收</title>
 <style>body{max-width:1160px;margin:32px auto;padding:0 20px;font:16px/1.65 system-ui;color:#203047;background:#f8fafc}table{border-collapse:collapse;width:100%;background:white;margin:18px 0}td,th{border:1px solid #dbe2eb;padding:7px;text-align:left}details{border:1px solid #dbe2eb;background:white;margin:8px 0;padding:10px}input,select{font:inherit;padding:8px;margin-right:12px}.pass{color:#087b60}.fail{color:#b94338}.pending{color:#718096}.scroll{overflow:auto}pre{white-space:pre-wrap;font-size:12px}@media print{input,select{display:none}details{break-inside:avoid}}</style>
-<h1>K4：656 路原动作验收</h1><p>SUMMARY</p><p>每路使用冻结的两个整段候选及统一输入选择规则。R 仅进入独立评分。逐窗口按 5°／5 cm、时序及覆盖验收；来源跳变沿用冻结分层。默认配置尚未晋升。</p>
+<h1>K4：656 路原动作验收</h1><p>SUMMARY</p><p>每路使用协议声明的冻结候选集合及统一输入选择规则；适用性由输入字段和几何决定。R 仅进入独立评分。逐窗口按 5°／5 cm、时序及覆盖验收；来源跳变沿用冻结分层。默认配置尚未晋升。</p>
 <p>下表始终保留每种格式 82 路分母。未完成、执行失败、指标未通过和不可观测分别表达。展开可查看原生 FK 的三类误差；完整导出与原动作时钟结果保存在结果 JSON。</p>
 <table><tr><th>格式</th><th>通过／总数</th><th>已评分</th><th>执行失败</th><th>待完成</th></tr>TABLE</table>
 <input id="query" placeholder="窗口编号或格式"><select id="state"><option value="all">全部</option><option value="passed">通过</option><option value="failed">未通过／执行失败</option><option value="pending">待完成</option></select><button id="prev">上一页</button><button id="next">下一页</button><span id="page"></span><div id="rows"></div>

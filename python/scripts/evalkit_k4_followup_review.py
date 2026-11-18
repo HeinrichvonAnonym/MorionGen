@@ -1,6 +1,7 @@
 """Independent acceptance of follow-up ablations; native/export and both clocks."""
 import argparse
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import sys
@@ -12,8 +13,10 @@ def main():
     parser.add_argument('--frozen-run',type=Path,required=True)
     parser.add_argument('--scoring-root',type=Path,required=True)
     args=parser.parse_args()
-    sys.path[:0]=[str(args.scoring_root/'utils'),str(args.scoring_root/'utils/motiogen')]
-    from motiogen.evalkit.k.strict_acceptance import assess
+    acceptance_file=args.scoring_root/'utils/motiogen/evalkit/k/strict_acceptance.py'
+    spec=importlib.util.spec_from_file_location('frozen_acceptance',acceptance_file)
+    frozen=importlib.util.module_from_spec(spec);spec.loader.exec_module(frozen)
+    assess=frozen.assess
     policy=json.loads((args.scoring_root/'config/evalkit_k4_20261117/strict_v1/acceptance.json').read_text())
     panel=json.loads((args.run/'panel.json').read_text())['records']
     protocol=json.loads((args.run/'protocol.json').read_text())
@@ -46,6 +49,7 @@ def main():
     result={'records':records,'expected':len(records),'completed':sum(x['status']=='completed' for x in records),
             'passed':sum(x.get('passed',False) for x in records),'pending':sum(x['status']=='pending' for x in records),
             'execution_failed':sum(x['status']=='failed' for x in records),'promotion':'none',
+            'acceptance_implementation_sha256':hashlib.sha256(acceptance_file.read_bytes()).hexdigest(),
             'policy_sha256':hashlib.sha256((args.scoring_root/'config/evalkit_k4_20261117/strict_v1/acceptance.json').read_bytes()).hexdigest(),
             'scope':'Full fixed development windows; R-only independent acceptance; exact frozen policy; F-D fidelity separate from F-R; no split changes'}
     dest=args.run/'review.json';tmp=dest.with_suffix('.tmp');tmp.write_text(json.dumps(result,indent=2,allow_nan=False)+'\n');tmp.replace(dest)
