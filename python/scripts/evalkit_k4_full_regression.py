@@ -46,13 +46,84 @@ def execution_workers(protocol, protocol_hash, original_identity, amendment):
     return amendment['max_workers']
 
 
+def validation_batches(protocol):
+    """Scheduling subsets preserve the registered full denominator and method."""
+    stages=protocol.get('validation_stages')
+    if stages is None:return None
+    if protocol.get('version')!='k4-full-frozen-regression-2' or protocol.get('preflight_paths'):
+        raise ValueError('Staged validation requires explicit v2 without legacy preflight paths')
+    if not isinstance(stages,list) or not stages:raise ValueError('Declare validation stages')
+    records={r['window']+'_'+r['method']:r for r in protocol['records']}
+    used=set();names=set();batches=[]
+    for stage in stages:
+        if set(stage)!={'name','paths'} or not stage['name'] or stage['name'] in names:
+            raise ValueError('Invalid or repeated validation stage')
+        paths=stage['paths']
+        if (not isinstance(paths,list) or not paths or len(paths)!=len(set(paths))
+                or set(paths)-set(records) or set(paths)&used):
+            raise ValueError('Validation paths must be unique registered development records')
+        batches.append((stage['name'],[records[k] for k in paths],True))
+        used.update(paths);names.add(stage['name'])
+    if 'full_remaining' in names:raise ValueError('Reserved stage name')
+    remaining=[r for k,r in records.items() if k not in used]
+    if remaining:batches.append(('full_remaining',remaining,False))
+    return batches
+
+
+def acceptance_readiness(protocol,policy_sha256):
+    """Independent development acceptance gates scheduling, never fitting inputs."""
+    waiting=[];evidence={}
+    for prerequisite in protocol.get('acceptance_prerequisites',[]):
+        run=Path(prerequisite['run'])
+        files={name:run/(name+'.json') for name in ('identity','completion','review')}
+        if any(not path.exists() for path in files.values()):
+            waiting.append(str(run));continue
+        try:
+            contents={name:path.read_bytes() for name,path in files.items()}
+            identity,completion,review=[json.loads(contents[name]) for name in files]
+        except (FileNotFoundError,json.JSONDecodeError):
+            waiting.append(str(run));continue
+        if identity['code_commit']!=prerequisite['code_commit']:
+            raise ValueError('Prerequisite implementation changed: '+str(run))
+        expected=prerequisite['expected']
+        if review['expected']!=expected or completion['expected']!=expected:
+            raise ValueError('Prerequisite denominator changed: '+str(run))
+        if review['completed']+review['execution_failed']<expected:
+            waiting.append(str(run));continue
+        if review['execution_failed'] or (prerequisite['require_all_passed'] and review['passed']!=expected):
+            raise RuntimeError('Prerequisite acceptance failed; preserve results and diagnose: '+str(run))
+        if review['policy_sha256']!=policy_sha256:
+            raise ValueError('Prerequisite acceptance policy changed: '+str(run))
+        evidence[str(run)]={'expected':expected,'passed':review['passed'],
+                            'require_all_passed':prerequisite['require_all_passed'],
+                            'sha256':{name:hashlib.sha256(data).hexdigest() for name,data in contents.items()}}
+    return waiting,evidence
+
+
+def archive_execution_failure(out,key):
+    """Explicit retry preserves all failed artifacts; metric failures never retry."""
+    task=out/'tasks'/key;result=task/'result.json'
+    if result.exists():
+        if json.loads(result.read_text()).get('status')!='failed':return False
+    elif not (task/'state.json').exists() and not (task/'runtime_job.json').exists():return False
+    destination=out/'attempt_history'/key/str(time.time_ns());destination.mkdir(parents=True)
+    task.rename(destination/'task')
+    window,method=key.split('_',1);fit=out/'fits'/window/method
+    if fit.exists():fit.rename(destination/'fit')
+    for condition in ('native','export'):
+        score=out/'scores'/condition/(key+'.json')
+        if score.exists():score.rename(destination/(condition+'_score.json'))
+    return True
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--protocol',type=Path,required=True)
     parser.add_argument('--execution-config',type=Path)
+    parser.add_argument('--retry-execution-failures',action='store_true')
     a=parser.parse_args();p=json.loads(a.protocol.read_text())
     code=Path(p['fit_code_root']);control=Path(p['control_code_root']);out=Path(p['output']);base=Path(p['baseline_root'])
-    records=p['records']
+    records=p['records'];batches=validation_batches(p)
     if len(records)!=656 or len({(r['window'],r['method']) for r in records})!=656:
         raise ValueError('Require all 656 unique registered paths')
     windows={r['window'] for r in records};methods={r['method'] for r in records}
@@ -69,6 +140,9 @@ def main():
     previous=json.loads((out/'identity.json').read_text()) if (out/'identity.json').exists() else None
     amendment=json.loads(a.execution_config.read_text()) if a.execution_config else None
     workers=execution_workers(p,identity['protocol_sha256'],previous,amendment)
+    interrupted=[str(task.parent) for task in (out/'tasks').glob('*/state.json') if not (task.parent/'result.json').exists()]
+    if interrupted and not a.retry_execution_failures:
+        raise ValueError('Interrupted paths require explicit --retry-execution-failures; partial artifacts stay intact: '+str(interrupted))
     if previous and previous!=identity and amendment is None:
         raise ValueError('Full regression identity changed')
     if previous is None:atomic(out/'identity.json',identity)
@@ -77,11 +151,6 @@ def main():
         atomic(epochs/(str(time.time_ns())+'.json'),dict(original_identity=previous,execution_identity=identity,
             effective_workers=workers,amendment=amendment,amendment_sha256=sha(a.execution_config)))
     if not (out/'protocol.json').exists():shutil.copyfile(a.protocol,out/'protocol.json')
-    # Wait only for the existing panel workers; no concurrent extra numerical pool.
-    if p.get('wait_for'):
-        while not Path(p['wait_for']).exists():
-            atomic(out/'progress.json',{'state':'waiting_for_registered_panel','expected':656,'completed':0,'failed':0})
-            time.sleep(10)
     preservation=json.loads(Path(p['preservation_manifest']).read_text());workspace=Path(p['workspace_root'])
     changed=[name for name,value in preservation['files'].items()
              if not (workspace/name).exists() or sha(workspace/name)!=value]
@@ -103,7 +172,9 @@ def main():
             if sha(path)!=value:raise ValueError('Input content changed: '+path)
         return receipt
     def execute(row):
-        w,m=row['window'],row['method'];task=out/'tasks'/f'{w}_{m}';task.mkdir(parents=True,exist_ok=True)
+        w,m=row['window'],row['method'];task=out/'tasks'/f'{w}_{m}'
+        if a.retry_execution_failures:archive_execution_failure(out,f'{w}_{m}')
+        task.mkdir(parents=True,exist_ok=True)
         result_file=task/'result.json'
         if result_file.exists():
             saved=json.loads(result_file.read_text())
@@ -158,31 +229,58 @@ def main():
         result['elapsed_s']=time.time()-started
         atomic(result_file,result);return result
     results=[]
-    # Verify the new bulk view/scoring path on existing accepted fits before
-    # spending compute on new windows. These are acceptance checks, not fitting inputs.
-    preflight=set(p.get('preflight_paths',[]))
-    for row in records:
-        if row['window']+'_'+row['method'] not in preflight:continue
-        result=execute(row);results.append(result)
-        if result['status']!='completed' or not result['passed']:
-            atomic(out/'preflight_failure.json',result)
-            raise RuntimeError('Bulk scoring preflight failed; no new full-regression fits started')
-    atomic(out/'preflight.json',{'expected':len(preflight),'results':results})
     def report():
         subprocess.run([sys.executable,str(control/'python/scripts/evalkit_k4_full_report.py'),
                         '--run',str(out),'--code-root',str(code)],check=True,env=env)
+    def save_progress(state,stage=None):
+        progress={'state':state,'stage':stage,'expected':656,'finished':len(results),
+                  'completed':sum(r['status']=='completed' for r in results),
+                  'failed':sum(r['status']=='failed' for r in results),
+                  'passed':sum(r.get('passed',False) for r in results),'results':results}
+        atomic(out/'progress.json',progress);return progress
     report()
-    remaining=[r for r in records if r['window']+'_'+r['method'] not in preflight]
-    with ThreadPoolExecutor(max_workers=workers) as pool:
-        for future in as_completed([pool.submit(execute,row) for row in remaining]):
-            item=future.result();results.append(item)
-            progress={'state':'running','expected':656,'finished':len(results),
-                      'completed':sum(r['status']=='completed' for r in results),
-                      'failed':sum(r['status']=='failed' for r in results),
-                      'passed':sum(r.get('passed',False) for r in results),'results':results}
-            atomic(out/'progress.json',progress)
-            print(item['window'],item['method'],item['status'],item.get('passed'),flush=True)
-            if len(results)%16==0:report()
+    wait_for=p.get('wait_for',[])
+    if isinstance(wait_for,str):wait_for=[wait_for]
+    policy_sha256=sha(code/'config/evalkit_k4_20261117/strict_v1/acceptance.json')
+    while True:
+        waiting=[path for path in wait_for if not Path(path).exists()]
+        pending,evidence=acceptance_readiness(p,policy_sha256);waiting.extend(pending)
+        if not waiting:
+            atomic(out/'readiness.json',{'prerequisites':evidence,'scope':'Development validation gate; no R fields passed to fitting children'})
+            break
+        progress=save_progress('waiting_for_registered_runs');progress['waiting_for']=waiting
+        atomic(out/'progress.json',progress);time.sleep(10)
+    if batches is not None:
+        for stage,rows,gate in batches:
+            stage_results=[];save_progress('running',stage)
+            with ThreadPoolExecutor(max_workers=workers) as pool:
+                for future in as_completed([pool.submit(execute,row) for row in rows]):
+                    item=future.result();results.append(item);stage_results.append(item)
+                    progress=save_progress('running',stage)
+                    print(stage,item['window'],item['method'],item['status'],item.get('passed'),flush=True)
+                    if len(stage_results)%4==0:report()
+            stage_record={'stage':stage,'expected':len(rows),'results':stage_results,
+                          'require_all_passed':gate,'passed':all(r['status']=='completed' and r['passed'] for r in stage_results)}
+            (out/'stages').mkdir(exist_ok=True);atomic(out/'stages'/(stage+'.json'),stage_record);report()
+            if gate and not stage_record['passed']:
+                atomic(out/'stage_failure.json',stage_record);save_progress('validation_stage_failed',stage)
+                raise RuntimeError('Development stage failed; preserve this version and diagnose before later stages')
+    else:
+        preflight=set(p.get('preflight_paths',[]))
+        for row in records:
+            if row['window']+'_'+row['method'] not in preflight:continue
+            result=execute(row);results.append(result)
+            if result['status']!='completed' or not result['passed']:
+                atomic(out/'preflight_failure.json',result)
+                raise RuntimeError('Bulk scoring preflight failed; no new full-regression fits started')
+        atomic(out/'preflight.json',{'expected':len(preflight),'results':results});report()
+        remaining=[r for r in records if r['window']+'_'+r['method'] not in preflight]
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            for future in as_completed([pool.submit(execute,row) for row in remaining]):
+                item=future.result();results.append(item);progress=save_progress('running')
+                print(item['window'],item['method'],item['status'],item.get('passed'),flush=True)
+                if len(results)%16==0:report()
+    progress=save_progress('completed')
     changed=[name for name,value in preservation['files'].items()
              if not (workspace/name).exists() or sha(workspace/name)!=value]
     atomic(out/'preservation_after.json',{'checked':len(preservation['files']),'changed':changed,'new_holdout_uses':0})
