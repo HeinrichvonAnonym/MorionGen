@@ -1,0 +1,13 @@
+{
+  "snapshot_sha256": "19b675ee9d62cb171f18bc7449704714d64c62d8a9df14f917bf4db2adc25bb4",
+  "all_candidates": 1744,
+  "all_passed": 1244,
+  "all_failed": 500,
+  "complement_candidates": 1377,
+  "complement_passed": 1020,
+  "complement_failed": 357,
+  "all_points": 53692,
+  "passing_points_unchanged": true,
+  "quantiles_verified": true,
+  "zero_pass_route_preserved": "077 ARDy"
+}

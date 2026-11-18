@@ -14,9 +14,12 @@ LABELS=dict(zip(METHODS,['MotionLCM','OmniControl','Kimodo','ARDy','CHOIS','CLoS
 COLORS=dict(zip(METHODS,plt.get_cmap('tab10').colors[:8]))
 
 
-def render(result,rows,output,method,counts):
+def render(result,rows,output,method,counts,population='passing'):
     rng=np.random.default_rng(41);summaries={};images={}
-    title=f"{counts['complete_routes']}路完整消融 · {counts['routes_with_pass']}路有通过候选 · {counts['candidates']}个通过候选（去除精确等价别名）"
+    if population=='passing':
+        title=f"{counts['complete_routes']}路完整消融 · {counts['routes_with_pass']}路有通过候选 · {counts['candidates']}个通过候选（去除精确等价别名）"
+    else:
+        title=f"{population} · {counts['complete_routes']}路 · {counts['candidates']}个重构（{counts['passed']}通过 / {counts['failed']}未通过）"
     for kind,label,unit,groupmap in [('position','位置','cm',POSITION_GROUPS),('angle','角度','°',ANGLE_GROUPS)]:
         pp=[x for x in rows if x['kind']==kind];order=list(dict.fromkeys(groupmap.values()))
         fig,axes=plt.subplots(1,2,figsize=(15,max(6.5,len(order)*.53+2.5)),sharey=True)
@@ -36,8 +39,10 @@ def render(result,rows,output,method,counts):
                 med,p95=np.percentile(values,[50,95])
                 summaries[kind][stat][g]=dict(points=len(group),median=float(med),p95=float(p95),max=float(values.max()),fraction_le1=float(np.mean(values<=1)))
                 for m in METHODS:
-                    vals=np.array([x[stat] for x in group if x['method']==m])
-                    axis.scatter(vals,yi+rng.uniform(-.26,.26,len(vals)),s=10,color=COLORS[m],alpha=.35,linewidths=0,rasterized=True)
+                    for passed in (True,False):
+                        vals=np.array([x[stat] for x in group if x['method']==m and x.get('candidate_passed',True)==passed])
+                        color=(COLORS[m] if population=='passing' else '#2474b7') if passed else '#d9364f'
+                        axis.scatter(vals,yi+rng.uniform(-.26,.26,len(vals)),s=10,color=color,alpha=.35,linewidths=0,rasterized=True)
                 axis.scatter([med],[yi],marker='D',color='#111827',s=39,zorder=5,edgecolor='white',linewidth=.6)
                 axis.plot([p95,p95],[yi-.27,yi+.27],color='#dc6b12',lw=2.3,zorder=5)
             axis.set_title(text,fontsize=13,pad=13);axis.set_yticks(range(len(order)),order);axis.set_ylim(len(order)-.5,-.6)
@@ -47,11 +52,13 @@ def render(result,rows,output,method,counts):
             axis.axvline(5,color='#c02e36',ls='--',lw=1.3,zorder=3);axis.grid(axis='x',alpha=.15);axis.set_axisbelow(True)
             axis.set_xlabel(f'误差（{unit}） · 0–0.1线性，其上为对数刻度；八格式同尺度')
         legend=[Line2D([],[],marker='o',ls='',color=COLORS[m],label=LABELS[m],markersize=5) for m in METHODS if method=='all' or method==m]
+        if population!='passing':legend=[Line2D([],[],marker='o',ls='',color='#2474b7',label='候选整体通过'),Line2D([],[],marker='o',ls='',color='#d9364f',label='候选整体未通过（含时序/覆盖失败）')]
         fig.legend(handles=legend,loc='lower center',bbox_to_anchor=(.54,.075),ncol=8,frameon=False,fontsize=9)
         marks=[Line2D([],[],marker='D',ls='',color='#111827',label='本行散点的中位数'),Line2D([],[],marker='|',ls='',color='#dc6b12',markersize=12,markeredgewidth=2,label='本行散点的P95'),Line2D([],[],ls='--',color='#c02e36',label=f'5 {unit}工程验收线（针对窗口P95）')]
         fig.legend(handles=marks,loc='lower center',bbox_to_anchor=(.54,.12),ncol=3,frameon=False,fontsize=9)
         fig.text(.115,.035,'每点＝窗口×候选×一个部位指标。两侧分别计点；完整窗口保留来源跳变。',fontsize=9,color='#475569')
-        fig.text(.115,.012,'标记是窗口统计值之间的分位数，并非逐帧总体分位数；仅展示通过候选，不代表总体通过率。',fontsize=9,color='#475569')
+        footer='仅展示通过候选，不代表总体通过率。' if population=='passing' else '纳入所列方法全部重构；未按原动作挑选最佳候选。'
+        fig.text(.115,.012,'标记是窗口统计值之间的分位数，并非逐帧总体分位数；'+footer,fontsize=9,color='#475569')
         suffix='' if method=='all' else '_'+method
         out=output.with_name(output.stem+suffix+'_'+kind)
         fig.savefig(out.with_suffix('.png'),dpi=160);fig.savefig(out.with_suffix('.svg'));plt.close(fig);images[kind]=out.with_suffix('.png')
