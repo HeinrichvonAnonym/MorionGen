@@ -1,0 +1,16 @@
+{
+  "kinematic_domain": {
+    "base": "preserve_existing",
+    "scope": "independent_kinematic",
+    "coordinate_ranges_deg": {
+      "arm_rot_l": [
+        -180,
+        180
+      ],
+      "arm_rot_r": [
+        -180,
+        180
+      ]
+    }
+  }
+}

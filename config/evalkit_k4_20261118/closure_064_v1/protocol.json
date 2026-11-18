@@ -1,0 +1,22 @@
+{
+  "version": "k4-closure-064-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "conditions": [
+    "control",
+    "geometry_domain",
+    "reverse_path",
+    "reverse_rate1_path"
+  ],
+  "hypothesis": "Transfer foot domain/geometry and temporal candidates from052/063 to additional064 deep-flexion development window",
+  "selection": "All conditions run for every row; no default promotion or R-dependent runtime choice; independent R acceptance",
+  "preregistration": "064 fixed development window, all8formats x same4conditions =32; separate from unchanged128manifest",
+  "resources": {
+    "workers": 1,
+    "numeric_threads": 1,
+    "disk_reserve_GiB": 80
+  },
+  "next": "Audit all four views/clocks and retain failures; evaluate input-only bank and fixed23 transfer before a new656."
+}

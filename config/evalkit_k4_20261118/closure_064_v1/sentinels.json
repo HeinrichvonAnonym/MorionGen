@@ -1,0 +1,36 @@
+{
+  "records": [
+    {
+      "window": "064",
+      "method": "motionlcm"
+    },
+    {
+      "window": "064",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "064",
+      "method": "kimodo"
+    },
+    {
+      "window": "064",
+      "method": "chois"
+    },
+    {
+      "window": "064",
+      "method": "primal"
+    },
+    {
+      "window": "064",
+      "method": "dart"
+    },
+    {
+      "window": "064",
+      "method": "closd"
+    },
+    {
+      "window": "064",
+      "method": "ardy"
+    }
+  ]
+}

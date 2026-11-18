@@ -1,0 +1,15 @@
+{
+  "version": "k4-arm-domain-registration-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "conditions": [
+    "control",
+    "arm_domain",
+    "registered_centres",
+    "domain_centres"
+  ],
+  "hypothesis": "D-only diagnostics show synchronous shoulder/arm error peaks at right arm axial bounds in073; 2x2 fixed-centre registration versus arm axial range distinguishes geometry and domain conflicts.077 has no persistent near-bound coordinates and is a contrasting mechanism.000 is passing control. All conditions identical across rows.",
+  "domain_qualification": "Independent kinematics only; shoulder axial +/-180 numerical domain/coupling scan required before fitting; no anatomical or force claim."
+}
