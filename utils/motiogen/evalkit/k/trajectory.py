@@ -51,13 +51,20 @@ def refine(model_path, labels, coordinates, observed, names, times, settings):
     objective,x0,seed,cols,active=problem(model_path,labels,coordinates,observed,names,times,settings)
     lower,upper=objective.lower,objective.upper
     r0=objective.residual(x0);initial=float(np.dot(r0,r0))
-    fit=least_squares(objective.residual,x0,jac=objective.jacobian,bounds=(np.tile(lower,len(seed)),np.tile(upper,len(seed))),
-                      method='trf',tr_solver='lsmr',x_scale=.1,max_nfev=int(settings.get('max_nfev',20)))
+    solver=settings.get('solver','trf_lsmr')
+    if solver=='trf_lsmr':
+        fit=least_squares(objective.residual,x0,jac=objective.jacobian,bounds=(np.tile(lower,len(seed)),np.tile(upper,len(seed))),
+                          method='trf',tr_solver='lsmr',x_scale=.1,max_nfev=int(settings.get('max_nfev',20)))
+    elif solver=='bounded_gauss_newton':
+        from .trajectory_solver import solve
+        fit=solve(objective,x0,settings)
+    else:raise ValueError('Unknown native trajectory solver')
     candidate=seed.copy();candidate[:,cols]=np.rad2deg(fit.x.reshape(len(seed),len(cols)))
     cost=float(np.dot(fit.fun,fit.fun));accepted=np.isfinite(cost) and cost<=initial+1e-8
     receipt=dict(settings=settings,active_coordinates=active,initial_squared_residual=initial,candidate_squared_residual=cost,
                  selected='joint_trajectory' if accepted else 'input_seed',optimizer_success=bool(fit.success),optimizer_status=int(fit.status),
                  message=str(fit.message),nfev=int(fit.nfev),njev=int(fit.njev),optimality=float(fit.optimality),
+                 solver=solver,iterations=fit.get('history',[]),
                  supported_features_per_frame=objective.mask.sum(1).tolist(),
                  scope='Fixed model; all native frames optimized jointly using D positions, directions and geometric angles. Rate is derivative of fitted-minus-input unit directions, never raw motion speed or Euler differences. R is absent. Cost acceptance is not accuracy qualification.')
     return candidate if accepted else seed, candidate, receipt

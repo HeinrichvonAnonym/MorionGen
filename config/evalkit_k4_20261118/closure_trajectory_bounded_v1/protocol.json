@@ -1,0 +1,14 @@
+{
+  "version": "k4-trajectory-bounded-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "conditions": [
+    "trf",
+    "bounded"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "077 saved-candidate D-only diagnostic found direct bounded linear least-squares step improves actual nonlinear cost1590.77to896.03 at half step, while unconstrained step clipped to bounds gives poor descent. Compare native whole-trajectory solvers with identical input, original domain seed, geometry and objective.",
+  "preregistration": "073/077 MotionLCM and000Kimodo three fixed development combinations x2=6. Both retain20 objective evaluation budget; per-frame FK calls, linear iteration counts and wall time differ and must not be called equal computational cost.",
+  "qualification": "Monotone actual-objective line search creates candidates only; fixed original-R targets/temporal/coverage gate. No anatomical or force qualification."
+}

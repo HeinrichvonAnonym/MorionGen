@@ -81,3 +81,20 @@ def test_post_seed_domain_preserves_known_fk_and_changes_only_search_bounds(tmp_
     assert after.upper[i]==np.pi and after.lower[i]==-np.pi
     np.testing.assert_allclose(x0,x1,atol=1.1e-9,rtol=0)
     np.testing.assert_allclose(before.residual(x0),after.residual(x1),atol=1e-6,rtol=0)
+
+
+def test_bounded_joint_solver_recovers_fk_features_with_monotone_steps():
+    from motiogen.evalkit.k.trajectory_solver import solve
+    obj,truth=fixture();initial=truth+np.array([.08,-.1,.12,-.04])
+    result=solve(obj,initial,{'max_nfev':20})
+    np.testing.assert_allclose(result.x,truth,atol=1e-6)
+    assert result.nfev<=20 and result.success
+    assert all(row['cost_after']<=row['cost_before'] for row in result.history)
+
+
+def test_bounded_joint_solver_respects_domain_and_evaluation_limit():
+    from motiogen.evalkit.k.trajectory_solver import solve
+    obj,truth=fixture();obj.upper[:]=.15
+    result=solve(obj,np.zeros_like(truth),{'max_nfev':3})
+    assert result.nfev<=3 and (result.x<=.15).all() and (result.x>=obj.lower[0]).all()
+    assert np.linalg.norm(result.fun)<=np.linalg.norm(obj.residual(np.zeros_like(truth)))
