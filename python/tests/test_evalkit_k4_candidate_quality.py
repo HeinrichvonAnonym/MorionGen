@@ -84,3 +84,19 @@ def test_export_path_checks_inserted_frames_without_changing_native_support():
     assert not checked['metrics']['interpolation_direction/left_foot_axis']['passed']
     assert checked['metrics']['position/left_foot']['expected']==12
     assert checked['metrics']['interpolation_direction/left_foot_axis']['expected']==11
+
+
+def test_observed_targets_take_priority_over_path_assumptions():
+    motion,fitted=example();times=np.linspace(motion.times[0],motion.times[-1],23)
+    clean=dict(times=times,names=fitted['names'],positions=np.repeat(fitted['positions'][:1],23,axis=0))
+    bad_path={**clean,'positions':clean['positions'].copy()}
+    bad_path['positions'][1::2]+=np.random.default_rng(731).normal(size=bad_path['positions'][1::2].shape)
+    bad_native={**clean,'positions':clean['positions']+.1}
+    policy=dict(include_export_path=True,ranking_policy='observed_then_path_v1')
+    path=assess(motion,bad_path,**policy);native=assess(motion,bad_native,**policy);good=assess(motion,clean,**policy)
+    assert path['rank'][1]==0 and path['rank'][3]>0
+    assert native['rank'][1]>0 and native['rank'][3]==0
+    assert choose({'observed_supported':path,'observed_failed':native})=='observed_supported'
+    assert choose({'path_failed':path,'all_supported':good})=='all_supported'
+    assert assess(motion,clean)['ranking_policy']=='flat_v1'
+    with pytest.raises(ValueError,match='policy'):assess(motion,clean,ranking_policy='unknown')

@@ -45,7 +45,8 @@ def fit(run, work, mass, floor, settings):
                 with np.load(folder/'head_neck.npz') as z:
                     head = z['head_relative_thorax']
             qualities[name] = assess(motion,values,head_rotation=head,thresholds=settings['selection_thresholds'],
-                                     include_export_path=settings.get('selection_include_export_path',False))
+                                     include_export_path=settings.get('selection_include_export_path',False),
+                                     ranking_policy=settings.get('selection_policy','flat_v1'))
             receipts[name] = values['receipt']
         except (ValueError,RuntimeError) as error:
             failures[name] = {'type':type(error).__name__,'message':str(error)}
@@ -62,7 +63,9 @@ def fit(run, work, mass, floor, settings):
         else:
             shutil.copyfile(source,destination)
     selection = {'selected':selected,'qualities':qualities,'failures':failures,
-                 'rule':'lexicographic: missing supported observations, failed targets, worst normalized error, mean normalized error, declaration order',
+                 'rule':('lexicographic: observed missing/failures, path missing/failures, observed worst/mean ratios, path worst/mean ratios, declaration order'
+                         if settings.get('selection_policy')=='observed_then_path_v1' else
+                         'lexicographic: missing supported observations, failed targets, worst normalized error, mean normalized error, declaration order'),
                  'qualification':'Input-fidelity selection only; independent R acceptance remains required',
                  'all_candidates_retained':True,'per_frame_switching':False}
     (out/'candidate_selection.json').write_text(json.dumps(selection,indent=2,allow_nan=False)+'\n')

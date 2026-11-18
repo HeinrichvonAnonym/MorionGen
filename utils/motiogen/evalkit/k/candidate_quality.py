@@ -39,9 +39,11 @@ def _unit(values):
     return np.where(length > 1e-9, values/np.maximum(length, 1e-9), np.nan)
 
 
-def assess(motion, fitted, *, head_rotation=None, thresholds=None, include_export_path=False):
+def assess(motion, fitted, *, head_rotation=None, thresholds=None, include_export_path=False, ranking_policy='flat_v1'):
     """Assess model FK on fixed D support. Missing F never reduces denominators."""
     limits = dict(angle_deg=5., position_cm=5., direction_rate_deg_s=10., added_step_deg=5.)
+    if ranking_policy not in ('flat_v1','observed_then_path_v1'):
+        raise ValueError('Unknown candidate-ranking policy')
     if thresholds is not None:
         if set(thresholds) != set(limits):
             raise ValueError('Declare every candidate-selection threshold explicitly')
@@ -133,7 +135,17 @@ def assess(motion, fitted, *, head_rotation=None, thresholds=None, include_expor
     failures = sum(not m['passed'] for m in supported)
     # Lexicographic whole-clip ranking. Declaration order is the final tie-break.
     rank = [missing, failures, max(ratios, default=float('inf')), sum(ratios)/len(ratios) if ratios else float('inf')]
+    if ranking_policy=='observed_then_path_v1':
+        observed=[v for k,v in metrics.items() if v['expected'] and not k.startswith('interpolation_')]
+        path=[v for k,v in metrics.items() if v['expected'] and k.startswith('interpolation_')]
+        def quality(group):
+            ratios=[v['value']/v['threshold'] for v in group if v['value'] is not None]
+            return [sum(v['missing'] for v in group),sum(not v['passed'] for v in group),
+                    max(ratios,default=0.),sum(ratios)/len(ratios) if ratios else 0.]
+        obs,pth=quality(observed),quality(path)
+        rank=obs[:2]+pth[:2]+obs[2:]+pth[2:]
     return dict(metrics=metrics, rank=rank, passed=bool(supported) and missing == 0 and failures == 0,
+                ranking_policy=ranking_policy,
                 scope='D-only full native clock; no source-jump exclusions; whole-clip selection, no per-frame switching',
                 frames=len(motion.times), thresholds=limits,
                 export_path_diagnostic=bool(include_export_path),

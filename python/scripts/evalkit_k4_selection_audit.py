@@ -22,7 +22,7 @@ def worker(job,code):
     from motiogen.evalkit.k.motion import load
     from motiogen.evalkit.k.candidate_quality import assess,choose
     d=json.loads(job.read_text())
-    if set(d)!={'input','method','candidates','output','include_export_path'}:raise ValueError('Unexpected runtime fields')
+    if set(d)!={'input','method','candidates','output','include_export_path','ranking_policy'}:raise ValueError('Unexpected runtime fields')
     motion=load(d['input'],d['method'],config=code/'config/evalkit_k4_20261117/input.json')
     qualities={};hashes={}
     for name,folder in d['candidates'].items():
@@ -30,7 +30,7 @@ def worker(job,code):
         if receipt['key']['inputs']!=motion.provenance['inputs']:raise ValueError('Candidate input mismatch')
         with np.load(p/'fit.npz') as z:fit={k:z[k] for k in z.files}
         with np.load(p/'head_neck.npz') as z:head=z['head_relative_thorax']
-        qualities[name]=assess(motion,fit,head_rotation=head,include_export_path=d['include_export_path'])
+        qualities[name]=assess(motion,fit,head_rotation=head,include_export_path=d['include_export_path'],ranking_policy=d['ranking_policy'])
         hashes[name]={n:hashlib.sha256((p/n).read_bytes()).hexdigest() for n in ['fit.npz','head_neck.npz','receipt.json']}
     dump(Path(d['output']),dict(selected=choose(qualities),qualities=qualities,source_sha256=hashes,
         scope='D-only native fidelity and optional fitted-anchor path diagnostic; no R in this child'))
@@ -73,10 +73,10 @@ def main():
             results.append({**group,'status':'no_completed_candidate'});continue
         source=json.loads((a.run/'jobs'/(key+'.json')).read_text())
         choice={}
-        for dense in (False,True):
-            tag='with_path' if dense else 'native_only';dest=a.output/key/tag;dest.mkdir(parents=True)
+        for tag,dense,ranking in [('native_only',False,'flat_v1'),('with_path',True,'flat_v1'),('observed_then_path',True,'observed_then_path_v1')]:
+            dest=a.output/key/tag;dest.mkdir(parents=True)
             job={k:source[k] for k in ('input','method')}
-            job.update(candidates=group['candidates'],output=str(dest/'selection.json'),include_export_path=dense)
+            job.update(candidates=group['candidates'],output=str(dest/'selection.json'),include_export_path=dense,ranking_policy=ranking)
             dump(dest/'runtime_job.json',job)
             with (dest/'runtime.log').open('w') as log:
                 subprocess.run([sys.executable,__file__,'--job',str(dest/'runtime_job.json'),'--code-root',str(a.code_root)],env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
