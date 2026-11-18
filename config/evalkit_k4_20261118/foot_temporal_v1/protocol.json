@@ -1,0 +1,22 @@
+{
+  "version": "k4-foot-temporal-1",
+  "conditions": [
+    "control",
+    "rate1",
+    "rate4",
+    "reverse",
+    "reverse_rate1"
+  ],
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "hypothesis": "Fixed-foot geometry resolves002 pose error but leaves native direction-rate residual;010 near-straight phase switches compensating hip/subtalar branches. Compare D-error-rate targets and offline reverse traversal independently, then combination. Preserve default forward candidate.",
+  "weights": "Reuse previously registered direction-rate excess weights 1 and4, margin .8 at10deg/s; engineering candidates, not validated optima",
+  "runtime": "D clock and unit direction errors only; same configuration for all records; no ID rule or R in fit",
+  "native_export_boundary": "Raw fitted FK and actual exported FK assessed separately on D and R clocks; improved native result cannot waive export failure",
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "max_candidate_workers": 2,
+  "frozen_regression_workers": 6,
+  "supersedes": "foot_rate_v1 preregistered9 tasks were not launched; expand prospectively to15 before any fitting",
+  "traversal": "Same full input clip, same observations and weights, reverse order with negated reversed physical times; outputs restored to original order, no R and no action-specific rule"
+}

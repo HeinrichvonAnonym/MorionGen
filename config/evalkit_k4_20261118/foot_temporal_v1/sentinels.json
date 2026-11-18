@@ -1,0 +1,17 @@
+{
+  "records": [
+    {
+      "window": "002",
+      "method": "kimodo"
+    },
+    {
+      "window": "010",
+      "method": "ardy"
+    },
+    {
+      "window": "000",
+      "method": "kimodo"
+    }
+  ],
+  "scope": "Unchanged full development windows: two failure mechanisms and prior successful leg control; IDs only in offline panel"
+}

@@ -105,3 +105,24 @@ class RestartTests(unittest.TestCase):
         actual,_=model_fk(biomech.MODEL,labels,result,direct_couplers=True)
         np.testing.assert_allclose(actual,p,atol=1e-8)
         self.assertTrue(all(x['selection_loss']<1e-10 for x in receipt['frames']))
+
+    def test_reverse_traversal_preserves_fk_order_clock_and_missing_frame(self):
+        model=osim.Model(str(biomech.MODEL));state=model.initSystem();cs=model.getCoordinateSet()
+        labels=[cs.get(i).getName() for i in range(cs.getSize())]
+        row=np.array([cs.get(n).getValue(state)*(180/np.pi if cs.get(n).getMotionType()==1 else 1) for n in labels])
+        q=np.tile(row,(3,1));q[:,labels.index('hip_flexion_l')]=[15,30,45]
+        q[:,labels.index('knee_angle_l')]=[30,60,90]
+        points,names,q=model_fk(biomech.MODEL,labels,q,direct_couplers=True,return_coordinates=True)
+        original=q.copy();times=np.array([7.,7.03,7.1])
+        settings={'max_nfev':2,'direction_continuity_weight':.25,'continuity_weight':0,
+                  'include_pelvis_line':True,'traversal':'reverse'}
+        fitted,receipt=refine(biomech.MODEL,labels,q,points,names,settings,times=times)
+        actual,_=model_fk(biomech.MODEL,labels,fitted,direct_couplers=True)
+        np.testing.assert_allclose(actual,points,atol=1e-8)
+        np.testing.assert_array_equal(q,original)
+        self.assertEqual(receipt['traversal']['output_order'],'original input order')
+        missing=points.copy();missing[0]=np.nan
+        _,masked=refine(biomech.MODEL,labels,q,missing,names,settings,times=times)
+        self.assertEqual([r['status'] for r in masked['frames']],['input_missing','computed','computed'])
+        with self.assertRaisesRegex(ValueError,'clock'):
+            refine(biomech.MODEL,labels,q,points,names,settings,times=times[::-1])

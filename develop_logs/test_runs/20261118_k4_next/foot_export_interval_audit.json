@@ -1,0 +1,213 @@
+{
+  "scope": "Largest actual-export foot step and surrounding unchanged native coordinates; diagnostic only, no acceptance mask edits",
+  "records": [
+    {
+      "condition": "control",
+      "export_max_foot_step_deg": 24.415734308613327,
+      "export_interval_s": [
+        0.39,
+        0.4
+      ],
+      "native_interval_s": [
+        0.35,
+        0.4
+      ],
+      "coordinates_deg": {
+        "pelvis_tilt": [
+          3.844834189496397,
+          3.66214861325809
+        ],
+        "pelvis_list": [
+          1.441841593852807,
+          0.375483960793503
+        ],
+        "pelvis_rotation": [
+          -27.40187897827709,
+          -25.47215554224816
+        ],
+        "hip_flexion_l": [
+          -5.256146237323703,
+          -3.111581397664361
+        ],
+        "hip_adduction_l": [
+          -4.187271335753665,
+          -8.24933725326019
+        ],
+        "hip_rotation_l": [
+          61.08615579424302,
+          -60.80854264673818
+        ],
+        "knee_angle_l": [
+          6.959678405212524e-11,
+          5.739166560782834
+        ],
+        "ankle_angle_l": [
+          -44.15672379472831,
+          -49.99999938431068
+        ],
+        "subtalar_angle_l": [
+          -61.77320505623819,
+          65.45097475839759
+        ]
+      },
+      "joint_fallbacks_in_interval": {},
+      "native_export_position_at_knots": 8.881784197001252e-16
+    },
+    {
+      "condition": "foot_domain",
+      "export_max_foot_step_deg": 35.532860297795985,
+      "export_interval_s": [
+        0.39,
+        0.4
+      ],
+      "native_interval_s": [
+        0.35,
+        0.4
+      ],
+      "coordinates_deg": {
+        "pelvis_tilt": [
+          3.846396479163817,
+          3.657086654539802
+        ],
+        "pelvis_list": [
+          1.440743988434336,
+          0.3745719648880124
+        ],
+        "pelvis_rotation": [
+          -27.40284488499691,
+          -25.48904723614808
+        ],
+        "hip_flexion_l": [
+          -5.260524808147018,
+          -4.782347424203516
+        ],
+        "hip_adduction_l": [
+          -4.182031713909494,
+          -9.011659782879308
+        ],
+        "hip_rotation_l": [
+          61.84707888162464,
+          -91.54457979568456
+        ],
+        "knee_angle_l": [
+          3.020783534031414e-14,
+          6.564552697921472
+        ],
+        "ankle_angle_l": [
+          -47.14600798285223,
+          -89.99999999836051
+        ],
+        "subtalar_angle_l": [
+          -64.66794087750428,
+          60.93427798844694
+        ]
+      },
+      "joint_fallbacks_in_interval": {},
+      "native_export_position_at_knots": 1.7763568394002505e-15
+    },
+    {
+      "condition": "foot_geometry",
+      "export_max_foot_step_deg": 31.05277106247777,
+      "export_interval_s": [
+        0.39,
+        0.4
+      ],
+      "native_interval_s": [
+        0.35,
+        0.4
+      ],
+      "coordinates_deg": {
+        "pelvis_tilt": [
+          3.848086261912993,
+          3.662178517317183
+        ],
+        "pelvis_list": [
+          1.440081023780775,
+          0.373236057089162
+        ],
+        "pelvis_rotation": [
+          -27.40433560625801,
+          -25.47944337098145
+        ],
+        "hip_flexion_l": [
+          -5.349351486282141,
+          -3.749203207786383
+        ],
+        "hip_adduction_l": [
+          -4.136750313609752,
+          -8.791677942378378
+        ],
+        "hip_rotation_l": [
+          73.97406777560397,
+          -74.34088933188919
+        ],
+        "knee_angle_l": [
+          5.572658685914078e-10,
+          6.332627797085733
+        ],
+        "ankle_angle_l": [
+          -43.26057722188741,
+          -49.99999997115501
+        ],
+        "subtalar_angle_l": [
+          -69.65311463714379,
+          58.67457056223367
+        ]
+      },
+      "joint_fallbacks_in_interval": {},
+      "native_export_position_at_knots": 1.7763568394002505e-15
+    },
+    {
+      "condition": "geometry_domain",
+      "export_max_foot_step_deg": 40.12953712570392,
+      "export_interval_s": [
+        0.39,
+        0.4
+      ],
+      "native_interval_s": [
+        0.35,
+        0.4
+      ],
+      "coordinates_deg": {
+        "pelvis_tilt": [
+          3.847655415016484,
+          3.656650050147052
+        ],
+        "pelvis_list": [
+          1.439986059685639,
+          0.3742113028314183
+        ],
+        "pelvis_rotation": [
+          -27.40434612350212,
+          -25.49805804403424
+        ],
+        "hip_flexion_l": [
+          -5.349230085070337,
+          -5.424409476705073
+        ],
+        "hip_adduction_l": [
+          -4.136005021253987,
+          -8.952448716309512
+        ],
+        "hip_rotation_l": [
+          74.09659032611201,
+          -101.3858777244638
+        ],
+        "knee_angle_l": [
+          1.919255232161989e-10,
+          6.603953231208926
+        ],
+        "ankle_angle_l": [
+          -43.73511231003982,
+          -83.08302777905227
+        ],
+        "subtalar_angle_l": [
+          -69.98924530788216,
+          47.88150389067378
+        ]
+      },
+      "joint_fallbacks_in_interval": {},
+      "native_export_position_at_knots": 8.881784197001252e-16
+    }
+  ]
+}

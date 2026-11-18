@@ -19,6 +19,23 @@ def bounded_jacobian(function,x,lower,upper,step):
 
 
 def refine(model_path, labels, coordinates, points, names, settings, orientation_targets=None,times=None):
+    traversal=settings.get('traversal','forward')
+    if traversal not in ('forward','reverse'):
+        raise ValueError('Unknown refinement traversal')
+    if traversal=='reverse':
+        # Offline whole-clip candidate: use later observed geometry to seed
+        # earlier ambiguous poses. Negating the reversed physical clock keeps
+        # positive intervals; output samples remain on their original clock.
+        inner={**settings,'traversal':'forward'}
+        reversed_targets={body:value[::-1] for body,value in (orientation_targets or {}).items()}
+        reversed_times=None if times is None else -np.asarray(times)[::-1]
+        result,receipt=refine(model_path,labels,np.asarray(coordinates)[::-1],
+                              np.asarray(points)[::-1],names,inner,reversed_targets,reversed_times)
+        receipt['frames']=receipt['frames'][::-1]
+        receipt['settings']=dict(settings)
+        receipt['traversal']={'direction':'reverse','output_order':'original input order',
+                              'scope':'Offline candidate using future D samples; no reference or window-specific selection'}
+        return result[::-1].copy(),receipt
     import opensim as osim
     import biomech
     model=osim.Model(str(model_path));state=model.initSystem();cs=model.getCoordinateSet()
