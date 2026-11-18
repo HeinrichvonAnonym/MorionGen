@@ -1,0 +1,39 @@
+{
+  "version": "position-foot-reachability-1",
+  "records": [
+    {
+      "window": "002",
+      "method": "motionlcm",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/002/motionlcm/candidate",
+      "fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/control/002/motionlcm",
+      "domain_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/motionlcm",
+      "side": "left",
+      "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_foot_probe_20261118_v1/002_motionlcm.json",
+      "source_sha256": {
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/control/002/motionlcm/model.osim": "07124a7ee236275518813c9cf5cc6fced2d6fb4038d603f2741387f0b2eef5e8",
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/motionlcm/model.osim": "15cf720757f197cab48b6d2f932ae0efa693f2b1ab230b3c74d3b983abe423b7",
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/control/002/motionlcm/coordinates_refined_native.mot": "6ebce037c3fc7f5abb72a2eb2444b3fd0ea5fba02929d052d6e2457d2af1c23a"
+      }
+    },
+    {
+      "window": "002",
+      "method": "omnicontrol",
+      "input": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/runtime_inputs/002/omnicontrol/candidate",
+      "fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/control/002/omnicontrol",
+      "domain_fit": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/omnicontrol",
+      "side": "left",
+      "output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_position_foot_probe_20261118_v1/002_omnicontrol.json",
+      "source_sha256": {
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/control/002/omnicontrol/model.osim": "938bf472d89354a5a9782d21793f6e98f1b9983a7dd31962c43bf0316400e566",
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/geometry_domain/002/omnicontrol/model.osim": "d9f867b254b82e45e996fa1b0b3744b31ed879cbde2b4c865de3d0dadb3cea3d",
+        "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_formats_20261118_v1/fits/control/002/omnicontrol/coordinates_refined_native.mot": "1f8a699b2148e926fa951b3cffdae8c505bab65b3474f3be91efad68a4402153"
+      }
+    }
+  ],
+  "workers": 1,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Both position formats retain scaled-asset foot geometry; geometry factor did not operate. Expanded range removes persistent boundary contact but errors remain. Diagnose fixed-proximal foot direction then released six-coordinate leg using same D-selected6frames before considering geometry or initialization changes.",
+  "selection": "3 uniformly spaced valid frames plus3 largest control D foot-direction residuals; unchanged between models. Sampled diagnosis only, no global impossibility proof.",
+  "script_sha256": "4ce8e9fdf1b4930245ab9ea3585834d7163c7022b37b26f68344ebd324ef404a"
+}
