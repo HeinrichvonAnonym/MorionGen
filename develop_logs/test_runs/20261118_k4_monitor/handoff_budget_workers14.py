@@ -36,6 +36,11 @@ def main():
  print(json.dumps({'event':'waiting_started','pid':os.getpid(),'target_pid':args.pid,'stage':args.stage,'time':datetime.datetime.now().isoformat()}),flush=True)
  assert not (B/'monitor_cache_20261118/handoff_hold').exists(),'Handoff held by parent for short numerical test'
  if args.wait:
+  protocol=json.loads(PROTOCOL.read_text());gate_total=0
+  for stage in protocol['validation_stages']:
+   gate_total+=len(stage['paths'])
+   if stage['name']==args.stage:break
+  else:raise ValueError('Unknown registered handoff stage')
   while True:
    try:inspect(args.pid,args.stage);break
    except AssertionError:
@@ -44,7 +49,7 @@ def main():
     if progress.get('state') in ('validation_stage_failed','completed'):raise RuntimeError('Stage gate stopped or run completed; preserve status')
     if progress.get('stage')=='full_remaining':raise RuntimeError('Safe format_completion38 boundary missed; full_remaining already started, leave fitting untouched')
     if (RUN/'stage_failure.json').exists():raise RuntimeError('Stage failure preserved; do not cross gate')
-    time.sleep(5)
+    time.sleep(.25 if progress.get('finished',0)>=gate_total-1 else 2)
  assert sha(NEW_RUNNER)==NEW_RUNNER_SHA,'New scheduler changed'
  initial=inspect(args.pid,args.stage);print(json.dumps(initial),flush=True)
  if not args.execute:return
