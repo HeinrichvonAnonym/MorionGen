@@ -43,6 +43,21 @@ def test_live_denominators_and_record_whitelist(tmp_path):
     assert api.snapshot()['worker_limit'] == 8
 
 
+def test_twelve_worker_amendment_reserves_other_numerical_jobs():
+    protocol=dict(workers=6,output='/run')
+    identity=dict(protocol_sha256='p',runner_sha256='r')
+    amendment=dict(version='k4-execution-amendment-2',protocol_sha256='p',
+        original_runner_sha256='r',output='/run',max_workers=11,
+        total_worker_limit=12,reserved_workers=1,authorization='User authorized twelve total')
+    assert runner.execution_workers(protocol,'p',identity,amendment)==11
+    assert runner.execution_workers(protocol,'p',identity,dict(amendment,max_workers=12,reserved_workers=0))==12
+    for change in ({'max_workers':12},{'total_worker_limit':13},{'reserved_workers':-1},
+                   {'max_workers':True},{'reserved_workers':True},{'authorization':''},
+                   {'fit_config':'changed'},{'protocol_sha256':'other'}):
+        with pytest.raises(ValueError):
+            runner.execution_workers(protocol,'p',identity,dict(amendment,**change))
+
+
 def test_new_protocol_declares_eight_worker_budget_without_changing_legacy():
     protocol=dict(version='k4-full-frozen-regression-2',workers=8,resource_budget=dict(
         max_workers=8,numerical_threads=1,minimum_free_GiB=80,authorization='User authorized at most8 CPU workers'))

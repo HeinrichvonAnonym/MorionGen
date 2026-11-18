@@ -35,14 +35,23 @@ def execution_workers(protocol, protocol_hash, original_identity, amendment):
         elif not 1<=protocol['workers']<=3:raise ValueError('Original protocol allows at most three workers')
         return protocol['workers']
     allowed={'version','protocol_sha256','original_runner_sha256','output','max_workers','authorization'}
-    if set(amendment)!=allowed or amendment['version']!='k4-execution-amendment-1':
+    expanded=amendment.get('version')=='k4-execution-amendment-2'
+    if expanded:allowed|={'total_worker_limit','reserved_workers'}
+    if set(amendment)!=allowed or amendment['version'] not in ('k4-execution-amendment-1','k4-execution-amendment-2'):
         raise ValueError('Invalid execution-only amendment')
     if not original_identity or amendment['protocol_sha256']!=protocol_hash or original_identity['protocol_sha256']!=protocol_hash:
         raise ValueError('Execution amendment protocol mismatch')
     if amendment['original_runner_sha256']!=original_identity['runner_sha256'] or amendment['output']!=protocol['output']:
         raise ValueError('Execution amendment run identity mismatch')
-    if not isinstance(amendment['max_workers'],int) or not 1<=amendment['max_workers']<=8:
-        raise ValueError('User-authorized maximum is eight workers')
+    limit=8
+    if expanded:
+        total=amendment['total_worker_limit'];reserved=amendment['reserved_workers']
+        if (type(total) is not int or not 1<=total<=12 or type(reserved) is not int
+                or not 0<=reserved<total or not amendment['authorization']):
+            raise ValueError('Explicit total budget and reserved workers required; maximum twelve')
+        limit=total-reserved
+    if type(amendment['max_workers']) is not int or not 1<=amendment['max_workers']<=limit:
+        raise ValueError('Worker count exceeds authorized execution budget')
     return amendment['max_workers']
 
 
