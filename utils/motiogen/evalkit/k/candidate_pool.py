@@ -8,7 +8,7 @@ from .motion import load
 from .candidate_quality import assess, choose
 
 
-def fit(run, work, mass, floor, settings):
+def fit(run, work, mass, floor, settings, *, native_provider=None):
     from .k4_fitting import fit as fit_single
     import biomech
     if settings.get('version') != 'k4-candidate-pool-1':
@@ -29,6 +29,7 @@ def fit(run, work, mass, floor, settings):
            'implementation':{str(p.relative_to(Path(__file__).parent)):digest(p) for p in sorted(Path(__file__).parent.rglob('*.py'))},
            'input_config_sha256':digest(ROOT/'config/evalkit_k4_20261117/input.json'),
            'biomech_sha256':digest(biomech.__file__)}
+    if native_provider is not None:key['frozen_native_provider']=native_provider.identity
     out = Path(work); out.mkdir(parents=True,exist_ok=True)
     receipt_path = out/'receipt.json'
     if receipt_path.exists():
@@ -62,7 +63,8 @@ def fit(run, work, mass, floor, settings):
         folder = out/'candidates'/name
         try:
             candidate = dict(config, method=motion.method)
-            values = fit_single(run, folder, mass, floor, candidate)
+            values = (fit_single(run, folder, mass, floor, candidate) if native_provider is None else
+                      native_provider(name,run,folder,mass,floor,candidate))
             record(name,folder,values)
         except (ValueError,RuntimeError) as error:
             failures[name] = {'type':type(error).__name__,'message':str(error)}

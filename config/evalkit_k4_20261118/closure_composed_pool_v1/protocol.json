@@ -1,0 +1,22 @@
+{
+  "version": "k4-composed-bank-transfer-1",
+  "conditions": [
+    "pool"
+  ],
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "frozen_native_bank": {
+    "run": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_pool_transfer_20261118_v1",
+    "condition": "pool",
+    "contract": "native_contract.json",
+    "code_commit": "272f08e01342e88695d250057202d03ad8fc51a0"
+  },
+  "hypothesis": "Compose fixed-native full-body export with every successful native candidate, preserving all original candidates and input-only whole-window ranking. Existing identical export policies are not recomputed. Validate that fixed native geometry choices can retain good interpolation without rerunning native fitting.",
+  "boundary": "All23 predeclared windows unchanged. Native code/config/assets pinned independently from export code. Reuse every native candidate, never only the old winner and never filter by R acceptance. Frozen source failed and inapplicable states retained. New output/caches preserve original source and all candidates. R scoring remains a separate process.",
+  "sources": {
+    "native_bank_config_sha256": "c4b6dd192abf7ea549417c81d6da98c5c95d06b36d3f3a9f07e2c683aab1671e",
+    "source_panel_sha256": "8e4a9ed59ba23cbe07bb11d45434569ac016053bc76dff5aa4f72c8a4750ad28"
+  }
+}

@@ -59,7 +59,27 @@ def main():
                 subprocess.run([sys.executable,*map(str,arguments)],check=True,env=env,stdout=log,stderr=subprocess.STDOUT)
         result={'window':key,'method':method,'condition':condition,'status':'failed'}
         try:
-            call([a.code_root/'python/scripts/evalkit_k4_run.py','--code-root',a.code_root,'--job',job],'fit')
+            native=protocol.get('frozen_native_bank')
+            if native:
+                source_run=Path(native['run']);source_task=source_run/'tasks'/native['condition']/f'{key}_{method}'/'status.json'
+                producer=json.loads((source_run/'identity.json').read_text())
+                if producer['code_commit']!=native['code_commit']:raise ValueError('Native producer implementation changed')
+                timeout=time.monotonic()+4*3600
+                while not source_task.exists():
+                    if (source_run/'completion.json').exists():raise RuntimeError('Completed native bank has no task record')
+                    if time.monotonic()>timeout:raise TimeoutError('Native producer has not completed this input')
+                    time.sleep(10)
+                if json.loads(source_task.read_text())['status']!='completed':
+                    raise RuntimeError('Native producer failed; preserve its failure history before recovery')
+                source_fit=source_run/'fits'/native['condition']/key/method
+                payload.update(native_bank=str(source_fit),native_contract=str(config/native['contract']))
+                job.write_text(json.dumps(payload,indent=2)+'\n')
+                call([a.code_root/'python/scripts/evalkit_k4_compose_bank.py','--input',original['input'],
+                      '--method',method,'--mass',original['mass_kg'],'--floor',original['floor_m'],
+                      '--native-bank',source_fit,'--native-contract',config/native['contract'],
+                      '--config',config/(condition+'.json'),'--output',fit],'fit')
+            else:
+                call([a.code_root/'python/scripts/evalkit_k4_run.py','--code-root',a.code_root,'--job',job],'fit')
             saved=json.loads((fit/'receipt.json').read_text())['key']
             common=json.loads((a.run/'common_v1'/key/method/'receipt.json').read_text())['key']
             if saved['inputs']!=common['inputs'] or saved['model_sha256']!=common['model_sha256']:

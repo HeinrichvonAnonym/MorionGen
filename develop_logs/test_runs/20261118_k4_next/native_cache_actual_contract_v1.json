@@ -1,0 +1,30 @@
+[
+  {
+    "window": "000",
+    "method": "kimodo",
+    "candidates": 8,
+    "declared": 12,
+    "passed": true
+  },
+  {
+    "window": "008",
+    "method": "omnicontrol",
+    "candidates": 8,
+    "declared": 12,
+    "passed": true
+  },
+  {
+    "window": "010",
+    "method": "kimodo",
+    "candidates": 8,
+    "declared": 12,
+    "passed": true
+  },
+  {
+    "window": "015",
+    "method": "ardy",
+    "candidates": 8,
+    "declared": 12,
+    "passed": true
+  }
+]
