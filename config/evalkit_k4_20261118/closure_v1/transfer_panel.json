@@ -1,0 +1,101 @@
+{
+  "records": [
+    {
+      "window": "000",
+      "method": "kimodo"
+    },
+    {
+      "window": "008",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "010",
+      "method": "kimodo"
+    },
+    {
+      "window": "015",
+      "method": "ardy"
+    },
+    {
+      "window": "015",
+      "method": "chois"
+    },
+    {
+      "window": "015",
+      "method": "closd"
+    },
+    {
+      "window": "015",
+      "method": "dart"
+    },
+    {
+      "window": "015",
+      "method": "kimodo"
+    },
+    {
+      "window": "015",
+      "method": "motionlcm"
+    },
+    {
+      "window": "015",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "015",
+      "method": "primal"
+    },
+    {
+      "window": "017",
+      "method": "chois"
+    },
+    {
+      "window": "022",
+      "method": "kimodo"
+    },
+    {
+      "window": "022",
+      "method": "motionlcm"
+    },
+    {
+      "window": "022",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "069",
+      "method": "ardy"
+    },
+    {
+      "window": "069",
+      "method": "chois"
+    },
+    {
+      "window": "069",
+      "method": "closd"
+    },
+    {
+      "window": "069",
+      "method": "dart"
+    },
+    {
+      "window": "069",
+      "method": "kimodo"
+    },
+    {
+      "window": "069",
+      "method": "primal"
+    },
+    {
+      "window": "070",
+      "method": "chois"
+    },
+    {
+      "window": "074",
+      "method": "kimodo"
+    }
+  ],
+  "sources": {
+    "config/evalkit_k4_20261117/strict_v1/panel.json": "2db8b4a6473d4cf940cb122a0853a84756684a4a171ee0f83ae2da8a70e1ef6e",
+    "config/evalkit_k4_20261118/failure_followup_regression_v1/sentinels.json": "b56fb6918b29744b4276744a59799d88cbe2ce7ce96e8a289ebf65c1d5df30fa"
+  },
+  "new_holdout_uses": 0
+}

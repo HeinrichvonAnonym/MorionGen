@@ -18,7 +18,11 @@ def bounded_jacobian(function,x,lower,upper,step):
     return np.stack(columns,axis=1)
 
 
-def refine(model_path, labels, coordinates, points, names, settings, orientation_targets=None,times=None):
+def refine(model_path, labels, coordinates, points, names, settings, orientation_targets=None,times=None,fixed_frames=None):
+    if fixed_frames is None:fixed_frames=np.zeros(len(coordinates),dtype=bool)
+    fixed_frames=np.asarray(fixed_frames)
+    if fixed_frames.dtype!=np.bool_ or fixed_frames.shape!=(len(coordinates),):
+        raise ValueError('Fixed-frame mask must be boolean and match the coordinate clock')
     traversal=settings.get('traversal','forward')
     if traversal not in ('forward','reverse'):
         raise ValueError('Unknown refinement traversal')
@@ -30,7 +34,7 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
         reversed_targets={body:value[::-1] for body,value in (orientation_targets or {}).items()}
         reversed_times=None if times is None else -np.asarray(times)[::-1]
         result,receipt=refine(model_path,labels,np.asarray(coordinates)[::-1],
-                              np.asarray(points)[::-1],names,inner,reversed_targets,reversed_times)
+                              np.asarray(points)[::-1],names,inner,reversed_targets,reversed_times,fixed_frames[::-1])
         receipt['frames']=receipt['frames'][::-1]
         receipt['settings']=dict(settings)
         receipt['traversal']={'direction':'reverse','output_order':'original input order',
@@ -65,6 +69,11 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
     label_index={n:i for i,n in enumerate(labels)}
     active=[n for n in labels if cs.contains(n) and not cs.get(n).getDefaultLocked()
             and not cs.get(n).isDependent(state) and cs.get(n).getMotionType()==1]
+    requested=settings.get('active_coordinates')
+    if requested is not None:
+        if not requested or len(set(requested))!=len(requested) or not set(requested)<=set(active):
+            raise ValueError('Requested refinement coordinates must be distinct active angular coordinates')
+        active=[n for n in active if n in requested]
     # Coordinate limits come from this model, including its explicitly free heading.
     lo=np.array([cs.get(n).getRangeMin() for n in active]);hi=np.array([cs.get(n).getRangeMax() for n in active])
     cols=[label_index[n] for n in active]
@@ -169,6 +178,16 @@ def refine(model_path, labels, coordinates, points, names, settings, orientation
                     error_rate=direction_error_rate(u-gu,previous_direction_error,times[frame]-times[frame-1])
                     terms.append(rate_excess_residual(error_rate,rate_scale,rate_margin,rate_weight))
             return np.concatenate(terms)
+        if fixed_frames[frame]:
+            chosen=np.deg2rad(row[cols])
+            if np.any(chosen<lo-1e-8) or np.any(chosen>hi+1e-8):
+                raise ValueError('Fixed native anchor outside declared coordinate domain')
+            final_points=evaluate(chosen)
+            previous=chosen.copy();previous_direction_error=unit(vectors(final_points))-gu
+            if transport_weight:
+                previous_body_rotations=body_rotations();previous_input_directions=gu.copy()
+            receipts.append({'status':'fixed_native_anchor','selected':'unchanged_native_coordinates'})
+            continue
         initial_loss=float(np.dot(residual(x0,False),residual(x0,False)))
         def selection_loss(x,pose_loss):
             value=residual(x,True) if temporal_active else None

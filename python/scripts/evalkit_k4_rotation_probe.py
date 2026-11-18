@@ -20,7 +20,9 @@ def main():
     for name in ('window','method'):p.add_argument('--'+name,required=True)
     p.add_argument('--whole-body',action='store_true',help='Replay all eligible joint rotations; also audit constrained joints')
     p.add_argument('--native-multiple',action='store_true',help='Add independent SO(3) export on a uniform grid containing every native input knot')
+    p.add_argument('--coordinated-config',type=Path,help='Fixed-native-anchor path refinement; requires native-multiple')
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
+    if a.coordinated_config and not a.native_multiple:raise ValueError('Coordinated path needs exact native knots')
     motion=load(a.input,a.method,config=ROOT/'config/evalkit_k4_20261117/input.json')
     saved=json.loads((a.fit/'receipt.json').read_text())
     if saved['key']['inputs']!=motion.provenance['inputs']:raise ValueError('Replay input identity changed')
@@ -46,6 +48,12 @@ def main():
         aligned_q,aligned_receipt=interpolate_rotations(model,labels,q,t,aligned,aligned_linear)
         _,clock_receipt=native_multiple_clock(t)
         conditions.append(('whole_native_grid',aligned,aligned_q));receipt['native_clock_export']={'clock':clock_receipt,'rotations':aligned_receipt}
+        if a.coordinated_config:
+            from motiogen.evalkit.k.resampling.coordinated import refine_path
+            policy=json.loads(a.coordinated_config.read_text())
+            refined,path_receipt=refine_path(model,labels,q,t,aligned_q,aligned,motion,policy)
+            conditions.append(('coordinated',aligned,refined));receipt['coordinated_path']=path_receipt
+            receipt['coordinated_config_sha256']=hashlib.sha256(a.coordinated_config.read_bytes()).hexdigest()
     definition_file=a.fit/'head_neck_model.json'
     if definition_file.exists():
         definition=json.loads(definition_file.read_text());definition_source=str(definition_file)

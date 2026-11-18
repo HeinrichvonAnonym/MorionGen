@@ -1,0 +1,44 @@
+{
+  "records": [
+    {
+      "window": "026",
+      "method": "kimodo"
+    },
+    {
+      "window": "026",
+      "method": "motionlcm"
+    },
+    {
+      "window": "032",
+      "method": "kimodo"
+    },
+    {
+      "window": "032",
+      "method": "motionlcm"
+    },
+    {
+      "window": "043",
+      "method": "kimodo"
+    },
+    {
+      "window": "043",
+      "method": "motionlcm"
+    },
+    {
+      "window": "044",
+      "method": "kimodo"
+    },
+    {
+      "window": "044",
+      "method": "motionlcm"
+    },
+    {
+      "window": "055",
+      "method": "kimodo"
+    },
+    {
+      "window": "055",
+      "method": "motionlcm"
+    }
+  ]
+}

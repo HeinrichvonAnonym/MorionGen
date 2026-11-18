@@ -151,6 +151,9 @@ class DeclaredCentresTests(unittest.TestCase):
             other=copy.deepcopy(m);other.positions[:]=0
             c=build(other,Path(temp)/'c.osim',75,True,'owned_joint_frame','declared_rig')
             self.assertEqual(b['joint_centres'],c['joint_centres'])
+            effective=build(m,Path(temp)/'effective.osim',75,True,'owned_joint_frame','declared_rig','observed_rigid_median')
+            self.assertAlmostEqual(effective['after']['shoulder_width'],effective['targets']['lengths_m']['shoulder_width'],places=9)
+            self.assertLess(max(effective['marker_joint_frame_offset_m'].values()),1e-9)
 
     def test_expanded_domain_is_explicit_and_leaves_other_constraints(self):
         from motiogen.evalkit.k.diagnostic_domain import apply

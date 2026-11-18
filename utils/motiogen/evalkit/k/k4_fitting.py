@@ -142,6 +142,17 @@ def fit(run,work,mass,floor,config):
     else:
         if refinement is not None:raise ValueError('Refined coordinates require explicit native-preserving resampling')
         times,labels,coordinates=biomech.write_coordinates(out/'ik/ik.mot',out/'coordinates.mot')
+    path_receipt=None
+    if settings.get('coordinated_path'):
+        if settings.get('postprocess')!='native_preserving' or clock_policy!='native_multiple':
+            raise ValueError('Coordinated path requires exact native-knot export')
+        if settings.get('constraint_policy')!='direct_couplers':
+            raise ValueError('Coordinated path requires explicit direct couplers')
+        from .resampling.coordinated import refine_path
+        before_path=coordinates.copy()
+        coordinates,path_receipt=refine_path(out/'model.osim',labels,native,nt,coordinates,times,motion,settings['coordinated_path'])
+        np.savez_compressed(out/'interpolation_before_coordination.npz',times=times,labels=labels,coords=before_path)
+        (out/'coordinated_path.json').write_text(json.dumps(path_receipt,indent=2)+'\n')
     direct=settings.get('constraint_policy','assembly')=='direct_couplers'
     physical_times=((times-times[0])+motion.times[0]
                     if settings.get('postprocess')=='native_preserving' else times+motion.times[0])
@@ -198,6 +209,7 @@ def fit(run,work,mass,floor,config):
              'constraint_policy':settings.get('constraint_policy','assembly'),
              'resampling':settings.get('postprocess','legacy_lowpass'),
              'rotation_resampling':rotation_resampling,'export_clock':export_clock_receipt,
+             'coordinated_path':None if path_receipt is None else {k:v for k,v in path_receipt.items() if k!='frames'},
              'root_policy':settings['root_policy'],'refinement_ran':refinement is not None,
              'initialization':initialization,
              'output_dt_s':float(np.median(np.diff(times))),

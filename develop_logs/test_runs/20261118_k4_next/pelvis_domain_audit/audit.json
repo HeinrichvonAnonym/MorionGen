@@ -1,0 +1,32 @@
+{
+  "policy": {
+    "base": "preserve_existing",
+    "scope": "independent_kinematic",
+    "coordinate_ranges_deg": {
+      "pelvis_tilt": [
+        -180,
+        180
+      ]
+    }
+  },
+  "changes": {
+    "pelvis_tilt": {
+      "locked_before": false,
+      "locked_after": false,
+      "range_native_before": [
+        -1.57079633,
+        1.57079633
+      ],
+      "range_native_after": [
+        -3.141592653589793,
+        3.141592653589793
+      ]
+    }
+  },
+  "model_sha256_before": "bf4fad3d9c062cbbef91b978af8cb200621abfb8b89a1d2a4b160fb58b318995",
+  "model_sha256_after": "2a82d1626c96dd1ae3144ff3d7ffd99c59a75f251fe4af4e7184b43ca68fb812",
+  "scope": "Existing angular coordinate range only; unchanged axes, structure and coupling; kinematic candidate, no force qualification",
+  "samples": 181,
+  "all_fk_finite": true,
+  "coupling_unchanged": true
+}

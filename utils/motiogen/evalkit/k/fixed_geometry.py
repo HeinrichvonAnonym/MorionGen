@@ -42,8 +42,8 @@ def build(motion,out,mass,independent_geometry=False,marker_registration='legacy
         if estimate is not None:
             lengths['rest_hip_to_shoulder_midpoint']=estimate
             targets['neutral_trunk_length']='unidentified; effective chain proxy used as explicit fixed model approximation'
-    if shoulder_width_source!='declared_or_observed' and (not independent_geometry or joint_centres!='scaled_asset'):
-        raise ValueError('Observed rigid shoulder width requires independent geometry and scaled-asset centres')
+    if shoulder_width_source!='declared_or_observed' and not independent_geometry:
+        raise ValueError('Observed rigid shoulder width requires independent geometry')
     if any(not np.isfinite(v) or v<=1e-6 for v in lengths.values()):
         raise ValueError('Fixed geometry unavailable: missing or degenerate input segments')
     model=osim.Model(str(biomech.MODEL));state=model.initSystem();base=measure(model,state)
@@ -81,7 +81,8 @@ def build(motion,out,mass,independent_geometry=False,marker_registration='legacy
     centre_receipt={'status':'scaled_asset'}
     if joint_centres=='declared_rig':
         from .rig_geometry import register_centres
-        centre_receipt=register_centres(model,motion.provenance.get('input_rig'))
+        centre_receipt=register_centres(model,motion.provenance.get('input_rig'),
+            lengths['shoulder_width'] if shoulder_width_source=='observed_rigid_median' else None)
     if foot_geometry not in ('scaled_asset','declared_rig'):
         raise ValueError('Unknown fixed foot geometry policy')
     foot_receipt={'status':'scaled_asset'}

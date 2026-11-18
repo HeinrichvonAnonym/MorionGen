@@ -1,0 +1,13 @@
+{
+  "version": "k4-closure-1",
+  "frozen_original": "17b4416, original656 unchanged",
+  "experiments": {
+    "legs": 20,
+    "torso": 50,
+    "coordinated_path": "010 ARDy reverse native fit, fixed knots; isolated export replay before full runtime regression"
+  },
+  "resource_policy": "6 original workers plus at most2 experimental numerical processes",
+  "transfer_panel_paths": 23,
+  "native_anchor_policy": "intermediate coordination preserves all native coordinates; interpolation targets are assumptions, not observations",
+  "promotion": "none"
+}

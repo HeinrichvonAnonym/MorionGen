@@ -1,0 +1,20 @@
+{
+  "records": [
+    {
+      "window": "052",
+      "method": "kimodo"
+    },
+    {
+      "window": "052",
+      "method": "motionlcm"
+    },
+    {
+      "window": "063",
+      "method": "kimodo"
+    },
+    {
+      "window": "063",
+      "method": "motionlcm"
+    }
+  ]
+}

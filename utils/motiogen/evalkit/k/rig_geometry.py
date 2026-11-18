@@ -9,12 +9,20 @@ def transport(rig):
     return np.array([[0.,0,1],[0,1,0],[-1,0,0]])@np.stack([left,up,np.cross(left,up)],1).T
 
 
-def register_centres(model,rig):
+def register_centres(model,rig,shoulder_width=None):
     """Move existing parent offset frames once; keep axes, child frames and DOFs."""
     import opensim as osim
     import biomech
     if rig is None:return {'status':'unavailable','reason':'Position profile has no declared neutral rig; existing model prior retained'}
     rest=np.asarray(rig['neutral_joints']);index={n:i for i,n in enumerate(rig['names'])}
+    rest=rest.copy()
+    if shoulder_width is not None:
+        if not np.isfinite(shoulder_width) or shoulder_width<=0:raise ValueError('Positive fixed shoulder width required')
+        left,right=index['left_shoulder'],index['right_shoulder']
+        midpoint=(rest[left]+rest[right])/2;axis=rest[left]-rest[right]
+        if np.linalg.norm(axis)<1e-9:raise ValueError('Degenerate rig shoulder axis')
+        half=axis/np.linalg.norm(axis)*shoulder_width/2
+        rest[left]=midpoint+half;rest[right]=midpoint-half
     hip=(rest[index['left_hip']]+rest[index['right_hip']])/2;rotation=transport(rig)
     state=model.initSystem();center=(biomech._child_origin(model,state,'hip_l')+biomech._child_origin(model,state,'hip_r'))/2
     spine='Spine' if 'Spine' in index else 'spine1';records={}
@@ -32,7 +40,7 @@ def register_centres(model,rig):
         if np.linalg.norm(actual-target)>1e-8:raise ValueError('Declared joint-centre registration FK mismatch')
         records[joint]={'source_node':node,'parent_translation_before_m':before,'parent_translation_after_m':local.tolist(),
                         'target_neutral_world_m':target.tolist(),'fk_neutral_world_m':actual.tolist()}
-    return {'status':'declared_rig_centres','changes':records,'fixed_for_clip':True,
+    return {'status':'declared_rig_centres','changes':records,'fixed_for_clip':True,'effective_shoulder_width_m':shoulder_width,
             'scope':'Input-rig neutral joint centres; existing joint axes, DOFs, ranges and child frames unchanged; kinematic only'}
 
 

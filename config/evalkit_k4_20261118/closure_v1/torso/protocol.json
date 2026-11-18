@@ -1,0 +1,16 @@
+{
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "selection": "Same conditions across all listed inputs; IDs only in offline dispatch; R only independent scoring",
+  "version": "k4-closure-torso-1",
+  "conditions": [
+    "control",
+    "position_chain",
+    "pelvis_range",
+    "registered_centres",
+    "range_centres"
+  ],
+  "hypothesis": "Deep/oblique trunk: isolate positional effective length, fixed declared joint-centre registration at unchanged observed width, and pelvis tilt range; existing structure and coupling retained"
+}
