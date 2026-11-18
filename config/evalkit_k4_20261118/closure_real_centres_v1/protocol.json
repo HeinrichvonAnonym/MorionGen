@@ -1,0 +1,29 @@
+{
+  "version": "k4-real-fixed-centres-1",
+  "records": [
+    {
+      "method": "omnicontrol",
+      "input": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_omnicontrol_demo_5d316f25/motion.npz",
+      "input_hashes": {
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_omnicontrol_demo_5d316f25/motion.npz": "5bf4699d1903fb6e10bf6931c166b35062e13512e65d405ba167180a36bfc487"
+      },
+      "frames": 196,
+      "time_range_s": [
+        0.0,
+        9.75
+      ]
+    }
+  ],
+  "conditions": [
+    "position_centres",
+    "control"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Actual Omni model prior has radial shoulder-midpoint lower-bound P95 6.164cm. Input-derived clip-fixed effective pivot/centre reduces that bound to3.433cm and sampled shoulder residuals about10-11cm to4-5cm; full-window behavior remains untested.",
+  "factors": "Only joint_centres differs; preserve original solver/weights/domains/coupling/root/geometry lengths and shoulder width. Existing candidate retained. No action-ID runtime conditions.",
+  "scoring": "No pairedR: full196 input frames F-D raw/common-Dlength, native/export, supported coverage, timing and actual file readback. Source masks unchanged. Geometric frames are priors, never observed rotations.",
+  "evidence": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/real_omni_position_centres_v1/reachability.json",
+  "evidence_sha256": "fdee549a6f0d039288e83fa5368f9ccf0750cfb0daf6407e7af379b68719b603",
+  "next": "Only after full-window evidence, perform registered development comparisons with originalR. Unifiedv2 frozen656 remains unchanged."
+}

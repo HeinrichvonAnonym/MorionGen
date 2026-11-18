@@ -77,12 +77,16 @@ def build(motion,out,mass,independent_geometry=False,marker_registration='legacy
                        'bounds':'0.25..4 engineering guard; boundary hits remain diagnostic'}
         if targets.get('effective_trunk_estimate',{}).get('status')=='estimated_effective_length':
             torso_receipt['neutral_length_source']='observed_chain_proxy; neutral length remains unidentified'
-    if joint_centres not in ('scaled_asset','declared_rig'):raise ValueError('Unknown fixed joint-centre policy')
+    if joint_centres not in ('scaled_asset','declared_rig','observed_position_centres_v1'):raise ValueError('Unknown fixed joint-centre policy')
     centre_receipt={'status':'scaled_asset'}
     if joint_centres=='declared_rig':
         from .rig_geometry import register_centres
         centre_receipt=register_centres(model,motion.provenance.get('input_rig'),
             lengths['shoulder_width'] if shoulder_width_source=='observed_rigid_median' else None)
+    if joint_centres=='observed_position_centres_v1':
+        if not independent_geometry:raise ValueError('Position centre prior requires independent fixed geometry')
+        from .position_centres import register
+        centre_receipt=register(model,motion)
     if foot_geometry not in ('scaled_asset','declared_rig'):
         raise ValueError('Unknown fixed foot geometry policy')
     foot_receipt={'status':'scaled_asset'}

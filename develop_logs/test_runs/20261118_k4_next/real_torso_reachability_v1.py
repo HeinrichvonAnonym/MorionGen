@@ -11,6 +11,7 @@ ap.add_argument('--fit',type=Path,required=True)
 ap.add_argument('--input',type=Path,required=True)
 ap.add_argument('--method',required=True)
 ap.add_argument('--output',type=Path,required=True)
+ap.add_argument('--frames',type=int,nargs='+',help='Previously registered common diagnostic frames')
 a=ap.parse_args()
 sys.path[:0]=[str(a.code_root/'utils'),str(a.code_root/'utils/motiogen')]
 import numpy as np
@@ -61,6 +62,9 @@ radial=np.maximum.reduce([np.zeros(len(span)),abs(aa-bb)-span,span-aa-bb])
 width_bound=abs(np.linalg.norm(G[:,3]-G[:,2],axis=1)-width)/2
 native_error=np.linalg.norm((native[:,2:4]-native[:,:2].mean(1)[:,None])-(G[:,2:4]-G[:,:2].mean(1)[:,None]),axis=-1).max(1)
 frames=sorted(set(np.linspace(0,len(q)-1,3,dtype=int).tolist()+np.argsort(native_error)[-3:].tolist()))
+if a.frames:
+    assert len(set(a.frames))==len(a.frames) and all(0<=i<len(q) for i in a.frames)
+    frames=sorted(a.frames)
 def measures(p,g):
     return dict(shoulder_cm=(100*np.linalg.norm((p[2:4]-p[:2].mean(0))-(g[2:4]-g[:2].mean(0)),axis=-1)).tolist(),
                 directions_deg=angle(feature(p),feature(g)).tolist())
@@ -78,7 +82,7 @@ for frame in frames:
         attempts.append(dict(seed=name,cost=float(r.cost),success=bool(r.success),nfev=r.nfev,optimality=float(r.optimality),angles_deg=np.rad2deg(r.x).tolist(),metrics=measures(p,g)))
     rows.append(dict(frame=int(frame),time_s=float(motion.times[frame]),native=measures(native[frame],g),attempts=attempts))
 out=dict(scope='Actual D-only fidelity diagnostic. No R; sampled local solves are not a global optimality proof or qualified temporal candidate.',
-    frames=len(q),selection='Three uniform frames plus three largest D shoulder-relative errors',coordinate_names=names,
+    frames=len(q),selection='Registered common frames' if a.frames else 'Three uniform frames plus three largest D shoulder-relative errors',coordinate_names=names,
     fixed_geometry=dict(hip_to_lumbar_m=float(aa),lumbar_to_shoulder_m=float(bb),shoulder_width_m=float(width),max_link_variation_m=float(np.max(np.ptp(lengths,axis=0))),max_pivot_gap_m=float(max(pivots))),
     relaxed_lower_bounds=dict(scope='Free link orientations, fixed geometry and hip-midpoint root anchoring; radial shoulder-midpoint and per-frame maximum unilateral shoulder error bounds. Ignores coordinate constraints.',
         shoulder_mid_radial_cm=stats(100*radial),max_shoulder_width_cm=stats(100*width_bound)),rows=rows,

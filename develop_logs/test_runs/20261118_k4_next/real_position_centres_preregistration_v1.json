@@ -1,0 +1,10 @@
+{
+  "scope": "Input-only actual OmniControl fidelity mechanism diagnostic, separate from controlled656",
+  "hypothesis": "Moving the lumbar pivot and shoulder midpoint once to robust D-derived effective centres reduces a fixed torso prior mismatch. The constructed frames are geometric assumptions, not observed rotations or anatomical calibration.",
+  "conditions": ["saved_model", "fixed_effective_centres"],
+  "controlled": ["input", "native_coordinates_as_initialization", "joint_structure", "coordinate_domains", "coupling", "shoulder_width", "torso_only_objective", "two_initializations"],
+  "frames": [0, 50, 51, 52, 97, 195],
+  "frame_selection": "Previously fixed from original model: three uniform frames plus three highest D shoulder-relative residuals",
+  "evaluation": "Conditional torso local solve and relaxed radial lower bounds; no R and no temporal pass claim. Preserve baseline. A successful diagnostic requires a new full-window fit, export and regression before adoption.",
+  "runtime_constraints": "One numerical worker, single thread; no change to queued unifiedv2 or heldout use"
+}
