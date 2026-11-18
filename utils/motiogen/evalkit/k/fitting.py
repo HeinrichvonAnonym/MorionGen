@@ -45,9 +45,9 @@ def fit(run, work, mass, floor, *, config=None):
         from .arms import assess
         points, names, fps = motion.legacy()
         quality = assess(work/'model.osim', points, names, fps, times, labels, coords, CONFIG['arm_fit'])
-        prior = set(motion.provenance.get('degradation', {}).get('prior_joints', []))
+        prior = motion.legacy_prior_names()
         for side, prefix in (('l','left'), ('r','right')):
-            if any(prefix+'_'+joint in prior for joint in ('shoulder','elbow','wrist','wrist_body')):
+            if any(prefix+'_'+joint in prior for joint in ('shoulder','elbow','wrist')):
                 for field in ('observed','angle_valid','position_valid','valid'):
                     quality[side][field][:] = False
         np.savez_compressed(work/'arm_quality.npz', times=times,

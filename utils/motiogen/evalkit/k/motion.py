@@ -48,15 +48,24 @@ class Motion:
     def fps(self):
         return float(1/np.median(np.diff(self.times)))
 
+    def legacy_name_map(self):
+        """Apply exactly the same semantic aliases to points and support metadata."""
+        rename={}
+        if 'left_wrist_body' in self.names:
+            rename.update(left_wrist='left_hand_point',right_wrist='right_hand_point',
+                          left_wrist_body='left_wrist',right_wrist_body='right_wrist')
+        if 'Spine' not in self.names:rename.update(spine1='Spine',spine3='Spine3')
+        return {name:rename.get(name,name) for name in self.names}
+
+    def legacy_prior_names(self):
+        names=self.legacy_name_map()
+        return {names.get(name,name) for name in self.provenance.get('degradation',{}).get('prior_joints',[])}
+
     def legacy(self):
         if not np.allclose(np.diff(self.times), 1/self.fps, rtol=1e-3, atol=1e-6):
             raise ValueError('Full-body fitting requires an explicitly resampled uniform clock')
-        names = self.names.copy()
-        if 'left_wrist_body' in names:
-            rename = {'left_wrist':'left_hand_point','right_wrist':'right_hand_point','left_wrist_body':'left_wrist','right_wrist_body':'right_wrist'}
-            names = [rename.get(n,n) for n in names]
-        if 'Spine' not in names:
-            names = [{'spine1':'Spine','spine3':'Spine3'}.get(n,n) for n in names]
+        aliases=self.legacy_name_map()
+        names=[aliases[n] for n in self.names]
         return self.positions, names, self.fps
 
 

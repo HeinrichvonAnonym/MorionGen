@@ -28,8 +28,7 @@ def main():
     settings=saved['key']['config']['trajectory_refinement']
     times,labels,q=biomech.read_storage(a.fit/a.coordinates)
     observed,names,_=motion.legacy();observed=np.array(observed,copy=True)
-    for name in motion.provenance.get('degradation',{}).get('prior_joints',[]):
-        name=name.removesuffix('_body')
+    for name in motion.legacy_prior_names():
         if name in names:observed[:,list(names).index(name)]=np.nan
     obj,x,_,cols,active=problem(a.fit/'model.osim',labels,q,observed,names,times,settings)
     residual=obj.residual(x);jac=obj.jacobian(x);gradient=np.asarray(jac.T@residual).ravel()

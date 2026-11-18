@@ -110,7 +110,7 @@ closure_path_runtime_20261118_v1的9路完整结束，5路通过、4路指标未
 
 实现保留model_before_trajectory及coordinates_before_trajectory，并在运行时检查变更前后全部原生坐标的FK一致。独立已知FK测试验证只改变搜索边界、原坐标对应的空间目标不变。真实雅可比诊断保存在数据盘trajectory_jacobian_diagnostic_v1.json。默认策略不变，候选尚未晋升。
 
-## CHOIS路径修正的部分观测接入
+## CHOIS路径修正的部分观测接入（阶段假设，后续别名审计已修正）
 
 固定原生回放closure_path_residual_v1发现010 CHOIS全身协调前后左足最大步长同为50.794°，原生D/R时钟均通过，MOT回读通过。检查回执后确认：CHOIS双腕属于声明先验，路径目标正确屏蔽双腕，但逐帧求解器要求所有身体点有限，因此265帧（含198个插入帧）全部标为input_missing，协调修正实际未执行。此结果揭示求解入口的支持门控过强，不能据它宣称协调目标对CHOIS无效。
 
@@ -127,3 +127,11 @@ closure_path_runtime_20261118_v1的9路完整结束，5路通过、4路指标未
 新增trajectory_solver实现有界Gauss–Newton：按Jacobian列范数缩放数值变量，显式求解坐标范围内的线性子问题，再以真实模型目标执行Armijo回溯；全程不读R。保留每次线性求解状态、试探目标、接受步长及最终投影梯度。11项测试通过，包含边界、评价预算、目标单调下降、已知特征恢复及既有真实模型/时钟检查。
 
 预登记closure_trajectory_bounded_v1，073/077 MotionLCM与000 Kimodo共6路，比较原TRF和新有界线性求解；输入、原域初解、几何、目标权重及20次目标评价预算相同。内层线性迭代和实际耗时不同，不能称为等计算成本。求解器数值收敛、输入保真度及原动作验收分别报告。
+
+## CHOIS观测别名审计：真正腕点被先验手端点误屏蔽
+
+上节将CHOIS的两个prior字段直接称为“双腕缺观测”属于阶段误判。继续追踪冻结serialize/reader/rig后确认：原始left_wrist/right_wrist是补出的手端点；left_wrist_body/right_wrist_body才是真实身体腕点。声明rig的这两个腕节点为observed=true。Motion.legacy将位置分别映射成hand_point与wrist，但路径、整段轨迹和选择器对prior字段直接去除_body或套用canonical名，导致手端先验标记覆盖了真实腕点。
+
+本轮修复位置和支持元数据共用legacy_name_map；legacy_prior_names明确把手端先验映射为hand_point，真实腕先验才映射为wrist。应用到路径目标、整段目标、候选质量及旧腕部有效性入口。冻结输入、原参考、独立评分与历史输出保持原值。部分观测求解保留为真实缺测能力，但不再作为CHOIS的主解释。
+
+新closure_path_alias_v1保持原完整身体路径目标，以相同010/032源拟合进行三组回放。此前partial/partial_legs实验均保留；通过的数值结论有效，关于输入缺失的解释由本节纠正。候选17组合不含CHOIS，该局部13/17选择结果不受这次别名修复影响；后续统一候选库必须纳入CHOIS支持检查。

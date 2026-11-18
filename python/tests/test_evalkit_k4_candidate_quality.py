@@ -18,6 +18,19 @@ def example():
     return motion,dict(times=times,positions=positions.copy(),names=np.array(NAMES))
 
 
+def test_hand_tip_prior_does_not_mask_observed_body_wrist():
+    motion,fitted=example()
+    names=[n+'_body' if n.endswith('_wrist') else n for n in motion.names]+['left_wrist','right_wrist']
+    p=np.concatenate([motion.positions,np.full((len(motion.times),2,3),10.)],axis=1)
+    decoded=Motion(p,names,motion.times,'chois',provenance={'degradation':{'prior_joints':['left_wrist','right_wrist']}})
+    assert decoded.legacy_prior_names()=={'left_hand_point','right_hand_point'}
+    assert assess(decoded,fitted)['metrics']['position/left_wrist']['expected']==len(motion.times)
+    fitted['positions'][:,NAMES.index('left_wrist')]+=1
+    assert not assess(decoded,fitted)['metrics']['position/left_wrist']['passed']
+    decoded.provenance['degradation']['prior_joints'].append('left_wrist_body')
+    assert assess(decoded,fitted)['metrics']['position/left_wrist']['expected']==0
+
+
 def test_exact_native_clock_rejects_interpolation_and_extrapolation():
     np.testing.assert_array_equal(exact_indices([0,.1,.2],[0,.05,.1,.15,.2]),[0,2,4])
     with pytest.raises(ValueError,match='exact D knots'):

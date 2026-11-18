@@ -41,7 +41,7 @@ def refine_path(model_path, labels, native, native_times, coordinates, output_ti
             motion.times-motion.times[0],native_times-native_times[0],atol=1e-8,rtol=0):
         raise ValueError('Native input clock mismatch')
     points,input_names,_=motion.legacy();index={n:i for i,n in enumerate(input_names)}
-    priors={n.removesuffix('_body') for n in motion.provenance.get('degradation',{}).get('prior_joints',[])}
+    priors=motion.legacy_prior_names()
     support=np.stack([np.isfinite(points[:,index[n]]).all(-1) & (n not in priors) for n in names],1)
     targets,fixed=anchored_targets(native_times,native_points,output_times,support)
     starts=np.array(coordinates,copy=True);knots=np.flatnonzero(fixed)

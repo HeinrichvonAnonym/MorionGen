@@ -54,8 +54,7 @@ def assess(motion, fitted, *, head_rotation=None, thresholds=None, include_expor
     index = exact_indices(motion.times, fitted['times'])
     decoded = points(motion)
     # Priors are explicitly unsupported even when the reader emits finite points.
-    for name in motion.provenance.get('degradation', {}).get('prior_joints', []):
-        key = name.removesuffix('_body')
+    for key in motion.legacy_prior_names():
         if key in decoded:
             decoded[key] = np.full_like(decoded[key], np.nan)
     decoded['pelvis_mid'] = (decoded['left_hip']+decoded['right_hip'])/2

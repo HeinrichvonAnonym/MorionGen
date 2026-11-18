@@ -144,8 +144,7 @@ def fit(run,work,mass,floor,config):
                     geometry['joint_domain'][name].update(locked=change['locked_after'],range_native=change['range_native_after'])
                 geometry['joint_domain_source']='Initial declared domain plus explicit post-seed trajectory range intervention; seed FK checked unchanged'
             observed=np.array(points,copy=True)
-            for prior in motion.provenance.get('degradation',{}).get('prior_joints',[]):
-                n=prior.removesuffix('_body')
+            for n in motion.legacy_prior_names():
                 if n in names:observed[:,names.index(n)]=np.nan
             native,candidate,trajectory=refine_trajectory(out/'model.osim',labels,native,observed,names,motion.times,settings['trajectory_refinement'])
             write_coordinates(out/'coordinates_trajectory_candidate.mot',nt,labels,candidate)
