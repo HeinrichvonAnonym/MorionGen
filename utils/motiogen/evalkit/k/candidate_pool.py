@@ -6,7 +6,7 @@ import numpy as np
 from .config import ROOT, digest
 from .motion import load
 from .candidate_quality import assess, choose
-from . import candidate_eligibility
+from . import candidate_eligibility, candidate_budget
 
 
 def fit(run, work, mass, floor, settings, *, native_provider=None):
@@ -15,6 +15,10 @@ def fit(run, work, mass, floor, settings, *, native_provider=None):
     if settings.get('version') != 'k4-candidate-pool-1':
         raise ValueError('Unsupported candidate bank')
     candidates = settings['candidates']
+    budget=settings.get('candidate_budget');candidate_budget.validate(budget)
+    early=None
+    if budget and not settings.get('selection_include_export_path',False):
+        raise ValueError('Early acceptance requires actual exported-path diagnostics')
     if not candidates or any(not name.isidentifier() for name in candidates):
         raise ValueError('Candidate names must be identifiers')
     if any(c.get('version') != 'k4-fit-1' or c.get('export_clock') != 'native_multiple' for c in candidates.values()):
@@ -63,6 +67,9 @@ def fit(run, work, mass, floor, settings, *, native_provider=None):
             values = (fit_single(run, folder, mass, floor, candidate) if native_provider is None else
                       native_provider(name,run,folder,mass,floor,candidate))
             record(name,folder,values)
+            if candidate_budget.accepts(qualities[name],budget):
+                early=name
+                break
         except (ValueError,RuntimeError) as error:
             failures[name] = {'type':type(error).__name__,'message':str(error)}
             continue
@@ -76,13 +83,16 @@ def fit(run, work, mass, floor, settings, *, native_provider=None):
                 exported=build(motion,folder,destination,path_policy)
                 record(variant,destination,exported)
                 composed[name]={'status':'computed','variant':variant,'native_fit_recomputed':False}
+                if candidate_budget.accepts(qualities[variant],budget):
+                    early=variant
+                    break
             except (ValueError,RuntimeError) as error:
                 failures[variant]={'type':type(error).__name__,'message':str(error)}
                 composed[name]={'status':'variant_failed','variant':variant,'base_candidate_retained':True}
     if not qualities:
         (out/'candidate_failures.json').write_text(json.dumps({'failures':failures,'inapplicable':skipped},indent=2)+'\n')
         raise RuntimeError('All candidates failed; see candidate_failures.json')
-    selected = choose(qualities)
+    selected = early if early is not None else choose(qualities)
     for source in (out/'candidates'/selected).iterdir():
         if source.name == 'receipt.json':
             continue
@@ -98,6 +108,11 @@ def fit(run, work, mass, floor, settings, *, native_provider=None):
                          'lexicographic: missing supported observations, failed targets, worst normalized error, mean normalized error, declaration order'),
                  'qualification':'Input-fidelity selection only; independent R acceptance remains required',
                  'all_candidates_retained':True,'per_frame_switching':False}
+    if budget:
+        selection['budget']={'policy':budget,'early_accepted':early,'full_pool_fallback':early is None,
+                             'unevaluated_native_candidates':[n for n in candidates if n not in qualities and n not in failures and n not in skipped],
+                             'qualification':'Input-only scheduling, no R access; unevaluated candidates carry no accuracy claim'}
+        if early is not None:selection['rule']='first declared candidate satisfying every supported input and exported-path metric with fixed margin'
     (out/'candidate_selection.json').write_text(json.dumps(selection,indent=2,allow_nan=False)+'\n')
     receipt = {**receipts[selected],'key':key,'version':settings['version'],
                'selected_candidate_key':receipts[selected]['key'],'candidate_selection':selection}

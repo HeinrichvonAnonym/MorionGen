@@ -1,0 +1,12 @@
+{
+  "version": "k4-input-budget-diagnostic-1",
+  "scope": "Read-only replay of candidate order using D-only saved quality; R scores accessed only after selecting",
+  "policy": "First candidate in declared execution order with complete input-supported metrics and every observed/path value <=0.8 times its existing threshold; if none, retain original complete-pool choice",
+  "margin": 0.8,
+  "margin_source": "Existing registered trajectory target_margin_fraction; diagnostic engineering reserve, not a new acceptance threshold",
+  "fixed_rules": "No format/window special cases; no R, candidate independent acceptance or source-jump masks in selection; all metrics count including timing and inserted path",
+  "sources": ["closure_pool_transfer_20261118_v1", "closure_composed_pool_20261118_v1"],
+  "qualification": "Retrospective scheduling hypothesis; no default/pending656 change; unreviewed candidates remain unknown",
+  "next_gate": "Any independently failed early choice blocks promotion; otherwise requires executable policy tests, fixed transfer and fresh complete656 under one version",
+  "new_holdout_uses": 0
+}

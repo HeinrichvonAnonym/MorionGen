@@ -1,0 +1,14 @@
+{
+  "version": "k4-budget-transfer-1",
+  "status": "registered_not_started",
+  "candidate_config": "pool.json",
+  "common_bank": "closure_unified_v2",
+  "factor": "First declared candidate with all supported D and dense export-path metrics <=0.8 existing target; otherwise original full-bank selection",
+  "panel_source": "config/evalkit_k4_20261118/closure_v1/transfer_panel.json",
+  "scope": "Same23 transfer combinations; independent original R acceptance; candidate early acceptance is not independent qualification",
+  "frozen656_changed": false,
+  "promotion": "none",
+  "new_holdout_uses": 0,
+  "workers": 1,
+  "resource_rule": "May use root diagnostic slot only after solver_trust_v2 completes, or separately verified free slot; total<=8"
+}

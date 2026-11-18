@@ -1,0 +1,8 @@
+{
+  "wait_controller": 288821,
+  "children_before": "",
+  "paused_seconds": 1.5834293365478516,
+  "restored": true,
+  "test_returncode": 0,
+  "numerical_test_workers": 1
+}
