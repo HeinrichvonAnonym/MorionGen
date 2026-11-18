@@ -1,0 +1,13 @@
+{
+  "old_new_same_seed": {
+    "positions": 0.0,
+    "times": 0.0,
+    "coords": 0.0
+  },
+  "saved_vs_old_replay": {
+    "positions": 1.863648326771994e-07,
+    "times": 1.7763568394002505e-15,
+    "coords": 0.010939133045514637
+  },
+  "original_solver_sha256": "74fd5ba48195f92cdb98b6957924b087994038cb1a26bdef25a8c5b8361ca070"
+}

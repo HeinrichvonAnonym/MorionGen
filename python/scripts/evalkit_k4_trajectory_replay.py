@@ -3,10 +3,23 @@
 Source fitting and reference scores are never rerun/read. Outputs go through the
 same FK, root, head-chain and export routines as a complete K4 fit.
 """
-import argparse,hashlib,json,shutil,sys
+import argparse,hashlib,json,shutil,sys,importlib.util
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 sys.path[:0]=[str(ROOT/'utils'),str(ROOT/'utils/motiogen')]
+
+
+def install_original_solver(path, source, settings, digest):
+    """Permit only the exact saved solver and saved control settings."""
+    expected=source['key']['implementation']['trajectory_solver.py']
+    if digest(path)!=expected:raise ValueError('Original solver differs from saved implementation')
+    if settings!=source['key']['config']['trajectory_refinement']:
+        raise ValueError('Original solver replay must use exact source control settings')
+    spec=importlib.util.spec_from_file_location('k4_frozen_original_solver',path)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    from motiogen.evalkit.k import trajectory_solver
+    trajectory_solver.solve=module.solve
+    return dict(path=str(path),sha256=expected,scope='Exact saved solver; same serialized model and native seed')
 
 
 def main():
@@ -14,6 +27,8 @@ def main():
     for name in ('fit','input','settings','output'):ap.add_argument('--'+name,type=Path,required=True)
     ap.add_argument('--method',required=True)
     ap.add_argument('--require-control-reproduction',action='store_true')
+    ap.add_argument('--original-solver',type=Path)
+    ap.add_argument('--reproduction-fit',type=Path,help='Same-seed original-solver control for numerical equivalence')
     a=ap.parse_args()
     import numpy as np
     import opensim as osim
@@ -30,6 +45,8 @@ def main():
     motion=load(a.input,a.method,config=ROOT/'config/evalkit_k4_20261117/input.json')
     if source['key']['inputs']!=motion.provenance['inputs']:raise ValueError('Frozen seed input differs')
     config=source['key']['config'].copy();config['trajectory_refinement']=json.loads(a.settings.read_text())
+    override=install_original_solver(a.original_solver,source,config['trajectory_refinement'],digest) if a.original_solver else None
+    if a.reproduction_fit and not a.require_control_reproduction:raise ValueError('Explicit reproduction fit requires control gate')
     if config['postprocess']!='native_preserving' or config['export_clock']!='native_multiple':raise ValueError('Replay requires exact native-knot policy')
     files=['model.osim','coordinates_before_trajectory.mot','receipt.json']
     fingerprints={n:digest(a.fit/n) for n in files}
@@ -64,19 +81,31 @@ def main():
     (a.output/'original_domain_diagnostics.json').write_text(json.dumps(domain,indent=2)+'\n')
     key=dict(source['key'],config=config,implementation={str(p.relative_to(ROOT/'utils/motiogen/evalkit/k')):digest(p) for p in sorted((ROOT/'utils/motiogen/evalkit/k').rglob('*.py'))},
              native_seed_source=dict(path=str(a.fit),sha256=fingerprints,scope='D-only fixed model and pre-trajectory seed; all conditions use same source'))
+    if override:
+        key['solver_override']=override;key['implementation']['trajectory_solver.py']=override['sha256']
     receipt=dict(source,key=key,head_neck_model=head,original_domain_diagnostics=domain,rotation_resampling=rotation_receipt,
                  coordinated_path=None if path_receipt is None else {k:v for k,v in path_receipt.items() if k!='frames'},
                  trajectory_replay=dict(source_fit=str(a.fit),source_sha256=fingerprints,runner_sha256=digest(__file__),
                                         scope='Numerical native-stage replay, no reference access; geometry and seed pinned, output pipeline retained'))
     if any(digest(a.fit/n)!=h for n,h in fingerprints.items()):raise ValueError('Frozen seed changed during replay')
+    # Keep provenance even when the pre-registered reproduction gate stops a run.
+    (a.output/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
     if a.require_control_reproduction:
-        with np.load(a.fit/'fit.npz') as old:
+        control=a.reproduction_fit or a.fit
+        if a.reproduction_fit:
+            control_receipt=json.loads((control/'receipt.json').read_text())
+            if control_receipt['key']['native_seed_source']!=key['native_seed_source']:raise ValueError('Control used a different saved seed')
+            if control_receipt['key']['config']!=key['config']:raise ValueError('Control settings differ')
+            if control_receipt['key'].get('solver_override',{}).get('sha256')!=source['key']['implementation']['trajectory_solver.py']:raise ValueError('Explicit control must identify exact original solver')
+        with np.load(control/'fit.npz') as old:
             np.testing.assert_array_equal(values['names'],old['names'])
             np.testing.assert_allclose(values['times'],old['times'],atol=1e-9,rtol=0)
             np.testing.assert_array_equal(np.isfinite(values['positions']),np.isfinite(old['positions']))
+            if a.reproduction_fit:
+                np.testing.assert_allclose(values['coords'],old['coords'],atol=1e-7,rtol=0,equal_nan=True)
             discrepancy=float(np.nanmax(np.abs(values['positions']-old['positions'])))
             comparison=dict(max_abs_position_m=discrepancy,limit_m=1e-7,passed=discrepancy<=1e-7,
-                            source_fit_sha256=digest(a.fit/'fit.npz'),scope='Saved F control reproduction, not R accuracy')
+                            source_fit_sha256=digest(control/'fit.npz'),source_fit=str(control),scope='Same-seed solver equivalence' if a.reproduction_fit else 'Saved historical F reproduction')
         (a.output/'control_reproduction.json').write_text(json.dumps(comparison,indent=2)+'\n')
         if not comparison['passed']:raise ValueError('Control replay did not reproduce source FK; investigate before interpreting paired candidates')
     (a.output/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
