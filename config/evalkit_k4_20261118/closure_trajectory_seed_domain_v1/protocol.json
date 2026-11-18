@@ -1,0 +1,14 @@
+{
+  "version": "k4-trajectory-seed-domain-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "conditions": [
+    "original_domain",
+    "expanded_after_seed"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Actual-model finite differences agree; dominant073 candidate gradients seek motion beyond shoulder axial +90, while globally widening before initialization previously changed to poor branches. Hold common original-domain native seed fixed, then compare same joint trajectory objective before/after audited shoulder-domain release. Seed FK must be unchanged.",
+  "preregistration": "3 fixed development combinations x2=6. Shared method and configuration; IDs only scheduling. Original controls remain separate.",
+  "qualification": "Fixed geometry, existing joint structure, independent kinematic domain only; R remains independent. No additional force or anatomical qualification."
+}

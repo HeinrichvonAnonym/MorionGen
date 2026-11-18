@@ -53,3 +53,31 @@ def test_fixed_model_known_fk_and_reference_free_interface():
     np.testing.assert_allclose(actual,p,atol=1e-8)
     assert receipt['initial_squared_residual']<1e-12
     assert receipt['candidate_squared_residual']<=receipt['initial_squared_residual']+1e-8
+
+
+def test_post_seed_domain_preserves_known_fk_and_changes_only_search_bounds(tmp_path):
+    import shutil
+    import opensim as osim
+    import biomech
+    from motiogen.evalkit.k.k4_fitting import model_fk
+    from motiogen.evalkit.k.trajectory import problem
+    from motiogen.evalkit.k.diagnostic_domain import apply
+    path=tmp_path/'model.osim';shutil.copyfile(biomech.MODEL,path)
+    model=osim.Model(str(path));state=model.initSystem();cs=model.getCoordinateSet()
+    labels=[cs.get(i).getName() for i in range(cs.getSize())]
+    q=np.tile([cs.get(n).getValue(state)*(180/np.pi if cs.get(n).getMotionType()==1 else 1) for n in labels],(3,1))
+    q[:,labels.index('arm_rot_r')]=[80,89,90]
+    p,names,q=model_fk(path,labels,q,direct_couplers=True,return_coordinates=True)
+    settings={'version':'joint_trajectory_v1'}
+    before,x0,_,_,active=problem(path,labels,q,p,names,np.arange(3)/30,settings)
+    policy={'base':'preserve_existing','scope':'independent_kinematic','coordinate_ranges_deg':{'arm_rot_r':[-180,180]}}
+    receipt=apply(path,policy)
+    actual,_=model_fk(path,labels,q,direct_couplers=True)
+    np.testing.assert_allclose(actual,p,atol=1e-9,rtol=0)
+    after,x1,_,_,active1=problem(path,labels,q,p,names,np.arange(3)/30,settings)
+    assert active==active1 and set(receipt['changes'])=={'arm_rot_r'}
+    i=active.index('arm_rot_r')
+    assert before.upper[i]<after.upper[i]
+    assert after.upper[i]==np.pi and after.lower[i]==-np.pi
+    np.testing.assert_allclose(x0,x1,atol=1.1e-9,rtol=0)
+    np.testing.assert_allclose(before.residual(x0),after.residual(x1),atol=1e-6,rtol=0)

@@ -4,7 +4,7 @@ from scipy.optimize import least_squares
 from .trajectory_objective import TrajectoryObjective
 
 
-def refine(model_path, labels, coordinates, observed, names, times, settings):
+def problem(model_path, labels, coordinates, observed, names, times, settings):
     if settings.get('version')!='joint_trajectory_v1':raise ValueError('Unknown trajectory policy')
     import opensim as osim
     import biomech
@@ -44,6 +44,12 @@ def refine(model_path, labels, coordinates, observed, names, times, settings):
     objective=TrajectoryObjective(feature,goals,times,scales,np.arange(np_,np_+nd),
         np.deg2rad(float(settings.get('direction_rate_scale_deg_s',10))),float(settings.get('direction_rate_weight',1)),lower,upper)
     x0=np.clip(np.deg2rad(seed[:,cols]),lower+1e-9,upper-1e-9).ravel()
+    return objective,x0,seed,cols,active
+
+
+def refine(model_path, labels, coordinates, observed, names, times, settings):
+    objective,x0,seed,cols,active=problem(model_path,labels,coordinates,observed,names,times,settings)
+    lower,upper=objective.lower,objective.upper
     r0=objective.residual(x0);initial=float(np.dot(r0,r0))
     fit=least_squares(objective.residual,x0,jac=objective.jacobian,bounds=(np.tile(lower,len(seed)),np.tile(upper,len(seed))),
                       method='trf',tr_solver='lsmr',x_scale=.1,max_nfev=int(settings.get('max_nfev',20)))

@@ -1,0 +1,13 @@
+{
+  "protected_count": 610,
+  "changed": [],
+  "new_holdout_uses": 0,
+  "free_gib": 812.7472686767578,
+  "selection_reviewed": 17,
+  "available_passing": 13,
+  "selected_passing": {
+    "native_only": 12,
+    "with_path": 12,
+    "observed_then_path": 13
+  }
+}

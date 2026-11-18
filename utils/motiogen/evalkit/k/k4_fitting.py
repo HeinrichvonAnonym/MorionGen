@@ -62,6 +62,8 @@ def fit(run,work,mass,floor,config):
         raise ValueError('Unsupported K4 solver')
     if settings.get('trajectory_refinement') and settings['solver']!='direction_position_refinement':
         raise ValueError('Trajectory refinement requires the direction-position native seed')
+    if settings.get('trajectory_kinematic_domain') and not settings.get('trajectory_refinement'):
+        raise ValueError('Post-seed domain requires an explicit trajectory refinement')
     if settings.get('root_policy') not in ('IK','input_hip_midpoint'):
         raise ValueError('Unsupported K4 root policy')
     if settings.get('hip_rotation_resampling') and settings.get('postprocess')!='native_preserving':
@@ -129,6 +131,18 @@ def fit(run,work,mass,floor,config):
             if body_targets:raise ValueError('Trajectory objective has no native body-frame targets; select a compatible configuration')
             from .trajectory import refine as refine_trajectory
             write_coordinates(out/'coordinates_before_trajectory.mot',nt,labels,native)
+            if settings.get('trajectory_kinematic_domain'):
+                import shutil
+                from .diagnostic_domain import apply as apply_trajectory_domain
+                shutil.copyfile(out/'model.osim',out/'model_before_trajectory.osim')
+                domain=apply_trajectory_domain(out/'model.osim',settings['trajectory_kinematic_domain'])
+                before,_=model_fk(out/'model_before_trajectory.osim',labels,native,direct_couplers=True)
+                after,_=model_fk(out/'model.osim',labels,native,direct_couplers=True)
+                np.testing.assert_allclose(after,before,atol=1e-9,rtol=0)
+                geometry['trajectory_domain']=domain
+                for name,change in domain['changes'].items():
+                    geometry['joint_domain'][name].update(locked=change['locked_after'],range_native=change['range_native_after'])
+                geometry['joint_domain_source']='Initial declared domain plus explicit post-seed trajectory range intervention; seed FK checked unchanged'
             observed=np.array(points,copy=True)
             for prior in motion.provenance.get('degradation',{}).get('prior_joints',[]):
                 n=prior.removesuffix('_body')
