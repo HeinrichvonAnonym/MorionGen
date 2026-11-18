@@ -1,0 +1,15 @@
+{
+  "version": "k4-trajectory-geometry-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "conditions": [
+    "native_prior",
+    "native_chain",
+    "balanced_prior",
+    "balanced_chain"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "077 model prior rest hip-shoulder distance0.539m differs from observed endpoint median0.412m; existing supported-chain proxy0.445m. 073 observed median0.462m/proxy0.471m. Compare fixed input chain geometry and trajectory solver independently2x2, preserve original model-prior candidates. Proxy is not identified anatomical neutral geometry.",
+  "preregistration": "073/077 MotionLCM mechanism cases plus000 MotionLCM regression control,3x4=12. Same input/root/ranges, no per-window runtime choice, R only independent scoring; chain-policy eligibility uses input fields and existing stability rule."
+}
