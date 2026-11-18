@@ -63,7 +63,7 @@ def main():
   before={str(p):sha(p) for p in paths};record.update(protected_actual_sha256=actual,preserved_sha256=before,new_holdout_uses=0)
   ident=json.loads((RUN/'identity.json').read_text());assert sha(PROTOCOL)==ident['protocol_sha256'] and sha(CODE/'python/scripts/evalkit_k4_full_regression.py')==ident['runner_sha256'],'Identity changed'
   assert shutil.disk_usage(RUN).free>=80*1024**3,'Insufficient disk reserve'
-  amendment={'version':'k4-execution-amendment-2','protocol_sha256':ident['protocol_sha256'],'original_runner_sha256':ident['runner_sha256'],'output':str(RUN),'max_workers':13,'total_worker_limit':14,'reserved_workers':1,'authorization':'User authorized fourteen total workers. Thirteen regression plus one reserved numerical worker at a safe passed-stage boundary. Scientific protocol unchanged.'}
+  amendment={'version':'k4-execution-amendment-2','protocol_sha256':ident['protocol_sha256'],'original_runner_sha256':ident['runner_sha256'],'output':str(RUN),'max_workers':10,'total_worker_limit':14,'reserved_workers':4,'authorization':'User authorized fourteen total workers. Ten regression plus four reserved numerical workers (one real-output and three candidate-ablation) at a safe passed-stage boundary. Scientific protocol unchanged.'}
   (out/'execution_config.json').write_text(json.dumps(amendment,indent=2)+'\n');save()
   childpids=list(record['stopped_check']['children']);os.kill(args.pid,signal.SIGTERM);os.kill(args.pid,signal.SIGCONT);stopped=False;terminated=True
   deadline=time.monotonic()+55
