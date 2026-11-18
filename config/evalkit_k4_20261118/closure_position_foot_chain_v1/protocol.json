@@ -1,0 +1,13 @@
+{
+  "version": "k4-position-foot-chain-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "conditions": [
+    "prior",
+    "chain"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Fixed foot restores002 leg targets; D shoulder directionP95 still4.972deg, R-clock5.000604deg remains a strict failure. Upperbody native solver reaches objective tolerance with no relevant trunk/shoulder bound. Input stable torso chain proxy0.4423m versus model-prior neutral midpoint0.5811m motivates a geometry-only comparison; proxy is not anatomical neutral identification. Keep prior as candidate because chain regressed other windows.",
+  "preregistration": "Same002 two position inputs plus000/064 MotionLCM,4x2. Samefixed endpoint and original independent ranges, solver, clocks, scoring masks. No threshold tolerance, no per-window runtime rule, R independent scoring. Use1worker while previous6 fitworkers active."
+}
