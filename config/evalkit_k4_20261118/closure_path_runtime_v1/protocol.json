@@ -1,0 +1,14 @@
+{
+  "version": "k4-coordinated-runtime-1",
+  "conditions": [
+    "reverse",
+    "reverse_path",
+    "reverse_rate1_path"
+  ],
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "hypothesis": "010 fixed-native isolated replay passed both clocks; verify actual fit/export pipeline and previously passing002/000; no assumed promotion",
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "runtime": "Same policies for every input; coordinate/native interpolation assumptions explicit, no R access"
+}

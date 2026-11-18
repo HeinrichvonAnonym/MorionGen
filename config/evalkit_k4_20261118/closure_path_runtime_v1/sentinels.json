@@ -1,0 +1,16 @@
+{
+  "records": [
+    {
+      "window": "010",
+      "method": "ardy"
+    },
+    {
+      "window": "002",
+      "method": "kimodo"
+    },
+    {
+      "window": "000",
+      "method": "kimodo"
+    }
+  ]
+}

@@ -70,3 +70,17 @@ def test_declared_rotation_missing_from_candidate_is_failure(monkeypatch):
         status='declared_native_frames',head_relative_thorax=rotations,head_relative_valid=np.ones(12,bool)))
     assert not assess(motion,fitted)['passed']
     assert assess(motion,fitted,head_rotation=rotations)['passed']
+
+
+def test_export_path_checks_inserted_frames_without_changing_native_support():
+    motion,fitted=example()
+    dense_times=np.linspace(motion.times[0],motion.times[-1],23)
+    dense=dict(times=dense_times,names=fitted['names'],positions=np.repeat(fitted['positions'][:1],23,axis=0))
+    assert assess(motion,dense,include_export_path=True)['passed']
+    dense['positions'][7,NAMES.index('left_foot')]+=[1,2,3]
+    assert assess(motion,dense)['passed']
+    checked=assess(motion,dense,include_export_path=True)
+    assert not checked['passed']
+    assert not checked['metrics']['interpolation_direction/left_foot_axis']['passed']
+    assert checked['metrics']['position/left_foot']['expected']==12
+    assert checked['metrics']['interpolation_direction/left_foot_axis']['expected']==11

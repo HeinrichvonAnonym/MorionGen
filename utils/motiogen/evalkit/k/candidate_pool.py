@@ -44,7 +44,8 @@ def fit(run, work, mass, floor, settings):
             if (folder/'head_neck.npz').exists():
                 with np.load(folder/'head_neck.npz') as z:
                     head = z['head_relative_thorax']
-            qualities[name] = assess(motion,values,head_rotation=head,thresholds=settings['selection_thresholds'])
+            qualities[name] = assess(motion,values,head_rotation=head,thresholds=settings['selection_thresholds'],
+                                     include_export_path=settings.get('selection_include_export_path',False))
             receipts[name] = values['receipt']
         except (ValueError,RuntimeError) as error:
             failures[name] = {'type':type(error).__name__,'message':str(error)}

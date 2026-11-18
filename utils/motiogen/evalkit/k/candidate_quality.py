@@ -39,7 +39,7 @@ def _unit(values):
     return np.where(length > 1e-9, values/np.maximum(length, 1e-9), np.nan)
 
 
-def assess(motion, fitted, *, head_rotation=None, thresholds=None):
+def assess(motion, fitted, *, head_rotation=None, thresholds=None, include_export_path=False):
     """Assess model FK on fixed D support. Missing F never reduces denominators."""
     limits = dict(angle_deg=5., position_cm=5., direction_rate_deg_s=10., added_step_deg=5.)
     if thresholds is not None:
@@ -101,6 +101,30 @@ def assess(motion, fitted, *, head_rotation=None, thresholds=None):
         from scipy.spatial.transform import Rotation
         error[good] = np.rad2deg(Rotation.from_matrix(d[good].swapaxes(-1,-2)@f[good]).magnitude())
         record('rotation/head_relative_thorax',error,native['head_relative_valid'],limits['angle_deg'])
+    if include_export_path:
+        # Diagnostic only: a fitted-anchor path is not a dense observation.
+        # Inspect actual exported FK between D knots to catch compensating
+        # joint branches that the native-only selector cannot see.
+        full_times=np.asarray(fitted['times'])
+        if full_times[0]<motion.times[0]-1e-8 or full_times[-1]>motion.times[-1]+1e-8:
+            raise ValueError('Export-path inspection requires bounded input clock')
+        dense=points(Motion(np.asarray(fitted['positions']),list(fitted['names']),full_times,motion.method))
+        dense['pelvis_mid']=(dense['left_hip']+dense['right_hip'])/2
+        dense['shoulder_mid']=(dense['left_shoulder']+dense['right_shoulder'])/2
+        left=np.clip(np.searchsorted(motion.times,full_times,side='right')-1,0,len(motion.times)-2)
+        alpha=(full_times-motion.times[left])/(motion.times[left+1]-motion.times[left])
+        inserted=np.ones(len(full_times),bool);inserted[index]=False
+        for name,(start,end) in DIRECTIONS.items():
+            native=model[end]-model[start]
+            target=(1-alpha[:,None])*native[left]+alpha[:,None]*native[left+1]
+            supported_native=np.isfinite(_unit(decoded[end]-decoded[start])).all(-1)
+            observed=supported_native[left]&supported_native[left+1]
+            observed[index]=supported_native
+            actual=dense[end]-dense[start]
+            record('interpolation_direction/'+name,angle(target,actual),observed&inserted,limits['angle_deg'],'max')
+            steps=observed[1:]&observed[:-1]
+            rate=np.diff(_unit(actual)-_unit(target),axis=0)/np.diff(full_times)[:,None]
+            record('interpolation_rate/'+name,np.linalg.norm(rate,axis=-1)*180/np.pi,steps,limits['direction_rate_deg_s'])
     supported = [m for m in metrics.values() if m['expected']]
     if not supported or not any(m['present'] for m in supported):
         raise ValueError('No supported candidate observations')
@@ -111,7 +135,9 @@ def assess(motion, fitted, *, head_rotation=None, thresholds=None):
     rank = [missing, failures, max(ratios, default=float('inf')), sum(ratios)/len(ratios) if ratios else float('inf')]
     return dict(metrics=metrics, rank=rank, passed=bool(supported) and missing == 0 and failures == 0,
                 scope='D-only full native clock; no source-jump exclusions; whole-clip selection, no per-frame switching',
-                frames=len(motion.times), thresholds=limits)
+                frames=len(motion.times), thresholds=limits,
+                export_path_diagnostic=bool(include_export_path),
+                export_path_scope='Fitted-anchor linear path assumption gated by D support; no R or dense observation qualification')
 
 
 def choose(qualities):
