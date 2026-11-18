@@ -20,6 +20,7 @@ class LegDirectionSeeder:
         self.knee=self.cs.get('knee_angle_'+self.s);self.knee_col=self.labels.index(self.knee.getName())
         self.lower=np.array([self.cs.get(n).getRangeMin() for n in self.hip_names])
         self.upper=np.array([self.cs.get(n).getRangeMax() for n in self.hip_names])
+        self.knee_table=None
 
     def points(self,row):
         import biomech
@@ -40,7 +41,12 @@ class LegDirectionSeeder:
         def angle(q):
             guess[self.knee_col]=np.rad2deg(q);v=np.diff(self.points(guess),axis=0)
             return float(np.arctan2(np.linalg.norm(np.cross(*v)),np.dot(*v)))
-        grid=np.linspace(lo,hi,361);errors=np.array([(angle(q)-wanted)**2 for q in grid]);i=int(errors.argmin())
+        # The inter-segment angle depends on this fixed model's knee coordinate,
+        # not on the world pose. Reuse the same coarse bracket across frames.
+        if self.knee_table is None:
+            grid=np.linspace(lo,hi,361)
+            self.knee_table=(grid,np.array([angle(q) for q in grid]))
+        grid,angles=self.knee_table;errors=(angles-wanted)**2;i=int(errors.argmin())
         left,right=grid[max(0,i-1)],grid[min(len(grid)-1,i+1)]
         result=minimize_scalar(lambda q:(angle(q)-wanted)**2,bounds=(left,right),method='bounded',options={'xatol':1e-10})
         knee=min([grid[i],result.x],key=lambda q:(angle(q)-wanted)**2)

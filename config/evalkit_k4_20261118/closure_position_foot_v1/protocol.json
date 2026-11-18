@@ -1,0 +1,15 @@
+{
+  "version": "k4-position-foot-1",
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "conditions": [
+    "control",
+    "fixed_endpoint",
+    "fixed_endpoint_full_domain"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "002 position formats demand foot polar angles119..157deg about input-derived ankle axis; fixed original geometry full-domain envelope16..129deg. Estimate a clip-fixed MTP parent translation from all identifiable D knee planes, minimize translation subject to polar coverage and full-rotation foot length within observed median+/-2cm. Right foot geometry remains unchanged when already feasible. Neutral pose/length is not inferred as anatomical truth. Compare control, endpoint only, endpoint plus audited full PinJoint rotations, retaining original axes/coupling/structure.",
+  "parameter_source": "2cm fixed-length guard is an explicit engineering geometry tradeoff below5cm position target, not derived anatomical tolerance. Five deterministic geometry starts, all valid D frames, no R. Existing full-domain audit at0.1deg reused; endpoint FK formula and unchanged XML outside MTP translation independently verified.",
+  "preregistration": "Two002 position inputs plus000 and064 position regression controls,4x3=12. Inputs/time/masks/scoring unchanged; no motion-ID runtime logic. Full/native/export,D/R clocks independently score every candidate; no default promotion on diagnostic feasibility."
+}

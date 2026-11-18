@@ -99,6 +99,15 @@ def fit(run,work,mass,floor,config):
         if not settings.get('kinematic_domain'):raise ValueError('Coupling extension requires independent model domain')
         from .coupling_extension import apply as extend_coupling
         geometry['coupling_extension']=extend_coupling(out/'model.osim',settings['kinematic_coupling'])
+    if settings.get('position_foot_geometry'):
+        if settings.get('marker_registration')!='owned_joint_frame':
+            raise ValueError('Estimated foot endpoints require owned-frame marker registration')
+        import shutil
+        from .position_foot_geometry import apply as calibrate_foot
+        shutil.copyfile(out/'model.osim',out/'model_before_position_foot.osim')
+        foot=calibrate_foot(out/'model.osim',motion,settings['position_foot_geometry'])
+        geometry['position_foot_geometry']=foot
+        if 'measurements_after' in foot:geometry['after']=foot['measurements_after']
     points,names,fps=motion.legacy()
     biomech.write_trc(points,names,fps,out/'markers.trc')
     weights={n:w for n,w in biomech.WEIGHTS.items() if n in biomech.MARKERS or n in geometry['registered_axial_markers']}

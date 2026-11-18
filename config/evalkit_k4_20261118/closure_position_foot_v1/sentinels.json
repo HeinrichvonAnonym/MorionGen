@@ -1,0 +1,20 @@
+{
+  "records": [
+    {
+      "window": "002",
+      "method": "motionlcm"
+    },
+    {
+      "window": "002",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "000",
+      "method": "motionlcm"
+    },
+    {
+      "window": "064",
+      "method": "motionlcm"
+    }
+  ]
+}
