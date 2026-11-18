@@ -1,0 +1,157 @@
+{
+  "records": [
+    {
+      "window": "026",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "032",
+      "method": "ardy"
+    },
+    {
+      "window": "032",
+      "method": "chois"
+    },
+    {
+      "window": "032",
+      "method": "closd"
+    },
+    {
+      "window": "032",
+      "method": "dart"
+    },
+    {
+      "window": "032",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "032",
+      "method": "primal"
+    },
+    {
+      "window": "043",
+      "method": "ardy"
+    },
+    {
+      "window": "043",
+      "method": "chois"
+    },
+    {
+      "window": "043",
+      "method": "closd"
+    },
+    {
+      "window": "043",
+      "method": "dart"
+    },
+    {
+      "window": "043",
+      "method": "primal"
+    },
+    {
+      "window": "044",
+      "method": "ardy"
+    },
+    {
+      "window": "044",
+      "method": "chois"
+    },
+    {
+      "window": "044",
+      "method": "closd"
+    },
+    {
+      "window": "044",
+      "method": "dart"
+    },
+    {
+      "window": "044",
+      "method": "primal"
+    },
+    {
+      "window": "055",
+      "method": "ardy"
+    },
+    {
+      "window": "055",
+      "method": "chois"
+    },
+    {
+      "window": "055",
+      "method": "closd"
+    },
+    {
+      "window": "055",
+      "method": "dart"
+    },
+    {
+      "window": "055",
+      "method": "primal"
+    },
+    {
+      "window": "071",
+      "method": "chois"
+    },
+    {
+      "window": "071",
+      "method": "closd"
+    },
+    {
+      "window": "071",
+      "method": "dart"
+    },
+    {
+      "window": "071",
+      "method": "primal"
+    },
+    {
+      "window": "073",
+      "method": "ardy"
+    },
+    {
+      "window": "073",
+      "method": "chois"
+    },
+    {
+      "window": "073",
+      "method": "closd"
+    },
+    {
+      "window": "073",
+      "method": "dart"
+    },
+    {
+      "window": "073",
+      "method": "primal"
+    },
+    {
+      "window": "074",
+      "method": "motionlcm"
+    },
+    {
+      "window": "074",
+      "method": "omnicontrol"
+    },
+    {
+      "window": "077",
+      "method": "ardy"
+    },
+    {
+      "window": "077",
+      "method": "chois"
+    },
+    {
+      "window": "077",
+      "method": "closd"
+    },
+    {
+      "window": "077",
+      "method": "dart"
+    },
+    {
+      "window": "077",
+      "method": "primal"
+    }
+  ],
+  "scope": "38 development format-window gaps, disjoint from the unchanged23 transfer panel"
+}

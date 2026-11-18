@@ -1,0 +1,178 @@
+{
+  "version": "k4-format-completion-registration-1",
+  "status": "preregistered, not started",
+  "conditions": [
+    "pool"
+  ],
+  "strict_scoring": true,
+  "native_export_scoring": true,
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "evidence_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/format_completion_evidence_20261118_v1.json",
+  "evidence_sha256": "0ca6f51a05147e17531d6b19499973f8dbcdbea416350da441b51c68c70ba5ec",
+  "evidence_counts": {
+    "original_failed": 94,
+    "local_candidate_exists": 56,
+    "format_transfer_unverified": 38
+  },
+  "input_jobs": {
+    "026_omnicontrol": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/026_omnicontrol.json",
+      "sha256": "723fa3c13cc1882e8b922ba943e29468478cc2b316602def6af9aae42fc9d3ea"
+    },
+    "032_ardy": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/032_ardy.json",
+      "sha256": "998ed08af9275a6484091308a2a24f504f1c23b44f3e87667c72a3cd4822b6ad"
+    },
+    "032_chois": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/032_chois.json",
+      "sha256": "a526cdd8d1f72dd669885db3f735e23c06313ce038d205ad4edaa85bd92ad4db"
+    },
+    "032_closd": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/032_closd.json",
+      "sha256": "91658821a9cceb4b99fe58e17f05532a3e1943a05b9f6a7cde2da50cc146ae62"
+    },
+    "032_dart": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/032_dart.json",
+      "sha256": "40da3e6bb0cacba212edd3282c2eca730df90af54002af1e1e2e38c73cfb528d"
+    },
+    "032_omnicontrol": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/032_omnicontrol.json",
+      "sha256": "c21a0206d05903fffa2297232f4176269f98c6a58f0125dbaf303211d963613c"
+    },
+    "032_primal": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/032_primal.json",
+      "sha256": "9e7b0354cad76b9f50f6ef0568aa0c4f78d23c3c3db0c960fc44d2bddc381579"
+    },
+    "043_ardy": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/043_ardy.json",
+      "sha256": "d70d2d3701f57d99902bc7480b5f611e9d54052d709ae645e68d58d37d6135ed"
+    },
+    "043_chois": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/043_chois.json",
+      "sha256": "6ebc88a42599733b2aec1879f3f1e596625fbe3171286e827855637080d34643"
+    },
+    "043_closd": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/043_closd.json",
+      "sha256": "f5d1daa6b9c217f85adae80a6256cf9d98073f568c1eeda2da26bd74d563704e"
+    },
+    "043_dart": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/043_dart.json",
+      "sha256": "f4d055797f8813b267c524d195aebebcb37c9798aa997d3c7f8b26cd564e211f"
+    },
+    "043_primal": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/043_primal.json",
+      "sha256": "832ec9568f31c4c3ee5bf4d22d841bf4c2fe2868ed2cff8421573d71fd15f417"
+    },
+    "044_ardy": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/044_ardy.json",
+      "sha256": "d3c51bcfcdbbc3f8ad7eb091d9527066fbbe10a472354e1e303530078b0cb35f"
+    },
+    "044_chois": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/044_chois.json",
+      "sha256": "e43accc1a236686867926cd4908ab5b4614d19b98ffb9b97ed93be869c8df1bd"
+    },
+    "044_closd": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/044_closd.json",
+      "sha256": "b836eba94d0ef7c5d9b188360e3d1f97bd361c0ad4d556ac29df40b83a7feec7"
+    },
+    "044_dart": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/044_dart.json",
+      "sha256": "f3229988e5c541e466a00d02d0499285d60352e502e8aae8727c5ea1bb5ae2da"
+    },
+    "044_primal": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/044_primal.json",
+      "sha256": "ed4e062a04e9f38d35fa81395817818ad5640c6b408cb9a329921bcfaeb6b4cc"
+    },
+    "055_ardy": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/055_ardy.json",
+      "sha256": "ba117425a3b75c04169078e5c5f15d5888b305eef60b5efe7dc1f58ee3fac66f"
+    },
+    "055_chois": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/055_chois.json",
+      "sha256": "91c2b066d6b71db40401c30632c2abc0b34afe0794901a56b8f03a1d69f06dce"
+    },
+    "055_closd": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/055_closd.json",
+      "sha256": "11c49090ad8bc9a36912e96eae486303b07fb4a88cf7bd8f0980fcd5c83fc39d"
+    },
+    "055_dart": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/055_dart.json",
+      "sha256": "18bfa517aeaf3c5cf34a7dc82fc242856fc0ea2f430f9cc3bb21d5fa60c86512"
+    },
+    "055_primal": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/055_primal.json",
+      "sha256": "11abfcbfbc0ddc98de3c8cb4dabbf4236f1f0b7b067d24146eefffbfc8afa433"
+    },
+    "071_chois": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/071_chois.json",
+      "sha256": "37e7bed454d2ea89f94fb29723f75eea08e7ffb28477656c7e789a7a9116c300"
+    },
+    "071_closd": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/071_closd.json",
+      "sha256": "dcc1e0089631648b053b823e268d5d3d13eea2d9963878304ca34b6d160d5e7b"
+    },
+    "071_dart": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/071_dart.json",
+      "sha256": "068a0c713cda0262e496bf6addb3984f179b7f11078607a110c8b1b6679d2bd6"
+    },
+    "071_primal": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/071_primal.json",
+      "sha256": "1a8a1712b4d312c04f9a33dbe7ee4510ff53aa9bb8538d2c342c2ca1abc6987d"
+    },
+    "073_ardy": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/073_ardy.json",
+      "sha256": "0aa99d3c49d2af37cd887facdae4f64fc4a58f5b8609f35c7624ffa055696dcf"
+    },
+    "073_chois": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/073_chois.json",
+      "sha256": "07e44dd08e115498e52571bf509adef0577a9645971f021fd1e84d63b0bb8cb7"
+    },
+    "073_closd": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/073_closd.json",
+      "sha256": "e2a98c435f4c3691fef60995f1fc244d9801fca36dcd09058a9d14cc9cf8d868"
+    },
+    "073_dart": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/073_dart.json",
+      "sha256": "3a935f83ace5864e9fcbb44dc2cbf5c8a1e5b6706f9086ccd21324f3e9a461e5"
+    },
+    "073_primal": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/073_primal.json",
+      "sha256": "e66239cb125ac579feafadd2d866e6783e900932309e5637f935db52bd0e4e3b"
+    },
+    "074_motionlcm": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/074_motionlcm.json",
+      "sha256": "c36ed55545376c913cd5a26673c23a5afb11c694fbe20354e24bc20e6559ea31"
+    },
+    "074_omnicontrol": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/074_omnicontrol.json",
+      "sha256": "815fb9e91e0d25e5bd5c6af8ddf65d81d90f96ea147f202695ca53719bd257be"
+    },
+    "077_ardy": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/077_ardy.json",
+      "sha256": "9aed040f6e35ec073a05fe755219c078bc7a107ab73519f71a07b988bebfd55a"
+    },
+    "077_chois": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/077_chois.json",
+      "sha256": "0cf892c2b01525711e61b50e589a7a966fae5b5cb2dc5e2679b6b5f6fdec3a7e"
+    },
+    "077_closd": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/077_closd.json",
+      "sha256": "61f627a89381d21c361609ff43cd08c5218cb4ac692aeb6e877b88de3eb409cf"
+    },
+    "077_dart": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/077_dart.json",
+      "sha256": "b8876589fd987aa419742a02b5cc81fd77398c4d566dee5c04c23e7aa4594ef6"
+    },
+    "077_primal": {
+      "job": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/jobs/077_primal.json",
+      "sha256": "e16986ff8305fbc70b68602274e5711fbcabea38439354ddf920e1c1958e8bc8"
+    }
+  },
+  "prerequisite": "Review current23 native/composed transfer first; use one frozen bank and selector for every row. Method changes require a new registered version; no method/window-specific setting. All input windows and masks remain frozen.",
+  "native_code_commit": "272f08e",
+  "native_pool_sha256": "c4b6dd192abf7ea549417c81d6da98c5c95d06b36d3f3a9f07e2c683aab1671e",
+  "export_code_commit": "0d79bb0",
+  "export_pool_sha256": "08369f3b89405d531c8312af3452d8c2c741fa6adfb372064acdbb4bb2c20ad1",
+  "scope": "These38 combinations have no completed new-method candidate in this evidence snapshot. They are missing migration evidence, not38 demonstrated failures of the new method. Local candidate existence is distinct from uniform runtime selection and full656 qualification."
+}
