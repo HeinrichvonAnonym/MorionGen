@@ -1,0 +1,16 @@
+{
+  "version": "k4-exhaustive-candidate-ablation-1",
+  "run": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_candidate_ablation_20261118_v1",
+  "protocol_sha256": "1fbfedf524a65c196d8a17da932a220e5a08b45d3f72a5d26ef17712da293208",
+  "routes": 656,
+  "declared_candidate_columns": 24,
+  "applicable_cells_including_proven_equivalents": 9512,
+  "audit_reuse_index_sha256": "d16996b9a048e0e0f4965fe06396ff04d1324413423c24fc1130e365a28a1b78",
+  "runtime_implementation": "dfe82393261902b4b4003c6b0943ca146176d279",
+  "frozen_selection_unchanged": true,
+  "scope": "All applicable declared candidate configurations plus export variants; independent native/export D/R-clock R acceptance. Candidate performance, complete audit coverage, and frozen selector performance are separate. Does not by itself establish causality for bundled multi-factor configurations.",
+  "workers": 3,
+  "global_worker_limit": 14,
+  "minimum_free_GiB": 80,
+  "new_holdout_uses": 0
+}
