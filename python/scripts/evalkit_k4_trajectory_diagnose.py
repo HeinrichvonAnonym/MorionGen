@@ -9,6 +9,7 @@ sys.path[:0]=[str(ROOT/'utils'),str(ROOT/'utils/motiogen')]
 import numpy as np
 from scipy import sparse
 from scipy.sparse.linalg import lsmr
+from scipy.optimize import lsq_linear
 import biomech
 from motiogen.evalkit.k.motion import load
 from motiogen.evalkit.k.trajectory import problem
@@ -40,16 +41,20 @@ def main():
                          gradient=float(gradient[k]),column_norm=float(norms[k]),
                          at_outward_bound=bool((x[k]-lower[k]<1e-6 and gradient[k]>0) or (upper[k]-x[k]<1e-6 and gradient[k]<0))))
     controls=[]
-    for label,scaling in [('unscaled',np.ones(len(x))),('column_scaled',1/np.maximum(norms,1))]:
+    for label,scaling in [('unscaled',np.ones(len(x))),('column_scaled',1/np.maximum(norms,1)),('bounded_column_scaled',1/np.maximum(norms,1))]:
         system=jac@sparse.diags(scaling)
-        result=lsmr(system,-residual,atol=1e-8,btol=1e-8,maxiter=500)
+        if label=='bounded_column_scaled':
+            solution=lsq_linear(system,-residual,bounds=((lower-x)/scaling,(upper-x)/scaling),
+                                tol=1e-6,max_iter=50,lsmr_tol=1e-8,lsmr_maxiter=500)
+            result=(solution.x,solution.status,solution.nit,np.linalg.norm(system@solution.x+residual),None,None,None)
+        else:result=lsmr(system,-residual,atol=1e-8,btol=1e-8,maxiter=500)
         step=scaling*result[0];trials=[]
-        for alpha in (1.,.5,.25,.125,.0625):
+        for alpha in (1.,.5,.25,.125,.0625,.03125,.015625):
             candidate=np.clip(x+alpha*step,lower+1e-9,upper-1e-9)
             value=obj.residual(candidate)
             trials.append(dict(alpha=alpha,squared_cost=float(value@value),max_coordinate_step_deg=float(np.rad2deg(abs(candidate-x)).max())))
         controls.append(dict(name=label,iterations=int(result[2]),stop_code=int(result[1]),
-                             linear_residual_norm=float(result[3]),estimated_condition=float(result[6]),trials=trials))
+                             linear_residual_norm=float(result[3]),estimated_condition=float(result[6]) if result[6] is not None else None,trials=trials))
     result=dict(source_fit=str(a.fit),source_coordinates=a.coordinates,initial_squared_cost=float(residual@residual),
                 active_coordinates=active,gradient_max_abs=float(abs(gradient).max()),top_gradients=rows,
                 column_norm_percentiles=np.percentile(norms,[0,25,50,75,100]).tolist(),linearized_controls=controls,
