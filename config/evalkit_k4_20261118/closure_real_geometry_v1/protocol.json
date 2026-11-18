@@ -1,0 +1,207 @@
+{
+  "version": "k4-real-geometry-1",
+  "records": [
+    {
+      "method": "motionlcm",
+      "input": "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_motionlcm_demo_ab0c550d/motion.npz",
+      "status": "read",
+      "frames": 100,
+      "time_range_s": [
+        0.0,
+        4.95
+      ],
+      "fps": 20.000000000000004,
+      "uniform_clock": true,
+      "input_hashes": {
+        "/home/heinrich/MorionGen/develop_logs/test_runs/20261109_024413_motionlcm_demo_ab0c550d/motion.npz": "93c2713cc7e7357a5c772561e8f8e46aea349e935e2c2b068331f028f4442145"
+      },
+      "declared_rig": false,
+      "raw_segment_rotations": false,
+      "native_rotation_status": "unavailable",
+      "native_rotation_reason": "Position profile has no independent segment rotations",
+      "prior_nodes": [],
+      "position_support": {
+        "trunk_axis": 100,
+        "shoulder_line": 100,
+        "pelvis_line": 100,
+        "head_neck_axis": 100,
+        "left_upper_arm": 100,
+        "left_forearm": 100,
+        "left_thigh": 100,
+        "left_shank": 100,
+        "left_foot_axis": 100,
+        "right_upper_arm": 100,
+        "right_forearm": 100,
+        "right_thigh": 100,
+        "right_shank": 100,
+        "right_foot_axis": 100
+      },
+      "segments": {
+        "pelvis_mid\u2192shoulder_mid": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.519485679532879,
+            0.5261916930105599,
+            0.550290357677641
+          ]
+        },
+        "shoulder_mid\u2192neck": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.07553307743677112,
+            0.09435365537599286,
+            0.10009187563890595
+          ]
+        },
+        "neck\u2192head": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.10233251384730356,
+            0.10360373340306178,
+            0.10660325708780069
+          ]
+        },
+        "pelvis_mid\u2192left_hip": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.06231855853569118,
+            0.06294479424542129,
+            0.06352562824692118
+          ]
+        },
+        "left_hip\u2192left_knee": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.3924752205011463,
+            0.39304850672481606,
+            0.39380442173530733
+          ]
+        },
+        "left_knee\u2192left_ankle": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.43176468010027536,
+            0.43254850257763466,
+            0.43326209733343585
+          ]
+        },
+        "left_ankle\u2192left_foot": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.1420350557212303,
+            0.14277766049483237,
+            0.14390171318359404
+          ]
+        },
+        "shoulder_mid\u2192left_shoulder": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.18800439566218988,
+            0.19892273937365135,
+            0.1997844304676394
+          ]
+        },
+        "left_shoulder\u2192left_elbow": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.2538758116765052,
+            0.25590984545407897,
+            0.2584337952343605
+          ]
+        },
+        "left_elbow\u2192left_wrist": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.26198555513512894,
+            0.26601925151724826,
+            0.27090828383698284
+          ]
+        },
+        "pelvis_mid\u2192right_hip": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.06231855853569118,
+            0.06294479424542129,
+            0.06352562824692118
+          ]
+        },
+        "right_hip\u2192right_knee": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.38893670561335963,
+            0.3904845866987806,
+            0.3908785109932513
+          ]
+        },
+        "right_knee\u2192right_ankle": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.4253154849125642,
+            0.42605491613252633,
+            0.42707633399826306
+          ]
+        },
+        "right_ankle\u2192right_foot": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.1464464137038228,
+            0.1488945549671266,
+            0.1503350126279187
+          ]
+        },
+        "shoulder_mid\u2192right_shoulder": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.18800439566218988,
+            0.19892273937365135,
+            0.1997844304676394
+          ]
+        },
+        "right_shoulder\u2192right_elbow": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.2553967920749441,
+            0.2614261209995812,
+            0.26914664139100614
+          ]
+        },
+        "right_elbow\u2192right_wrist": {
+          "observed": 100,
+          "denominator": 100,
+          "length_quantiles_m": [
+            0.2680911498445243,
+            0.27062045256658596,
+            0.2840954971248351
+          ]
+        }
+      }
+    }
+  ],
+  "conditions": [
+    "control",
+    "total_proxy"
+  ],
+  "new_holdout_uses": 0,
+  "promotion": "none",
+  "hypothesis": "Actual MotionLCM terminal spine3-to-shoulder-midpoint segment has22.93% spread while total chain spread5.34%. Treat this virtual endpoint uncertainty at the effective total length, keeping first3 spine-link and total-chain10% stability criteria; one clip-fixed median estimate, neutral length remains unidentified.",
+  "factors": "Only fixed geometry eligibility policy differs; native solver, chart, domains, root, interpolation unchanged. Original model prior candidate retained. No reference or neutral-frame/max-distance calibration.",
+  "scoring": "Actual baseline F-D only; raw/commonDlength, native/export/Dclock, full fixed input support and actual file readback. No pairedR or claim of anatomical/end-to-end accuracy.",
+  "evidence_file": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/actual_motionlcm_chain_uncertainty_v1.json",
+  "evidence_sha256": "369e0bd8c24dd1e59579a2e7889d64bb4ec50bbbe164bf472c37bbbff5d7464d"
+}

@@ -32,12 +32,12 @@ def build(motion,out,mass,independent_geometry=False,marker_registration='legacy
     import opensim as osim
     import biomech
     targets=geometry_targets(motion,shoulder_width_source);lengths=targets['lengths_m']
-    if position_trunk_strategy not in ('model_prior','observed_chain_proxy_v1'):
+    if position_trunk_strategy not in ('model_prior','observed_chain_proxy_v1','observed_chain_total_proxy_v1'):
         raise ValueError('Unknown position-input trunk geometry strategy')
     if position_trunk_strategy!='model_prior' and not motion.provenance.get('input_rig'):
         if not independent_geometry:raise ValueError('Chain proxy requires independent fixed geometry')
         from .position_geometry import trunk_chain_proxy
-        estimate,description=trunk_chain_proxy(motion)
+        estimate,description=trunk_chain_proxy(motion,position_trunk_strategy)
         targets['effective_trunk_estimate']=description
         if estimate is not None:
             lengths['rest_hip_to_shoulder_midpoint']=estimate

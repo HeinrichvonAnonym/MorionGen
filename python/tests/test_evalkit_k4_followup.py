@@ -34,3 +34,18 @@ def test_chain_proxy_fixed_invariant_and_keeps_neutral_unknown():
     assert abs(trunk_chain_proxy(other)[0]-value)<1e-12
     m.positions[:,3]=np.nan
     assert trunk_chain_proxy(m)[0] is None
+
+
+def test_derived_shoulder_midpoint_variation_propagates_to_total_proxy():
+    names=['left_hip','right_hip','spine1','spine2','spine3','left_shoulder','right_shoulder']
+    p=np.array([[-.1,0,0],[.1,0,0],[0,.2,0],[0,.35,0],[0,.4,0],[-.2,.52,0],[.2,.52,0]])
+    data=np.tile(p,(101,1,1));data[:,5:,1]+=np.linspace(-.015,.015,101)[:,None]
+    m=Motion(data,names,np.arange(101)/30,'positions')
+    assert trunk_chain_proxy(m)[0] is None
+    value,r=trunk_chain_proxy(m,'observed_chain_total_proxy_v1')
+    assert abs(value-.52)<1e-12 and r['neutral_length_identified'] is False
+    assert r['relative_segment_spread'][-1]>.1 and r['relative_total_spread']<.1
+    m.provenance['degradation']={'prior_joints':['spine3']}
+    assert trunk_chain_proxy(m,'observed_chain_total_proxy_v1')[0] is None
+    m.provenance={};m.positions[:,5:,1]+=np.linspace(-.1,.1,101)[:,None]
+    assert trunk_chain_proxy(m,'observed_chain_total_proxy_v1')[0] is None
