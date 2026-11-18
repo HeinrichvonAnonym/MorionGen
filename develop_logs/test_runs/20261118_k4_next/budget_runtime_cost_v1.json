@@ -1,0 +1,39 @@
+{
+  "scope": "Read-only execution timing diagnosis, approximate stages from saved file timestamps; not numerical profiling or method change",
+  "window": "032",
+  "method": "closd",
+  "task_elapsed_s": 2405.128527402878,
+  "fit_log_finished_after_s": 2399.9116179943085,
+  "remaining_postfit_s": 5.216203212738037,
+  "chosen_receipt_after_s": 1099.792732000351,
+  "native_candidate_count": 8,
+  "export_variant_count": 6,
+  "selected": "rig_arm_domain_centres__coordinated",
+  "budget": {
+    "policy": {
+      "version": "first_input_margin_v1",
+      "margin": 0.8
+    },
+    "early_accepted": null,
+    "full_pool_fallback": true,
+    "all_computed_candidates_retained": true,
+    "all_declared_native_candidates_visited": true,
+    "unevaluated_export_variants": [],
+    "unevaluated_native_candidates": [],
+    "qualification": "Input-only scheduling, no R access; unevaluated candidates carry no accuracy claim"
+  },
+  "selected_shoulder_direction": {
+    "expected": 150,
+    "present": 150,
+    "missing": 0,
+    "value": 4.002287563809195,
+    "statistic": "p95",
+    "threshold": 5.0,
+    "passed": true
+  },
+  "sha256": {
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_budget_v3/fits/032/closd/candidate_selection.json": "1925ed26d48c8a0cc5df195fe5ce8de24e5a281c976e8a42b08d4abb154708bc",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_budget_v3/tasks/032_closd/result.json": "6daf01375531d06006017348bc9769ad77fee23963f4184e9a8e4816212b81e2",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_budget_v3/fits/032/closd/candidates/rig_arm_domain_centres__coordinated/receipt.json": "be019193df99c47353eb094b5f1a86db5dd3dadec2fde57a4c176022e84f413a"
+  }
+}

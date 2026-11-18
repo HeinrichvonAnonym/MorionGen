@@ -43,15 +43,16 @@ def test_live_denominators_and_record_whitelist(tmp_path):
     assert api.snapshot()['worker_limit'] == 8
 
 
-def test_twelve_worker_amendment_reserves_other_numerical_jobs():
+def test_fourteen_worker_amendment_reserves_other_numerical_jobs():
     protocol=dict(workers=6,output='/run')
     identity=dict(protocol_sha256='p',runner_sha256='r')
     amendment=dict(version='k4-execution-amendment-2',protocol_sha256='p',
-        original_runner_sha256='r',output='/run',max_workers=11,
-        total_worker_limit=12,reserved_workers=1,authorization='User authorized twelve total')
-    assert runner.execution_workers(protocol,'p',identity,amendment)==11
-    assert runner.execution_workers(protocol,'p',identity,dict(amendment,max_workers=12,reserved_workers=0))==12
-    for change in ({'max_workers':12},{'total_worker_limit':13},{'reserved_workers':-1},
+        original_runner_sha256='r',output='/run',max_workers=13,
+        total_worker_limit=14,reserved_workers=1,authorization='User authorized fourteen total')
+    assert runner.execution_workers(protocol,'p',identity,amendment)==13
+    assert runner.execution_workers(protocol,'p',identity,dict(amendment,max_workers=14,reserved_workers=0))==14
+    assert runner.execution_workers(protocol,'p',identity,dict(amendment,max_workers=11,total_worker_limit=12))==11
+    for change in ({'max_workers':14},{'total_worker_limit':15},{'reserved_workers':-1},
                    {'max_workers':True},{'reserved_workers':True},{'authorization':''},
                    {'fit_config':'changed'},{'protocol_sha256':'other'}):
         with pytest.raises(ValueError):

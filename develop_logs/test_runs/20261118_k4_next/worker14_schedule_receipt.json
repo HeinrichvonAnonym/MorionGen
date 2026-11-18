@@ -1,0 +1,13 @@
+{
+  "runner": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/scheduler_workers14_20261118/evalkit_k4_full_regression.py",
+  "sha256": "fbfc2f049960ede836f6692c96e8ace91f0651add0e733816b192b1fcf3bf15e",
+  "old_runner_sha256": "8c8938a188e1df56a4db40c1a502008546058d5f676d1b0ef8fc5d808727e003",
+  "only_changed_function": "execution_workers",
+  "all_other_ast_equal": true,
+  "total_worker_limit": 14,
+  "regression_workers": 13,
+  "reserved_workers": 1,
+  "tests": "8 passed",
+  "authorization": "User: WORKER可以拉到14个",
+  "reserved_scope": "Real-output or ablation task; all numerical processes share total14"
+}

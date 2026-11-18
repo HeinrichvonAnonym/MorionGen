@@ -46,9 +46,9 @@ def execution_workers(protocol, protocol_hash, original_identity, amendment):
     limit=8
     if expanded:
         total=amendment['total_worker_limit'];reserved=amendment['reserved_workers']
-        if (type(total) is not int or not 1<=total<=12 or type(reserved) is not int
+        if (type(total) is not int or not 1<=total<=14 or type(reserved) is not int
                 or not 0<=reserved<total or not amendment['authorization']):
-            raise ValueError('Explicit total budget and reserved workers required; maximum twelve')
+            raise ValueError('Explicit total budget and reserved workers required; maximum fourteen')
         limit=total-reserved
     if type(amendment['max_workers']) is not int or not 1<=amendment['max_workers']<=limit:
         raise ValueError('Worker count exceeds authorized execution budget')
