@@ -8,6 +8,8 @@
   bar.innerHTML = '<label><input id="k4-auto" type="checkbox" checked>自动更新（15 秒）</label> <button id="k4-refresh">立即更新</button> <span id="k4-live-state"></span>';
   summary.after(bar);
   const status = bar.querySelector('#k4-live-state');
+  const phase = document.createElement('p');
+  phase.id='k4-phase';phase.style.cssText='margin:8px 0 0;font-size:14px';bar.append(phase);
   if (!/^https?:$/.test(location.protocol)) {
     status.textContent = '离线快照：显示文件中保存的结果';
     bar.querySelector('#k4-auto').disabled = true;
@@ -59,6 +61,13 @@
       formatTable.innerHTML='<tr><th>格式</th><th>通过／总数</th><th>已评分</th><th>执行失败</th><th>待完成</th></tr>'+Object.entries(data.by_format).sort().map(([method,c])=>`<tr><td>${esc(method)}</td><td>${c.passed}/${c.total}</td><td>${c.evaluated}</td><td>${c.execution_failed}</td><td>${c.pending}</td></tr>`).join('');
       if (changed) render();
       status.textContent=`已同步 ${new Date(data.checked_at).toLocaleTimeString()} · worker 上限 ${data.worker_limit}`;
+      const states={waiting_for_registered_runs:'等待前序实验及独立验收',running:'执行中',validation_stage_failed:'本阶段未通过，后续保留待执行',completed:'本版任务执行结束'};
+      const messages=[];
+      if (data.recorded_state) messages.push('调度记录：'+(states[data.recorded_state]||data.recorded_state));
+      if (data.stage) messages.push('当前阶段：'+data.stage);
+      if (data.waiting_on?.length) messages.push('等待：'+data.waiting_on.join('、'));
+      messages.push(data.latest_result_at?'最近新增结果：'+new Date(data.latest_result_at).toLocaleString():'尚无已完成结果');
+      phase.textContent=messages.join('；');
       if (!data.pending) {clearInterval(timer);status.textContent+=' · 全部路径已结束';}
     } catch (error) {
       status.textContent='更新暂不可用；保留上次结果，可稍后重试';

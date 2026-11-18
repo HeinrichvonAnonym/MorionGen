@@ -30,9 +30,16 @@ class Results:
         workers=self.protocol['workers']
         epochs=sorted((self.run/'execution_epochs').glob('*.json'))
         if epochs:workers=json.loads(epochs[-1].read_text())['effective_workers']
+        progress_file=self.run/'progress.json'
+        progress=json.loads(progress_file.read_text()) if progress_file.exists() else {}
+        waiting=[]
+        for item in progress.get('waiting_for',[]):
+            path=Path(item);name=path.parent.name if path.suffix=='.json' else path.name
+            if name not in waiting:waiting.append(name)
         return dict(rows=rows,by_format=formats,expected=len(rows),
                     **{k:sum(x[k] for x in formats.values()) for k in ('evaluated','passed','execution_failed','pending','running')},
                     worker_limit=workers,checked_at=datetime.now(timezone.utc).isoformat(),
+                    run_name=self.run.name,recorded_state=progress.get('state'),stage=progress.get('stage'),waiting_on=waiting,
                     latest_result_at=datetime.fromtimestamp(latest,timezone.utc).isoformat() if latest else None)
 
     def detail(self,key):
