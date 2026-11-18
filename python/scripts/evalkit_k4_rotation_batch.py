@@ -12,6 +12,15 @@ def main():
         if hashlib.sha256((ROOT/path).read_bytes()).hexdigest()!=expected:raise ValueError('Frozen implementation changed: '+path)
     for row in protocol['records']:
         if hashlib.sha256((Path(row['fit'])/'model.osim').read_bytes()).hexdigest()!=row['model_sha256']:raise ValueError('Frozen model changed')
+        for name,expected in row.get('source_sha256',{}).items():
+            if hashlib.sha256((Path(row['fit'])/name).read_bytes()).hexdigest()!=expected:raise ValueError('Frozen source changed: '+name)
+    coordinated=protocol.get('coordinated_config')
+    if coordinated:
+        if 'whole_native_grid' not in protocol['conditions'] or 'coordinated' not in protocol['conditions']:raise ValueError('Coordinated replay requires native-grid and coordinated conditions')
+        if hashlib.sha256(Path(coordinated).read_bytes()).hexdigest()!=protocol['coordinated_config_sha256']:raise ValueError('Frozen path policy changed')
+    scoring_root=Path(protocol.get('scoring_root',ROOT))
+    for name,expected in protocol.get('scoring_sha256',{}).items():
+        if hashlib.sha256((scoring_root/name).read_bytes()).hexdigest()!=expected:raise ValueError('Frozen scoring changed: '+name)
     out=Path(protocol['output']);out.mkdir(parents=True,exist_ok=False)
     (out/'protocol.json').write_text(a.protocol.read_text())
     env=dict(os.environ,OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1',MKL_NUM_THREADS='1',PYTHONPATH=str(ROOT/'utils')+':'+str(ROOT/'utils/motiogen'))
@@ -21,14 +30,16 @@ def main():
         with (out/f'{w}_{m}.log').open('w') as log:
             try:
                 if shutil.disk_usage(out).free<80*1024**3:raise RuntimeError('80 GiB reserve reached')
-                subprocess.run([sys.executable,str(ROOT/'python/scripts/evalkit_k4_rotation_probe.py'),'--fit',row['fit'],'--input',row['input'],'--output',str(dest),'--window',w,'--method',m,'--whole-body',*(['--native-multiple'] if 'whole_native_grid' in protocol['conditions'] else [])],env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+                subprocess.run([sys.executable,str(ROOT/'python/scripts/evalkit_k4_rotation_probe.py'),'--fit',row['fit'],'--input',row['input'],'--output',str(dest),'--window',w,'--method',m,'--whole-body',*(['--native-multiple'] if 'whole_native_grid' in protocol['conditions'] else []),*(['--coordinated-config',coordinated] if coordinated else [])],env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
                 replay=json.loads((dest/'receipt.json').read_text())
                 receipt['legacy_control_failures']=replay.get('legacy_control_failures',{})
                 for condition in protocol['conditions']:
                     if condition in receipt['legacy_control_failures']:
                         if condition not in protocol.get('optional_controls',[]):raise RuntimeError('Required replay condition failed: '+condition)
                         continue
-                    subprocess.run([sys.executable,str(ROOT/'python/scripts/evalkit_k4_ablation_score.py'),'--fits',str(dest/'views'/condition),'--baseline',protocol['baseline'],'--output',str(out/'scores'/condition),'--window',w,'--method',m,'--strict'],env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+                    subprocess.run([sys.executable,str(scoring_root/'python/scripts/evalkit_k4_ablation_score.py'),'--fits',str(dest/'views'/condition),'--baseline',protocol['baseline'],'--output',str(out/'scores'/condition),'--window',w,'--method',m,'--strict'],env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+                if protocol.get('audit_roundtrip',False):
+                    subprocess.run([sys.executable,str(ROOT/'python/scripts/evalkit_k4_export_audit.py'),'--replay',str(dest),'--output',str(dest/'roundtrip')],env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
                 receipt['status']='completed'
             except Exception as error:receipt.update(status='failed',error=repr(error))
         return receipt
