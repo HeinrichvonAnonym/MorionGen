@@ -103,9 +103,21 @@ def ablation_panel(data):
 def ablation_document(data):
     title='K4 · 656 路完整候选消融'
     details=''
+    def verdict(value):return '通过' if value is True else '未通过' if value is False else '未知'
+    status_names={'pending':'待验','running':'计算中','completed':'已独立验收','inapplicable':'不适用','failed':'执行失败','execution_failed':'执行失败'}
     for row in data.get('rows',[]) if data.get('available') else []:
         label=' · '.join(str(row.get(k,'未知')) for k in ('window','method'))
-        details+='<details><summary>'+html.escape(label)+'</summary><pre>'+html.escape(json.dumps(row,ensure_ascii=False,indent=2))+'</pre></details>'
+        selector=row.get('selector',{})
+        details+='<details><summary>'+html.escape(label)+' · '+('全部候选已验' if row.get('fully_evaluated') else '候选验收未完成')+'</summary>'
+        details+='<p>选择器输出：'+verdict(selector.get('passed'))+'；所选候选：'+html.escape(str(selector.get('selected') or '尚未选定'))+'；候选比较：'+('已有通过候选但所选未通过' if row.get('missed_passing_candidate') is True else '已完成' if row.get('fully_evaluated') and selector.get('status')=='completed' else '尚未完成')+'。</p>'
+        details+='<div class="scroll"><table><tr><th>候选</th><th>验收状态</th><th>独立结论</th><th>证据／原因</th></tr>'
+        for name,cell in row.get('candidates',{}).items():
+            state=cell.get('status','pending');evidence=''
+            if state=='inapplicable':evidence='输入不满足声明的适用条件'
+            elif state not in ('pending','running'):
+                evidence='<details><summary>查看独立验收记录</summary><pre>'+html.escape(json.dumps(cell,ensure_ascii=False,indent=2))+'</pre></details>'
+            details+='<tr><td>'+html.escape(name)+'</td><td>'+html.escape(status_names.get(state,state))+'</td><td>'+('不计适用分母' if state=='inapplicable' else verdict(cell.get('passed')) )+'</td><td>'+evidence+'</td></tr>'
+        details+='</table></div></details>'
     return ('<!doctype html><html lang="zh"><meta charset="utf-8"><meta name="viewport" content="width=device-width">'
             '<title>'+title+'</title><style>body{max-width:1160px;margin:30px auto;padding:0 20px;font:16px/1.6 system-ui;color:#203047;background:#f8fafc}table{border-collapse:collapse;width:100%;background:white}th,td{border:1px solid #dbe2eb;padding:8px;text-align:left}details{padding:8px;margin:8px 0;background:white}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.scroll{overflow:auto}</style>'
             '<h1>'+title+'</h1><p>离线快照生成：'+html.escape(datetime.now(timezone.utc).isoformat())+'</p>'+ablation_panel(data)+details+'</html>')

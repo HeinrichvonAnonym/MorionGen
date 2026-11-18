@@ -50,6 +50,18 @@ class LiveStatus(unittest.TestCase):
         self.assertIn('id="k4-ablation"',result)
         self.assertNotIn('选择器输出验收',frozen)
 
+    def test_route_candidate_table_keeps_unknown_and_inapplicable_distinct(self):
+        data={**self.make_ablation(),'available':True}
+        data['rows']=[dict(window='000',method='a',fully_evaluated=False,selector={},candidates={
+            'waiting':dict(status='pending',passed=None),
+            'unsupported':dict(status='inapplicable',reason='input contract'),
+            'bad':dict(status='completed',passed=False,failures=['pose'])})]
+        document=live.ablation_document(data)
+        self.assertIn('候选验收未完成',document)
+        self.assertIn('<td>waiting</td><td>待验</td><td>未知</td>',document)
+        self.assertIn('不计适用分母',document)
+        self.assertIn('<td>bad</td><td>已独立验收</td><td>未通过</td>',document)
+
     def test_waiting_has_full_denominator_and_distinct_prerequisites(self):
         with tempfile.TemporaryDirectory(dir=ROOT/'develop_logs/test_runs/20261118_k4_next') as folder:
             run=Path(folder)
