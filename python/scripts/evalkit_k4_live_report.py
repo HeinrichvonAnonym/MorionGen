@@ -97,7 +97,7 @@ def ablation_panel(data):
             body+='<tr>'+''.join('<td>'+x+'</td>' for x in [value('name'),value('passed')+'/'+value('applicable'),value('evaluated'),value('metric_failed'),value('execution_failed'),value('pending')])+'</tr>'
         body+='</table></div>'
         if data.get('updated_at'):body+='<p>候选账本更新时间：'+esc(data['updated_at'])+'；与主回归进度分别更新。</p>'
-    return '<section id="k4-ablation"><h2>全部适用候选的独立验收</h2>'+body+'<p>适用性与选择仅使用输入 D；R 只用于独立验收。未验、执行失败、指标失败与不可观测分别保留。</p><p><a href="/docs/20261118_k4_candidate_ablation.html">候选消融逐路详情／离线快照</a></p></section>'
+    return '<section id="k4-ablation"><h2>全部适用候选的独立验收</h2><p>24 列为已声明的完整策略及其导出变体；组合策略之间的比较不能直接得出单因素因果结论。完成条件是全部适用候选均有独立验收结果，不要求所有候选都通过。</p>'+body+'<p>适用性与选择仅使用输入 D；R 只用于独立验收。未验、执行失败、指标失败与不可观测分别保留。</p><p><a href="/docs/20261118_k4_candidate_ablation.html">候选消融逐路详情／离线快照</a></p></section>'
 
 
 def ablation_document(data):

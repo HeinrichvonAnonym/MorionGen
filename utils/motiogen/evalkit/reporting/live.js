@@ -13,7 +13,7 @@
   function renderAblation(data) {
     let panel=document.querySelector('#k4-ablation');
     if (!panel) {panel=document.createElement('section');panel.id='k4-ablation';formatTable.after(panel);}
-    let body='<h2>全部适用候选的独立验收</h2>';
+    let body='<h2>全部适用候选的独立验收</h2><p>24 列为已声明的完整策略及其导出变体；组合策略之间的比较不能直接得出单因素因果结论。完成条件是全部适用候选均有独立验收结果，不要求所有候选都通过。</p>';
     if (!data?.available) {
       body+='<p>'+esc(data?.reason||'候选消融验收待建立；完成数、失败数与选择器比较均未知。')+'</p>';
     } else {
