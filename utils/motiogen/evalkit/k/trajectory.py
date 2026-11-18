@@ -4,7 +4,7 @@ from scipy.optimize import least_squares
 from .trajectory_objective import TrajectoryObjective
 
 
-def problem(model_path, labels, coordinates, observed, names, times, settings):
+def problem(model_path, labels, coordinates, observed, names, times, settings, *, attached_targets=None):
     if settings.get('version')!='joint_trajectory_v1':raise ValueError('Unknown trajectory policy')
     import opensim as osim
     import biomech
@@ -35,28 +35,49 @@ def problem(model_path, labels, coordinates, observed, names, times, settings):
     goals=np.array([features(p) for p in target]);np_=len(body_names)*3;nd=len(edges)*3
     scale_position=float(settings.get('position_scale_m',.05));scale_angle=np.deg2rad(float(settings.get('angle_scale_deg',5)))
     scales=np.r_[np.full(np_,scale_position),np.full(nd,2*np.sin(scale_angle/2)),np.full(4,scale_angle)]
+    groups=[(i,i+3) for i in range(0,np_+nd,3)]+[(i,i+1) for i in range(np_+nd,np_+nd+4)]
+    body=None
+    if attached_targets is not None:
+        if not np.array_equal(attached_targets.times,np.asarray(times)):
+            raise ValueError('Attached targets and body objective clocks differ')
+        if attached_targets.names!=('neck','head'):
+            raise ValueError('Declare existing neck/head point semantics')
+        pelvis=(target[:,ni['left_hip']]+target[:,ni['right_hip']])/2
+        extra=(attached_targets.observed-pelvis[:,None,:]).reshape(len(times),6)
+        start=goals.shape[1];goals=np.c_[goals,extra]
+        scales=np.r_[scales,np.full(6,scale_position)]
+        groups.extend([(start,start+3),(start+3,start+6)])
+        body=model.getBodySet().get('torso')
     seed=np.asarray(coordinates,float).copy()
     def feature(frame,x):
         biomech._set(model,state,labels,seed[frame])
         for h,value in zip(handles,x):h.setValue(state,float(value),False)
         synchronize(state,bindings);model.realizePosition(state)
-        return features(np.array([biomech._child_origin(model,state,j) for j in joints]))
+        points=np.array([biomech._child_origin(model,state,j) for j in joints])
+        values=features(points)
+        if attached_targets is not None:
+            transform=body.getTransformInGround(state)
+            origin=np.array([transform.p().get(j) for j in range(3)])
+            rotation=np.array([[transform.R().get(j,k) for k in range(3)] for j in range(3)])
+            pelvis=(points[ni['left_hip']]+points[ni['right_hip']])/2
+            values=np.r_[values,(attached_targets.positions(frame,origin,rotation)-pelvis).ravel()]
+        return values
     objective=TrajectoryObjective(feature,goals,times,scales,np.arange(np_,np_+nd),
         np.deg2rad(float(settings.get('direction_rate_scale_deg_s',10))),float(settings.get('direction_rate_weight',1)),lower,upper,
-        violation_groups=[(i,i+3) for i in range(0,np_+nd,3)]+[(i,i+1) for i in range(np_+nd,np_+nd+4)],
+        violation_groups=groups,
         violation_weight=float(settings.get('target_violation_weight',0)),
         violation_margin=float(settings.get('target_margin_fraction',.8)))
     x0=np.clip(np.deg2rad(seed[:,cols]),lower+1e-9,upper-1e-9).ravel()
     return objective,x0,seed,cols,active
 
 
-def refine(model_path, labels, coordinates, observed, names, times, settings):
+def refine(model_path, labels, coordinates, observed, names, times, settings, *, attached_targets=None):
     chart=None
     if settings.get('equivalent_seed_chart'):
         if settings['equivalent_seed_chart']!='max_margin_v1':raise ValueError('Unknown equivalent seed chart')
         from .rotation_chart import rechart
         coordinates,chart=rechart(model_path,labels,coordinates)
-    objective,x0,seed,cols,active=problem(model_path,labels,coordinates,observed,names,times,settings)
+    objective,x0,seed,cols,active=problem(model_path,labels,coordinates,observed,names,times,settings,attached_targets=attached_targets)
     lower,upper=objective.lower,objective.upper
     r0=objective.residual(x0);initial=float(np.dot(r0,r0))
     solver=settings.get('solver','trf_lsmr')
@@ -75,4 +96,5 @@ def refine(model_path, labels, coordinates, observed, names, times, settings):
                  solver=solver,iterations=fit.get('history',[]),seed_chart=chart,
                  supported_features_per_frame=objective.mask.sum(1).tolist(),
                  scope='Fixed model; all native frames optimized jointly using D positions, directions and geometric angles. Rate is derivative of fitted-minus-input unit directions, never raw motion speed or Euler differences. R is absent. Cost acceptance is not accuracy qualification.')
+    if attached_targets is not None:receipt['attached_node_targets']=attached_targets.receipt
     return candidate if accepted else seed, candidate, receipt
