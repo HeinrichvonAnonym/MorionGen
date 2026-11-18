@@ -88,7 +88,7 @@ def ablation_panel(data):
               f"<p>候选单元：独立验收 {data['independently_evaluated_cells']}/{data['applicable_cells']}；"
               f"通过 {data['candidate_passed_cells']}；指标未通过 {data['candidate_metric_failed_cells']}；"
               f"执行失败 {data['execution_failed_cells']}；待验 {data['pending_cells']}。</p>"
-              f"<p>选择器输出验收：通过 {data['selector_passed_routes']}/{n}，已验 {data['selector_evaluated_routes']}/{n}；"
+              f"<p>候选账本内的选择器输出验收：通过 {data['selector_passed_routes']}/{n}，已验 {data['selector_evaluated_routes']}/{n}；"
               f"候选能力与选择结果比较完成 {data['selector_comparison_complete_routes']}/{n}；"
               f"已有通过候选但选择器未通过 {data['selector_missed_passing_routes']}。</p>")
         body+='<div class="scroll"><table><tr><th>候选</th><th>通过／适用</th><th>已独立验收</th><th>指标未通过</th><th>执行失败</th><th>待验</th></tr>'
@@ -96,6 +96,7 @@ def ablation_panel(data):
             value=lambda k:esc(r[k]) if k in r and r[k] is not None else '未知'
             body+='<tr>'+''.join('<td>'+x+'</td>' for x in [value('name'),value('passed')+'/'+value('applicable'),value('evaluated'),value('metric_failed'),value('execution_failed'),value('pending')])+'</tr>'
         body+='</table></div>'
+        if data.get('updated_at'):body+='<p>候选账本更新时间：'+esc(data['updated_at'])+'；与主回归进度分别更新。</p>'
     return '<section id="k4-ablation"><h2>全部适用候选的独立验收</h2>'+body+'<p>适用性与选择仅使用输入 D；R 只用于独立验收。未验、执行失败、指标失败与不可观测分别保留。</p><p><a href="/docs/20261118_k4_candidate_ablation.html">候选消融逐路详情／离线快照</a></p></section>'
 
 
