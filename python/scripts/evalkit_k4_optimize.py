@@ -75,7 +75,7 @@ def main():
                 payload.update(native_bank=str(source_fit),native_contract=str(config/native['contract']))
                 job.write_text(json.dumps(payload,indent=2)+'\n')
                 call([a.code_root/'python/scripts/evalkit_k4_compose_bank.py','--input',original['input'],
-                      '--method',method,'--mass',original['mass_kg'],'--floor',original['floor_m'],
+                      '--method',method,'--mass='+str(original['mass_kg']),'--floor='+str(original['floor_m']),
                       '--native-bank',source_fit,'--native-contract',config/native['contract'],
                       '--config',config/(condition+'.json'),'--output',fit],'fit')
             else:
