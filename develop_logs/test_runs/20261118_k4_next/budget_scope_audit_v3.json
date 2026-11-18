@@ -1,0 +1,15 @@
+{
+  "code_commit": "dfe82393261902b4b4003c6b0943ca146176d279",
+  "base_commit": "644f4bc",
+  "only_runtime_code_changes": [
+    "utils/motiogen/evalkit/k/candidate_budget.py",
+    "utils/motiogen/evalkit/k/candidate_pool.py"
+  ],
+  "config_diff": {
+    "version": "first_input_margin_v1",
+    "margin": 0.8
+  },
+  "body_geometry_solver_interpolation_and_scoring": "identical to644f4bc",
+  "unpromoted_trust_solver_and_position_centres": "excluded",
+  "new_holdout_uses": 0
+}

@@ -1,0 +1,17 @@
+{
+  "time_utc": "2026-11-18T07:53:30Z",
+  "old_controller": 288821,
+  "action": "superseded_before_numerical_fitting",
+  "old_completed": 0,
+  "new_protocol": "config/evalkit_k4_20261118/full_regression_budget_v3/protocol.json",
+  "new_protocol_sha256": "d9ca477935456a928ef170f3fdc1dad347ac5d34039cb04acbf22152518c4d10",
+  "reason": "Isolated D-only candidate budget after43 paired selection acceptances; body fit/interpolation/scoring remain644f4bc; all656 freshly refit underdfe8239; same prerequisite and stage gates",
+  "preserved_sha256": {
+    "protocol.json": "58fccae79d4b7fa0dcb4e5fb5075028aa171bafa62d1efb37bcbf99a4949a753",
+    "identity.json": "29d9258443dc8b215cbec4b7537b5ef6616ae41c6f22c75a253b640b467e003c",
+    "progress.json": "f9412a38bc08a47e5de80f2ddba6aaaeb3a67a3580f0f09574e7f8d2a22cf78a",
+    "results_656.json": "c2f1b0f5127bf49901397c2e8facb9d988ff34cb97757932f7480b9e606b69af",
+    "preservation_before.json": "784aee80e62ebc135968ebd7cfce34ad3cb11c60b95ea4ede9cd9669fe0de771"
+  },
+  "original_frozen656": "unchanged"
+}

@@ -109,7 +109,9 @@ def fit(run, work, mass, floor, settings, *, native_provider=None):
                  'qualification':'Input-fidelity selection only; independent R acceptance remains required',
                  'all_candidates_retained':True,'per_frame_switching':False}
     if budget:
-        selection['budget']={'policy':budget,'early_accepted':early,'full_pool_fallback':early is None,
+        selection['budget']={'policy':budget,'early_accepted':early,'full_pool_fallback':early is None,'all_computed_candidates_retained':True,
+                             'all_declared_native_candidates_visited':len(eligibility)==len(candidates),
+                             'unevaluated_export_variants':[n+'__coordinated' for n,c in candidates.items() if path_policy and c.get('coordinated_path')!=path_policy and n not in skipped and n+'__coordinated' not in qualities and n+'__coordinated' not in failures],
                              'unevaluated_native_candidates':[n for n in candidates if n not in qualities and n not in failures and n not in skipped],
                              'qualification':'Input-only scheduling, no R access; unevaluated candidates carry no accuracy claim'}
         if early is not None:selection['rule']='first declared candidate satisfying every supported input and exported-path metric with fixed margin'
