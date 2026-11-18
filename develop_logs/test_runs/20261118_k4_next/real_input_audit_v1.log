@@ -1,0 +1,74 @@
+[
+  {
+    "method": "motionlcm",
+    "status": "read",
+    "frames": 100,
+    "declared_rig": false,
+    "raw_segment_rotations": false,
+    "native_rotation_status": "unavailable",
+    "reason": null
+  },
+  {
+    "method": "omnicontrol",
+    "status": "read",
+    "frames": 196,
+    "declared_rig": false,
+    "raw_segment_rotations": false,
+    "native_rotation_status": "unavailable",
+    "reason": null
+  },
+  {
+    "method": "ardy",
+    "status": "read",
+    "frames": 400,
+    "declared_rig": false,
+    "raw_segment_rotations": true,
+    "native_rotation_status": "undeclared",
+    "reason": null
+  },
+  {
+    "method": "chois",
+    "status": "read",
+    "frames": 120,
+    "declared_rig": false,
+    "raw_segment_rotations": true,
+    "native_rotation_status": "undeclared",
+    "reason": null
+  },
+  {
+    "method": "closd",
+    "status": "read",
+    "frames": 600,
+    "declared_rig": false,
+    "raw_segment_rotations": true,
+    "native_rotation_status": "undeclared",
+    "reason": null
+  },
+  {
+    "method": "dart",
+    "status": "read",
+    "frames": 600,
+    "declared_rig": false,
+    "raw_segment_rotations": true,
+    "native_rotation_status": "undeclared",
+    "reason": null
+  },
+  {
+    "method": "primal",
+    "status": "read",
+    "frames": 600,
+    "declared_rig": false,
+    "raw_segment_rotations": true,
+    "native_rotation_status": "undeclared",
+    "reason": null
+  },
+  {
+    "method": "kimodo",
+    "status": "read",
+    "frames": 90,
+    "declared_rig": false,
+    "raw_segment_rotations": true,
+    "native_rotation_status": "undeclared",
+    "reason": null
+  }
+]
