@@ -100,8 +100,18 @@ def ablation_panel(data):
     return '<section id="k4-ablation"><h2>全部适用候选的独立验收</h2><p>24 列为已声明的完整策略及其导出变体；组合策略之间的比较不能直接得出单因素因果结论。完成条件是全部适用候选均有独立验收结果，不要求所有候选都通过。</p>'+body+'<p>适用性与选择仅使用输入 D；R 只用于独立验收。未验、执行失败、指标失败与不可观测分别保留。</p><p><a href="/docs/20261118_k4_candidate_ablation.html">候选消融逐路详情／离线快照</a></p></section>'
 
 
+def replay_panel(run):
+    path=Path(run).parent/'selector_replay_20261120_v1/progress.json'
+    if not path.exists():return '<p>D-only回放尚无进度记录。</p>'
+    d=json.loads(path.read_text());esc=lambda x:html.escape(str(x))
+    return ('<h2>D-only离线回放（与历史65路分开统计）</h2>'
+        +f"<p>已验 {d['completed']}/{d['expected']}；完整排序通过 {d['full_passed']}、漏选 {d['full_missed_passing']}；提前接受通过 {d['budget_passed']}、漏选 {d['budget_missed_passing']}。</p>"
+        +f"<p>回放并发上限 {d['replay_limit']}，此刻活动 {len(d['active'])}；预留消融容量 {d['reserved_ablation_capacity']}；执行/完整性错误 {len(d['execution_or_integrity_errors'])}。回放数据时间：{esc(datetime.fromtimestamp(d['updated_unix_s'],timezone.utc).isoformat())}。</p>")
+
+
 def ablation_document(data):
     title='K4 · 656 路完整候选消融'
+    live=(Path(__file__).resolve().parents[2]/'utils/motiogen/evalkit/reporting/ablation_live.js').read_text()
     details=''
     def verdict(value):return '通过' if value is True else '未通过' if value is False else '未知'
     status_names={'pending':'待验','running':'计算中','completed':'已独立验收','evaluated':'已独立验收','inapplicable':'不适用','failed':'执行失败','execution_failed':'执行失败'}
@@ -120,7 +130,7 @@ def ablation_document(data):
         details+='</table></div></details>'
     return ('<!doctype html><html lang="zh"><meta charset="utf-8"><meta name="viewport" content="width=device-width">'
             '<title>'+title+'</title><style>body{max-width:1160px;margin:30px auto;padding:0 20px;font:16px/1.6 system-ui;color:#203047;background:#f8fafc}table{border-collapse:collapse;width:100%;background:white}th,td{border:1px solid #dbe2eb;padding:8px;text-align:left}details{padding:8px;margin:8px 0;background:white}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}.scroll{overflow:auto}</style>'
-            '<h1>'+title+'</h1><p>离线快照生成：'+html.escape(datetime.now(timezone.utc).isoformat())+'</p>'+ablation_panel(data)+details+'</html>')
+            '<h1>'+title+'</h1><p>离线快照生成：'+html.escape(datetime.now(timezone.utc).isoformat())+'</p><p id="live-status">离线快照；在线打开后每15秒刷新摘要。</p>'+ablation_panel(data)+'<section id="replay-live"></section><p><strong>下方逐路详情为本页打开时的快照。</strong>摘要与候选汇总表在线更新。<button id="reload-details">重新加载最新逐路详情</button></p>'+details+'<script>'+live+'</script></html>')
 
 
 def enhance_report(document,data,script):
@@ -157,6 +167,9 @@ def main():
             try:
                 if url.path=='/api/k4/progress':
                     return self.respond(json.dumps(results.snapshot(),ensure_ascii=False).encode(),'application/json; charset=utf-8')
+                if url.path=='/api/k4/ablation_status':
+                    data=results.ablation()
+                    return self.respond(json.dumps(dict(panel=ablation_panel(data),replay=replay_panel(results.run),updated_unix_s=data.get('updated_unix_s')),ensure_ascii=False).encode(),'application/json; charset=utf-8')
                 if url.path=='/api/k4/ablation':
                     return self.respond(json.dumps(results.ablation(),ensure_ascii=False).encode(),'application/json; charset=utf-8')
                 if url.path=='/api/k4/record':
