@@ -1,0 +1,1877 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>K4 GPU 工程一致性</title>
+<style>body{font:16px/1.7 system-ui;color:#21354b;background:#f5f7fa;max-width:1250px;margin:30px auto;padding:0 20px}section{padding:22px;background:white;border:1px solid #d8e2eb;border-radius:10px;margin:20px 0}h1,h2{line-height:1.3}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:9px;border-bottom:1px solid #dde5ed;text-align:left}th{background:#eaf0f6}.scroll{overflow:auto}pre{white-space:pre-wrap;word-break:break-word;font-size:12px}.note{background:#fff4dc;padding:12px;border-left:4px solid #b88719}@media print{body{margin:0;background:white}section{break-inside:avoid}details{display:none}}</style>
+<h1>K4 GPU：CPU 算法一致性与批处理工程</h1>
+<p>本页检验相同 CPU 算法更换计算后端后的行为与成本。CPU/GPU 相对原动作共同失败列入关联明细，不计作迁移失败。</p>
+<section><h2>当前判断</h2><p>批量有限差分、常驻模型、CUDA Graph 与批量坐标转换已接通。当前 CPU 保持原 SciPy 求解控制，GPU 执行 FK；完整设备端控制仍待实现。</p>
+<p>32 帧 FK 的预热耗时约从 34 ms 降到 5 ms；相同计算的数值和批次检查通过。逐帧求解的小样本仍出现临界初值选择差异，严格一致性尚未通过。多初值并行在短样本上增加了开销，保留为独立实验。</p>
+<p class="note">默认配置保持原状。下表“通过初检”仅覆盖原生点位置、可构成的方向及选用分支；完整旋转、覆盖、导出及原动作时钟的验收另列。当前快照不代表40项或656路已完成。</p></section>
+<section><h2>模型计算消融</h2><p>同一固定模型及32帧，GPU0、float64；一次冷调用、三次预热后重复。包含请求传输和回读；模型启动另列。原14个CPU worker并行运行，属于资源竞争条件。</p>
+<div class="scroll"><table><thead><tr><th>执行方式</th><th>模型启动 s</th><th>冷调用 ms</th><th>预热中位数 ms</th><th>OpenSim位置最大差 m</th><th>旋转最大差 rad</th><th>数值验收</th></tr></thead><tbody><tr><td>eager</td><td>3.0729</td><td>300.44</td><td>34.202</td><td>7.1143e-16</td><td>4.0299e-16</td><td>通过</td></tr><tr><td>cuda_graph</td><td>3.812</td><td>529.64</td><td>7.2989</td><td>7.1143e-16</td><td>4.0299e-16</td><td>通过</td></tr><tr><td>eager_storage</td><td>3.5964</td><td>305.35</td><td>33.507</td><td>7.1143e-16</td><td>4.0299e-16</td><td>通过</td></tr><tr><td>cuda_graph_storage</td><td>3.4989</td><td>514.48</td><td>5.0658</td><td>7.1143e-16</td><td>4.0299e-16</td><td>通过</td></tr></tbody></table></div>
+<p>批量顺序、1/3/7/31/32行及分块回放均检查。原数值门槛为位置1e−7 m、旋转1e−6 rad。求解器内部使用直接耦合函数的FK，因此以同一语义的OpenSim调用作对应；额外装配步骤的差异单独保留。</p></section>
+<section><h2>CPU策略求解对照</h2><p>完整帧数和短片段分别列出。复用CPU时不伪造CPU计时。短片段不是原全窗口的准确度验收。严格迁移要求选用初值也保持一致，微小位置误差不能抵消分支变化。</p><div class="scroll"><table><thead><tr><th>条件</th><th>帧</th><th>CPU求解 s</th><th>新求解 s</th><th>含设备启动 s</th><th>最大位置差 mm</th><th>初值选择差异帧</th><th>原生初检</th><th>F−R差值</th></tr></thead><tbody><tr><td>cuda_000_4_derivative</td><td>4</td><td>1.9037</td><td>5.9209</td><td>9.6256</td><td>4.2733e-05</td><td>2</td><td>初检未通过</td><td>待独立评分</td></tr><tr><td>cuda_000_4_graph_storage</td><td>4</td><td>2.8324</td><td>2.6536</td><td>6.8188</td><td>4.2733e-05</td><td>2</td><td>初检未通过</td><td>待独立评分</td></tr><tr><td>cuda_000_4_parallel</td><td>4</td><td>1.9032</td><td>3.2159</td><td>7.2621</td><td>4.3068e-05</td><td>1</td><td>初检未通过</td><td>待独立评分</td></tr><tr><td>cuda_000_full_v1</td><td>150</td><td>复用 CPU</td><td>76.159</td><td>81.123</td><td>0.021876</td><td>45</td><td>初检未通过</td><td>已评分</td></tr><tr><td>cuda_008_trajectory4</td><td>4</td><td>3.1161</td><td>1.9494</td><td>6.5776</td><td>0.00074996</td><td>0</td><td>通过初检</td><td>待独立评分</td></tr><tr><td>cuda_008_trajectory_full_v1</td><td>100</td><td>复用 CPU</td><td>145.46</td><td>149.89</td><td>9.0219e-11</td><td>0</td><td>通过初检</td><td>已评分</td></tr></tbody></table></div></section>
+<section><h2>40项CPU策略配对</h2><p>新队列已入账 0/40（上方两项前置完整窗口将按哈希核验后复用）；原生、输出及评分差值通过 0；执行失败 0。共同原动作失败单列。</p><p>剩余项保持原分母。当前属于CPU控制＋GPU计算的工程路径，完整设备端求解仍待实现。</p></section><section><h2>工程与实验边界</h2><p>新目录和缓存独立。原CPU14 worker继续；旧独立GPU Gauss–Newton面板在第18项求解及评分落盘后暂停，保留恢复记录。阶段核验610份保护文件，新增留出使用为0。R仅进入独立评分。</p><p>剩余工作包括完整旋转和导出一致性、40项逐候选配对、跨序列批处理与设备端求解控制，以及后续全候选扩展。每项以CPU/GPU差值和真实端到端耗时决定资格。</p></section>
+<p>快照时间：2026-11-19T20:32:34.513256</p><details><summary>完整快照与计数依据</summary><pre>{
+  &quot;generated&quot;: &quot;2026-11-19T20:32:34.513256&quot;,
+  &quot;kernel&quot;: {
+    &quot;eager&quot;: {
+      &quot;execution&quot;: {
+        &quot;algorithm&quot;: &quot;cpu_original&quot;,
+        &quot;compute&quot;: &quot;torch_fk&quot;,
+        &quot;precision&quot;: &quot;float64&quot;,
+        &quot;derivative_batch&quot;: true,
+        &quot;max_batch_rows&quot;: 256,
+        &quot;strict&quot;: true,
+        &quot;parallel_starts&quot;: 1,
+        &quot;request_batch&quot;: false,
+        &quot;cuda_graph&quot;: false,
+        &quot;storage_batch&quot;: false
+      },
+      &quot;model_start_seconds&quot;: 3.0728680539759807,
+      &quot;cold_seconds&quot;: 0.30044007598189637,
+      &quot;warm_seconds&quot;: [
+        0.03387342597125098,
+        0.034201962989754975,
+        0.03559696098091081
+      ],
+      &quot;fk_position_max_m&quot;: 7.114312260401321e-16,
+      &quot;assembly_vs_direct_max_m&quot;: 1.8788765749860718e-07,
+      &quot;fk_rotation_max_rad&quot;: 4.029910492310679e-16,
+      &quot;batch_position_max_m&quot;: 2.220446049250313e-16,
+      &quot;eager_vs_graph_max_m&quot;: 0.0,
+      &quot;stages&quot;: {
+        &quot;requests&quot;: 10,
+        &quot;rows&quot;: 234,
+        &quot;roundtrip_seconds&quot;: 0.722057166043669,
+        &quot;device_compute_seconds&quot;: 0.6483660429366864,
+        &quot;cache_hits&quot;: 0,
+        &quot;peak_memory_bytes&quot;: 9622528,
+        &quot;graph&quot;: null
+      },
+      &quot;passed&quot;: true
+    },
+    &quot;cuda_graph&quot;: {
+      &quot;execution&quot;: {
+        &quot;algorithm&quot;: &quot;cpu_original&quot;,
+        &quot;compute&quot;: &quot;torch_fk&quot;,
+        &quot;precision&quot;: &quot;float64&quot;,
+        &quot;derivative_batch&quot;: true,
+        &quot;max_batch_rows&quot;: 256,
+        &quot;strict&quot;: true,
+        &quot;parallel_starts&quot;: 1,
+        &quot;request_batch&quot;: false,
+        &quot;cuda_graph&quot;: true,
+        &quot;storage_batch&quot;: false
+      },
+      &quot;model_start_seconds&quot;: 3.8119646799750626,
+      &quot;cold_seconds&quot;: 0.5296405020053498,
+      &quot;warm_seconds&quot;: [
+        0.007173153047915548,
+        0.0074567829724401236,
+        0.0072988769970834255
+      ],
+      &quot;fk_position_max_m&quot;: 7.114312260401321e-16,
+      &quot;assembly_vs_direct_max_m&quot;: 1.8788765749860718e-07,
+      &quot;fk_rotation_max_rad&quot;: 4.029910492310679e-16,
+      &quot;batch_position_max_m&quot;: 2.220446049250313e-16,
+      &quot;eager_vs_graph_max_m&quot;: 0.0,
+      &quot;stages&quot;: {
+        &quot;requests&quot;: 10,
+        &quot;rows&quot;: 234,
+        &quot;roundtrip_seconds&quot;: 1.3509139709058218,
+        &quot;device_compute_seconds&quot;: 1.2761054111178964,
+        &quot;cache_hits&quot;: 0,
+        &quot;peak_memory_bytes&quot;: 35158528,
+        &quot;graph&quot;: {
+          &quot;shape_buckets&quot;: [
+            1,
+            4,
+            8,
+            32
+          ],
+          &quot;capture_seconds&quot;: 1.2321176320547238,
+          &quot;replays&quot;: 14,
+          &quot;padding&quot;: &quot;duplicated first row; removed before residuals/statistics&quot;
+        }
+      },
+      &quot;passed&quot;: true
+    },
+    &quot;eager_storage&quot;: {
+      &quot;execution&quot;: {
+        &quot;algorithm&quot;: &quot;cpu_original&quot;,
+        &quot;compute&quot;: &quot;torch_fk&quot;,
+        &quot;precision&quot;: &quot;float64&quot;,
+        &quot;derivative_batch&quot;: true,
+        &quot;max_batch_rows&quot;: 256,
+        &quot;strict&quot;: true,
+        &quot;parallel_starts&quot;: 1,
+        &quot;request_batch&quot;: false,
+        &quot;cuda_graph&quot;: false,
+        &quot;storage_batch&quot;: true
+      },
+      &quot;model_start_seconds&quot;: 3.596417588996701,
+      &quot;cold_seconds&quot;: 0.30534863198408857,
+      &quot;warm_seconds&quot;: [
+        0.033506852050777525,
+        0.03248444403288886,
+        0.03442368900869042
+      ],
+      &quot;fk_position_max_m&quot;: 7.114312260401321e-16,
+      &quot;assembly_vs_direct_max_m&quot;: 1.8788765749860718e-07,
+      &quot;fk_rotation_max_rad&quot;: 4.029910492310679e-16,
+      &quot;batch_position_max_m&quot;: 2.220446049250313e-16,
+      &quot;eager_vs_graph_max_m&quot;: 0.0,
+      &quot;stages&quot;: {
+        &quot;requests&quot;: 10,
+        &quot;rows&quot;: 234,
+        &quot;roundtrip_seconds&quot;: 0.7181907430640422,
+        &quot;device_compute_seconds&quot;: 0.6648685290711001,
+        &quot;cache_hits&quot;: 0,
+        &quot;peak_memory_bytes&quot;: 9633792,
+        &quot;graph&quot;: null
+      },
+      &quot;passed&quot;: true
+    },
+    &quot;cuda_graph_storage&quot;: {
+      &quot;execution&quot;: {
+        &quot;algorithm&quot;: &quot;cpu_original&quot;,
+        &quot;compute&quot;: &quot;torch_fk&quot;,
+        &quot;precision&quot;: &quot;float64&quot;,
+        &quot;derivative_batch&quot;: true,
+        &quot;max_batch_rows&quot;: 256,
+        &quot;strict&quot;: true,
+        &quot;parallel_starts&quot;: 1,
+        &quot;request_batch&quot;: false,
+        &quot;cuda_graph&quot;: true,
+        &quot;storage_batch&quot;: true
+      },
+      &quot;model_start_seconds&quot;: 3.4988800450228155,
+      &quot;cold_seconds&quot;: 0.514481196005363,
+      &quot;warm_seconds&quot;: [
+        0.0050657750107347965,
+        0.004911046999040991,
+        0.005202892993111163
+      ],
+      &quot;fk_position_max_m&quot;: 7.114312260401321e-16,
+      &quot;assembly_vs_direct_max_m&quot;: 1.8788765749860718e-07,
+      &quot;fk_rotation_max_rad&quot;: 4.029910492310679e-16,
+      &quot;batch_position_max_m&quot;: 2.220446049250313e-16,
+      &quot;eager_vs_graph_max_m&quot;: 0.0,
+      &quot;stages&quot;: {
+        &quot;requests&quot;: 10,
+        &quot;rows&quot;: 234,
+        &quot;roundtrip_seconds&quot;: 1.100735706044361,
+        &quot;device_compute_seconds&quot;: 1.0480250638211146,
+        &quot;cache_hits&quot;: 0,
+        &quot;peak_memory_bytes&quot;: 35169792,
+        &quot;graph&quot;: {
+          &quot;shape_buckets&quot;: [
+            1,
+            4,
+            8,
+            32
+          ],
+          &quot;capture_seconds&quot;: 1.0052989879623055,
+          &quot;replays&quot;: 14,
+          &quot;padding&quot;: &quot;duplicated first row; removed before residuals/statistics&quot;
+        }
+      },
+      &quot;passed&quot;: true
+    }
+  },
+  &quot;cases&quot;: [
+    {
+      &quot;contract&quot;: {
+        &quot;version&quot;: &quot;k4-cpu-policy-1&quot;,
+        &quot;mode&quot;: &quot;refinement&quot;,
+        &quot;settings&quot;: {
+          &quot;position_scale_m&quot;: 0.05,
+          &quot;direction_scale_deg&quot;: 5,
+          &quot;position_weight&quot;: 1.0,
+          &quot;continuity_weight&quot;: 0.02,
+          &quot;max_nfev&quot;: 100,
+          &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+          &quot;include_pelvis_line&quot;: true,
+          &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+          &quot;direction_continuity_weight&quot;: 0.25,
+          &quot;direction_rate_scale_deg_s&quot;: 10.0,
+          &quot;joint_angle_weight&quot;: 1.0,
+          &quot;target_violation_weight&quot;: 4.0,
+          &quot;target_margin_fraction&quot;: 0.8
+        },
+        &quot;scipy&quot;: &quot;1.17.1&quot;,
+        &quot;scipy_sources&quot;: {
+          &quot;trf.py&quot;: &quot;0c7c29d5d3fd6915720e9547f051d47e14ca5a821e7872686aa8cf1d1c4e4893&quot;,
+          &quot;_numdiff.py&quot;: &quot;ab92e82d0f93f2c7a35eba0a2800b70cf8015d97ccf094abf556206211beb00b&quot;
+        },
+        &quot;policy_sources&quot;: {
+          &quot;refinement.py&quot;: &quot;eba9d7a8afbfdc381427379e6872c200af4d4c4550790c5b54b1646c113cd2c2&quot;,
+          &quot;trajectory.py&quot;: &quot;19a1ffad0b90c447a807e89e58ad44f904798d735fca50a71bfb49f791a487fd&quot;,
+          &quot;trajectory_solver.py&quot;: &quot;74fd5ba48195f92cdb98b6957924b087994038cb1a26bdef25a8c5b8361ca070&quot;,
+          &quot;trajectory_objective.py&quot;: &quot;a4be031dc76f7fc18047094f3c47bcb32ecd7e82b7e198afc5d8f46be030ab7c&quot;
+        },
+        &quot;solver&quot;: &quot;scipy_trf_exact&quot;,
+        &quot;derivatives&quot;: &quot;relative_forward&quot;,
+        &quot;budget_unit&quot;: &quot;CPU residual evaluations; derivative evaluations separately counted&quot;,
+        &quot;tolerance&quot;: {
+          &quot;position_max_m&quot;: 0.0001,
+          &quot;rotation_max_deg&quot;: 0.01,
+          &quot;direction_max_deg&quot;: 0.01,
+          &quot;position_p95_delta_cm&quot;: 0.01,
+          &quot;angle_p95_delta_deg&quot;: 0.01,
+          &quot;rate_p95_delta_deg_s&quot;: 0.1
+        }
+      },
+      &quot;frames&quot;: 4,
+      &quot;mode&quot;: &quot;refinement&quot;,
+      &quot;device&quot;: &quot;cuda:0&quot;,
+      &quot;derivative_batch&quot;: true,
+      &quot;execution&quot;: {
+        &quot;algorithm&quot;: &quot;cpu_original&quot;,
+        &quot;compute&quot;: &quot;torch_fk&quot;,
+        &quot;precision&quot;: &quot;float64&quot;,
+        &quot;derivative_batch&quot;: true,
+        &quot;max_batch_rows&quot;: 256,
+        &quot;strict&quot;: true,
+        &quot;parallel_starts&quot;: 1,
+        &quot;request_batch&quot;: false
+      },
+      &quot;cpu_seconds&quot;: 1.9036597840022296,
+      &quot;compute_seconds&quot;: 5.920880442019552,
+      &quot;including_device_start_seconds&quot;: 9.625557138992008,
+      &quot;stages&quot;: {
+        &quot;requests&quot;: 139,
+        &quot;rows&quot;: 1840,
+        &quot;roundtrip_seconds&quot;: 4.847706055094022,
+        &quot;device_compute_seconds&quot;: 4.189891974674538,
+        &quot;cache_hits&quot;: 1861
+      },
+      &quot;position&quot;: {
+        &quot;n&quot;: 56,
+        &quot;denominator&quot;: 56,
+        &quot;max_m&quot;: 4.273283481575416e-08,
+        &quot;passed&quot;: true
+      },
+      &quot;directions&quot;: {
+        &quot;shoulder_line&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 6.607354809197003e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;pelvis_line&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 6.24543768919182e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;left_upper_arm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 5.889544677325041e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;left_forearm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 3.822692631596259e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;left_thigh&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.3128897227239304e-09,
+          &quot;passed&quot;: true
+        },
+        &quot;left_shank&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.0247202363667545e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;left_foot_axis&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.4333189792164728e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;right_upper_arm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 7.076938923298292e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;right_forearm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 3.8120673491286567e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;right_thigh&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 2.613436541749058e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;right_shank&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 2.739435746408204e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;right_foot_axis&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 4.373511669115327e-07,
+          &quot;passed&quot;: true
+        }
+      },
+      &quot;decisions&quot;: {
+        &quot;passed&quot;: false,
+        &quot;differences&quot;: [
+          {
+            &quot;frame&quot;: 2,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 3,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          }
+        ]
+      },
+      &quot;max_coordinate_difference&quot;: 0.00014091140318388138,
+      &quot;cpu_replay_vs_cached_max&quot;: 2.842170943040401e-14,
+      &quot;preliminary_parity_passed&quot;: false,
+      &quot;scope&quot;: &quot;Preliminary native CPU-vs-GPU parity; export/R scoring and rotation comparisons remain required&quot;,
+      &quot;source_fixture&quot;: &quot;../gpu_accel_20261119_v1/matched_panel_v2/000_kimodo__balanced_targets/fixture&quot;,
+      &quot;code&quot;: &quot;53a1fb7ca5872c675bcce5bf316de8d0cb86a473&quot;,
+      &quot;default_promoted&quot;: false,
+      &quot;preservation&quot;: {
+        &quot;checked&quot;: 610,
+        &quot;failures&quot;: [],
+        &quot;additional_holdout_use&quot;: 0,
+        &quot;scope&quot;: &quot;Read-only development artifacts; no holdout paths submitted&quot;
+      },
+      &quot;id&quot;: &quot;cuda_000_4_derivative&quot;
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;version&quot;: &quot;k4-cpu-policy-1&quot;,
+        &quot;mode&quot;: &quot;refinement&quot;,
+        &quot;settings&quot;: {
+          &quot;position_scale_m&quot;: 0.05,
+          &quot;direction_scale_deg&quot;: 5,
+          &quot;position_weight&quot;: 1.0,
+          &quot;continuity_weight&quot;: 0.02,
+          &quot;max_nfev&quot;: 100,
+          &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+          &quot;include_pelvis_line&quot;: true,
+          &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+          &quot;direction_continuity_weight&quot;: 0.25,
+          &quot;direction_rate_scale_deg_s&quot;: 10.0,
+          &quot;joint_angle_weight&quot;: 1.0,
+          &quot;target_violation_weight&quot;: 4.0,
+          &quot;target_margin_fraction&quot;: 0.8
+        },
+        &quot;scipy&quot;: &quot;1.17.1&quot;,
+        &quot;scipy_sources&quot;: {
+          &quot;trf.py&quot;: &quot;0c7c29d5d3fd6915720e9547f051d47e14ca5a821e7872686aa8cf1d1c4e4893&quot;,
+          &quot;_numdiff.py&quot;: &quot;ab92e82d0f93f2c7a35eba0a2800b70cf8015d97ccf094abf556206211beb00b&quot;
+        },
+        &quot;policy_sources&quot;: {
+          &quot;refinement.py&quot;: &quot;eba9d7a8afbfdc381427379e6872c200af4d4c4550790c5b54b1646c113cd2c2&quot;,
+          &quot;trajectory.py&quot;: &quot;19a1ffad0b90c447a807e89e58ad44f904798d735fca50a71bfb49f791a487fd&quot;,
+          &quot;trajectory_solver.py&quot;: &quot;74fd5ba48195f92cdb98b6957924b087994038cb1a26bdef25a8c5b8361ca070&quot;,
+          &quot;trajectory_objective.py&quot;: &quot;a4be031dc76f7fc18047094f3c47bcb32ecd7e82b7e198afc5d8f46be030ab7c&quot;
+        },
+        &quot;solver&quot;: &quot;scipy_trf_exact&quot;,
+        &quot;derivatives&quot;: &quot;relative_forward&quot;,
+        &quot;budget_unit&quot;: &quot;CPU residual evaluations; derivative evaluations separately counted&quot;,
+        &quot;tolerance&quot;: {
+          &quot;position_max_m&quot;: 0.0001,
+          &quot;rotation_max_deg&quot;: 0.01,
+          &quot;direction_max_deg&quot;: 0.01,
+          &quot;position_p95_delta_cm&quot;: 0.01,
+          &quot;angle_p95_delta_deg&quot;: 0.01,
+          &quot;rate_p95_delta_deg_s&quot;: 0.1
+        }
+      },
+      &quot;frames&quot;: 4,
+      &quot;mode&quot;: &quot;refinement&quot;,
+      &quot;device&quot;: &quot;cuda:0&quot;,
+      &quot;derivative_batch&quot;: true,
+      &quot;execution&quot;: {
+        &quot;algorithm&quot;: &quot;cpu_original&quot;,
+        &quot;compute&quot;: &quot;torch_fk&quot;,
+        &quot;precision&quot;: &quot;float64&quot;,
+        &quot;derivative_batch&quot;: true,
+        &quot;max_batch_rows&quot;: 256,
+        &quot;strict&quot;: true,
+        &quot;parallel_starts&quot;: 1,
+        &quot;request_batch&quot;: false,
+        &quot;cuda_graph&quot;: true,
+        &quot;storage_batch&quot;: true
+      },
+      &quot;cpu_seconds&quot;: 2.832429031957872,
+      &quot;compute_seconds&quot;: 2.6536188989994116,
+      &quot;including_device_start_seconds&quot;: 6.818825910042506,
+      &quot;stages&quot;: {
+        &quot;requests&quot;: 139,
+        &quot;rows&quot;: 1840,
+        &quot;roundtrip_seconds&quot;: 1.5528789405943826,
+        &quot;device_compute_seconds&quot;: 1.0917859324836172,
+        &quot;cache_hits&quot;: 1861,
+        &quot;peak_memory_bytes&quot;: 18123264,
+        &quot;graph&quot;: {
+          &quot;shape_buckets&quot;: [
+            1,
+            32
+          ],
+          &quot;capture_seconds&quot;: 0.6997500989818946,
+          &quot;replays&quot;: 139,
+          &quot;padding&quot;: &quot;duplicated first row; removed before residuals/statistics&quot;
+        }
+      },
+      &quot;position&quot;: {
+        &quot;n&quot;: 56,
+        &quot;denominator&quot;: 56,
+        &quot;max_m&quot;: 4.273283481575416e-08,
+        &quot;passed&quot;: true
+      },
+      &quot;directions&quot;: {
+        &quot;shoulder_line&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 6.607354809197003e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;pelvis_line&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 6.24543768919182e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;left_upper_arm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 5.889544677325041e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;left_forearm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 3.822692631596259e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;left_thigh&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.3128897227239304e-09,
+          &quot;passed&quot;: true
+        },
+        &quot;left_shank&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.0247202363667545e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;left_foot_axis&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.4333189792164728e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;right_upper_arm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 7.076938923298292e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;right_forearm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 3.8120673491286567e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;right_thigh&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 2.613436541749058e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;right_shank&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 2.739435746408204e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;right_foot_axis&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 4.373511669115327e-07,
+          &quot;passed&quot;: true
+        }
+      },
+      &quot;decisions&quot;: {
+        &quot;passed&quot;: false,
+        &quot;differences&quot;: [
+          {
+            &quot;frame&quot;: 2,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 3,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          }
+        ]
+      },
+      &quot;max_coordinate_difference&quot;: 0.00014091140318388138,
+      &quot;cpu_replay_vs_cached_max&quot;: 2.842170943040401e-14,
+      &quot;preliminary_parity_passed&quot;: false,
+      &quot;scope&quot;: &quot;Preliminary native CPU-vs-GPU parity; export/R scoring and rotation comparisons remain required&quot;,
+      &quot;source_fixture&quot;: &quot;../gpu_accel_20261119_v1/matched_panel_v2/000_kimodo__balanced_targets/fixture&quot;,
+      &quot;code&quot;: &quot;6886635663036be361df642f44b09864f7ad6aa9&quot;,
+      &quot;default_promoted&quot;: false,
+      &quot;preservation&quot;: {
+        &quot;checked&quot;: 610,
+        &quot;failures&quot;: [],
+        &quot;additional_holdout_use&quot;: 0,
+        &quot;scope&quot;: &quot;Read-only development artifacts; no holdout paths submitted&quot;
+      },
+      &quot;id&quot;: &quot;cuda_000_4_graph_storage&quot;
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;version&quot;: &quot;k4-cpu-policy-1&quot;,
+        &quot;mode&quot;: &quot;refinement&quot;,
+        &quot;settings&quot;: {
+          &quot;position_scale_m&quot;: 0.05,
+          &quot;direction_scale_deg&quot;: 5,
+          &quot;position_weight&quot;: 1.0,
+          &quot;continuity_weight&quot;: 0.02,
+          &quot;max_nfev&quot;: 100,
+          &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+          &quot;include_pelvis_line&quot;: true,
+          &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+          &quot;direction_continuity_weight&quot;: 0.25,
+          &quot;direction_rate_scale_deg_s&quot;: 10.0,
+          &quot;joint_angle_weight&quot;: 1.0,
+          &quot;target_violation_weight&quot;: 4.0,
+          &quot;target_margin_fraction&quot;: 0.8
+        },
+        &quot;scipy&quot;: &quot;1.17.1&quot;,
+        &quot;scipy_sources&quot;: {
+          &quot;trf.py&quot;: &quot;0c7c29d5d3fd6915720e9547f051d47e14ca5a821e7872686aa8cf1d1c4e4893&quot;,
+          &quot;_numdiff.py&quot;: &quot;ab92e82d0f93f2c7a35eba0a2800b70cf8015d97ccf094abf556206211beb00b&quot;
+        },
+        &quot;policy_sources&quot;: {
+          &quot;refinement.py&quot;: &quot;eba9d7a8afbfdc381427379e6872c200af4d4c4550790c5b54b1646c113cd2c2&quot;,
+          &quot;trajectory.py&quot;: &quot;19a1ffad0b90c447a807e89e58ad44f904798d735fca50a71bfb49f791a487fd&quot;,
+          &quot;trajectory_solver.py&quot;: &quot;74fd5ba48195f92cdb98b6957924b087994038cb1a26bdef25a8c5b8361ca070&quot;,
+          &quot;trajectory_objective.py&quot;: &quot;a4be031dc76f7fc18047094f3c47bcb32ecd7e82b7e198afc5d8f46be030ab7c&quot;
+        },
+        &quot;solver&quot;: &quot;scipy_trf_exact&quot;,
+        &quot;derivatives&quot;: &quot;relative_forward&quot;,
+        &quot;budget_unit&quot;: &quot;CPU residual evaluations; derivative evaluations separately counted&quot;,
+        &quot;tolerance&quot;: {
+          &quot;position_max_m&quot;: 0.0001,
+          &quot;rotation_max_deg&quot;: 0.01,
+          &quot;direction_max_deg&quot;: 0.01,
+          &quot;position_p95_delta_cm&quot;: 0.01,
+          &quot;angle_p95_delta_deg&quot;: 0.01,
+          &quot;rate_p95_delta_deg_s&quot;: 0.1
+        }
+      },
+      &quot;frames&quot;: 4,
+      &quot;mode&quot;: &quot;refinement&quot;,
+      &quot;device&quot;: &quot;cuda:0&quot;,
+      &quot;derivative_batch&quot;: true,
+      &quot;execution&quot;: {
+        &quot;algorithm&quot;: &quot;cpu_original&quot;,
+        &quot;compute&quot;: &quot;torch_fk&quot;,
+        &quot;precision&quot;: &quot;float64&quot;,
+        &quot;derivative_batch&quot;: true,
+        &quot;max_batch_rows&quot;: 256,
+        &quot;strict&quot;: true,
+        &quot;parallel_starts&quot;: 2,
+        &quot;request_batch&quot;: true,
+        &quot;cuda_graph&quot;: true,
+        &quot;storage_batch&quot;: true
+      },
+      &quot;cpu_seconds&quot;: 1.9032273690099828,
+      &quot;compute_seconds&quot;: 3.215941872971598,
+      &quot;including_device_start_seconds&quot;: 7.262130848015659,
+      &quot;stages&quot;: {
+        &quot;requests&quot;: 136,
+        &quot;rows&quot;: 1876,
+        &quot;roundtrip_seconds&quot;: 2.076012300502043,
+        &quot;device_compute_seconds&quot;: 1.5661972477682866,
+        &quot;cache_hits&quot;: 1890,
+        &quot;peak_memory_bytes&quot;: 35448832,
+        &quot;graph&quot;: {
+          &quot;shape_buckets&quot;: [
+            1,
+            2,
+            32,
+            64
+          ],
+          &quot;capture_seconds&quot;: 1.1850427260505967,
+          &quot;replays&quot;: 136,
+          &quot;padding&quot;: &quot;duplicated first row; removed before residuals/statistics&quot;
+        }
+      },
+      &quot;position&quot;: {
+        &quot;n&quot;: 56,
+        &quot;denominator&quot;: 56,
+        &quot;max_m&quot;: 4.3068044225331615e-08,
+        &quot;passed&quot;: true
+      },
+      &quot;directions&quot;: {
+        &quot;shoulder_line&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 7.190961395634375e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;pelvis_line&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 6.903783158858748e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;left_upper_arm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.0608701182355874e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;left_forearm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 3.896654205738276e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;left_thigh&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.508500276780754e-09,
+          &quot;passed&quot;: true
+        },
+        &quot;left_shank&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.074926503738107e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;left_foot_axis&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.4627976261057309e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;right_upper_arm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.2900131260705708e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;right_forearm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 6.991976555090791e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;right_thigh&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 3.402979862091006e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;right_shank&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 3.567365803126377e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;right_foot_axis&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 6.328509081769527e-08,
+          &quot;passed&quot;: true
+        }
+      },
+      &quot;decisions&quot;: {
+        &quot;passed&quot;: false,
+        &quot;differences&quot;: [
+          {
+            &quot;frame&quot;: 2,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          }
+        ]
+      },
+      &quot;max_coordinate_difference&quot;: 0.00014382267326384254,
+      &quot;cpu_replay_vs_cached_max&quot;: 2.842170943040401e-14,
+      &quot;preliminary_parity_passed&quot;: false,
+      &quot;scope&quot;: &quot;Preliminary native CPU-vs-GPU parity; export/R scoring and rotation comparisons remain required&quot;,
+      &quot;source_fixture&quot;: &quot;../gpu_accel_20261119_v1/matched_panel_v2/000_kimodo__balanced_targets/fixture&quot;,
+      &quot;code&quot;: &quot;6886635663036be361df642f44b09864f7ad6aa9&quot;,
+      &quot;default_promoted&quot;: false,
+      &quot;preservation&quot;: {
+        &quot;checked&quot;: 610,
+        &quot;failures&quot;: [],
+        &quot;additional_holdout_use&quot;: 0,
+        &quot;scope&quot;: &quot;Read-only development artifacts; no holdout paths submitted&quot;
+      },
+      &quot;id&quot;: &quot;cuda_000_4_parallel&quot;
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;version&quot;: &quot;k4-cpu-policy-1&quot;,
+        &quot;mode&quot;: &quot;refinement&quot;,
+        &quot;settings&quot;: {
+          &quot;position_scale_m&quot;: 0.05,
+          &quot;direction_scale_deg&quot;: 5,
+          &quot;position_weight&quot;: 1.0,
+          &quot;continuity_weight&quot;: 0.02,
+          &quot;max_nfev&quot;: 100,
+          &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+          &quot;include_pelvis_line&quot;: true,
+          &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+          &quot;direction_continuity_weight&quot;: 0.25,
+          &quot;direction_rate_scale_deg_s&quot;: 10.0,
+          &quot;joint_angle_weight&quot;: 1.0,
+          &quot;target_violation_weight&quot;: 4.0,
+          &quot;target_margin_fraction&quot;: 0.8
+        },
+        &quot;scipy&quot;: &quot;1.17.1&quot;,
+        &quot;scipy_sources&quot;: {
+          &quot;trf.py&quot;: &quot;0c7c29d5d3fd6915720e9547f051d47e14ca5a821e7872686aa8cf1d1c4e4893&quot;,
+          &quot;_numdiff.py&quot;: &quot;ab92e82d0f93f2c7a35eba0a2800b70cf8015d97ccf094abf556206211beb00b&quot;
+        },
+        &quot;policy_sources&quot;: {
+          &quot;refinement.py&quot;: &quot;eba9d7a8afbfdc381427379e6872c200af4d4c4550790c5b54b1646c113cd2c2&quot;,
+          &quot;trajectory.py&quot;: &quot;19a1ffad0b90c447a807e89e58ad44f904798d735fca50a71bfb49f791a487fd&quot;,
+          &quot;trajectory_solver.py&quot;: &quot;74fd5ba48195f92cdb98b6957924b087994038cb1a26bdef25a8c5b8361ca070&quot;,
+          &quot;trajectory_objective.py&quot;: &quot;a4be031dc76f7fc18047094f3c47bcb32ecd7e82b7e198afc5d8f46be030ab7c&quot;
+        },
+        &quot;solver&quot;: &quot;scipy_trf_exact&quot;,
+        &quot;derivatives&quot;: &quot;relative_forward&quot;,
+        &quot;budget_unit&quot;: &quot;CPU residual evaluations; derivative evaluations separately counted&quot;,
+        &quot;tolerance&quot;: {
+          &quot;position_max_m&quot;: 0.0001,
+          &quot;rotation_max_deg&quot;: 0.01,
+          &quot;direction_max_deg&quot;: 0.01,
+          &quot;position_p95_delta_cm&quot;: 0.01,
+          &quot;angle_p95_delta_deg&quot;: 0.01,
+          &quot;rate_p95_delta_deg_s&quot;: 0.1
+        }
+      },
+      &quot;frames&quot;: 150,
+      &quot;mode&quot;: &quot;refinement&quot;,
+      &quot;device&quot;: &quot;cuda:0&quot;,
+      &quot;derivative_batch&quot;: true,
+      &quot;execution&quot;: {
+        &quot;algorithm&quot;: &quot;cpu_original&quot;,
+        &quot;compute&quot;: &quot;torch_fk&quot;,
+        &quot;precision&quot;: &quot;float64&quot;,
+        &quot;derivative_batch&quot;: true,
+        &quot;max_batch_rows&quot;: 256,
+        &quot;strict&quot;: true,
+        &quot;parallel_starts&quot;: 1,
+        &quot;request_batch&quot;: false,
+        &quot;cuda_graph&quot;: true,
+        &quot;storage_batch&quot;: true
+      },
+      &quot;cpu_reused&quot;: true,
+      &quot;cpu_seconds&quot;: null,
+      &quot;compute_seconds&quot;: 76.15901148802368,
+      &quot;including_device_start_seconds&quot;: 81.12329731899081,
+      &quot;stages&quot;: {
+        &quot;requests&quot;: 5911,
+        &quot;rows&quot;: 78312,
+        &quot;roundtrip_seconds&quot;: 37.02315313211875,
+        &quot;device_compute_seconds&quot;: 17.36702663626056,
+        &quot;cache_hits&quot;: 78952,
+        &quot;peak_memory_bytes&quot;: 28238848,
+        &quot;graph&quot;: {
+          &quot;shape_buckets&quot;: [
+            1,
+            32,
+            256
+          ],
+          &quot;capture_seconds&quot;: 0.9471803660271689,
+          &quot;replays&quot;: 5911,
+          &quot;padding&quot;: &quot;duplicated first row; removed before residuals/statistics&quot;
+        }
+      },
+      &quot;policy_timing&quot;: {
+        &quot;per_start_trf_including_evaluation&quot;: {
+          &quot;calls&quot;: 299,
+          &quot;seconds&quot;: 73.55450419528643
+        }
+      },
+      &quot;position&quot;: {
+        &quot;n&quot;: 2100,
+        &quot;denominator&quot;: 2100,
+        &quot;max_m&quot;: 2.1875954394862873e-05,
+        &quot;passed&quot;: true
+      },
+      &quot;directions&quot;: {
+        &quot;trunk_axis&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 6.672927298891506e-05,
+          &quot;passed&quot;: true
+        },
+        &quot;shoulder_line&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 7.38504063711974e-05,
+          &quot;passed&quot;: true
+        },
+        &quot;pelvis_line&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 5.018432993989478e-05,
+          &quot;passed&quot;: true
+        },
+        &quot;left_upper_arm&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 1.891341428478801e-05,
+          &quot;passed&quot;: true
+        },
+        &quot;left_forearm&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 0.00015002144670186885,
+          &quot;passed&quot;: true
+        },
+        &quot;left_thigh&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 0.00013232131938380087,
+          &quot;passed&quot;: true
+        },
+        &quot;left_shank&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 0.00013074987806757337,
+          &quot;passed&quot;: true
+        },
+        &quot;left_foot_axis&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 2.6143792340479855e-05,
+          &quot;passed&quot;: true
+        },
+        &quot;right_upper_arm&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 3.376868107629885e-05,
+          &quot;passed&quot;: true
+        },
+        &quot;right_forearm&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 8.034675862561368e-05,
+          &quot;passed&quot;: true
+        },
+        &quot;right_thigh&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 0.0025152458653905,
+          &quot;passed&quot;: true
+        },
+        &quot;right_shank&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 0.002646732326545412,
+          &quot;passed&quot;: true
+        },
+        &quot;right_foot_axis&quot;: {
+          &quot;n&quot;: 150,
+          &quot;max_deg&quot;: 0.00019907402114021605,
+          &quot;passed&quot;: true
+        }
+      },
+      &quot;decisions&quot;: {
+        &quot;passed&quot;: false,
+        &quot;differences&quot;: [
+          {
+            &quot;frame&quot;: 2,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 3,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 6,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 7,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 10,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 20,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 25,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 27,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 29,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 37,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 39,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 42,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 45,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 48,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 49,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 51,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 52,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 54,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 56,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 57,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 58,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 59,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 63,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 75,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 76,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 77,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 81,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 83,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 85,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 87,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 88,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 92,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 94,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 100,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 103,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 105,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 113,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 114,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 116,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 117,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 118,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 119,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;nominal_start&quot;,
+            &quot;gpu&quot;: &quot;continuity_start&quot;
+          },
+          {
+            &quot;frame&quot;: 122,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 132,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          },
+          {
+            &quot;frame&quot;: 145,
+            &quot;field&quot;: &quot;selected&quot;,
+            &quot;cpu&quot;: &quot;continuity_start&quot;,
+            &quot;gpu&quot;: &quot;nominal_start&quot;
+          }
+        ]
+      },
+      &quot;max_coordinate_difference&quot;: 0.09249129123155195,
+      &quot;cpu_replay_vs_cached_max&quot;: 0.0,
+      &quot;preliminary_parity_passed&quot;: false,
+      &quot;scope&quot;: &quot;Preliminary native CPU-vs-GPU parity; export/R scoring and rotation comparisons remain required&quot;,
+      &quot;source_fixture&quot;: &quot;../gpu_accel_20261119_v1/matched_panel_v2/000_kimodo__balanced_targets/fixture&quot;,
+      &quot;code&quot;: &quot;666602ed6945be73b39ca47e2168205bf6a2dd04&quot;,
+      &quot;default_promoted&quot;: false,
+      &quot;preservation&quot;: {
+        &quot;checked&quot;: 610,
+        &quot;failures&quot;: [],
+        &quot;additional_holdout_use&quot;: 0,
+        &quot;scope&quot;: &quot;Read-only development artifacts; no holdout paths submitted&quot;
+      },
+      &quot;id&quot;: &quot;cuda_000_full_v1&quot;,
+      &quot;independent_review&quot;: {
+        &quot;score_and_native_passed&quot;: false,
+        &quot;common_research_failure&quot;: false,
+        &quot;output_views&quot;: {
+          &quot;native&quot;: {
+            &quot;positions&quot;: {
+              &quot;n&quot;: 2400,
+              &quot;denominator&quot;: 2400,
+              &quot;max_m&quot;: 2.16951485420893e-05,
+              &quot;passed&quot;: true
+            },
+            &quot;directions&quot;: {
+              &quot;trunk_axis&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 6.672927322790027e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;shoulder_line&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 7.38504066709312e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;pelvis_line&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 5.018433181116265e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;head_neck_axis&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 1.3645897800405762e-13,
+                &quot;passed&quot;: true
+              },
+              &quot;left_upper_arm&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 1.8913414512536505e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;left_forearm&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 0.00014555515447225173,
+                &quot;passed&quot;: true
+              },
+              &quot;left_thigh&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 0.00013232132259926132,
+                &quot;passed&quot;: true
+              },
+              &quot;left_shank&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 0.00013075012188683952,
+                &quot;passed&quot;: true
+              },
+              &quot;left_foot_axis&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 2.6144581260530795e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;right_upper_arm&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 3.376865106872507e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;right_forearm&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 8.034674615008212e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;right_thigh&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 0.002515245608560569,
+                &quot;passed&quot;: true
+              },
+              &quot;right_shank&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 0.002646723419132818,
+                &quot;passed&quot;: true
+              },
+              &quot;right_foot_axis&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 0.0004638630826433786,
+                &quot;passed&quot;: true
+              }
+            },
+            &quot;rotations&quot;: {
+              &quot;head_relative_thorax&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 1.1718847847718908e-14,
+                &quot;passed&quot;: true
+              },
+              &quot;head_world_rotation&quot;: {
+                &quot;n&quot;: 150,
+                &quot;max_deg&quot;: 0.00062260681641903,
+                &quot;passed&quot;: true
+              }
+            },
+            &quot;passed&quot;: true
+          },
+          &quot;export&quot;: {
+            &quot;positions&quot;: {
+              &quot;n&quot;: 9552,
+              &quot;denominator&quot;: 9552,
+              &quot;max_m&quot;: 2.1695148542212637e-05,
+              &quot;passed&quot;: true
+            },
+            &quot;directions&quot;: {
+              &quot;trunk_axis&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 6.672927319830746e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;shoulder_line&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 7.38504066444458e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;pelvis_line&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 5.0184331878085905e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;head_neck_axis&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 1.3627540767495757e-13,
+                &quot;passed&quot;: true
+              },
+              &quot;left_upper_arm&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 1.891341451116925e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;left_forearm&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 0.00014555515448067018,
+                &quot;passed&quot;: true
+              },
+              &quot;left_thigh&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 0.00013232132259927615,
+                &quot;passed&quot;: true
+              },
+              &quot;left_shank&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 0.00013075012188528993,
+                &quot;passed&quot;: true
+              },
+              &quot;left_foot_axis&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 2.6144581223462513e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;right_upper_arm&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 3.3768651082628294e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;right_forearm&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 8.034674619793646e-05,
+                &quot;passed&quot;: true
+              },
+              &quot;right_thigh&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 0.0025152456085705977,
+                &quot;passed&quot;: true
+              },
+              &quot;right_shank&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 0.002646723419116335,
+                &quot;passed&quot;: true
+              },
+              &quot;right_foot_axis&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 0.00046386308266418714,
+                &quot;passed&quot;: true
+              }
+            },
+            &quot;rotations&quot;: {
+              &quot;head_relative_thorax&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 1.5147176945832554e-14,
+                &quot;passed&quot;: true
+              },
+              &quot;head_world_rotation&quot;: {
+                &quot;n&quot;: 597,
+                &quot;max_deg&quot;: 0.0006226068164148196,
+                &quot;passed&quot;: true
+              }
+            },
+            &quot;passed&quot;: true
+          }
+        },
+        &quot;score_delta_max&quot;: {
+          &quot;position&quot;: 1.2615529829784755e-05,
+          &quot;angle&quot;: 2.781589212463853e-05,
+          &quot;rate&quot;: 0.0007930667540462788
+        }
+      }
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;version&quot;: &quot;k4-cpu-policy-1&quot;,
+        &quot;mode&quot;: &quot;trajectory&quot;,
+        &quot;settings&quot;: {
+          &quot;version&quot;: &quot;joint_trajectory_v1&quot;,
+          &quot;position_scale_m&quot;: 0.05,
+          &quot;angle_scale_deg&quot;: 5.0,
+          &quot;direction_rate_scale_deg_s&quot;: 10.0,
+          &quot;direction_rate_weight&quot;: 1.0,
+          &quot;max_nfev&quot;: 20,
+          &quot;solver&quot;: &quot;bounded_gauss_newton&quot;,
+          &quot;linear_max_iter&quot;: 50,
+          &quot;linear_lsmr_maxiter&quot;: 500,
+          &quot;projected_gradient_fallback&quot;: true,
+          &quot;target_violation_weight&quot;: 4.0,
+          &quot;target_margin_fraction&quot;: 0.8
+        },
+        &quot;scipy&quot;: &quot;1.17.1&quot;,
+        &quot;scipy_sources&quot;: {
+          &quot;trf.py&quot;: &quot;0c7c29d5d3fd6915720e9547f051d47e14ca5a821e7872686aa8cf1d1c4e4893&quot;,
+          &quot;_numdiff.py&quot;: &quot;ab92e82d0f93f2c7a35eba0a2800b70cf8015d97ccf094abf556206211beb00b&quot;
+        },
+        &quot;policy_sources&quot;: {
+          &quot;refinement.py&quot;: &quot;eba9d7a8afbfdc381427379e6872c200af4d4c4550790c5b54b1646c113cd2c2&quot;,
+          &quot;trajectory.py&quot;: &quot;19a1ffad0b90c447a807e89e58ad44f904798d735fca50a71bfb49f791a487fd&quot;,
+          &quot;trajectory_solver.py&quot;: &quot;74fd5ba48195f92cdb98b6957924b087994038cb1a26bdef25a8c5b8361ca070&quot;,
+          &quot;trajectory_objective.py&quot;: &quot;a4be031dc76f7fc18047094f3c47bcb32ecd7e82b7e198afc5d8f46be030ab7c&quot;
+        },
+        &quot;solver&quot;: &quot;bounded_gauss_newton&quot;,
+        &quot;derivatives&quot;: &quot;absolute_central_sparse&quot;,
+        &quot;budget_unit&quot;: &quot;CPU residual evaluations; derivative evaluations separately counted&quot;,
+        &quot;tolerance&quot;: {
+          &quot;position_max_m&quot;: 0.0001,
+          &quot;rotation_max_deg&quot;: 0.01,
+          &quot;direction_max_deg&quot;: 0.01,
+          &quot;position_p95_delta_cm&quot;: 0.01,
+          &quot;angle_p95_delta_deg&quot;: 0.01,
+          &quot;rate_p95_delta_deg_s&quot;: 0.1
+        }
+      },
+      &quot;frames&quot;: 4,
+      &quot;mode&quot;: &quot;trajectory&quot;,
+      &quot;device&quot;: &quot;cuda:0&quot;,
+      &quot;derivative_batch&quot;: true,
+      &quot;execution&quot;: {
+        &quot;algorithm&quot;: &quot;cpu_original&quot;,
+        &quot;compute&quot;: &quot;torch_fk&quot;,
+        &quot;precision&quot;: &quot;float64&quot;,
+        &quot;derivative_batch&quot;: true,
+        &quot;max_batch_rows&quot;: 256,
+        &quot;strict&quot;: true,
+        &quot;parallel_starts&quot;: 1,
+        &quot;request_batch&quot;: false,
+        &quot;cuda_graph&quot;: true,
+        &quot;storage_batch&quot;: true
+      },
+      &quot;cpu_seconds&quot;: 3.116136504977476,
+      &quot;compute_seconds&quot;: 1.9494420109549537,
+      &quot;including_device_start_seconds&quot;: 6.577593188965693,
+      &quot;stages&quot;: {
+        &quot;requests&quot;: 23,
+        &quot;rows&quot;: 1852,
+        &quot;roundtrip_seconds&quot;: 0.8785990019096062,
+        &quot;device_compute_seconds&quot;: 0.7628473459626548,
+        &quot;cache_hits&quot;: 0,
+        &quot;peak_memory_bytes&quot;: 19654144,
+        &quot;graph&quot;: {
+          &quot;shape_buckets&quot;: [
+            4,
+            256
+          ],
+          &quot;capture_seconds&quot;: 0.6952076770248823,
+          &quot;replays&quot;: 23,
+          &quot;padding&quot;: &quot;duplicated first row; removed before residuals/statistics&quot;
+        }
+      },
+      &quot;position&quot;: {
+        &quot;n&quot;: 56,
+        &quot;denominator&quot;: 56,
+        &quot;max_m&quot;: 7.499570404210633e-07,
+        &quot;passed&quot;: true
+      },
+      &quot;directions&quot;: {
+        &quot;shoulder_line&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.0052149670865819e-05,
+          &quot;passed&quot;: true
+        },
+        &quot;pelvis_line&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 2.5678195591830452e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;left_upper_arm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 4.336320942245506e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;left_forearm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 2.2753456236577457e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;left_thigh&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 2.8592315284207797e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;left_shank&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.6654767375838605e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;left_foot_axis&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 9.801809564361359e-08,
+          &quot;passed&quot;: true
+        },
+        &quot;right_upper_arm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 2.7067623499950343e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;right_forearm&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 9.397816256858711e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;right_thigh&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 9.304761112296179e-07,
+          &quot;passed&quot;: true
+        },
+        &quot;right_shank&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 1.0093887612851524e-06,
+          &quot;passed&quot;: true
+        },
+        &quot;right_foot_axis&quot;: {
+          &quot;n&quot;: 4,
+          &quot;max_deg&quot;: 3.62831214346677e-07,
+          &quot;passed&quot;: true
+        }
+      },
+      &quot;decisions&quot;: {
+        &quot;passed&quot;: true,
+        &quot;cpu&quot;: &quot;joint_trajectory&quot;,
+        &quot;gpu&quot;: &quot;joint_trajectory&quot;
+      },
+      &quot;max_coordinate_difference&quot;: 0.03978114145478173,
+      &quot;cpu_replay_vs_cached_max&quot;: null,
+      &quot;preliminary_parity_passed&quot;: true,
+      &quot;scope&quot;: &quot;Preliminary native CPU-vs-GPU parity; export/R scoring and rotation comparisons remain required&quot;,
+      &quot;source_fixture&quot;: &quot;../gpu_accel_20261119_v1/matched_panel_v2/008_motionlcm__position_trajectory/fixture&quot;,
+      &quot;code&quot;: &quot;6886635663036be361df642f44b09864f7ad6aa9&quot;,
+      &quot;default_promoted&quot;: false,
+      &quot;preservation&quot;: {
+        &quot;checked&quot;: 610,
+        &quot;failures&quot;: [],
+        &quot;additional_holdout_use&quot;: 0,
+        &quot;scope&quot;: &quot;Read-only development artifacts; no holdout paths submitted&quot;
+      },
+      &quot;id&quot;: &quot;cuda_008_trajectory4&quot;
+    },
+    {
+      &quot;contract&quot;: {
+        &quot;version&quot;: &quot;k4-cpu-policy-1&quot;,
+        &quot;mode&quot;: &quot;trajectory&quot;,
+        &quot;settings&quot;: {
+          &quot;version&quot;: &quot;joint_trajectory_v1&quot;,
+          &quot;position_scale_m&quot;: 0.05,
+          &quot;angle_scale_deg&quot;: 5.0,
+          &quot;direction_rate_scale_deg_s&quot;: 10.0,
+          &quot;direction_rate_weight&quot;: 1.0,
+          &quot;max_nfev&quot;: 20,
+          &quot;solver&quot;: &quot;bounded_gauss_newton&quot;,
+          &quot;linear_max_iter&quot;: 50,
+          &quot;linear_lsmr_maxiter&quot;: 500,
+          &quot;projected_gradient_fallback&quot;: true,
+          &quot;target_violation_weight&quot;: 4.0,
+          &quot;target_margin_fraction&quot;: 0.8
+        },
+        &quot;scipy&quot;: &quot;1.17.1&quot;,
+        &quot;scipy_sources&quot;: {
+          &quot;trf.py&quot;: &quot;0c7c29d5d3fd6915720e9547f051d47e14ca5a821e7872686aa8cf1d1c4e4893&quot;,
+          &quot;_numdiff.py&quot;: &quot;ab92e82d0f93f2c7a35eba0a2800b70cf8015d97ccf094abf556206211beb00b&quot;
+        },
+        &quot;policy_sources&quot;: {
+          &quot;refinement.py&quot;: &quot;eba9d7a8afbfdc381427379e6872c200af4d4c4550790c5b54b1646c113cd2c2&quot;,
+          &quot;trajectory.py&quot;: &quot;19a1ffad0b90c447a807e89e58ad44f904798d735fca50a71bfb49f791a487fd&quot;,
+          &quot;trajectory_solver.py&quot;: &quot;74fd5ba48195f92cdb98b6957924b087994038cb1a26bdef25a8c5b8361ca070&quot;,
+          &quot;trajectory_objective.py&quot;: &quot;a4be031dc76f7fc18047094f3c47bcb32ecd7e82b7e198afc5d8f46be030ab7c&quot;
+        },
+        &quot;solver&quot;: &quot;bounded_gauss_newton&quot;,
+        &quot;derivatives&quot;: &quot;absolute_central_sparse&quot;,
+        &quot;budget_unit&quot;: &quot;CPU residual evaluations; derivative evaluations separately counted&quot;,
+        &quot;tolerance&quot;: {
+          &quot;position_max_m&quot;: 0.0001,
+          &quot;rotation_max_deg&quot;: 0.01,
+          &quot;direction_max_deg&quot;: 0.01,
+          &quot;position_p95_delta_cm&quot;: 0.01,
+          &quot;angle_p95_delta_deg&quot;: 0.01,
+          &quot;rate_p95_delta_deg_s&quot;: 0.1
+        }
+      },
+      &quot;frames&quot;: 100,
+      &quot;mode&quot;: &quot;trajectory&quot;,
+      &quot;device&quot;: &quot;cuda:0&quot;,
+      &quot;derivative_batch&quot;: true,
+      &quot;execution&quot;: {
+        &quot;algorithm&quot;: &quot;cpu_original&quot;,
+        &quot;compute&quot;: &quot;torch_fk&quot;,
+        &quot;precision&quot;: &quot;float64&quot;,
+        &quot;derivative_batch&quot;: true,
+        &quot;max_batch_rows&quot;: 256,
+        &quot;strict&quot;: true,
+        &quot;parallel_starts&quot;: 1,
+        &quot;request_batch&quot;: false,
+        &quot;cuda_graph&quot;: true,
+        &quot;storage_batch&quot;: true
+      },
+      &quot;cpu_reused&quot;: true,
+      &quot;cpu_seconds&quot;: null,
+      &quot;compute_seconds&quot;: 145.45940497500123,
+      &quot;including_device_start_seconds&quot;: 149.8874941369868,
+      &quot;stages&quot;: {
+        &quot;requests&quot;: 31,
+        &quot;rows&quot;: 52600,
+        &quot;roundtrip_seconds&quot;: 2.454774096084293,
+        &quot;device_compute_seconds&quot;: 1.359356357017532,
+        &quot;cache_hits&quot;: 0,
+        &quot;peak_memory_bytes&quot;: 41860096,
+        &quot;graph&quot;: {
+          &quot;shape_buckets&quot;: [
+            128,
+            256
+          ],
+          &quot;capture_seconds&quot;: 0.7370373469311744,
+          &quot;replays&quot;: 220,
+          &quot;padding&quot;: &quot;duplicated first row; removed before residuals/statistics&quot;
+        }
+      },
+      &quot;position&quot;: {
+        &quot;n&quot;: 1400,
+        &quot;denominator&quot;: 1400,
+        &quot;max_m&quot;: 9.021933523269067e-14,
+        &quot;passed&quot;: true
+      },
+      &quot;directions&quot;: {
+        &quot;trunk_axis&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 2.7229291284275564e-12,
+          &quot;passed&quot;: true
+        },
+        &quot;shoulder_line&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 4.40900671539238e-12,
+          &quot;passed&quot;: true
+        },
+        &quot;pelvis_line&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 1.9934461471323255e-12,
+          &quot;passed&quot;: true
+        },
+        &quot;left_upper_arm&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 4.910163105706153e-12,
+          &quot;passed&quot;: true
+        },
+        &quot;left_forearm&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 1.3943271046191855e-11,
+          &quot;passed&quot;: true
+        },
+        &quot;left_thigh&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 3.074041578328001e-12,
+          &quot;passed&quot;: true
+        },
+        &quot;left_shank&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 4.132154442729743e-12,
+          &quot;passed&quot;: true
+        },
+        &quot;left_foot_axis&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 5.5925369409544514e-12,
+          &quot;passed&quot;: true
+        },
+        &quot;right_upper_arm&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 5.9087871159769255e-12,
+          &quot;passed&quot;: true
+        },
+        &quot;right_forearm&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 2.0111637157198635e-11,
+          &quot;passed&quot;: true
+        },
+        &quot;right_thigh&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 2.7063766835918896e-12,
+          &quot;passed&quot;: true
+        },
+        &quot;right_shank&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 2.747820959754205e-12,
+          &quot;passed&quot;: true
+        },
+        &quot;right_foot_axis&quot;: {
+          &quot;n&quot;: 100,
+          &quot;max_deg&quot;: 4.076438282931618e-12,
+          &quot;passed&quot;: true
+        }
+      },
+      &quot;decisions&quot;: {
+        &quot;passed&quot;: true,
+        &quot;cpu&quot;: &quot;joint_trajectory&quot;,
+        &quot;gpu&quot;: &quot;joint_trajectory&quot;
+      },
+      &quot;max_coordinate_difference&quot;: 3.4286529171367874e-10,
+      &quot;cpu_replay_vs_cached_max&quot;: 0.0,
+      &quot;preliminary_parity_passed&quot;: true,
+      &quot;scope&quot;: &quot;Preliminary native CPU-vs-GPU parity; export/R scoring and rotation comparisons remain required&quot;,
+      &quot;source_fixture&quot;: &quot;../gpu_accel_20261119_v1/matched_panel_v2/008_motionlcm__position_trajectory/fixture&quot;,
+      &quot;code&quot;: &quot;31d5130707a8adb2878cd0e8c73df886b139e7d8&quot;,
+      &quot;default_promoted&quot;: false,
+      &quot;preservation&quot;: {
+        &quot;checked&quot;: 610,
+        &quot;failures&quot;: [],
+        &quot;additional_holdout_use&quot;: 0,
+        &quot;scope&quot;: &quot;Read-only development artifacts; no holdout paths submitted&quot;
+      },
+      &quot;id&quot;: &quot;cuda_008_trajectory_full_v1&quot;,
+      &quot;independent_review&quot;: {
+        &quot;score_and_native_passed&quot;: true,
+        &quot;common_research_failure&quot;: false,
+        &quot;output_views&quot;: {
+          &quot;native&quot;: {
+            &quot;positions&quot;: {
+              &quot;n&quot;: 1600,
+              &quot;denominator&quot;: 1600,
+              &quot;max_m&quot;: 9.175393839109501e-14,
+              &quot;passed&quot;: true
+            },
+            &quot;directions&quot;: {
+              &quot;trunk_axis&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 2.5850188080400755e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;shoulder_line&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 4.26836074397459e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;pelvis_line&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 2.0972069960116445e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;head_neck_axis&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 6.976661060872186e-13,
+                &quot;passed&quot;: true
+              },
+              &quot;left_upper_arm&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 4.910141473537007e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;left_forearm&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 1.374680971963836e-11,
+                &quot;passed&quot;: true
+              },
+              &quot;left_thigh&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 3.049117420506799e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;left_shank&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 4.1667908912916945e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;left_foot_axis&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 5.53711368497302e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;right_upper_arm&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 5.8507740605861545e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;right_forearm&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 2.0129277348607174e-11,
+                &quot;passed&quot;: true
+              },
+              &quot;right_thigh&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 2.705570064678505e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;right_shank&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 2.8086162085219855e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;right_foot_axis&quot;: {
+                &quot;n&quot;: 100,
+                &quot;max_deg&quot;: 4.1224026287579625e-12,
+                &quot;passed&quot;: true
+              }
+            },
+            &quot;rotations&quot;: {
+              &quot;head_relative_thorax&quot;: {
+                &quot;status&quot;: &quot;not_observable&quot;,
+                &quot;n&quot;: 0
+              },
+              &quot;head_world_rotation&quot;: {
+                &quot;status&quot;: &quot;not_observable&quot;,
+                &quot;n&quot;: 0
+              }
+            },
+            &quot;passed&quot;: true
+          },
+          &quot;export&quot;: {
+            &quot;positions&quot;: {
+              &quot;n&quot;: 7936,
+              &quot;denominator&quot;: 7936,
+              &quot;max_m&quot;: 9.165037326052378e-14,
+              &quot;passed&quot;: true
+            },
+            &quot;directions&quot;: {
+              &quot;trunk_axis&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 2.526277188768025e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;shoulder_line&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 4.2351688627352196e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;pelvis_line&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 2.062897175860973e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;head_neck_axis&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 8.42150581479036e-13,
+                &quot;passed&quot;: true
+              },
+              &quot;left_upper_arm&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 4.8811438110786445e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;left_forearm&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 1.379879479039963e-11,
+                &quot;passed&quot;: true
+              },
+              &quot;left_thigh&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 3.0476104167622476e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;left_shank&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 4.168004509123323e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;left_foot_axis&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 5.532527329011131e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;right_upper_arm&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 5.891920674870113e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;right_forearm&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 2.0099228934240664e-11,
+                &quot;passed&quot;: true
+              },
+              &quot;right_thigh&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 2.7055700646785043e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;right_shank&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 2.8086162085219855e-12,
+                &quot;passed&quot;: true
+              },
+              &quot;right_foot_axis&quot;: {
+                &quot;n&quot;: 496,
+                &quot;max_deg&quot;: 4.1209122338306645e-12,
+                &quot;passed&quot;: true
+              }
+            },
+            &quot;rotations&quot;: {
+              &quot;head_relative_thorax&quot;: {
+                &quot;status&quot;: &quot;not_observable&quot;,
+                &quot;n&quot;: 0
+              },
+              &quot;head_world_rotation&quot;: {
+                &quot;status&quot;: &quot;not_observable&quot;,
+                &quot;n&quot;: 0
+              }
+            },
+            &quot;passed&quot;: true
+          }
+        },
+        &quot;score_delta_max&quot;: {
+          &quot;position&quot;: 1.8210988272926443e-12,
+          &quot;angle&quot;: 1.5812179343654975e-10,
+          &quot;rate&quot;: 2.423918843419415e-10
+        }
+      }
+    }
+  ],
+  &quot;scope&quot;: &quot;工程阶段快照；原生初检与完整迁移资格分开；全部40项及656全候选尚未完成&quot;
+}</pre></details></html>
