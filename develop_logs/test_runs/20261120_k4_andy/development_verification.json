@@ -1,0 +1,99 @@
+{
+  "known_orientation": [
+    {
+      "method": "motionlcm",
+      "ideal_passed": true,
+      "bad_direction_rejected": true,
+      "rotation_observable": false
+    },
+    {
+      "method": "omnicontrol",
+      "ideal_passed": true,
+      "bad_direction_rejected": true,
+      "rotation_observable": false
+    },
+    {
+      "method": "ardy",
+      "ideal_passed": true,
+      "bad_direction_rejected": true,
+      "rotation_observable": true
+    },
+    {
+      "method": "chois",
+      "ideal_passed": true,
+      "bad_direction_rejected": true,
+      "rotation_observable": true
+    },
+    {
+      "method": "closd",
+      "ideal_passed": true,
+      "bad_direction_rejected": true,
+      "rotation_observable": true
+    },
+    {
+      "method": "dart",
+      "ideal_passed": true,
+      "bad_direction_rejected": true,
+      "rotation_observable": true
+    },
+    {
+      "method": "kimodo",
+      "ideal_passed": true,
+      "bad_direction_rejected": true,
+      "rotation_observable": true
+    },
+    {
+      "method": "primal",
+      "ideal_passed": true,
+      "bad_direction_rejected": true,
+      "rotation_observable": true
+    }
+  ],
+  "actual_development_fit": [
+    {
+      "method": "ardy",
+      "view": "native",
+      "acceptance": {
+        "D_clock": "passed",
+        "R_clock": "passed"
+      }
+    },
+    {
+      "method": "ardy",
+      "view": "export",
+      "acceptance": {
+        "D_clock": "passed",
+        "R_clock": "passed"
+      }
+    },
+    {
+      "method": "motionlcm",
+      "view": "native",
+      "acceptance": {
+        "D_clock": "passed",
+        "R_clock": "passed"
+      }
+    },
+    {
+      "method": "motionlcm",
+      "view": "export",
+      "acceptance": {
+        "D_clock": "passed",
+        "R_clock": "passed"
+      }
+    }
+  ],
+  "reference_quality": {
+    "full_record_frames": 12698,
+    "head_valid": 7144,
+    "thorax_valid": 5533,
+    "paired_valid": 4618,
+    "selected_frames": 240,
+    "selected_paired_valid": 240,
+    "selection_rule": "centre <=5s within historically registered K1 optical-valid window; no current fit error selection",
+    "reference_method": "direct four-marker frames; no template imputation, redundant-marker recovery or temporal filling"
+  },
+  "test_records_used": 0,
+  "adapter_sha256": "23b85ce3507b4ced4d6b4ea16fbc7cdf601949c8911e487347703852650487a1",
+  "scope": "Transport and scoring gates; optical development acceptance retained without method tuning"
+}

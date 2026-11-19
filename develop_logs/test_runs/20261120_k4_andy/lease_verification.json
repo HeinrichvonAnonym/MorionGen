@@ -1,0 +1,12 @@
+[
+  {
+    "mode": "normal",
+    "suspended_during_guest": true,
+    "resumed_after_guest": true
+  },
+  {
+    "mode": "termination",
+    "suspended_during_guest": true,
+    "resumed_after_guest": true
+  }
+]

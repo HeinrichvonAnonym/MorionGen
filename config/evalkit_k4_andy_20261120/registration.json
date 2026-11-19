@@ -1,0 +1,37 @@
+{
+  "version": "andy-head-optical-k4-1",
+  "run": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v1",
+  "fit_commit": "dfe82393261902b4b4003c6b0943ca146176d279",
+  "expected_routes": 600,
+  "window_policy": "central <=5s within previously registered complete optical interval; no new window replacement",
+  "scoring": "Measured head-up direction for eight formats; measured head relative thorax for six rotational formats; no physical position or whole-body acceptance",
+  "selector": "Frozen D-only early budget on the declared virtual-body input; existing priors remain explicit",
+  "resource": "one guest numerical worker reserved from running TV; total active numerical slots <=14",
+  "measured_targets": {
+    "version": "andy-optical-fixture-1",
+    "positions": "virtual template FK, not measured joint centres",
+    "segment_rotations": "Head/Spine3 carry optical marker-frame orientation; neck is virtual articulation",
+    "allowed_physical_targets": [
+      "optical head-up direction",
+      "head relative optical thorax (rotation profiles)"
+    ],
+    "body_context": "fixed template prior, not subject-specific anthropometry"
+  },
+  "known_historical_differences": [
+    {
+      "path": "plans/20261112_gold_anchor_and_own_method_plan.md",
+      "original": "9728f94953cd724dbfdce16f640f1f4e40c076ad9285d1033685c28d33a100ca",
+      "current": "30b5fe7c77f3f4dbf3ff0b008f3adef646b28b0632802d6729fbedd6590b4ff4"
+    }
+  ],
+  "protocol_sha256": "ca83a035f79f21634ecf8f5844cda648835c3bb600c8f440f5d923e0ba6799a8",
+  "fit_config_sha256": "7e48648207d68460281cc45eaf989cdce6c92216cedd8f2e9e4bb048da7774db",
+  "workers": 1,
+  "source_records": 75,
+  "code_identity": {
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v1/control/evalkit_k4_slot_lease.py": "c569958be38ff2619e87a0c042c16d6a221daa89c0aa4a9aa1d46824d03f75fa",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v1/control/evalkit_k4_andy.py": "23b85ce3507b4ced4d6b4ea16fbc7cdf601949c8911e487347703852650487a1"
+  },
+  "prior_holdout_use_retained": true,
+  "development_verification_sha256": "59037464101b3c95f34d34bb831f1f3350eb5e62056b3cd1151e2caa28d25dab"
+}

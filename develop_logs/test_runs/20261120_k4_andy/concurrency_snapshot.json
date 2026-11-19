@@ -1,0 +1,187 @@
+{
+  "at_unix_s": 1795119124.6217725,
+  "children": [
+    {
+      "pid": 586182,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T008_motionlcm/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 591839,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T019_motionlcm/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 591972,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T020_motionlcm/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 594477,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T011_dart/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 594619,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T016_ardy/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 595028,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T012_dart/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 595166,
+      "ppid": 585745,
+      "state": "T",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/control/evalkit_k4_test_evaluate.py score --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --request /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T022_omnicontrol/visited/pelvis_continuity__coordinated/native_request.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 595433,
+      "ppid": 595224,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v1/tasks/A000_motionlcm/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 595703,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T021_omnicontrol/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 595865,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T023_motionlcm/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 595896,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T017_omnicontrol/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 595966,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T015_chois/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 596219,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T018_kimodo/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 596241,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout/python/scripts/evalkit_k4_run.py --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --job /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T002_omnicontrol/runtime_job.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    },
+    {
+      "pid": 596370,
+      "ppid": 585745,
+      "state": "R",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/control/evalkit_k4_test_evaluate.py score --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --request /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T014_motionlcm/visited/balanced_targets__coordinated/export_request.json ",
+      "threads": {
+        "OPENBLAS_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1"
+      }
+    }
+  ],
+  "TV_runnable_child_slots": 13,
+  "Andy_runnable_child_slots": 1
+}

@@ -1,0 +1,214 @@
+{
+  "identity_files": 924,
+  "protected_files": 610,
+  "changed": [],
+  "guard": {
+    "version": "external-single-slot-1",
+    "guard_pid": 595223,
+    "tv_controller": {
+      "pid": 585745,
+      "state": "S",
+      "ppid": 3302,
+      "start_ticks": "48689268",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/control/evalkit_k4_test.py run --run /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1 "
+    },
+    "command": [
+      "/home/heinrich/.local/share/opensim-api/bin/python",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v1/control/evalkit_k4_andy.py",
+      "run",
+      "--run",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v1",
+      "--lease",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v1/slot_lease.json"
+    ],
+    "started_unix_s": 1795118994.507979,
+    "scope": "13 TV runnable slots + one guest numerical slot; no fit/selection changes",
+    "state": "guest_running",
+    "paused_tv_process": {
+      "pid": 595166,
+      "state": "R",
+      "ppid": 585745,
+      "start_ticks": "48855687",
+      "argv": "/home/heinrich/.local/share/opensim-api/bin/python /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/control/evalkit_k4_test_evaluate.py score --code-root /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/closure_budget_v3_checkout --request /media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/tasks/T022_omnicontrol/visited/pelvis_continuity__coordinated/native_request.json "
+    },
+    "guest_pid": 595224
+  },
+  "Andy": {
+    "state": "running A000_motionlcm",
+    "expected": 600,
+    "evaluated": 0,
+    "passed": 0,
+    "metric_failed": 0,
+    "execution_failed": 0,
+    "reference_insufficient": 0,
+    "pending": 600,
+    "updated_unix_s": 1795119008.3067763,
+    "rows": [],
+    "per_format": {
+      "motionlcm": {
+        "expected": 75,
+        "evaluated": 0,
+        "passed": 0
+      },
+      "omnicontrol": {
+        "expected": 75,
+        "evaluated": 0,
+        "passed": 0
+      },
+      "ardy": {
+        "expected": 75,
+        "evaluated": 0,
+        "passed": 0
+      },
+      "chois": {
+        "expected": 75,
+        "evaluated": 0,
+        "passed": 0
+      },
+      "closd": {
+        "expected": 75,
+        "evaluated": 0,
+        "passed": 0
+      },
+      "dart": {
+        "expected": 75,
+        "evaluated": 0,
+        "passed": 0
+      },
+      "kimodo": {
+        "expected": 75,
+        "evaluated": 0,
+        "passed": 0
+      },
+      "primal": {
+        "expected": 75,
+        "evaluated": 0,
+        "passed": 0
+      }
+    },
+    "per_person": {
+      "541": {
+        "expected": 120,
+        "evaluated": 0,
+        "passed": 0
+      },
+      "5535": {
+        "expected": 120,
+        "evaluated": 0,
+        "passed": 0
+      },
+      "8524": {
+        "expected": 120,
+        "evaluated": 0,
+        "passed": 0
+      },
+      "9266": {
+        "expected": 120,
+        "evaluated": 0,
+        "passed": 0
+      },
+      "9875": {
+        "expected": 120,
+        "evaluated": 0,
+        "passed": 0
+      }
+    }
+  },
+  "TV": {
+    "state": "running",
+    "expected": 4256,
+    "finished": 102,
+    "evaluated": 102,
+    "passed": 102,
+    "metric_failed": 0,
+    "execution_failed": 0,
+    "pending": 4154,
+    "active": 14,
+    "updated_unix_s": 1795119077.2456386,
+    "visited_evaluated": 124,
+    "skipped_candidates": "unvisited unknown; no full-pool coverage estimate",
+    "per_format": {
+      "motionlcm": {
+        "expected": 532,
+        "evaluated": 18,
+        "passed": 18
+      },
+      "omnicontrol": {
+        "expected": 532,
+        "evaluated": 15,
+        "passed": 15
+      },
+      "ardy": {
+        "expected": 532,
+        "evaluated": 13,
+        "passed": 13
+      },
+      "chois": {
+        "expected": 532,
+        "evaluated": 13,
+        "passed": 13
+      },
+      "closd": {
+        "expected": 532,
+        "evaluated": 13,
+        "passed": 13
+      },
+      "dart": {
+        "expected": 532,
+        "evaluated": 10,
+        "passed": 10
+      },
+      "kimodo": {
+        "expected": 532,
+        "evaluated": 10,
+        "passed": 10
+      },
+      "primal": {
+        "expected": 532,
+        "evaluated": 10,
+        "passed": 10
+      }
+    },
+    "per_group": {
+      "collaborate/Television_AssemblyPackaging/S01": {
+        "expected": 2824,
+        "evaluated": 56,
+        "passed": 56,
+        "execution_failed": 0
+      },
+      "collaborate/Television_AssemblyPackaging/S02": {
+        "expected": 1296,
+        "evaluated": 46,
+        "passed": 46,
+        "execution_failed": 0
+      },
+      "collaborate/Television_AssemblyPackaging/S03": {
+        "expected": 136,
+        "evaluated": 0,
+        "passed": 0,
+        "execution_failed": 0
+      }
+    },
+    "per_task": {
+      "Packaging": {
+        "expected": 424,
+        "evaluated": 102,
+        "passed": 102,
+        "execution_failed": 0
+      },
+      "Board_Connection": {
+        "expected": 2576,
+        "evaluated": 0,
+        "passed": 0,
+        "execution_failed": 0
+      },
+      "Drilling": {
+        "expected": 1256,
+        "evaluated": 0,
+        "passed": 0,
+        "execution_failed": 0
+      }
+    }
+  },
+  "checked_unix_s": 1795119085.213203
+}

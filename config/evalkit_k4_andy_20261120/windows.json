@@ -1,0 +1,3527 @@
+[
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_3_Trial_1",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_3_Trial_1",
+    "status": "included",
+    "frames": 11689,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_1.qualisys.csv",
+        "bytes": 22637106,
+        "crc32": "f5e54c3c"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_3_Trial_1.qualisys.c3d",
+        "bytes": 8048128,
+        "crc32": "d8545f79"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_1.labels.csv",
+        "bytes": 173464,
+        "crc32": "8f07b046"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_1.glove.csv",
+        "bytes": 649685,
+        "crc32": "dbab460f"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A000",
+    "historical_window_s": [
+      1.0,
+      8.575000047683716
+    ],
+    "source_window_s": [
+      2.287500023841858,
+      7.287500023841858
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_3_Trial_2",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_3_Trial_2",
+    "status": "included",
+    "frames": 11660,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_2.qualisys.csv",
+        "bytes": 22468040,
+        "crc32": "f1645454"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_3_Trial_2.qualisys.c3d",
+        "bytes": 8028160,
+        "crc32": "d4a26ac5"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_2.labels.csv",
+        "bytes": 175224,
+        "crc32": "25d75b28"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_2.glove.csv",
+        "bytes": 634560,
+        "crc32": "b1ee980e"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A001",
+    "historical_window_s": [
+      1.0,
+      9.091670036315918
+    ],
+    "source_window_s": [
+      2.545835018157959,
+      7.545835018157959
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_3_Trial_3",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_3_Trial_3",
+    "status": "included",
+    "frames": 12523,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_3.qualisys.csv",
+        "bytes": 24037401,
+        "crc32": "40181303"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_3_Trial_3.qualisys.c3d",
+        "bytes": 8621568,
+        "crc32": "06c8e9be"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_3.labels.csv",
+        "bytes": 184934,
+        "crc32": "386c2083"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_3.glove.csv",
+        "bytes": 709575,
+        "crc32": "5ed65431"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A002",
+    "historical_window_s": [
+      1.0,
+      8.50833010673523
+    ],
+    "source_window_s": [
+      2.2541650533676147,
+      7.254165053367615
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_3_Trial_4",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_3_Trial_4",
+    "status": "included",
+    "frames": 13150,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_4.qualisys.csv",
+        "bytes": 25370215,
+        "crc32": "53ad707e"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_3_Trial_4.qualisys.c3d",
+        "bytes": 9053184,
+        "crc32": "a6dc91ac"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_4.labels.csv",
+        "bytes": 248470,
+        "crc32": "7429c4bb"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_4.glove.csv",
+        "bytes": 977268,
+        "crc32": "39bc6a7b"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A003",
+    "historical_window_s": [
+      1.0,
+      5.783329963684082
+    ],
+    "source_window_s": [
+      1.0,
+      5.783329963684082
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_3_Trial_5",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_3_Trial_5",
+    "status": "included",
+    "frames": 13122,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_5.qualisys.csv",
+        "bytes": 25428759,
+        "crc32": "ed9923d6"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_3_Trial_5.qualisys.c3d",
+        "bytes": 9033728,
+        "crc32": "be9760dd"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_5.labels.csv",
+        "bytes": 193669,
+        "crc32": "075b003b"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_3_Trial_5.glove.csv",
+        "bytes": 774585,
+        "crc32": "d7c80e8e"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A004",
+    "historical_window_s": [
+      1.0,
+      8.683330059051514
+    ],
+    "source_window_s": [
+      2.341665029525757,
+      7.341665029525757
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_4_Trial_1",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_4_Trial_1",
+    "status": "included",
+    "frames": 18398,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_1.qualisys.csv",
+        "bytes": 35025603,
+        "crc32": "b15c75f4"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_4_Trial_1.qualisys.c3d",
+        "bytes": 12663808,
+        "crc32": "0b4c3f55"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_1.labels.csv",
+        "bytes": 269945,
+        "crc32": "be0c21dc"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_1.glove.csv",
+        "bytes": 1026426,
+        "crc32": "5dde2f14"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A005",
+    "historical_window_s": [
+      1.0,
+      7.333329916000366
+    ],
+    "source_window_s": [
+      1.666664958000183,
+      6.666664958000183
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_4_Trial_2",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_4_Trial_2",
+    "status": "included",
+    "frames": 12104,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_2.qualisys.csv",
+        "bytes": 23453667,
+        "crc32": "099c122c"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_4_Trial_2.qualisys.c3d",
+        "bytes": 8333312,
+        "crc32": "d8bdfedf"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_2.labels.csv",
+        "bytes": 182372,
+        "crc32": "556d4424"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_2.glove.csv",
+        "bytes": 683084,
+        "crc32": "a789632a"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A006",
+    "historical_window_s": [
+      1.0,
+      8.483330011367798
+    ],
+    "source_window_s": [
+      2.241665005683899,
+      7.241665005683899
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_4_Trial_3",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_4_Trial_3",
+    "status": "included",
+    "frames": 12511,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_3.qualisys.csv",
+        "bytes": 24112187,
+        "crc32": "54633479"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_4_Trial_3.qualisys.c3d",
+        "bytes": 8613376,
+        "crc32": "308d231e"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_3.labels.csv",
+        "bytes": 184967,
+        "crc32": "81a6593b"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_3.glove.csv",
+        "bytes": 714802,
+        "crc32": "7717ed63"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A007",
+    "historical_window_s": [
+      1.0,
+      8.341670036315918
+    ],
+    "source_window_s": [
+      2.170835018157959,
+      7.170835018157959
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_4_Trial_4",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_4_Trial_4",
+    "status": "included",
+    "frames": 13048,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_4.qualisys.csv",
+        "bytes": 25359962,
+        "crc32": "1dd098ca"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_4_Trial_4.qualisys.c3d",
+        "bytes": 8983040,
+        "crc32": "9dbaa88e"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_4.labels.csv",
+        "bytes": 196456,
+        "crc32": "f4c86b06"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_4.glove.csv",
+        "bytes": 719610,
+        "crc32": "2276f7ef"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A008",
+    "historical_window_s": [
+      1.0,
+      8.391669988632202
+    ],
+    "source_window_s": [
+      2.195834994316101,
+      7.195834994316101
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_4_Trial_5",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_4_Trial_5",
+    "status": "included",
+    "frames": 11897,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_5.qualisys.csv",
+        "bytes": 22803427,
+        "crc32": "83fd00ff"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_4_Trial_5.qualisys.c3d",
+        "bytes": 8190976,
+        "crc32": "c1915319"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_5.labels.csv",
+        "bytes": 177109,
+        "crc32": "d75de2f5"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_4_Trial_5.glove.csv",
+        "bytes": 651641,
+        "crc32": "ec28f295"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A009",
+    "historical_window_s": [
+      1.0,
+      8.408329963684082
+    ],
+    "source_window_s": [
+      2.204164981842041,
+      7.204164981842041
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_5_Trial_1",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_5_Trial_1",
+    "status": "included",
+    "frames": 12851,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_1.qualisys.csv",
+        "bytes": 24947818,
+        "crc32": "e9eb678b"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_5_Trial_1.qualisys.c3d",
+        "bytes": 8847360,
+        "crc32": "78b18a63"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_1.labels.csv",
+        "bytes": 222277,
+        "crc32": "8aad6db6"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_1.glove.csv",
+        "bytes": 897334,
+        "crc32": "75251dd4"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A010",
+    "historical_window_s": [
+      6.525000095367432,
+      9.0
+    ],
+    "source_window_s": [
+      6.525000095367432,
+      9.0
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_5_Trial_2",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_5_Trial_2",
+    "status": "included",
+    "frames": 13010,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_2.qualisys.csv",
+        "bytes": 24984343,
+        "crc32": "344210de"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_5_Trial_2.qualisys.c3d",
+        "bytes": 8956928,
+        "crc32": "b5d8944c"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_2.labels.csv",
+        "bytes": 193859,
+        "crc32": "7039dacc"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_2.glove.csv",
+        "bytes": 761060,
+        "crc32": "2655ad4f"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A011",
+    "historical_window_s": [
+      1.0,
+      8.066669940948486
+    ],
+    "source_window_s": [
+      2.033334970474243,
+      7.033334970474243
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_5_Trial_3",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_5_Trial_3",
+    "status": "included",
+    "frames": 10429,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_3.qualisys.csv",
+        "bytes": 20157699,
+        "crc32": "cbfb9bcd"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_5_Trial_3.qualisys.c3d",
+        "bytes": 7180800,
+        "crc32": "854d1d4b"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_3.labels.csv",
+        "bytes": 155577,
+        "crc32": "422cbe19"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_3.glove.csv",
+        "bytes": 600251,
+        "crc32": "5a392e59"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A012",
+    "historical_window_s": [
+      1.0,
+      7.483330011367798
+    ],
+    "source_window_s": [
+      1.741665005683899,
+      6.741665005683899
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_5_Trial_4",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_5_Trial_4",
+    "status": "included",
+    "frames": 11918,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_4.qualisys.csv",
+        "bytes": 23289657,
+        "crc32": "dd71be49"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_5_Trial_4.qualisys.c3d",
+        "bytes": 8205312,
+        "crc32": "b1901c1c"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_4.labels.csv",
+        "bytes": 179508,
+        "crc32": "5141e0a5"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_4.glove.csv",
+        "bytes": 705991,
+        "crc32": "c72320ba"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A013",
+    "historical_window_s": [
+      1.0,
+      7.708329916000366
+    ],
+    "source_window_s": [
+      1.854164958000183,
+      6.854164958000183
+    ]
+  },
+  {
+    "id": "andy/Participant_541_Setup_A_Seq_5_Trial_5",
+    "dataset": "andy",
+    "subject": "541",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/541",
+    "recording_id": "andy/Participant_541_Setup_A_Seq_5_Trial_5",
+    "status": "included",
+    "frames": 13200,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_5.qualisys.csv",
+        "bytes": 25264530,
+        "crc32": "2197dc5d"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_541/Participant_541_Setup_A_Seq_5_Trial_5.qualisys.c3d",
+        "bytes": 9087488,
+        "crc32": "c6a57cfb"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_5.labels.csv",
+        "bytes": 201872,
+        "crc32": "5223401d"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_541/Participant_541_Setup_A_Seq_5_Trial_5.glove.csv",
+        "bytes": 768142,
+        "crc32": "901599d3"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A014",
+    "historical_window_s": [
+      1.0,
+      7.75
+    ],
+    "source_window_s": [
+      1.875,
+      6.875
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_1_Trial_1",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_1_Trial_1",
+    "status": "included",
+    "frames": 13509,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_1.qualisys.csv",
+        "bytes": 26379271,
+        "crc32": "82f80f45"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_1.qualisys.c3d",
+        "bytes": 9299968,
+        "crc32": "e64c7667"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_1.labels.csv",
+        "bytes": 205266,
+        "crc32": "01244adc"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_1.glove.csv",
+        "bytes": 773391,
+        "crc32": "5da6a72d"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A015",
+    "historical_window_s": [
+      1.0,
+      9.016669988632202
+    ],
+    "source_window_s": [
+      2.508334994316101,
+      7.508334994316101
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_1_Trial_2",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_1_Trial_2",
+    "status": "included",
+    "frames": 16592,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_2.qualisys.csv",
+        "bytes": 31647983,
+        "crc32": "7dec334e"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_2.qualisys.c3d",
+        "bytes": 11421184,
+        "crc32": "9c1e8485"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_2.labels.csv",
+        "bytes": 248943,
+        "crc32": "044e7eb7"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_2.glove.csv",
+        "bytes": 919340,
+        "crc32": "6b334baa"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A016",
+    "historical_window_s": [
+      1.0,
+      7.75
+    ],
+    "source_window_s": [
+      1.875,
+      6.875
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_1_Trial_3",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_1_Trial_3",
+    "status": "included",
+    "frames": 16395,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_3.qualisys.csv",
+        "bytes": 31715619,
+        "crc32": "a1766099"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_3.qualisys.c3d",
+        "bytes": 11285504,
+        "crc32": "cb32ac0f"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_3.labels.csv",
+        "bytes": 245000,
+        "crc32": "bffec160"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_3.glove.csv",
+        "bytes": 922092,
+        "crc32": "6ac14525"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A017",
+    "historical_window_s": [
+      1.0,
+      8.941669940948486
+    ],
+    "source_window_s": [
+      2.470834970474243,
+      7.470834970474243
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_1_Trial_4",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_1_Trial_4",
+    "status": "included",
+    "frames": 12586,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_4.qualisys.csv",
+        "bytes": 24446037,
+        "crc32": "bd977bd4"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_4.qualisys.c3d",
+        "bytes": 8665088,
+        "crc32": "c9484719"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_4.labels.csv",
+        "bytes": 246444,
+        "crc32": "d8507ce5"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_4.glove.csv",
+        "bytes": 960470,
+        "crc32": "580fc827"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A018",
+    "historical_window_s": [
+      1.0,
+      7.900000095367432
+    ],
+    "source_window_s": [
+      1.9500000476837158,
+      6.950000047683716
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_1_Trial_5",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_1_Trial_5",
+    "status": "included",
+    "frames": 13154,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_5.qualisys.csv",
+        "bytes": 25264811,
+        "crc32": "e0805766"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_5.qualisys.c3d",
+        "bytes": 9055744,
+        "crc32": "0fa43ef2"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_5.labels.csv",
+        "bytes": 201645,
+        "crc32": "5a216a0d"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_1_Trial_5.glove.csv",
+        "bytes": 755808,
+        "crc32": "796ef18e"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A019",
+    "historical_window_s": [
+      1.0,
+      8.075000047683716
+    ],
+    "source_window_s": [
+      2.037500023841858,
+      7.037500023841858
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_2_Trial_1",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_2_Trial_1",
+    "status": "included",
+    "frames": 12685,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_1.qualisys.csv",
+        "bytes": 24531317,
+        "crc32": "cd538ac7"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_1.qualisys.c3d",
+        "bytes": 8733184,
+        "crc32": "aee2e687"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_1.labels.csv",
+        "bytes": 228052,
+        "crc32": "d91e15e1"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_1.glove.csv",
+        "bytes": 872508,
+        "crc32": "615aeb4e"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A020",
+    "historical_window_s": [
+      1.0,
+      7.900000095367432
+    ],
+    "source_window_s": [
+      1.9500000476837158,
+      6.950000047683716
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_2_Trial_2",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_2_Trial_2",
+    "status": "included",
+    "frames": 11614,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_2.qualisys.csv",
+        "bytes": 22776527,
+        "crc32": "6c7aaeae"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_2.qualisys.c3d",
+        "bytes": 7996416,
+        "crc32": "04747917"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_2.labels.csv",
+        "bytes": 176224,
+        "crc32": "985fc900"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_2.glove.csv",
+        "bytes": 665892,
+        "crc32": "8b0baacc"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A021",
+    "historical_window_s": [
+      1.0,
+      8.450000047683716
+    ],
+    "source_window_s": [
+      2.225000023841858,
+      7.225000023841858
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_2_Trial_3",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_2_Trial_3",
+    "status": "included",
+    "frames": 12860,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_3.qualisys.csv",
+        "bytes": 24968503,
+        "crc32": "623968d2"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_3.qualisys.c3d",
+        "bytes": 8853504,
+        "crc32": "337fb420"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_3.labels.csv",
+        "bytes": 192386,
+        "crc32": "3c6d369a"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_3.glove.csv",
+        "bytes": 722580,
+        "crc32": "bf27fe0d"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A022",
+    "historical_window_s": [
+      1.0,
+      8.099999904632568
+    ],
+    "source_window_s": [
+      2.049999952316284,
+      7.049999952316284
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_2_Trial_4",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_2_Trial_4",
+    "status": "included",
+    "frames": 15552,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_4.qualisys.csv",
+        "bytes": 29840052,
+        "crc32": "e7a9ed2c"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_4.qualisys.c3d",
+        "bytes": 10705920,
+        "crc32": "34bf7473"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_4.labels.csv",
+        "bytes": 197947,
+        "crc32": "d0d284f9"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_4.glove.csv",
+        "bytes": 912475,
+        "crc32": "e336a558"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A023",
+    "historical_window_s": [
+      1.0,
+      8.049999952316284
+    ],
+    "source_window_s": [
+      2.024999976158142,
+      7.024999976158142
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_2_Trial_5",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_2_Trial_5",
+    "status": "included",
+    "frames": 15296,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_5.qualisys.csv",
+        "bytes": 29269702,
+        "crc32": "841c15cd"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_5.qualisys.c3d",
+        "bytes": 10529792,
+        "crc32": "0d913687"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_5.labels.csv",
+        "bytes": 227767,
+        "crc32": "0b18734d"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_2_Trial_5.glove.csv",
+        "bytes": 842330,
+        "crc32": "4bce20ba"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A024",
+    "historical_window_s": [
+      1.0,
+      8.025000095367432
+    ],
+    "source_window_s": [
+      2.012500047683716,
+      7.012500047683716
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_5_Trial_1",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_5_Trial_1",
+    "status": "included",
+    "frames": 12623,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_1.qualisys.csv",
+        "bytes": 24613985,
+        "crc32": "51c508f4"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_1.qualisys.c3d",
+        "bytes": 8690688,
+        "crc32": "4019c858"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_1.labels.csv",
+        "bytes": 191214,
+        "crc32": "709a6bcb"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_1.glove.csv",
+        "bytes": 713559,
+        "crc32": "81d8e43a"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A025",
+    "historical_window_s": [
+      1.0,
+      7.924999952316284
+    ],
+    "source_window_s": [
+      1.962499976158142,
+      6.962499976158142
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_5_Trial_2",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_5_Trial_2",
+    "status": "included",
+    "frames": 13748,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_2.qualisys.csv",
+        "bytes": 26466577,
+        "crc32": "b6be42dd"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_2.qualisys.c3d",
+        "bytes": 9464320,
+        "crc32": "5174d369"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_2.labels.csv",
+        "bytes": 206423,
+        "crc32": "e37b9135"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_2.glove.csv",
+        "bytes": 782974,
+        "crc32": "0994e722"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A026",
+    "historical_window_s": [
+      1.0,
+      8.166670083999634
+    ],
+    "source_window_s": [
+      2.083335041999817,
+      7.083335041999817
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_5_Trial_3",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_5_Trial_3",
+    "status": "included",
+    "frames": 14572,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_3.qualisys.csv",
+        "bytes": 28473583,
+        "crc32": "6d89211c"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_3.qualisys.c3d",
+        "bytes": 10031616,
+        "crc32": "dd22a02a"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_3.labels.csv",
+        "bytes": 221985,
+        "crc32": "11395e56"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_3.glove.csv",
+        "bytes": 826366,
+        "crc32": "26842341"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A027",
+    "historical_window_s": [
+      1.0,
+      7.8666698932647705
+    ],
+    "source_window_s": [
+      1.9333349466323853,
+      6.933334946632385
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_5_Trial_4",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_5_Trial_4",
+    "status": "included",
+    "frames": 12911,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_4.qualisys.csv",
+        "bytes": 25148064,
+        "crc32": "259a0733"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_4.qualisys.c3d",
+        "bytes": 8888832,
+        "crc32": "3ee2a8e8"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_4.labels.csv",
+        "bytes": 195599,
+        "crc32": "7b1a4a58"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_4.glove.csv",
+        "bytes": 739166,
+        "crc32": "38ec81f6"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A028",
+    "historical_window_s": [
+      1.0,
+      7.325000047683716
+    ],
+    "source_window_s": [
+      1.662500023841858,
+      6.662500023841858
+    ]
+  },
+  {
+    "id": "andy/Participant_5535_Setup_A_Seq_5_Trial_5",
+    "dataset": "andy",
+    "subject": "5535",
+    "setup": "A",
+    "partition": "final_holdout",
+    "group_id": "andy/5535",
+    "recording_id": "andy/Participant_5535_Setup_A_Seq_5_Trial_5",
+    "status": "included",
+    "frames": 13138,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_5.qualisys.csv",
+        "bytes": 25496825,
+        "crc32": "eeab6ceb"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_5.qualisys.c3d",
+        "bytes": 9044992,
+        "crc32": "4ba9a371"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_5.labels.csv",
+        "bytes": 200952,
+        "crc32": "0a06084d"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_5535/Participant_5535_Setup_A_Seq_5_Trial_5.glove.csv",
+        "bytes": 742965,
+        "crc32": "6ab94c1e"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A029",
+    "historical_window_s": [
+      1.0,
+      7.816669940948486
+    ],
+    "source_window_s": [
+      1.9083349704742432,
+      6.908334970474243
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_2_Trial_1",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_2_Trial_1",
+    "status": "included",
+    "frames": 12158,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_1.qualisys.csv",
+        "bytes": 23529245,
+        "crc32": "6d90b591"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_1.qualisys.c3d",
+        "bytes": 8370688,
+        "crc32": "1242283e"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_1.labels.csv",
+        "bytes": 195554,
+        "crc32": "c4e7ee94"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_1.glove.csv",
+        "bytes": 763331,
+        "crc32": "2e78ee28"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A030",
+    "historical_window_s": [
+      8.666670083999634,
+      9.983330011367798
+    ],
+    "source_window_s": [
+      8.666670083999634,
+      9.983330011367798
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_2_Trial_2",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_2_Trial_2",
+    "status": "included",
+    "frames": 12925,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_2.qualisys.csv",
+        "bytes": 24638609,
+        "crc32": "676ee701"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_2.qualisys.c3d",
+        "bytes": 8898048,
+        "crc32": "7fdeb90e"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_2.labels.csv",
+        "bytes": 204165,
+        "crc32": "1a8e06ef"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_2.glove.csv",
+        "bytes": 770271,
+        "crc32": "80af8a26"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A031",
+    "historical_window_s": [
+      2.7583301067352295,
+      4.224999904632568
+    ],
+    "source_window_s": [
+      2.7583301067352295,
+      4.224999904632568
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_2_Trial_3",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_2_Trial_3",
+    "status": "included",
+    "frames": 10662,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_3.qualisys.csv",
+        "bytes": 20705592,
+        "crc32": "f163d661"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_3.qualisys.c3d",
+        "bytes": 7341568,
+        "crc32": "c4841abb"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_3.labels.csv",
+        "bytes": 166495,
+        "crc32": "773e549e"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_3.glove.csv",
+        "bytes": 656357,
+        "crc32": "5d907c85"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A032",
+    "historical_window_s": [
+      1.341670036315918,
+      7.9916698932647705
+    ],
+    "source_window_s": [
+      2.1666699647903442,
+      7.166669964790344
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_2_Trial_4",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_2_Trial_4",
+    "status": "included",
+    "frames": 12155,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_4.qualisys.csv",
+        "bytes": 23057863,
+        "crc32": "0c2901e0"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_4.qualisys.c3d",
+        "bytes": 8368640,
+        "crc32": "80f6802f"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_4.labels.csv",
+        "bytes": 193687,
+        "crc32": "81807054"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_4.glove.csv",
+        "bytes": 745822,
+        "crc32": "6aa2185e"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A033",
+    "historical_window_s": [
+      2.5999999046325684,
+      4.433330059051514
+    ],
+    "source_window_s": [
+      2.5999999046325684,
+      4.433330059051514
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_2_Trial_5",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_2_Trial_5",
+    "status": "included",
+    "frames": 11679,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_5.qualisys.csv",
+        "bytes": 22508137,
+        "crc32": "555f1298"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_5.qualisys.c3d",
+        "bytes": 8040960,
+        "crc32": "ff5b87dd"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_5.labels.csv",
+        "bytes": 180705,
+        "crc32": "d6a6df34"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_2_Trial_5.glove.csv",
+        "bytes": 711477,
+        "crc32": "2f33056b"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A034",
+    "historical_window_s": [
+      9.058330059051514,
+      11.025000095367432
+    ],
+    "source_window_s": [
+      9.058330059051514,
+      11.025000095367432
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_4_Trial_1",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_4_Trial_1",
+    "status": "included",
+    "frames": 11846,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_1.qualisys.csv",
+        "bytes": 22953315,
+        "crc32": "1de3125d"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_1.qualisys.c3d",
+        "bytes": 8156160,
+        "crc32": "5f10a92a"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_1.labels.csv",
+        "bytes": 185694,
+        "crc32": "769367db"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_1.glove.csv",
+        "bytes": 685447,
+        "crc32": "74545484"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A035",
+    "historical_window_s": [
+      2.4916698932647705,
+      8.650000095367432
+    ],
+    "source_window_s": [
+      3.070834994316101,
+      8.070834994316101
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_4_Trial_2",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_4_Trial_2",
+    "status": "included",
+    "frames": 13044,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_2.qualisys.csv",
+        "bytes": 25145684,
+        "crc32": "a7ed4f43"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_2.qualisys.c3d",
+        "bytes": 8979968,
+        "crc32": "c7c76e7d"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_2.labels.csv",
+        "bytes": 204628,
+        "crc32": "ae901a18"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_2.glove.csv",
+        "bytes": 793827,
+        "crc32": "afadd743"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A036",
+    "historical_window_s": [
+      4.875,
+      8.125
+    ],
+    "source_window_s": [
+      4.875,
+      8.125
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_4_Trial_3",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_4_Trial_3",
+    "status": "included",
+    "frames": 13792,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_3.qualisys.csv",
+        "bytes": 26598393,
+        "crc32": "58f03351"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_3.qualisys.c3d",
+        "bytes": 9495040,
+        "crc32": "ec104a80"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_3.labels.csv",
+        "bytes": 214151,
+        "crc32": "3add8135"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_3.glove.csv",
+        "bytes": 800907,
+        "crc32": "68ebf3ac"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A037",
+    "historical_window_s": [
+      5.900000095367432,
+      10.908329963684082
+    ],
+    "source_window_s": [
+      5.904165029525757,
+      10.904165029525757
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_4_Trial_4",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_4_Trial_4",
+    "status": "included",
+    "frames": 10973,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_4.qualisys.csv",
+        "bytes": 21298616,
+        "crc32": "f7a41cc9"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_4.qualisys.c3d",
+        "bytes": 7555072,
+        "crc32": "78f99278"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_4.labels.csv",
+        "bytes": 173900,
+        "crc32": "a031fe82"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_4.glove.csv",
+        "bytes": 669600,
+        "crc32": "45351281"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A038",
+    "historical_window_s": [
+      5.233330011367798,
+      6.2583301067352295
+    ],
+    "source_window_s": [
+      5.233330011367798,
+      6.2583301067352295
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_4_Trial_5",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_4_Trial_5",
+    "status": "included",
+    "frames": 10892,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_5.qualisys.csv",
+        "bytes": 21117952,
+        "crc32": "626450f0"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_5.qualisys.c3d",
+        "bytes": 7499776,
+        "crc32": "787582d0"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_5.labels.csv",
+        "bytes": 169675,
+        "crc32": "8af25e18"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_4_Trial_5.glove.csv",
+        "bytes": 664787,
+        "crc32": "b4c63b6d"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A039",
+    "historical_window_s": [
+      1.4000000953674316,
+      5.400000095367432
+    ],
+    "source_window_s": [
+      1.4000000953674316,
+      5.400000095367432
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_6_Trial_1",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_6_Trial_1",
+    "status": "included",
+    "frames": 14256,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_1.qualisys.csv",
+        "bytes": 27095715,
+        "crc32": "71ebac04"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_1.qualisys.c3d",
+        "bytes": 9814016,
+        "crc32": "1d4618ae"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_1.labels.csv",
+        "bytes": 220013,
+        "crc32": "15724cf1"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_1.glove.csv",
+        "bytes": 843617,
+        "crc32": "8481bd1a"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A040",
+    "historical_window_s": [
+      2.200000047683716,
+      11.908329963684082
+    ],
+    "source_window_s": [
+      4.554165005683899,
+      9.554165005683899
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_6_Trial_2",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_6_Trial_2",
+    "status": "included",
+    "frames": 14987,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_2.qualisys.csv",
+        "bytes": 28865380,
+        "crc32": "2125a2ee"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_2.qualisys.c3d",
+        "bytes": 10316800,
+        "crc32": "7d84ed93"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_2.labels.csv",
+        "bytes": 239475,
+        "crc32": "c689663f"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_2.glove.csv",
+        "bytes": 942103,
+        "crc32": "cf59b565"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A041",
+    "historical_window_s": [
+      5.316669940948486,
+      12.849999904632568
+    ],
+    "source_window_s": [
+      6.583334922790527,
+      11.583334922790527
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_6_Trial_3",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_6_Trial_3",
+    "status": "included",
+    "frames": 13291,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_3.qualisys.csv",
+        "bytes": 24791747,
+        "crc32": "db336e41"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_3.qualisys.c3d",
+        "bytes": 9149952,
+        "crc32": "4a3c9295"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_3.labels.csv",
+        "bytes": 222555,
+        "crc32": "8115180f"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_3.glove.csv",
+        "bytes": 872080,
+        "crc32": "064f67df"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A042",
+    "historical_window_s": [
+      33.375,
+      34.958329916000366
+    ],
+    "source_window_s": [
+      33.375,
+      34.958329916000366
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_6_Trial_4",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_6_Trial_4",
+    "status": "included",
+    "frames": 12364,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_4.qualisys.csv",
+        "bytes": 23992581,
+        "crc32": "afa4100f"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_4.qualisys.c3d",
+        "bytes": 8512512,
+        "crc32": "55baff03"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_4.labels.csv",
+        "bytes": 209093,
+        "crc32": "3e650fdd"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_4.glove.csv",
+        "bytes": 810629,
+        "crc32": "de52812d"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A043",
+    "historical_window_s": [
+      1.283329963684082,
+      11.283329963684082
+    ],
+    "source_window_s": [
+      3.783329963684082,
+      8.783329963684082
+    ]
+  },
+  {
+    "id": "andy/Participant_8524_Setup_B_Seq_6_Trial_5",
+    "dataset": "andy",
+    "subject": "8524",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/8524",
+    "recording_id": "andy/Participant_8524_Setup_B_Seq_6_Trial_5",
+    "status": "included",
+    "frames": 12947,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_5.qualisys.csv",
+        "bytes": 24786377,
+        "crc32": "09b9857a"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_5.qualisys.c3d",
+        "bytes": 8913408,
+        "crc32": "ab387801"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_5.labels.csv",
+        "bytes": 200741,
+        "crc32": "7f89b0d2"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_8524/Participant_8524_Setup_B_Seq_6_Trial_5.glove.csv",
+        "bytes": 761792,
+        "crc32": "371b51ea"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A044",
+    "historical_window_s": [
+      2.3833301067352295,
+      4.3833301067352295
+    ],
+    "source_window_s": [
+      2.3833301067352295,
+      4.3833301067352295
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_1_Trial_1",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_1_Trial_1",
+    "status": "included",
+    "frames": 13970,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_1.qualisys.csv",
+        "bytes": 26166696,
+        "crc32": "57637167"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_1.qualisys.c3d",
+        "bytes": 9617408,
+        "crc32": "2942b062"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_1.labels.csv",
+        "bytes": 213782,
+        "crc32": "f445a0db"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_1.glove.csv",
+        "bytes": 813177,
+        "crc32": "d1f7595f"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A045",
+    "historical_window_s": [
+      1.0999999046325684,
+      5.3833301067352295
+    ],
+    "source_window_s": [
+      1.0999999046325684,
+      5.3833301067352295
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_1_Trial_2",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_1_Trial_2",
+    "status": "included",
+    "frames": 13684,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_2.qualisys.csv",
+        "bytes": 25889892,
+        "crc32": "9e2112cd"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_2.qualisys.c3d",
+        "bytes": 9420288,
+        "crc32": "5b264d28"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_2.labels.csv",
+        "bytes": 206454,
+        "crc32": "41a3825c"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_2.glove.csv",
+        "bytes": 807157,
+        "crc32": "63b7564f"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A046",
+    "historical_window_s": [
+      1.0,
+      6.708329916000366
+    ],
+    "source_window_s": [
+      1.354164958000183,
+      6.354164958000183
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_1_Trial_3",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_1_Trial_3",
+    "status": "included",
+    "frames": 18527,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_3.qualisys.csv",
+        "bytes": 35067558,
+        "crc32": "4960419b"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_3.qualisys.c3d",
+        "bytes": 12752384,
+        "crc32": "6e7baa2e"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_3.labels.csv",
+        "bytes": 307703,
+        "crc32": "10abb131"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_3.glove.csv",
+        "bytes": 1188683,
+        "crc32": "6de49447"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A047",
+    "historical_window_s": [
+      2.125,
+      6.841670036315918
+    ],
+    "source_window_s": [
+      2.125,
+      6.841670036315918
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_1_Trial_4",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_1_Trial_4",
+    "status": "included",
+    "frames": 12609,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_4.qualisys.csv",
+        "bytes": 24265316,
+        "crc32": "4aaf2660"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_4.qualisys.c3d",
+        "bytes": 8680960,
+        "crc32": "4c966b83"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_4.labels.csv",
+        "bytes": 195159,
+        "crc32": "b6d5a7eb"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_4.glove.csv",
+        "bytes": 767694,
+        "crc32": "62b4d4b1"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A048",
+    "historical_window_s": [
+      1.0,
+      8.13333010673523
+    ],
+    "source_window_s": [
+      2.0666650533676147,
+      7.066665053367615
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_1_Trial_5",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_1_Trial_5",
+    "status": "included",
+    "frames": 12866,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_5.qualisys.csv",
+        "bytes": 24298218,
+        "crc32": "51360385"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_5.qualisys.c3d",
+        "bytes": 8857600,
+        "crc32": "f6011c19"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_5.labels.csv",
+        "bytes": 202321,
+        "crc32": "37d4bbde"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_1_Trial_5.glove.csv",
+        "bytes": 783050,
+        "crc32": "354a0205"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A049",
+    "historical_window_s": [
+      1.0,
+      6.541670083999634
+    ],
+    "source_window_s": [
+      1.270835041999817,
+      6.270835041999817
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_4_Trial_1",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_4_Trial_1",
+    "status": "included",
+    "frames": 13032,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_1.qualisys.csv",
+        "bytes": 24841031,
+        "crc32": "5a45d292"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_1.qualisys.c3d",
+        "bytes": 8971776,
+        "crc32": "796cd8fa"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_1.labels.csv",
+        "bytes": 208854,
+        "crc32": "f8c821b3"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_1.glove.csv",
+        "bytes": 775759,
+        "crc32": "f2f54b3a"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A050",
+    "historical_window_s": [
+      1.0,
+      10.816669940948486
+    ],
+    "source_window_s": [
+      3.408334970474243,
+      8.408334970474243
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_4_Trial_2",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_4_Trial_2",
+    "status": "included",
+    "frames": 13951,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_2.qualisys.csv",
+        "bytes": 26466478,
+        "crc32": "bba87a0d"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_2.qualisys.c3d",
+        "bytes": 9604096,
+        "crc32": "7860b4d9"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_2.labels.csv",
+        "bytes": 219840,
+        "crc32": "1b6432d5"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_2.glove.csv",
+        "bytes": 831578,
+        "crc32": "d6c10e5e"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A051",
+    "historical_window_s": [
+      1.0,
+      7.400000095367432
+    ],
+    "source_window_s": [
+      1.7000000476837158,
+      6.700000047683716
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_4_Trial_3",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_4_Trial_3",
+    "status": "included",
+    "frames": 12826,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_3.qualisys.csv",
+        "bytes": 24291076,
+        "crc32": "cabb28c6"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_3.qualisys.c3d",
+        "bytes": 8829952,
+        "crc32": "f7d15c53"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_3.labels.csv",
+        "bytes": 210985,
+        "crc32": "042129f9"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_3.glove.csv",
+        "bytes": 786316,
+        "crc32": "c40fe798"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A052",
+    "historical_window_s": [
+      1.0,
+      7.099999904632568
+    ],
+    "source_window_s": [
+      1.5499999523162842,
+      6.549999952316284
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_4_Trial_4",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_4_Trial_4",
+    "status": "included",
+    "frames": 14428,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_4.qualisys.csv",
+        "bytes": 27366700,
+        "crc32": "c7d623b6"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_4.qualisys.c3d",
+        "bytes": 9932288,
+        "crc32": "b50d8115"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_4.labels.csv",
+        "bytes": 258684,
+        "crc32": "acf8fa9f"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_4.glove.csv",
+        "bytes": 977688,
+        "crc32": "2616f91d"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A053",
+    "historical_window_s": [
+      1.0,
+      7.25
+    ],
+    "source_window_s": [
+      1.625,
+      6.625
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_4_Trial_5",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_4_Trial_5",
+    "status": "included",
+    "frames": 15954,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_5.qualisys.csv",
+        "bytes": 30212637,
+        "crc32": "517b1745"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_5.qualisys.c3d",
+        "bytes": 10982400,
+        "crc32": "46dbc35c"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_5.labels.csv",
+        "bytes": 248325,
+        "crc32": "79d7c80a"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_4_Trial_5.glove.csv",
+        "bytes": 914594,
+        "crc32": "32501480"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A054",
+    "historical_window_s": [
+      1.0,
+      6.474999904632568
+    ],
+    "source_window_s": [
+      1.2374999523162842,
+      6.237499952316284
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_5_Trial_1",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_5_Trial_1",
+    "status": "included",
+    "frames": 14530,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_1.qualisys.csv",
+        "bytes": 27852107,
+        "crc32": "d80bbcdc"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_1.qualisys.c3d",
+        "bytes": 10002432,
+        "crc32": "f210c242"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_1.labels.csv",
+        "bytes": 236316,
+        "crc32": "d410229f"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_1.glove.csv",
+        "bytes": 898468,
+        "crc32": "4ca33e53"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A055",
+    "historical_window_s": [
+      1.0,
+      8.316669940948486
+    ],
+    "source_window_s": [
+      2.158334970474243,
+      7.158334970474243
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_5_Trial_2",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_5_Trial_2",
+    "status": "included",
+    "frames": 15372,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_2.qualisys.csv",
+        "bytes": 29166131,
+        "crc32": "9a4f0602"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_2.qualisys.c3d",
+        "bytes": 10582016,
+        "crc32": "ca501c16"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_2.labels.csv",
+        "bytes": 249733,
+        "crc32": "7eb83e1f"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_2.glove.csv",
+        "bytes": 938423,
+        "crc32": "678aef0c"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A056",
+    "historical_window_s": [
+      1.0,
+      7.566669940948486
+    ],
+    "source_window_s": [
+      1.7833349704742432,
+      6.783334970474243
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_5_Trial_3",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_5_Trial_3",
+    "status": "included",
+    "frames": 14486,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_3.qualisys.csv",
+        "bytes": 27666307,
+        "crc32": "25578c86"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_3.qualisys.c3d",
+        "bytes": 9972224,
+        "crc32": "5ee705a0"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_3.labels.csv",
+        "bytes": 286838,
+        "crc32": "ce8a102e"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_3.glove.csv",
+        "bytes": 1111015,
+        "crc32": "04d6aec1"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A057",
+    "historical_window_s": [
+      1.0,
+      7.075000047683716
+    ],
+    "source_window_s": [
+      1.537500023841858,
+      6.537500023841858
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_5_Trial_4",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_5_Trial_4",
+    "status": "included",
+    "frames": 12152,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_4.qualisys.csv",
+        "bytes": 23219748,
+        "crc32": "2089c06d"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_4.qualisys.c3d",
+        "bytes": 8366592,
+        "crc32": "70a42c71"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_4.labels.csv",
+        "bytes": 191966,
+        "crc32": "091b7c3f"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_4.glove.csv",
+        "bytes": 715166,
+        "crc32": "9cfe5a8b"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A058",
+    "historical_window_s": [
+      1.0,
+      8.049999952316284
+    ],
+    "source_window_s": [
+      2.024999976158142,
+      7.024999976158142
+    ]
+  },
+  {
+    "id": "andy/Participant_9266_Setup_B_Seq_5_Trial_5",
+    "dataset": "andy",
+    "subject": "9266",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9266",
+    "recording_id": "andy/Participant_9266_Setup_B_Seq_5_Trial_5",
+    "status": "included",
+    "frames": 13705,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_5.qualisys.csv",
+        "bytes": 26215126,
+        "crc32": "384a3e87"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_5.qualisys.c3d",
+        "bytes": 9435136,
+        "crc32": "85833191"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_5.labels.csv",
+        "bytes": 228070,
+        "crc32": "3d367ede"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9266/Participant_9266_Setup_B_Seq_5_Trial_5.glove.csv",
+        "bytes": 850411,
+        "crc32": "f67784ff"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A059",
+    "historical_window_s": [
+      1.0,
+      8.075000047683716
+    ],
+    "source_window_s": [
+      2.037500023841858,
+      7.037500023841858
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_1_Trial_1",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_1_Trial_1",
+    "status": "included",
+    "frames": 11303,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_1.qualisys.csv",
+        "bytes": 21367471,
+        "crc32": "92f3f531"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_1.qualisys.c3d",
+        "bytes": 7782400,
+        "crc32": "0aebc15b"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_1.labels.csv",
+        "bytes": 177320,
+        "crc32": "0ef97128"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_1.glove.csv",
+        "bytes": 657032,
+        "crc32": "957c0a28"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A060",
+    "historical_window_s": [
+      1.0,
+      6.908329963684082
+    ],
+    "source_window_s": [
+      1.454164981842041,
+      6.454164981842041
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_1_Trial_2",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_1_Trial_2",
+    "status": "included",
+    "frames": 10736,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_2.qualisys.csv",
+        "bytes": 20232362,
+        "crc32": "a255881c"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_2.qualisys.c3d",
+        "bytes": 7392256,
+        "crc32": "5ed38718"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_2.labels.csv",
+        "bytes": 168218,
+        "crc32": "8bfae197"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_2.glove.csv",
+        "bytes": 635376,
+        "crc32": "74f982fb"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A061",
+    "historical_window_s": [
+      1.0,
+      6.875
+    ],
+    "source_window_s": [
+      1.4375,
+      6.4375
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_1_Trial_3",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_1_Trial_3",
+    "status": "included",
+    "frames": 10594,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_3.qualisys.csv",
+        "bytes": 20317963,
+        "crc32": "cfa5346d"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_3.qualisys.c3d",
+        "bytes": 7294464,
+        "crc32": "0e523ccd"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_3.labels.csv",
+        "bytes": 163931,
+        "crc32": "0ab89f25"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_3.glove.csv",
+        "bytes": 631089,
+        "crc32": "951dc1b1"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A062",
+    "historical_window_s": [
+      1.0,
+      6.75
+    ],
+    "source_window_s": [
+      1.375,
+      6.375
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_1_Trial_4",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_1_Trial_4",
+    "status": "included",
+    "frames": 10409,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_4.qualisys.csv",
+        "bytes": 19892760,
+        "crc32": "41a21b39"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_4.qualisys.c3d",
+        "bytes": 7167488,
+        "crc32": "8aa5d602"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_4.labels.csv",
+        "bytes": 165409,
+        "crc32": "9b4b669e"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_4.glove.csv",
+        "bytes": 584090,
+        "crc32": "9f17dfc6"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A063",
+    "historical_window_s": [
+      1.0,
+      6.716670036315918
+    ],
+    "source_window_s": [
+      1.358335018157959,
+      6.358335018157959
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_1_Trial_5",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_1_Trial_5",
+    "status": "included",
+    "frames": 8908,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_5.qualisys.csv",
+        "bytes": 17005087,
+        "crc32": "b15cb162"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_5.qualisys.c3d",
+        "bytes": 6134784,
+        "crc32": "091bd831"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_5.labels.csv",
+        "bytes": 140805,
+        "crc32": "75bd76c9"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_1_Trial_5.glove.csv",
+        "bytes": 544472,
+        "crc32": "86303f97"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A064",
+    "historical_window_s": [
+      1.0,
+      6.674999952316284
+    ],
+    "source_window_s": [
+      1.337499976158142,
+      6.337499976158142
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_3_Trial_1",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_3_Trial_1",
+    "status": "included",
+    "frames": 9946,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_1.qualisys.csv",
+        "bytes": 19012087,
+        "crc32": "2cb23f8e"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_1.qualisys.c3d",
+        "bytes": 6848512,
+        "crc32": "c69afff9"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_1.labels.csv",
+        "bytes": 158879,
+        "crc32": "013bacd5"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_1.glove.csv",
+        "bytes": 593812,
+        "crc32": "2231b155"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A065",
+    "historical_window_s": [
+      1.0,
+      5.25
+    ],
+    "source_window_s": [
+      1.0,
+      5.25
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_3_Trial_2",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_3_Trial_2",
+    "status": "included",
+    "frames": 10488,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_2.qualisys.csv",
+        "bytes": 19759269,
+        "crc32": "c99cc016"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_2.qualisys.c3d",
+        "bytes": 7221760,
+        "crc32": "4e0fa601"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_2.labels.csv",
+        "bytes": 161726,
+        "crc32": "fb3df13b"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_2.glove.csv",
+        "bytes": 617458,
+        "crc32": "d238c4a1"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A066",
+    "historical_window_s": [
+      1.0,
+      6.191669940948486
+    ],
+    "source_window_s": [
+      1.0958349704742432,
+      6.095834970474243
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_3_Trial_3",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_3_Trial_3",
+    "status": "included",
+    "frames": 11807,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_3.qualisys.csv",
+        "bytes": 22173863,
+        "crc32": "9e466b8a"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_3.qualisys.c3d",
+        "bytes": 8129024,
+        "crc32": "8d1bbbe0"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_3.labels.csv",
+        "bytes": 182025,
+        "crc32": "6a3260e7"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_3.glove.csv",
+        "bytes": 709836,
+        "crc32": "22aa99d6"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A067",
+    "historical_window_s": [
+      1.0,
+      6.908329963684082
+    ],
+    "source_window_s": [
+      1.454164981842041,
+      6.454164981842041
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_3_Trial_4",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_3_Trial_4",
+    "status": "included",
+    "frames": 10841,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_4.qualisys.csv",
+        "bytes": 20558113,
+        "crc32": "7c9c9d2f"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_4.qualisys.c3d",
+        "bytes": 7464448,
+        "crc32": "0216ba80"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_4.labels.csv",
+        "bytes": 167891,
+        "crc32": "5e80f8dc"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_4.glove.csv",
+        "bytes": 649961,
+        "crc32": "7b8dd4fe"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A068",
+    "historical_window_s": [
+      1.0,
+      6.783329963684082
+    ],
+    "source_window_s": [
+      1.391664981842041,
+      6.391664981842041
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_3_Trial_5",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_3_Trial_5",
+    "status": "included",
+    "frames": 11058,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_5.qualisys.csv",
+        "bytes": 20190542,
+        "crc32": "2e749e90"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_5.qualisys.c3d",
+        "bytes": 7613952,
+        "crc32": "6e04235b"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_5.labels.csv",
+        "bytes": 172296,
+        "crc32": "9acf36d7"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_3_Trial_5.glove.csv",
+        "bytes": 671874,
+        "crc32": "11130251"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A069",
+    "historical_window_s": [
+      1.0,
+      8.875
+    ],
+    "source_window_s": [
+      2.4375,
+      7.4375
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_4_Trial_1",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_4_Trial_1",
+    "status": "included",
+    "frames": 14161,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_1.qualisys.csv",
+        "bytes": 26662400,
+        "crc32": "7a18c9a7"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_1.qualisys.c3d",
+        "bytes": 9748480,
+        "crc32": "1093963f"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_1.labels.csv",
+        "bytes": 217478,
+        "crc32": "b338238e"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_1.glove.csv",
+        "bytes": 818640,
+        "crc32": "b28ae685"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A070",
+    "historical_window_s": [
+      1.0,
+      11.0
+    ],
+    "source_window_s": [
+      3.5,
+      8.5
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_4_Trial_2",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_4_Trial_2",
+    "status": "included",
+    "frames": 12695,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_2.qualisys.csv",
+        "bytes": 24086079,
+        "crc32": "99756fbe"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_2.qualisys.c3d",
+        "bytes": 8739840,
+        "crc32": "ea6e6ac7"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_2.labels.csv",
+        "bytes": 199015,
+        "crc32": "aa314fe2"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_2.glove.csv",
+        "bytes": 737610,
+        "crc32": "ec6a9773"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A071",
+    "historical_window_s": [
+      1.0,
+      7.666670083999634
+    ],
+    "source_window_s": [
+      1.833335041999817,
+      6.833335041999817
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_4_Trial_3",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_4_Trial_3",
+    "status": "included",
+    "frames": 12572,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_3.qualisys.csv",
+        "bytes": 23794776,
+        "crc32": "52d203e4"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_3.qualisys.c3d",
+        "bytes": 8655360,
+        "crc32": "9fce9357"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_3.labels.csv",
+        "bytes": 192142,
+        "crc32": "bf241c9c"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_3.glove.csv",
+        "bytes": 755254,
+        "crc32": "09a0c45c"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A072",
+    "historical_window_s": [
+      1.0,
+      6.575000047683716
+    ],
+    "source_window_s": [
+      1.287500023841858,
+      6.287500023841858
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_4_Trial_4",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_4_Trial_4",
+    "status": "included",
+    "frames": 11878,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_4.qualisys.csv",
+        "bytes": 22597359,
+        "crc32": "30b21afe"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_4.qualisys.c3d",
+        "bytes": 8178176,
+        "crc32": "f628e225"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_4.labels.csv",
+        "bytes": 182685,
+        "crc32": "c9fc1704"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_4.glove.csv",
+        "bytes": 714813,
+        "crc32": "94b2f1a7"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A073",
+    "historical_window_s": [
+      1.0,
+      5.908329963684082
+    ],
+    "source_window_s": [
+      1.0,
+      5.908329963684082
+    ]
+  },
+  {
+    "id": "andy/Participant_9875_Setup_B_Seq_4_Trial_5",
+    "dataset": "andy",
+    "subject": "9875",
+    "setup": "B",
+    "partition": "final_holdout",
+    "group_id": "andy/9875",
+    "recording_id": "andy/Participant_9875_Setup_B_Seq_4_Trial_5",
+    "status": "included",
+    "frames": 11564,
+    "sources": [
+      {
+        "archive": "qualisys_csv.zip",
+        "member": "qualisys_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_5.qualisys.csv",
+        "bytes": 22093592,
+        "crc32": "7a761373"
+      },
+      {
+        "archive": "qualisys_c3d.zip",
+        "member": "qualisys_c3d/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_5.qualisys.c3d",
+        "bytes": 7962112,
+        "crc32": "afdd842c"
+      },
+      {
+        "archive": "labels_csv.zip",
+        "member": "labels_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_5.labels.csv",
+        "bytes": 181697,
+        "crc32": "811ddc9c"
+      },
+      {
+        "archive": "glove_csv.zip",
+        "member": "glove_csv/Participant_9875/Participant_9875_Setup_B_Seq_4_Trial_5.glove.csv",
+        "bytes": 694981,
+        "crc32": "c796a2cf"
+      }
+    ],
+    "history": "inventory_and_observability_only",
+    "window_key": "A074",
+    "historical_window_s": [
+      1.0,
+      6.799999952316284
+    ],
+    "source_window_s": [
+      1.399999976158142,
+      6.399999976158142
+    ]
+  }
+]
