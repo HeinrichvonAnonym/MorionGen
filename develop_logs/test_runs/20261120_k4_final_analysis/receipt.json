@@ -1,0 +1,24 @@
+{
+  "summary_sha256": "6421b30d7e8563cb64e9f20bea46abf8f342a440c834672542c9aed41f0985fe",
+  "checks": "count identities, paired-export counts, runtime identity, Python compilation, browser format/comparison/geometry controls",
+  "files": {
+    "python/scripts/evalkit_k4_final_analysis.py": "d97c6525c4f277232c4a52c541e03d6be4850e8824487dab086eb2e9133425fd",
+    "develop_logs/test_runs/20261120_k4_final_analysis/build_report.py": "ef97dc729fa6ebf2f7d49fa8af571d56f9cbb23a3802bc099b0cd7e1252c3be9",
+    "develop_logs/notes/20261120_k4_cpu_final_analysis.md": "98a3bc738d455415ba7098fc5a6e287ce32e7c613ccd63aaac9e2b369f3af68d",
+    "docs/20261120_k4_cpu_final_analysis.html": "b550b408af1f1ca2fc28e9121a63f40752d42ba1dadc981e98cbd4a179e0ff7a"
+  },
+  "preservation_status": {
+    "protected_checked": 610,
+    "protected_mismatches": [
+      {
+        "path": "plans/20261112_gold_anchor_and_own_method_plan.md",
+        "expected": "9728f94953cd724dbfdce16f640f1f4e40c076ad9285d1033685c28d33a100ca",
+        "actual": "30b5fe7c77f3f4dbf3ff0b008f3adef646b28b0632802d6729fbedd6590b4ff4"
+      }
+    ],
+    "runtime_files_checked": 2106,
+    "runtime_mismatches": [],
+    "ablation_completion_exists": false,
+    "replay_completion_exists": true
+  }
+}
