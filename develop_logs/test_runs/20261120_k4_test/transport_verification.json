@@ -1,0 +1,75 @@
+{
+  "eight_format_export": [
+    {
+      "method": "motionlcm",
+      "byte_identical_input_files": 2
+    },
+    {
+      "method": "omnicontrol",
+      "byte_identical_input_files": 4
+    },
+    {
+      "method": "ardy",
+      "byte_identical_input_files": 3
+    },
+    {
+      "method": "chois",
+      "byte_identical_input_files": 4
+    },
+    {
+      "method": "closd",
+      "byte_identical_input_files": 4
+    },
+    {
+      "method": "dart",
+      "byte_identical_input_files": 4
+    },
+    {
+      "method": "kimodo",
+      "byte_identical_input_files": 3
+    },
+    {
+      "method": "primal",
+      "byte_identical_input_files": 5
+    }
+  ],
+  "score_pairs": [
+    {
+      "window": "000",
+      "method": "kimodo",
+      "score": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/pool_candidates/000_kimodo/pelvis_continuity/scores/native/000_kimodo.json",
+      "full_metric_tree_identical": true
+    },
+    {
+      "window": "000",
+      "method": "kimodo",
+      "score": "/home/heinrich/MorionGen/develop_logs/test_runs/20261118_k4_monitor/pool_candidates/000_kimodo/pelvis_continuity/scores/export/000_kimodo.json",
+      "full_metric_tree_identical": true
+    },
+    {
+      "window": "008",
+      "method": "motionlcm",
+      "score": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_candidate_ablation_20261118_v1/cells/008_motionlcm/position_chain/attempt_1795022789733932239/scores/native/008_motionlcm.json",
+      "full_metric_tree_identical": true
+    },
+    {
+      "window": "008",
+      "method": "motionlcm",
+      "score": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_candidate_ablation_20261118_v1/cells/008_motionlcm/position_chain/attempt_1795022789733932239/scores/export/008_motionlcm.json",
+      "full_metric_tree_identical": true
+    },
+    {
+      "window": "077",
+      "method": "ardy",
+      "score": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_budget_v3/scores/native/077_ardy.json",
+      "full_metric_tree_identical": true
+    },
+    {
+      "window": "077",
+      "method": "ardy",
+      "score": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_regression_20261118_budget_v3/scores/export/077_ardy.json",
+      "full_metric_tree_identical": true
+    }
+  ],
+  "scope": "Development-only equivalence of new path orchestration; no test result used"
+}

@@ -1,0 +1,12 @@
+{
+  "protocol_sha256": "19a06814508df9d84d56f17bba5417dc8397d143a48bcffcfd99ad47a90b8141",
+  "window_denominator_verified": 532,
+  "route_denominator_verified": 4256,
+  "window_rule_verified": true,
+  "job_reference_isolation_verified": true,
+  "frozen_margin": 0.8,
+  "snapshot_completed": 9,
+  "snapshot_passed": 9,
+  "snapshot_execution_failed": 0,
+  "running": true
+}

@@ -1,0 +1,24 @@
+{
+  "version": "k4-test-budget-1",
+  "run": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1",
+  "protocol_sha256": "19a06814508df9d84d56f17bba5417dc8397d143a48bcffcfd99ad47a90b8141",
+  "fit_commit": "dfe82393261902b4b4003c6b0943ca146176d279",
+  "fit_config_sha256": "7e48648207d68460281cc45eaf989cdce6c92216cedd8f2e9e4bb048da7774db",
+  "expected_routes": 4256,
+  "window_rule": "Each included TV recording: central 5 physical seconds, shorter recordings full length; original source samples retained.",
+  "workers": 14,
+  "evaluation": "Actual visited candidates only; selected output fixed before independent R scoring; unvisited unknown; no oracle/missed-selection claims.",
+  "code_identity": {
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/control/evalkit_k4_test_evaluate.py": "5dcd27c902faa5e8fca41ef7eed5c2a729bb5ccebd3edd3d7ac7525d074ecbe0",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/control/evalkit_k4_test.py": "74079999c43a6894fb7dd47dc7b2347e709837ae01b1dbf3bc573e3bd2070a6d"
+  },
+  "known_historical_differences": [
+    {
+      "path": "plans/20261112_gold_anchor_and_own_method_plan.md",
+      "original": "9728f94953cd724dbfdce16f640f1f4e40c076ad9285d1033685c28d33a100ca",
+      "current": "30b5fe7c77f3f4dbf3ff0b008f3adef646b28b0632802d6729fbedd6590b4ff4"
+    }
+  ],
+  "prior_holdout_use_retained": true,
+  "andy_status": "Separate head/thorax test requires reference adapter; not in TV denominator."
+}
