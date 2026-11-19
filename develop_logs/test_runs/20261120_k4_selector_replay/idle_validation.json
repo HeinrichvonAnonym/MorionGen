@@ -1,0 +1,20 @@
+{
+  "unit_tests": 3,
+  "unchanged_poll_test_iterations": 100,
+  "atomic_same_size_mtime_replace_detected": true,
+  "stable_functions": [
+    "read",
+    "sha",
+    "write",
+    "worker",
+    "allocation",
+    "prepare",
+    "audit"
+  ],
+  "preserved_existing_files": 2010,
+  "changed_files": [],
+  "handoff_receipt_sha256": "0ae68224b5d7c1358ddc34e86e240f2874d906874dc93cc6fd558a604c7ecc32",
+  "new_controller_pid": 565995,
+  "ablation_process_untouched": 561230,
+  "new_holdout_uses": 0
+}

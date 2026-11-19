@@ -1,5 +1,5 @@
 """Read-only replay of frozen D-only selectors; independent cached R audit follows selection."""
-import argparse, fcntl, hashlib, json, os, shutil, statistics, subprocess, sys, time
+import argparse, ast, fcntl, hashlib, json, os, shutil, statistics, subprocess, sys, time
 from pathlib import Path
 
 def read(p): return json.loads(Path(p).read_text())
@@ -78,6 +78,40 @@ def audit(key,out,frozen):
   old=read(old);row['historical_selection']=old.get('selected');row['historical_budget_match']=old.get('selected')==result['budget_selected']
  write(out/'routes'/key/'audit.json',row);return row
 
+class LedgerWatch:
+ """Metadata is a wake-up hint only; artifact hashes remain mandatory at use."""
+ def __init__(self,path):
+  self.path=Path(path);self.signature=None;self.data=None;self.reads=0;self.ready=set();self.generation=0
+ def poll(self):
+  st=self.path.stat();sig=(st.st_dev,st.st_ino,st.st_size,st.st_mtime_ns,st.st_ctime_ns)
+  if sig==self.signature:return self.data,False
+  with self.path.open() as f:
+   opened=os.fstat(f.fileno());data=json.load(f)
+  self.signature=(opened.st_dev,opened.st_ino,opened.st_size,opened.st_mtime_ns,opened.st_ctime_ns)
+  self.data=data;self.reads+=1;self.generation+=1
+  self.ready={r['window']+'_'+r['method'] for r in data['rows'] if r.get('fully_evaluated')}
+  return data,True
+
+
+def control_identity(out,identity,previous_runner):
+ """Append a controller epoch; preserve the original run identity."""
+ ip=out/'identity.json'
+ if not ip.exists():write(ip,identity);return
+ old=read(ip)
+ if old==identity:return
+ if previous_runner is None:raise ValueError('Explicit previous runner required for scheduling upgrade')
+ if sha(previous_runner)!=old['script_sha256']:raise ValueError('Original runner hash mismatch')
+ if {k:v for k,v in old.items() if k!='script_sha256'}!={k:v for k,v in identity.items() if k!='script_sha256'}:raise ValueError('Scientific replay identity changed')
+ def functions(path):return {n.name:ast.dump(n,include_attributes=False) for n in ast.parse(Path(path).read_text()).body if isinstance(n,ast.FunctionDef)}
+ before,after=functions(previous_runner),functions(__file__)
+ stable=('read','sha','write','worker','allocation','prepare','audit')
+ if any(before[n]!=after[n] for n in stable):raise ValueError('Scheduling upgrade changed scientific execution or integrity checks')
+ epoch=out/'controller_epochs'/(identity['script_sha256']+'.json')
+ receipt=dict(previous_runner=str(previous_runner),previous_sha256=sha(previous_runner),new_identity=identity,unchanged_functions=list(stable),scope='Ledger change detection, ready queue and idle backoff only')
+ if epoch.exists() and read(epoch)!=receipt:raise ValueError('Controller epoch changed')
+ if not epoch.exists():write(epoch,receipt)
+
+
 def run(a):
  out=a.output;out.mkdir(parents=True,exist_ok=True);lock=(out/'.lock').open('w');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
  p=read(a.run/'protocol.json');frozen=Path(p['frozen_run']);fp=read(frozen/'protocol.json');cfg=read(fp['fit_config']);settings={k:cfg[k] for k in ['selection_thresholds','selection_include_export_path','selection_policy','candidate_budget']}
@@ -87,18 +121,27 @@ def run(a):
  protected=read(p['preservation_manifest'])['files']
  if any(sha(Path(p['workspace_root'])/n)!=h for n,h in protected.items()):raise ValueError('Protected file changed')
  identity={'version':'D-only-replay-1','script_sha256':sha(__file__),'protocol_sha256':sha(a.run/'protocol.json'),'settings':settings,'fit_code_root':p['code_root'],'expected':656,'protected_checked':len(protected),'new_holdout_uses':0}
- ip=out/'identity.json'
- if ip.exists() and read(ip)!=identity:raise ValueError('Replay identity changed')
- write(ip,identity);running={};rows={};errors={};start=time.time()
+ control_identity(out,identity,a.previous_runner)
+ running={};rows={};errors={};start=time.time()
+ if (out/'progress.json').exists():errors=read(out/'progress.json').get('execution_or_integrity_errors',{})
  for f in (out/'routes').glob('*/audit.json') if (out/'routes').exists() else []:rows[f.parent.name]=read(f)
+ # A drained old controller may leave completed workers awaiting independent audit.
+ for f in (out/'routes').glob('*/selection.json') if (out/'routes').exists() else []:
+  key=f.parent.name
+  if key not in rows and key not in errors:
+   if read(f)['job_sha256']!=sha(out/'jobs'/(key+'.json')):raise ValueError('Orphan worker request changed')
+   rows[key]=audit(key,out,frozen)
+ watcher=LedgerWatch(a.run/'progress.json');attempted={};idle_delay=3
  while True:
+  launched=0
   for key,(proc,log,t0) in list(running.items()):
    if proc.poll() is None:continue
    log.close();del running[key]
    if proc.returncode:errors[key]={'returncode':proc.returncode};continue
    try:rows[key]=audit(key,out,frozen)
    except Exception as e:errors[key]={'audit_error':str(e)}
-  progress=read(a.run/'progress.json');done=progress['fully_evaluated_routes']==656
+  progress,changed=watcher.poll();done=progress['fully_evaluated_routes']==656
+  if changed:idle_delay=3
   reserved,active=allocation();ceiling=14 if done else (1 if len(rows)<3 else 4);slots=max(0,min(ceiling,14-reserved))
   mem=int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))*1024
   resource_ok=mem>=8*1024**3 and shutil.disk_usage(out).free>=80*1024**3
@@ -107,17 +150,22 @@ def run(a):
     if len(running)>=slots:break
     key=r['window']+'_'+r['method']
     if key in rows or key in running or key in errors:continue
+    if key not in watcher.ready or attempted.get(key)==watcher.generation:continue
+    attempted[key]=watcher.generation
     job=prepare(r,p,a.run,out,settings)
     if job is None:continue
     (out/'routes'/key).mkdir(parents=True,exist_ok=True);log=(out/'routes'/key/'worker.log').open('a');env={**os.environ,**{k:'1' for k in ['OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS']}}
-    proc=subprocess.Popen([sys.executable,__file__,'worker','--job',str(job)],stdout=log,stderr=subprocess.STDOUT,env=env);running[key]=(proc,log,time.time())
+    proc=subprocess.Popen([sys.executable,__file__,'worker','--job',str(job)],stdout=log,stderr=subprocess.STDOUT,env=env);running[key]=(proc,log,time.time());launched+=1
   summary={'expected':656,'completed':len(rows),'execution_or_integrity_errors':errors,'active':{k:v[0].pid for k,v in running.items()},'reserved_ablation_capacity':reserved,'replay_limit':slots,'ablation_complete':done,'elapsed_s':time.time()-start,'median_route_s':statistics.median(r['timing_s'] for r in rows.values()) if rows else None,'full_passed':sum(r['full']['passed'] for r in rows.values()),'budget_passed':sum(r['budget']['passed'] for r in rows.values()),'full_missed_passing':sum(r['full']['missed_passing'] for r in rows.values()),'budget_missed_passing':sum(r['budget']['missed_passing'] for r in rows.values()),'historical_mismatches':[k for k,r in rows.items() if r.get('historical_budget_match') is False],'updated_unix_s':time.time()}
+  delay=3 if running or launched else idle_delay
+  summary['scheduler']={'version':'ledger-watch-1','ledger_reads':watcher.reads,'ready_routes':len(watcher.ready),'next_poll_s':delay,'waiting':not running and not launched,'metadata_is_integrity_proof':False}
   write(out/'progress.json',summary)
   if len(rows)+len(errors)==656 and not running:write(out/'completion.json',summary);break
   if a.once and not running:break
-  time.sleep(3)
+  time.sleep(delay)
+  if not running and not launched:idle_delay=min(60,idle_delay*2)
 
 if __name__=='__main__':
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('action',choices=['run','worker']);ap.add_argument('--run',type=Path);ap.add_argument('--output',type=Path);ap.add_argument('--job',type=Path);ap.add_argument('--once',action='store_true');args=ap.parse_args()
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('action',choices=['run','worker']);ap.add_argument('--run',type=Path);ap.add_argument('--output',type=Path);ap.add_argument('--job',type=Path);ap.add_argument('--once',action='store_true');ap.add_argument('--previous-runner',type=Path);args=ap.parse_args()
  if args.action=='worker':worker(args.job)
  else:run(args)
