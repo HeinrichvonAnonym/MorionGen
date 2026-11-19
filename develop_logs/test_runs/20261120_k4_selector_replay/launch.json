@@ -1,0 +1,13 @@
+{
+  "pid": 560139,
+  "command": [
+    "/home/heinrich/.local/share/opensim-api/bin/python",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/selector_replay_20261120_v1/code/evalkit_k4_selector_replay.py",
+    "run",
+    "--run",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_candidate_ablation_20261118_v1",
+    "--output",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/selector_replay_20261120_v1"
+  ],
+  "implementation_commit": "eae46a5"
+}

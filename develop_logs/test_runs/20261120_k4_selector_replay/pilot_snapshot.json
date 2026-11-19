@@ -1,0 +1,24 @@
+{
+  "progress": {
+    "expected": 656,
+    "completed": 19,
+    "execution_or_integrity_errors": {},
+    "active": {
+      "002_dart": 560655
+    },
+    "reserved_ablation_capacity": 13,
+    "replay_limit": 1,
+    "ablation_complete": false,
+    "elapsed_s": 361.3494007587433,
+    "median_route_s": 0.7557760269846767,
+    "full_passed": 19,
+    "budget_passed": 19,
+    "full_missed_passing": 0,
+    "budget_missed_passing": 0,
+    "historical_mismatches": [],
+    "updated_unix_s": 1795107644.6961508
+  },
+  "historical_paired": 3,
+  "source": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/selector_replay_20261120_v1",
+  "numeric_implementation_unchanged": true
+}
