@@ -1,0 +1,22 @@
+{
+  "method_figures": 1,
+  "choices": 24,
+  "candidate_mappings": 24,
+  "native_rows": 13,
+  "export_variants": 11,
+  "export_only_changes_path": true,
+  "mapping_protocol_sha256": "1fbfedf524a65c196d8a17da932a220e5a08b45d3f72a5d26ef17712da293208",
+  "unique_html_ids": true,
+  "embedded_svg_css_js": true,
+  "browser_checks": [
+    "rig_reverse_leg_path__coordinated: reverse + full export",
+    "position_total_proxy: total gate + trajectory + chart",
+    "selected row count 1",
+    "reset clears all active nodes",
+    "desktop rendered screenshot inspected"
+  ],
+  "protected_files_checked": 610,
+  "protected_files_changed": [],
+  "experiment_code_or_config_changed": false,
+  "holdout_additional_use": 0
+}
