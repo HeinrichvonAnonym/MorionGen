@@ -1,0 +1,21 @@
+{
+  "figures": 6,
+  "candidate_columns": 24,
+  "figure_render": "All six SVGs rasterized with rsvg-convert and visually inspected",
+  "browser": "Reload unavailable: browser.user is unavailable; no new browser interaction claim",
+  "scope": "Documentation/illustration only; no experiment mutation",
+  "math_source_files": [
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/refinement.py",
+      "sha256": "c2d50ff67ebf5d885d3fc3ff3a157fb71e024772ae642431331f43e8f8d5353d"
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/trajectory_objective.py",
+      "sha256": "721bcfd69cdece27c9fd6f1738dd1db2df4576008d22e3f8c744158cd3c550d2"
+    },
+    {
+      "path": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/resampling/coordinated.py",
+      "sha256": "515b32e8ec5e32331ee5f882860928acfd5e45358b44458eae38fcf84d6d1bf9"
+    }
+  ]
+}
