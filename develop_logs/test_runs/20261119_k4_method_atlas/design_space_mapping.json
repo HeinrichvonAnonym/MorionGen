@@ -1,56 +1,6 @@
 {
   "protocol_sha256": "1fbfedf524a65c196d8a17da932a220e5a08b45d3f72a5d26ef17712da293208",
   "mapping": {
-    "pelvis_continuity": {
-      "center": "asset",
-      "trunk": "prior",
-      "foot": "asset",
-      "domain": "base",
-      "loss": "pelvis",
-      "rate": "off",
-      "traverse": "forward",
-      "traj": "off",
-      "chart": "off",
-      "path": "so3",
-      "nodes": [
-        "center_asset",
-        "trunk_prior",
-        "foot_asset",
-        "domain_base",
-        "loss_pelvis",
-        "rate_off",
-        "traverse_forward",
-        "traj_off",
-        "chart_off",
-        "path_so3"
-      ],
-      "name": "pelvis_continuity"
-    },
-    "pelvis_continuity__coordinated": {
-      "center": "asset",
-      "trunk": "prior",
-      "foot": "asset",
-      "domain": "base",
-      "loss": "pelvis",
-      "rate": "off",
-      "traverse": "forward",
-      "traj": "off",
-      "chart": "off",
-      "path": "full",
-      "nodes": [
-        "center_asset",
-        "trunk_prior",
-        "foot_asset",
-        "domain_base",
-        "loss_pelvis",
-        "rate_off",
-        "traverse_forward",
-        "traj_off",
-        "chart_off",
-        "path_full"
-      ],
-      "name": "pelvis_continuity__coordinated"
-    },
     "balanced_targets": {
       "center": "asset",
       "trunk": "prior",
@@ -201,131 +151,6 @@
       ],
       "name": "rig_arm_domain_centres__coordinated"
     },
-    "rig_reverse_leg_path": {
-      "center": "asset",
-      "trunk": "prior",
-      "foot": "rig",
-      "domain": "foot",
-      "loss": "balanced",
-      "rate": "off",
-      "traverse": "reverse",
-      "traj": "off",
-      "chart": "off",
-      "path": "leg",
-      "nodes": [
-        "center_asset",
-        "trunk_prior",
-        "foot_rig",
-        "domain_foot",
-        "loss_balanced",
-        "rate_off",
-        "traverse_reverse",
-        "traj_off",
-        "chart_off",
-        "path_leg"
-      ],
-      "name": "rig_reverse_leg_path"
-    },
-    "rig_reverse_leg_path__coordinated": {
-      "center": "asset",
-      "trunk": "prior",
-      "foot": "rig",
-      "domain": "foot",
-      "loss": "balanced",
-      "rate": "off",
-      "traverse": "reverse",
-      "traj": "off",
-      "chart": "off",
-      "path": "full",
-      "nodes": [
-        "center_asset",
-        "trunk_prior",
-        "foot_rig",
-        "domain_foot",
-        "loss_balanced",
-        "rate_off",
-        "traverse_reverse",
-        "traj_off",
-        "chart_off",
-        "path_full"
-      ],
-      "name": "rig_reverse_leg_path__coordinated"
-    },
-    "rig_reverse_rate_leg_path": {
-      "center": "asset",
-      "trunk": "prior",
-      "foot": "rig",
-      "domain": "foot",
-      "loss": "balanced",
-      "rate": "on",
-      "traverse": "reverse",
-      "traj": "off",
-      "chart": "off",
-      "path": "leg",
-      "nodes": [
-        "center_asset",
-        "trunk_prior",
-        "foot_rig",
-        "domain_foot",
-        "loss_balanced",
-        "rate_on",
-        "traverse_reverse",
-        "traj_off",
-        "chart_off",
-        "path_leg"
-      ],
-      "name": "rig_reverse_rate_leg_path"
-    },
-    "rig_reverse_rate_leg_path__coordinated": {
-      "center": "asset",
-      "trunk": "prior",
-      "foot": "rig",
-      "domain": "foot",
-      "loss": "balanced",
-      "rate": "on",
-      "traverse": "reverse",
-      "traj": "off",
-      "chart": "off",
-      "path": "full",
-      "nodes": [
-        "center_asset",
-        "trunk_prior",
-        "foot_rig",
-        "domain_foot",
-        "loss_balanced",
-        "rate_on",
-        "traverse_reverse",
-        "traj_off",
-        "chart_off",
-        "path_full"
-      ],
-      "name": "rig_reverse_rate_leg_path__coordinated"
-    },
-    "reverse_full_path": {
-      "center": "asset",
-      "trunk": "prior",
-      "foot": "rig",
-      "domain": "foot",
-      "loss": "balanced",
-      "rate": "off",
-      "traverse": "reverse",
-      "traj": "off",
-      "chart": "off",
-      "path": "full",
-      "nodes": [
-        "center_asset",
-        "trunk_prior",
-        "foot_rig",
-        "domain_foot",
-        "loss_balanced",
-        "rate_off",
-        "traverse_reverse",
-        "traj_off",
-        "chart_off",
-        "path_full"
-      ],
-      "name": "reverse_full_path"
-    },
     "position_chain": {
       "center": "asset",
       "trunk": "chain",
@@ -425,6 +250,156 @@
         "path_full"
       ],
       "name": "position_fixed_foot_chain__coordinated"
+    },
+    "pelvis_continuity": {
+      "center": "asset",
+      "trunk": "prior",
+      "foot": "asset",
+      "domain": "base",
+      "loss": "pelvis",
+      "rate": "off",
+      "traverse": "forward",
+      "traj": "off",
+      "chart": "off",
+      "path": "so3",
+      "nodes": [
+        "center_asset",
+        "trunk_prior",
+        "foot_asset",
+        "domain_base",
+        "loss_pelvis",
+        "rate_off",
+        "traverse_forward",
+        "traj_off",
+        "chart_off",
+        "path_so3"
+      ],
+      "name": "pelvis_continuity"
+    },
+    "pelvis_continuity__coordinated": {
+      "center": "asset",
+      "trunk": "prior",
+      "foot": "asset",
+      "domain": "base",
+      "loss": "pelvis",
+      "rate": "off",
+      "traverse": "forward",
+      "traj": "off",
+      "chart": "off",
+      "path": "full",
+      "nodes": [
+        "center_asset",
+        "trunk_prior",
+        "foot_asset",
+        "domain_base",
+        "loss_pelvis",
+        "rate_off",
+        "traverse_forward",
+        "traj_off",
+        "chart_off",
+        "path_full"
+      ],
+      "name": "pelvis_continuity__coordinated"
+    },
+    "rig_reverse_leg_path": {
+      "center": "asset",
+      "trunk": "prior",
+      "foot": "rig",
+      "domain": "foot",
+      "loss": "balanced",
+      "rate": "off",
+      "traverse": "reverse",
+      "traj": "off",
+      "chart": "off",
+      "path": "leg",
+      "nodes": [
+        "center_asset",
+        "trunk_prior",
+        "foot_rig",
+        "domain_foot",
+        "loss_balanced",
+        "rate_off",
+        "traverse_reverse",
+        "traj_off",
+        "chart_off",
+        "path_leg"
+      ],
+      "name": "rig_reverse_leg_path"
+    },
+    "rig_reverse_leg_path__coordinated": {
+      "center": "asset",
+      "trunk": "prior",
+      "foot": "rig",
+      "domain": "foot",
+      "loss": "balanced",
+      "rate": "off",
+      "traverse": "reverse",
+      "traj": "off",
+      "chart": "off",
+      "path": "full",
+      "nodes": [
+        "center_asset",
+        "trunk_prior",
+        "foot_rig",
+        "domain_foot",
+        "loss_balanced",
+        "rate_off",
+        "traverse_reverse",
+        "traj_off",
+        "chart_off",
+        "path_full"
+      ],
+      "name": "rig_reverse_leg_path__coordinated"
+    },
+    "rig_reverse_rate_leg_path": {
+      "center": "asset",
+      "trunk": "prior",
+      "foot": "rig",
+      "domain": "foot",
+      "loss": "balanced",
+      "rate": "on",
+      "traverse": "reverse",
+      "traj": "off",
+      "chart": "off",
+      "path": "leg",
+      "nodes": [
+        "center_asset",
+        "trunk_prior",
+        "foot_rig",
+        "domain_foot",
+        "loss_balanced",
+        "rate_on",
+        "traverse_reverse",
+        "traj_off",
+        "chart_off",
+        "path_leg"
+      ],
+      "name": "rig_reverse_rate_leg_path"
+    },
+    "rig_reverse_rate_leg_path__coordinated": {
+      "center": "asset",
+      "trunk": "prior",
+      "foot": "rig",
+      "domain": "foot",
+      "loss": "balanced",
+      "rate": "on",
+      "traverse": "reverse",
+      "traj": "off",
+      "chart": "off",
+      "path": "full",
+      "nodes": [
+        "center_asset",
+        "trunk_prior",
+        "foot_rig",
+        "domain_foot",
+        "loss_balanced",
+        "rate_on",
+        "traverse_reverse",
+        "traj_off",
+        "chart_off",
+        "path_full"
+      ],
+      "name": "rig_reverse_rate_leg_path__coordinated"
     },
     "position_trajectory": {
       "center": "asset",
@@ -526,31 +501,6 @@
       ],
       "name": "position_trajectory_chart__coordinated"
     },
-    "forward_full_path": {
-      "center": "asset",
-      "trunk": "prior",
-      "foot": "asset",
-      "domain": "base",
-      "loss": "balanced",
-      "rate": "off",
-      "traverse": "forward",
-      "traj": "off",
-      "chart": "off",
-      "path": "full",
-      "nodes": [
-        "center_asset",
-        "trunk_prior",
-        "foot_asset",
-        "domain_base",
-        "loss_balanced",
-        "rate_off",
-        "traverse_forward",
-        "traj_off",
-        "chart_off",
-        "path_full"
-      ],
-      "name": "forward_full_path"
-    },
     "position_total_proxy": {
       "center": "asset",
       "trunk": "total",
@@ -600,37 +550,59 @@
         "path_full"
       ],
       "name": "position_total_proxy__coordinated"
-    }
-  },
-  "native_rows": [
-    {
+    },
+    "forward_full_path": {
       "center": "asset",
       "trunk": "prior",
       "foot": "asset",
       "domain": "base",
-      "loss": "pelvis",
+      "loss": "balanced",
       "rate": "off",
       "traverse": "forward",
       "traj": "off",
       "chart": "off",
-      "path": "so3",
+      "path": "full",
       "nodes": [
         "center_asset",
         "trunk_prior",
         "foot_asset",
         "domain_base",
-        "loss_pelvis",
+        "loss_balanced",
         "rate_off",
         "traverse_forward",
         "traj_off",
         "chart_off",
-        "path_so3"
+        "path_full"
       ],
-      "name": "pelvis_continuity",
-      "id": "C01",
-      "variant": "pelvis_continuity__coordinated",
-      "eligible": 656
+      "name": "forward_full_path"
     },
+    "reverse_full_path": {
+      "center": "asset",
+      "trunk": "prior",
+      "foot": "rig",
+      "domain": "foot",
+      "loss": "balanced",
+      "rate": "off",
+      "traverse": "reverse",
+      "traj": "off",
+      "chart": "off",
+      "path": "full",
+      "nodes": [
+        "center_asset",
+        "trunk_prior",
+        "foot_rig",
+        "domain_foot",
+        "loss_balanced",
+        "rate_off",
+        "traverse_reverse",
+        "traj_off",
+        "chart_off",
+        "path_full"
+      ],
+      "name": "reverse_full_path"
+    }
+  },
+  "native_rows": [
     {
       "center": "asset",
       "trunk": "prior",
@@ -656,6 +628,7 @@
       ],
       "name": "balanced_targets",
       "id": "C02",
+      "group": "共同基准",
       "variant": "balanced_targets__coordinated",
       "eligible": 656
     },
@@ -684,6 +657,7 @@
       ],
       "name": "rig_centres",
       "id": "C03",
+      "group": "固定几何与可行域",
       "variant": "rig_centres__coordinated",
       "eligible": 492
     },
@@ -712,92 +686,9 @@
       ],
       "name": "rig_arm_domain_centres",
       "id": "C04",
+      "group": "固定几何与可行域",
       "variant": "rig_arm_domain_centres__coordinated",
       "eligible": 492
-    },
-    {
-      "center": "asset",
-      "trunk": "prior",
-      "foot": "rig",
-      "domain": "foot",
-      "loss": "balanced",
-      "rate": "off",
-      "traverse": "reverse",
-      "traj": "off",
-      "chart": "off",
-      "path": "leg",
-      "nodes": [
-        "center_asset",
-        "trunk_prior",
-        "foot_rig",
-        "domain_foot",
-        "loss_balanced",
-        "rate_off",
-        "traverse_reverse",
-        "traj_off",
-        "chart_off",
-        "path_leg"
-      ],
-      "name": "rig_reverse_leg_path",
-      "id": "C05",
-      "variant": "rig_reverse_leg_path__coordinated",
-      "eligible": 492
-    },
-    {
-      "center": "asset",
-      "trunk": "prior",
-      "foot": "rig",
-      "domain": "foot",
-      "loss": "balanced",
-      "rate": "on",
-      "traverse": "reverse",
-      "traj": "off",
-      "chart": "off",
-      "path": "leg",
-      "nodes": [
-        "center_asset",
-        "trunk_prior",
-        "foot_rig",
-        "domain_foot",
-        "loss_balanced",
-        "rate_on",
-        "traverse_reverse",
-        "traj_off",
-        "chart_off",
-        "path_leg"
-      ],
-      "name": "rig_reverse_rate_leg_path",
-      "id": "C06",
-      "variant": "rig_reverse_rate_leg_path__coordinated",
-      "eligible": 492
-    },
-    {
-      "center": "asset",
-      "trunk": "prior",
-      "foot": "rig",
-      "domain": "foot",
-      "loss": "balanced",
-      "rate": "off",
-      "traverse": "reverse",
-      "traj": "off",
-      "chart": "off",
-      "path": "full",
-      "nodes": [
-        "center_asset",
-        "trunk_prior",
-        "foot_rig",
-        "domain_foot",
-        "loss_balanced",
-        "rate_off",
-        "traverse_reverse",
-        "traj_off",
-        "chart_off",
-        "path_full"
-      ],
-      "name": "reverse_full_path",
-      "id": "C07",
-      "variant": null,
-      "eligible": 656
     },
     {
       "center": "asset",
@@ -824,6 +715,7 @@
       ],
       "name": "position_chain",
       "id": "C08",
+      "group": "固定几何与可行域",
       "variant": "position_chain__coordinated",
       "eligible": 164
     },
@@ -852,8 +744,96 @@
       ],
       "name": "position_fixed_foot_chain",
       "id": "C09",
+      "group": "固定几何与可行域",
       "variant": "position_fixed_foot_chain__coordinated",
       "eligible": 164
+    },
+    {
+      "center": "asset",
+      "trunk": "prior",
+      "foot": "asset",
+      "domain": "base",
+      "loss": "pelvis",
+      "rate": "off",
+      "traverse": "forward",
+      "traj": "off",
+      "chart": "off",
+      "path": "so3",
+      "nodes": [
+        "center_asset",
+        "trunk_prior",
+        "foot_asset",
+        "domain_base",
+        "loss_pelvis",
+        "rate_off",
+        "traverse_forward",
+        "traj_off",
+        "chart_off",
+        "path_so3"
+      ],
+      "name": "pelvis_continuity",
+      "id": "C01",
+      "group": "目标函数权衡",
+      "variant": "pelvis_continuity__coordinated",
+      "eligible": 656
+    },
+    {
+      "center": "asset",
+      "trunk": "prior",
+      "foot": "rig",
+      "domain": "foot",
+      "loss": "balanced",
+      "rate": "off",
+      "traverse": "reverse",
+      "traj": "off",
+      "chart": "off",
+      "path": "leg",
+      "nodes": [
+        "center_asset",
+        "trunk_prior",
+        "foot_rig",
+        "domain_foot",
+        "loss_balanced",
+        "rate_off",
+        "traverse_reverse",
+        "traj_off",
+        "chart_off",
+        "path_leg"
+      ],
+      "name": "rig_reverse_leg_path",
+      "id": "C05",
+      "group": "遍历、连续性与整段求解",
+      "variant": "rig_reverse_leg_path__coordinated",
+      "eligible": 492
+    },
+    {
+      "center": "asset",
+      "trunk": "prior",
+      "foot": "rig",
+      "domain": "foot",
+      "loss": "balanced",
+      "rate": "on",
+      "traverse": "reverse",
+      "traj": "off",
+      "chart": "off",
+      "path": "leg",
+      "nodes": [
+        "center_asset",
+        "trunk_prior",
+        "foot_rig",
+        "domain_foot",
+        "loss_balanced",
+        "rate_on",
+        "traverse_reverse",
+        "traj_off",
+        "chart_off",
+        "path_leg"
+      ],
+      "name": "rig_reverse_rate_leg_path",
+      "id": "C06",
+      "group": "遍历、连续性与整段求解",
+      "variant": "rig_reverse_rate_leg_path__coordinated",
+      "eligible": 492
     },
     {
       "center": "asset",
@@ -880,6 +860,7 @@
       ],
       "name": "position_trajectory",
       "id": "C10",
+      "group": "遍历、连续性与整段求解",
       "variant": "position_trajectory__coordinated",
       "eligible": 164
     },
@@ -908,7 +889,37 @@
       ],
       "name": "position_trajectory_chart",
       "id": "C11",
+      "group": "遍历、连续性与整段求解",
       "variant": "position_trajectory_chart__coordinated",
+      "eligible": 164
+    },
+    {
+      "center": "asset",
+      "trunk": "total",
+      "foot": "rig",
+      "domain": "foot",
+      "loss": "balanced",
+      "rate": "off",
+      "traverse": "forward",
+      "traj": "on",
+      "chart": "on",
+      "path": "so3",
+      "nodes": [
+        "center_asset",
+        "trunk_total",
+        "foot_rig",
+        "domain_foot",
+        "loss_balanced",
+        "rate_off",
+        "traverse_forward",
+        "traj_on",
+        "chart_on",
+        "path_so3"
+      ],
+      "name": "position_total_proxy",
+      "id": "C13",
+      "group": "遍历、连续性与整段求解",
+      "variant": "position_total_proxy__coordinated",
       "eligible": 164
     },
     {
@@ -936,36 +947,38 @@
       ],
       "name": "forward_full_path",
       "id": "C12",
+      "group": "全身协调导出组合",
       "variant": null,
       "eligible": 656
     },
     {
       "center": "asset",
-      "trunk": "total",
+      "trunk": "prior",
       "foot": "rig",
       "domain": "foot",
       "loss": "balanced",
       "rate": "off",
-      "traverse": "forward",
-      "traj": "on",
-      "chart": "on",
-      "path": "so3",
+      "traverse": "reverse",
+      "traj": "off",
+      "chart": "off",
+      "path": "full",
       "nodes": [
         "center_asset",
-        "trunk_total",
+        "trunk_prior",
         "foot_rig",
         "domain_foot",
         "loss_balanced",
         "rate_off",
-        "traverse_forward",
-        "traj_on",
-        "chart_on",
-        "path_so3"
+        "traverse_reverse",
+        "traj_off",
+        "chart_off",
+        "path_full"
       ],
-      "name": "position_total_proxy",
-      "id": "C13",
-      "variant": "position_total_proxy__coordinated",
-      "eligible": 164
+      "name": "reverse_full_path",
+      "id": "C07",
+      "group": "全身协调导出组合",
+      "variant": null,
+      "eligible": 656
     }
   ],
   "nodes": [
@@ -994,6 +1007,87 @@
     "path_leg",
     "path_full"
   ],
+  "display_groups": [
+    [
+      "共同基准",
+      [
+        "balanced_targets"
+      ]
+    ],
+    [
+      "固定几何与可行域",
+      [
+        "rig_centres",
+        "rig_arm_domain_centres",
+        "position_chain",
+        "position_fixed_foot_chain"
+      ]
+    ],
+    [
+      "目标函数权衡",
+      [
+        "pelvis_continuity"
+      ]
+    ],
+    [
+      "遍历、连续性与整段求解",
+      [
+        "rig_reverse_leg_path",
+        "rig_reverse_rate_leg_path",
+        "position_trajectory",
+        "position_trajectory_chart",
+        "position_total_proxy"
+      ]
+    ],
+    [
+      "全身协调导出组合",
+      [
+        "forward_full_path",
+        "reverse_full_path"
+      ]
+    ]
+  ],
+  "display_order": [
+    "balanced_targets",
+    "balanced_targets__coordinated",
+    "rig_centres",
+    "rig_centres__coordinated",
+    "rig_arm_domain_centres",
+    "rig_arm_domain_centres__coordinated",
+    "position_chain",
+    "position_chain__coordinated",
+    "position_fixed_foot_chain",
+    "position_fixed_foot_chain__coordinated",
+    "pelvis_continuity",
+    "pelvis_continuity__coordinated",
+    "rig_reverse_leg_path",
+    "rig_reverse_leg_path__coordinated",
+    "rig_reverse_rate_leg_path",
+    "rig_reverse_rate_leg_path__coordinated",
+    "position_trajectory",
+    "position_trajectory__coordinated",
+    "position_trajectory_chart",
+    "position_trajectory_chart__coordinated",
+    "position_total_proxy",
+    "position_total_proxy__coordinated",
+    "forward_full_path",
+    "reverse_full_path"
+  ],
+  "stable_candidate_ids": {
+    "pelvis_continuity": "C01",
+    "balanced_targets": "C02",
+    "rig_centres": "C03",
+    "rig_arm_domain_centres": "C04",
+    "rig_reverse_leg_path": "C05",
+    "rig_reverse_rate_leg_path": "C06",
+    "reverse_full_path": "C07",
+    "position_chain": "C08",
+    "position_fixed_foot_chain": "C09",
+    "position_trajectory": "C10",
+    "position_trajectory_chart": "C11",
+    "forward_full_path": "C12",
+    "position_total_proxy": "C13"
+  },
   "native_count": 13,
   "export_count": 11
 }
