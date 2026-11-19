@@ -1,0 +1,3981 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>K4 方法图谱与加速边界</title><style>*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f3f5f8;color:#19334a;font:16px/1.75 system-ui,-apple-system,"Noto Sans CJK SC",sans-serif}header{background:#173149;color:white;padding:54px max(24px,calc((100vw - 1220px)/2)) 44px}header h1{font-size:38px;line-height:1.3;margin:12px 0}header p{max-width:1000px;color:#d2dee7}small,.muted{color:#657789}header small{color:#bed1df}.eyebrow{font-size:12px;letter-spacing:.2em;font-weight:700;color:#8bd0c7}main{max-width:1268px;margin:auto;padding:24px}nav{position:sticky;top:0;background:#fffefa;z-index:2;padding:10px 24px;display:flex;gap:20px;flex-wrap:wrap;border-bottom:1px solid #d7e0e7}a{color:#315b92;text-decoration:none}a:hover{text-decoration:underline}section{background:white;border:1px solid #dce4eb;border-radius:10px;padding:28px;margin:24px 0;scroll-margin-top:70px}h2{font-size:25px;margin:0 0 12px}h3{font-size:19px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{padding:20px;background:#f1f6f9;border-left:3px solid #315b92}.card strong{display:block;font-size:24px}.card p{font-size:14px;margin-bottom:0}.lead{font-size:19px}.callout{padding:18px 22px;border-left:4px solid #137e79;background:#edf7f5}.warn{background:#fff7e8;border-color:#b57418}.figure{overflow:auto;margin:20px -10px 8px}svg{width:100%;height:auto;min-width:0;display:block}.caption{color:#657789;font-size:14px}.bar{display:flex;justify-content:space-between;gap:15px;align-items:center}.download{font-size:13px;white-space:nowrap}table{border-collapse:collapse;width:100%;font-size:14px}th{background:#edf3f7;text-align:left;padding:11px;position:sticky;top:0}td{padding:12px 11px;vertical-align:top;border-bottom:1px solid #dce4eb}td:first-child{font-weight:650}code{background:#eef2f5;font-size:12px;padding:2px 4px;overflow-wrap:anywhere}pre{font-size:12px;overflow:auto;background:#f5f7f9;padding:16px;max-height:330px}.table-scroll{overflow:auto}.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;white-space:nowrap}.done{background:#e0f2ed;color:#14695f}.partial{background:#e6eef9;color:#315b92}.local{background:#fff0d6;color:#855710}.todo{background:#eff0f2;color:#657789}button{background:#fff;border:1px solid #b7c6d2;padding:7px 12px;border-radius:5px;color:#19334a;cursor:pointer}button.active{background:#19334a;color:white}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}details{border-top:1px solid #dce4eb;padding:14px 0}summary{cursor:pointer;font-weight:600}.metric{font-variant-numeric:tabular-nums}input[type=range]{width:240px;vertical-align:middle}.calculator{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;padding:20px;background:#f4f8fa}footer{padding:20px;font-size:13px;color:#657789}@media(max-width:600px){svg{min-width:760px}}@media(max-width:750px){header h1{font-size:28px}.grid,.calculator{grid-template-columns:1fr}main{padding:12px}section{padding:18px}nav{position:static;font-size:13px;gap:12px}}@media print{nav,.filters,.download,button{display:none}body{background:white}header{padding:20px;background:white;color:#19334a}header p,header small{color:#657789}section{break-inside:avoid;padding:15px;margin:10px 0}.figure{overflow:visible}svg{min-width:0}.table-scroll{overflow:visible}th{position:static}details{display:block}}</style></head><body><header><div class="eyebrow">K4 / METHODS & COMPUTATIONAL STRUCTURE</div><h1>从动作观测到可信重建<br>方法图谱与批处理空间</h1><p class="lead">当前收益有限，是因为加速主要覆盖了模型计算，整体求解仍保留CPU控制、线性子问题和连续状态依赖。下一步的重点应从单次FK转向完整迭代与跨任务批处理。</p><small>证据快照：2026-11-19T22:40:14 · 论文方法图风格的矢量示意 · 图中不使用虚构运动轨迹 · 可离线阅读</small></header><nav><a href="#overview">结论</a><a href="#pipeline">方法流程</a><a href="#candidates">候选家族</a><a href="#batch">并行边界</a><a href="#execution">CPU/GPU</a><a href="#export">导出</a><a href="#matrix">完成度矩阵</a><a href="#catalogue">全部24列</a><a href="#priorities">下一步重点</a></nav><main><section id="overview"><h2>收益已经出现，工程覆盖还未到主要瓶颈</h2><div class="grid"><div class="card"><strong>约6.8×</strong><p>32帧固定模型FK请求的局部提速：34.20→5.07 ms。CUDA Graph与坐标批变换已接入。</p></div><div class="card"><strong>13.7% 减时</strong><p>000 Kimodo同候选150帧：76.57→66.04 s。轻量传输与按需回读的组合结果。</p></div><div class="card"><strong>26 / 40</strong><p>CPU算法一致性完整面板通过数。性能改善和算法一致性分别验收，默认后端尚未替换。</p></div></div><p>这段开发已经建立了算法契约、独立验收、模型计算后端与诊断工具，但<strong>当前加速路径仍是CPU控制求解、GPU计算模型的混合实现</strong>。因此局部内核加速与用户体验到的等待时间之间存在明显差距。</p><p>“全部方法”在本页指当前K4运行流程、冻结消融协议的24列配置，以及独立GPU工程后端。历史已回退实验作为背景保留；它们未合并进当前方法或充当改善证据。</p><div class="callout warn">当前最佳已完成局部性能条件约2.27帧/秒；约5秒动作需要66秒求解，仍是离线处理。这里66秒计量的是固定模型和既有种子之后的姿态细化求解，模型准备、基础IK、多候选、导出和独立验收还会增加总耗时。高吞吐与低延迟、离线与在线是不同目标。</div></section><section id="pipeline"><div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" role="img" aria-labelledby="t1 d1"><title id="t1">K alignment：观测驱动的模型重建</title><desc id="d1">运行时求解只接收 D 与声明输入；R 在独立评分端使用。图示为方法结构，非实测轨迹。</desc><defs><marker id="arrow1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" fill="#657789"/></marker></defs><rect width="1200" height="560" fill="white"/><style>text{font-family:Arial,"Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#19334a}.small{font-size:16px;fill:#657789}.body{font-size:18px}.head{font-size:20px;font-weight:700}</style><text x="32" y="37" font-size="26" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">01  K alignment：观测驱动的模型重建</text><text x="32" y="66" font-size="16" font-weight="400" fill="#657789" style="fill:#657789" text-anchor="start">运行时求解只接收 D 与声明输入；R 在独立评分端使用。图示为方法结构，非实测轨迹。</text><rect x="25" y="92" width="1150" height="259" rx="6" fill="#f8fafc" stroke="#315b92" stroke-width="1.4" stroke-dasharray="6 5"/><text x="43" y="117" font-size="16" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">RUNTIME  ·  输入侧计算与候选输出</text><rect x="45" y="146" width="207" height="107" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="61" y="175" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">D：八格式观测</text><text x="61" y="202" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">位置 / 可用旋转</text><text x="61" y="225" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">时钟、掩码、input_rig</text><rect x="275" y="146" width="207" height="107" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="291" y="175" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">固定几何 θ</text><text x="291" y="202" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">节点注册、长度、范围</text><text x="291" y="225" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">片段内保持固定</text><rect x="505" y="146" width="207" height="107" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="521" y="175" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">姿态候选 q₁:T</text><text x="521" y="202" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">初值 → 逐帧 / 整段求解</text><text x="521" y="225" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">方向、位置、时序目标</text><rect x="735" y="146" width="207" height="107" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="751" y="175" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">组合 FK → F</text><text x="751" y="202" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">root 定位 + 头颈链</text><text x="751" y="225" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">原生解 / 导出回读</text><path d="M252,199 L273,199" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow1)" /><path d="M482,199 L503,199" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow1)" /><path d="M712,199 L733,199" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow1)" /><rect x="965" y="146" width="190" height="107" rx="6" fill="#edf7f5" stroke="#137e79" stroke-width="1.4" /><text x="981" y="175" font-size="19" font-weight="700" fill="#137e79" style="fill:#137e79" text-anchor="start">D-only 质量选择</text><text x="981" y="202" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">保留候选 / 回退</text><text x="981" y="225" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">整段选择或分支输出</text><path d="M942,199 L963,199" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow1)" /><text x="47" y="293" font-size="18" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">FK（正运动学）：由关节坐标 q 与固定模型 θ 重新计算节点位置和段旋转。</text><text x="47" y="321" font-size="16" font-weight="400" fill="#657789" style="fill:#657789" text-anchor="start">头胸原生旋转读出另列；欠观测分量保持未知。模型几何与评分用共同骨长分别管理。</text><rect x="45" y="398" width="207" height="111" rx="6" fill="#fff7e8" stroke="#b57418" stroke-width="1.4" /><text x="61" y="427" font-size="19" font-weight="700" fill="#b57418" style="fill:#b57418" text-anchor="start">R：退化前原动作</text><text x="61" y="454" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">只进入受控构造与验收</text><text x="61" y="477" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">运行时无 R 回路</text><rect x="320" y="398" width="445" height="111" rx="6" fill="#fff7e8" stroke="#b57418" stroke-width="1.4" /><text x="336" y="427" font-size="19" font-weight="700" fill="#b57418" style="fill:#b57418" text-anchor="start">独立评分：D−R / F−D / F−R</text><text x="336" y="454" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">原始几何 + 统一骨长；native / export × D / R 时钟</text><text x="336" y="477" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">完整窗口、来源跳变分层、有效覆盖、实际文件回读</text><rect x="820" y="398" width="330" height="111" rx="6" fill="#fff7e8" stroke="#b57418" stroke-width="1.4" /><text x="836" y="427" font-size="19" font-weight="700" fill="#b57418" style="fill:#b57418" text-anchor="start">两类不同的结论</text><text x="836" y="454" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">原动作准确度：5° / 5 cm 与时序</text><text x="836" y="477" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">计算迁移一致性：CPU ↔ GPU</text><path d="M252,453 L318,453" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow1)" /><path d="M843,253 L843,374 L633,374 L633,397" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow1)" /><path d="M149,253 L149,371 L431,371 L431,397" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow1)" stroke-dasharray="6 5"/><path d="M765,453 L818,453" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow1)" /></svg></div><div class="bar"><p class="caption">先保持输入语义，再求解模型姿态。R用于验收与开发选型；实际拟合、补偿和运行时选择使用D。位置输入缺少的独立轴向旋转保留未知。</p><a class="download" download href="assets/20261119_k4_method_atlas/01_pipeline.svg">下载矢量 SVG ↗</a></div><p><strong>输入适配</strong>统一单位、轴、层级与时钟；ARDy、CHOIS、CLoSD、DART、Kimodo、PRIMAL六种旋转格式保留声明骨架及独立旋转，MotionLCM / OmniControl使用实际位置字段。<strong>几何标定</strong>确定固定长度、关节中心和标记对应；<strong>姿态求解</strong>在这些固定条件下寻找关节坐标。双髋中点root补偿、头颈附着以及后续FK共同产生最终输出。</p><p>统一骨长是评分端操作；它不会向运行时提供原动作的参考骨长。几何方向、头胸相对旋转、模型胸段旋转和腰椎坐标分开命名，避免将整体方向达标解释为内部解剖角准确。</p></section><section id="candidates"><div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 580" role="img" aria-labelledby="t2 d2"><title id="t2">候选方法：几何、目标与求解方式的组合</title><desc id="d2">当前消融协议声明 13 个原生配置 + 11 个协调导出变体 = 24 列；按输入契约判定适用性。</desc><defs><marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" fill="#657789"/></marker></defs><rect width="1200" height="580" fill="white"/><style>text{font-family:Arial,"Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#19334a}.small{font-size:16px;fill:#657789}.body{font-size:18px}.head{font-size:20px;font-weight:700}</style><text x="32" y="37" font-size="26" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">02  候选方法：几何、目标与求解方式的组合</text><text x="32" y="66" font-size="16" font-weight="400" fill="#657789" style="fill:#657789" text-anchor="start">当前消融协议声明 13 个原生配置 + 11 个协调导出变体 = 24 列；按输入契约判定适用性。</text><rect x="34" y="110" width="270" height="136" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="50" y="139" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">A  固定几何 / 注册</text><text x="50" y="166" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">源骨架关节中心与肩宽</text><text x="50" y="189" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">位置链长代理 / 总链长代理</text><text x="50" y="212" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">足端注册 / 输入足部几何</text><rect x="34" y="275" width="270" height="136" rx="6" fill="#fff7e8" stroke="#b57418" stroke-width="1.4" /><text x="50" y="304" font-size="19" font-weight="700" fill="#b57418" style="fill:#b57418" text-anchor="start">B  范围与耦合</text><text x="50" y="331" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立运动学坐标域</text><text x="50" y="354" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">膝辅助耦合延拓</text><text x="50" y="377" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">记录原模型范围与变化</text><rect x="344" y="110" width="362" height="136" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="360" y="139" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">C  逐帧方向—位置拟合</text><text x="360" y="166" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">nominal / continuity / 条件追加初值</text><text x="360" y="189" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">骨盆线、方向、几何角、端点位置</text><text x="360" y="212" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">正向 / 反向遍历；新增变化率约束</text><rect x="344" y="275" width="362" height="136" rx="6" fill="#edf7f5" stroke="#137e79" stroke-width="1.4" /><text x="360" y="304" font-size="19" font-weight="700" fill="#137e79" style="fill:#137e79" text-anchor="start">D  整段轨迹联合求解</text><text x="360" y="331" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">位置输入轨迹与等价坐标图</text><text x="360" y="354" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">全窗口 q₁:T + 相邻方向误差变化</text><text x="360" y="377" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">有界 GN / TRF–LSMR（按配置）</text><rect x="748" y="110" width="416" height="136" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="764" y="139" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">E  头颈、root 与输出路径</text><text x="764" y="166" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">头颈链附着身体胸段，固定长度</text><text x="764" y="189" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">双髋中点定位 root 后重新 FK</text><text x="764" y="212" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">SO(3) 初始插值 + 可选跨关节协调</text><rect x="748" y="275" width="416" height="136" rx="6" fill="#edf7f5" stroke="#137e79" stroke-width="1.4" /><text x="764" y="304" font-size="19" font-weight="700" fill="#137e79" style="fill:#137e79" text-anchor="start">F  候选验收 / 选择分列</text><text x="764" y="331" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">每个适用候选分别对 R 验收</text><text x="764" y="354" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">D-only 选择器单独评价命中 / 漏选</text><text x="764" y="377" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">完整消融保留弱对照与失败</text><path d="M304,178 L342,178" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow2)" /><path d="M304,343 L342,343" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow2)" /><path d="M706,178 L746,178" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow2)" /><path d="M706,343 L746,343" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow2)" /><path d="M956,246 L956,273" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow2)" /><rect x="34" y="448" width="1130" height="98" rx="6" fill="#f4f6f8" stroke="#a6b3be" stroke-width="1.4" /><text x="54" y="479" font-size="23" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">min  E(q) = Eposition + Edirection + Eangle + Etemporal     s.t. q ∈ Qθ</text><text x="54" y="513" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">概念分解；Qθ表示坐标域与耦合。权重与停止规则按配置固定；多因素候选比较需另做因果消融。</text></svg></div><div class="bar"><p class="caption">同一方法家族会在几何、遍历方向和导出策略上产生不同候选。完整名称、启用项及适用分母见后面的24列清单。</p><a class="download" download href="assets/20261119_k4_method_atlas/02_candidates.svg">下载矢量 SVG ↗</a></div><p>IK（逆运动学）从目标节点位置反求关节坐标；FK完成反向计算。多初值降低陷入局部解的风险，正反遍历改变连续状态的起点。整段求解同时优化整个窗口的关节轨迹，利用相邻帧误差变化约束连续性。GN是高斯–牛顿近似；TRF是有界信赖域方法；LSMR用于稀疏线性最小二乘。</p><p>输入驱动的固定几何与扩展坐标域是不同因素；后者使用独立运动学配置、逐项核验耦合，不授予肌肉与受力资格。HYOID仍保持现状。</p></section><section id="batch"><div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 595" role="img" aria-labelledby="t3 d3"><title id="t3">并行的边界：沿 Batch 扩展，沿状态依赖推进</title><desc id="d3">灰蓝箭头是必须保留的状态依赖；绿色列表示同一时刻可聚合的计算。</desc><defs><marker id="arrow3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" fill="#657789"/></marker></defs><rect width="1200" height="595" fill="white"/><style>text{font-family:Arial,"Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#19334a}.small{font-size:16px;fill:#657789}.body{font-size:18px}.head{font-size:20px;font-weight:700}</style><text x="32" y="37" font-size="26" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">03  并行的边界：沿 Batch 扩展，沿状态依赖推进</text><text x="32" y="66" font-size="16" font-weight="400" fill="#657789" style="fill:#657789" text-anchor="start">灰蓝箭头是必须保留的状态依赖；绿色列表示同一时刻可聚合的计算。</text><text x="35" y="110" font-size="19" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">A  连续逐帧拟合：qₜ₋₁ 会影响当前初值与时序残差</text><text x="40" y="172" font-size="18" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">序列 A</text><rect x="160" y="140" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="176" y="169" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t</text><text x="176" y="196" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 A · FK / J</text><path d="M335,170 L378,170" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow3)" /><rect x="380" y="140" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="396" y="169" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t+1</text><text x="396" y="196" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 A · FK / J</text><path d="M555,170 L598,170" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow3)" /><rect x="600" y="140" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="616" y="169" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t+2</text><text x="616" y="196" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 A · FK / J</text><path d="M775,170 L818,170" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow3)" /><rect x="820" y="140" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="836" y="169" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t+3</text><text x="836" y="196" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 A · FK / J</text><text x="40" y="253" font-size="18" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">序列 B</text><rect x="160" y="221" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="176" y="250" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t</text><text x="176" y="277" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 B · FK / J</text><path d="M335,251 L378,251" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow3)" /><rect x="380" y="221" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="396" y="250" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t+1</text><text x="396" y="277" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 B · FK / J</text><path d="M555,251 L598,251" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow3)" /><rect x="600" y="221" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="616" y="250" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t+2</text><text x="616" y="277" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 B · FK / J</text><path d="M775,251 L818,251" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow3)" /><rect x="820" y="221" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="836" y="250" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t+3</text><text x="836" y="277" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 B · FK / J</text><text x="40" y="334" font-size="18" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">序列 C</text><rect x="160" y="302" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="176" y="331" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t</text><text x="176" y="358" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 C · FK / J</text><path d="M335,332 L378,332" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow3)" /><rect x="380" y="302" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="396" y="331" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t+1</text><text x="396" y="358" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 C · FK / J</text><path d="M555,332 L598,332" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow3)" /><rect x="600" y="302" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="616" y="331" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t+2</text><text x="616" y="358" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 C · FK / J</text><path d="M775,332 L818,332" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow3)" /><rect x="820" y="302" width="175" height="60" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="836" y="331" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">帧 t+3</text><text x="836" y="358" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立状态 C · FK / J</text><rect x="149" y="132" width="197" height="235" rx="6" fill="none" stroke="#137e79" stroke-width="1.4" stroke-dasharray="6 5"/><text x="175" y="392" font-size="17" font-weight="700" fill="#137e79" style="fill:#137e79" text-anchor="start">跨序列微批</text><text x="390" y="392" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">不同序列保持各自时钟、活动坐标与停止状态</text><rect x="35" y="432" width="350" height="122" rx="6" fill="#edf7f5" stroke="#137e79" stroke-width="1.4" /><text x="51" y="461" font-size="19" font-weight="700" fill="#137e79" style="fill:#137e79" text-anchor="start">B  同一迭代可批量</text><text x="51" y="488" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">有限差分扰动列；独立常规初值</text><text x="51" y="511" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">独立候选；输入已就绪的序列</text><rect x="425" y="432" width="350" height="122" rx="6" fill="#edf7f5" stroke="#137e79" stroke-width="1.4" /><text x="441" y="461" font-size="19" font-weight="700" fill="#137e79" style="fill:#137e79" text-anchor="start">C  整段求解可批量</text><text x="441" y="488" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">给定 q₁:T 后，全帧 FK / 残差</text><text x="441" y="511" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">时序产生块稀疏耦合，保留结构</text><rect x="815" y="432" width="350" height="122" rx="6" fill="#fff7e8" stroke="#b57418" stroke-width="1.4" /><text x="831" y="461" font-size="19" font-weight="700" fill="#b57418" style="fill:#b57418" text-anchor="start">D  保持顺序的部分</text><text x="831" y="488" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">迭代更新、触发条件、接受决策</text><text x="831" y="511" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">逻辑顺序可保留在 GPU 上执行</text></svg></div><div class="bar"><p class="caption">自回归依赖限制同一序列沿时间直接独立求解，但不限制跨序列合批。GPU上的掩码控制可以保留决策顺序；这部分目前尚未完成。</p><a class="download" download href="assets/20261119_k4_method_atlas/03_batch.svg">下载矢量 SVG ↗</a></div><div class="callout"><strong>有顺序依赖 ≠ 必须留在CPU。</strong>一条序列的前态传播需要保持；不同序列、不同候选可以同时推进，设备端也能执行有顺序的迭代。当前未完成的是保持这些算法行为的批控制工程。</div><p>同一迭代的有限差分列可以同时计算；下一次迭代依赖本次更新。整段轨迹给定当前q后，所有帧的FK和局部残差可批量计算，但求解步受相邻帧耦合。直接把每帧拆成独立优化会改变问题，应作为新算法条件验证。</p></section><section id="execution"><div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" role="img" aria-labelledby="t4 d4"><title id="t4">CPU ↔ GPU：当前工程路径与剩余成本</title><desc id="d4">蓝色为当前 CPU 控制；绿色为已接入计算；虚线框为待完成的工程能力。</desc><defs><marker id="arrow4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" fill="#657789"/></marker></defs><rect width="1200" height="600" fill="white"/><style>text{font-family:Arial,"Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#19334a}.small{font-size:16px;fill:#657789}.body{font-size:18px}.head{font-size:20px;font-weight:700}</style><text x="32" y="37" font-size="26" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">04  CPU ↔ GPU：当前工程路径与剩余成本</text><text x="32" y="66" font-size="16" font-weight="400" fill="#657789" style="fill:#657789" text-anchor="start">蓝色为当前 CPU 控制；绿色为已接入计算；虚线框为待完成的工程能力。</text><rect x="30" y="105" width="470" height="350" rx="6" fill="#f5f8fc" stroke="#315b92" stroke-width="1.4" /><text x="53" y="136" font-size="22" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">CPU · 冻结算法与残差定义</text><rect x="53" y="157" width="424" height="98" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="69" y="186" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">① 初值 / 边界 / 收敛与预算</text><text x="69" y="213" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">SciPy TRF；整段 GN / LSMR</text><text x="69" y="236" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">每个样本保留原停止状态</text><rect x="53" y="292" width="424" height="110" rx="6" fill="#fff7e8" stroke="#b57418" stroke-width="1.4" /><text x="69" y="321" font-size="19" font-weight="700" fill="#b57418" style="fill:#b57418" text-anchor="start">④ 线性子问题与接受步骤</text><text x="69" y="348" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">残差组装、稀疏线性代数、线搜索</text><text x="69" y="371" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">迭代仍在 CPU，尚无完整设备控制</text><rect x="700" y="105" width="470" height="350" rx="6" fill="#f2faf8" stroke="#137e79" stroke-width="1.4" /><text x="723" y="136" font-size="22" font-weight="700" fill="#137e79" style="fill:#137e79" text-anchor="start">GPU · 常驻固定模型</text><rect x="723" y="157" width="424" height="98" rx="6" fill="#edf7f5" stroke="#137e79" stroke-width="1.4" /><text x="739" y="186" font-size="19" font-weight="700" fill="#137e79" style="fill:#137e79" text-anchor="start">② 批量 FK / 有限差分扰动</text><text x="739" y="213" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">float64；关闭 TF32 / 混合精度</text><text x="739" y="236" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">模型缓存、CUDA Graph、坐标批变换</text><rect x="723" y="292" width="424" height="110" rx="6" fill="#edf7f5" stroke="#137e79" stroke-width="1.4" /><text x="739" y="321" font-size="19" font-weight="700" fill="#137e79" style="fill:#137e79" text-anchor="start">③ 回传所需数值</text><text x="739" y="348" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">轻量数值协议；按需旋转输出</text><text x="739" y="371" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">CPU 继续残差与决策</text><path d="M477,203 L721,203" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow4)" /><text x="528" y="188" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">q 与扰动批</text><path d="M935,255 L935,290" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow4)" /><path d="M723,347 L479,347" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow4)" /><text x="540" y="331" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">位置 / 旋转</text><path d="M63,292 L42,292 L42,267 L63,267 L63,255" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow4)" /><rect x="30" y="488" width="540" height="89" rx="6" fill="#f4f6f8" stroke="#a6b3be" stroke-width="1.4" /><text x="46" y="517" font-size="19" font-weight="700" fill="#a6b3be" style="fill:#a6b3be" text-anchor="start">为什么需要回传？</text><text x="46" y="544" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">当前决策仍在 SciPy / NumPy；协议隔离两个既有环境。</text><text x="46" y="567" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">保留同一算法迁移到设备控制后，可减少这些边界。</text><rect x="610" y="488" width="560" height="89" rx="6" fill="#fff7e8" stroke="#b57418" stroke-width="1.4" stroke-dasharray="6 5"/><text x="630" y="517" font-size="18" font-weight="700" fill="#b57418" style="fill:#b57418" text-anchor="start">待完成：设备端线性求解 + 收敛掩码 + 异构几何 Batch</text><text x="630" y="548" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">迁移逐项验收；更换求解算法另设条件。</text></svg></div><div class="bar"><p class="caption">GPU已加速的是反复调用的模型计算。CPU还承担算法控制和大部分整段线性求解，主机与设备之间因此仍有往返。整套循环驻留GPU属于后续工程工作。</p><a class="download" download href="assets/20261119_k4_method_atlas/04_execution.svg">下载矢量 SVG ↗</a></div><p>当前两个既有环境通过常驻设备进程交换数值，避免修改正在运行的CPU环境。轻量传输减少打包/解包，按需回读减少输出量。下一层改进需要将残差、雅可比、线性子问题和接受判断放在同一设备循环中，同时保留CPU算法的边界、预算、停止与回退语义。</p><p>历史独立Torch GN已经有实现，属于另一种求解算法；它与本轮“CPU算法一致性迁移”分别命名和验收。自动微分、更少初值或更小计算预算也应单列，而不能算作等价执行的免费加速。</p></section><section id="export"><div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 555" role="img" aria-labelledby="t5 d5"><title id="t5">输出路径：原生拟合、插值与回读分别验收</title><desc id="d5">关节旋转采用 SO(3) 路径；多个关节分别平滑，仍可能产生不理想的末端运动。</desc><defs><marker id="arrow5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" fill="#657789"/></marker></defs><rect width="1200" height="555" fill="white"/><style>text{font-family:Arial,"Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#19334a}.small{font-size:16px;fill:#657789}.body{font-size:18px}.head{font-size:20px;font-weight:700}</style><text x="32" y="37" font-size="26" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">05  输出路径：原生拟合、插值与回读分别验收</text><text x="32" y="66" font-size="16" font-weight="400" fill="#657789" style="fill:#657789" text-anchor="start">关节旋转采用 SO(3) 路径；多个关节分别平滑，仍可能产生不理想的末端运动。</text><text x="35" y="115" font-size="19" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">A  原生锚点固定</text><path d="M65 190 L1110 190" stroke="#a6b3be" stroke-width="2" fill="none"/><circle cx="65" cy="190" r="9" fill="#315b92"/><text x="65" y="165" font-size="19" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="middle">qₜ</text><circle cx="410" cy="190" r="9" fill="#315b92"/><text x="410" y="165" font-size="19" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="middle">qₜ</text><circle cx="755" cy="190" r="9" fill="#315b92"/><text x="755" y="165" font-size="19" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="middle">qₜ</text><circle cx="1110" cy="190" r="9" fill="#315b92"/><text x="1110" y="165" font-size="19" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="middle">qₜ</text><circle cx="151" cy="190" r="5" fill="#a6b3be"/><circle cx="237" cy="190" r="5" fill="#a6b3be"/><circle cx="323" cy="190" r="5" fill="#a6b3be"/><circle cx="496" cy="190" r="5" fill="#a6b3be"/><circle cx="582" cy="190" r="5" fill="#a6b3be"/><circle cx="668" cy="190" r="5" fill="#a6b3be"/><circle cx="841" cy="190" r="5" fill="#a6b3be"/><circle cx="927" cy="190" r="5" fill="#a6b3be"/><circle cx="1013" cy="190" r="5" fill="#a6b3be"/><text x="35" y="230" font-size="18" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">蓝点：已拟合原生坐标；灰点：新增导出采样。全部输出仍由同一固定模型 FK 产生。</text><rect x="35" y="274" width="340" height="130" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="51" y="303" font-size="19" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">B  SO(3) 插值</text><text x="51" y="330" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">旋转群上的连续旋转路径</text><text x="51" y="353" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">回到模型坐标与耦合</text><text x="51" y="376" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">保留原生采样点</text><rect x="430" y="274" width="340" height="130" rx="6" fill="#edf7f5" stroke="#137e79" stroke-width="1.4" /><text x="446" y="303" font-size="19" font-weight="700" fill="#137e79" style="fill:#137e79" text-anchor="start">C  协调中间姿态</text><text x="446" y="330" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">原生 FK 端点线性插值作目标</text><text x="446" y="353" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">按 D 的支持掩码门控</text><text x="446" y="376" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">联合关节重求解；锚点不动</text><rect x="825" y="274" width="340" height="130" rx="6" fill="#fff7e8" stroke="#b57418" stroke-width="1.4" /><text x="841" y="303" font-size="19" font-weight="700" fill="#b57418" style="fill:#b57418" text-anchor="start">D  文件输出与独立回读</text><text x="841" y="330" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">协调前 → 协调后 → 实际文件</text><text x="841" y="353" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">D 时钟 / R 时钟分别验证</text><text x="841" y="376" font-size="16" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">报告插值新增误差与原生误差</text><path d="M375,338 L428,338" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow5)" /><path d="M770,338 L823,338" stroke="#657789" stroke-width="1.7" fill="none" marker-end="url(#arrow5)" /><rect x="35" y="439" width="1130" height="80" rx="6" fill="#f4f6f8" stroke="#a6b3be" stroke-width="1.4" /><text x="52" y="470" font-size="18" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">批处理空间：独立区间与中间帧的 FK / 残差。当前复用逐帧 refine，连续初值仍需显式处理。</text><text x="52" y="499" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">线性端点路径是插值假设；它未增加观测信息。直接移除连续初值或减少导出采样要另作算法条件。</text></svg></div><div class="bar"><p class="caption">协调导出是独立方法因素，可复用同一原生拟合结果。导出路径质量、原生姿态质量与文件精度分别报告，避免把插值改善归给原生求解。</p><a class="download" download href="assets/20261119_k4_method_atlas/05_export.svg">下载矢量 SVG ↗</a></div></section><section id="evidence"><div class="figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 530" role="img" aria-labelledby="t6 d6"><title id="t6">性能证据：局部计算快，整体循环仍受限制</title><desc id="d6">两个面板来自不同实验，计时范围不同；不可把内核倍数直接视为整条 K 加速倍数。</desc><defs><marker id="arrow6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10Z" fill="#657789"/></marker></defs><rect width="1200" height="530" fill="white"/><style>text{font-family:Arial,"Noto Sans CJK SC","Microsoft YaHei",sans-serif;fill:#19334a}.small{font-size:16px;fill:#657789}.body{font-size:18px}.head{font-size:20px;font-weight:700}</style><text x="32" y="37" font-size="26" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">06  性能证据：局部计算快，整体循环仍受限制</text><text x="32" y="66" font-size="16" font-weight="400" fill="#657789" style="fill:#657789" text-anchor="start">两个面板来自不同实验，计时范围不同；不可把内核倍数直接视为整条 K 加速倍数。</text><text x="35" y="112" font-size="19" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">A  固定32帧 FK 请求 · 预热中位数 / ms</text><text x="35" y="164" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">逐算子执行</text><rect x="239" y="147" width="215" height="30" rx="6" fill="#edf7f5" stroke="#137e79" stroke-width="1.4" /><text x="465.46000000000004" y="169" font-size="17" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">34.20</text><text x="35" y="240" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">CUDA Graph</text><rect x="239" y="223" width="46" height="30" rx="6" fill="#edf7f5" stroke="#137e79" stroke-width="1.4" /><text x="295.99" y="245" font-size="17" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">7.30</text><text x="35" y="316" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">Graph + 坐标批变换</text><rect x="239" y="299" width="32" height="30" rx="6" fill="#edf7f5" stroke="#137e79" stroke-width="1.4" /><text x="281.94100000000003" y="321" font-size="17" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">5.07</text><text x="35" y="402" font-size="18" font-weight="700" fill="#137e79" style="fill:#137e79" text-anchor="start">局部约 6.8×；同请求边界，含往返。</text><text x="625" y="112" font-size="19" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">B  150帧姿态细化 · 预热中位数 / s</text><text x="625" y="164" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">控制实现</text><rect x="756" y="147" width="290.95459999999997" height="30" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="1058.9546" y="169" font-size="17" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">76.57</text><text x="625" y="240" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">轻量传输</text><rect x="756" y="223" width="262.4242" height="30" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="1030.4242" y="245" font-size="17" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">69.06</text><text x="625" y="316" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">组合优化</text><rect x="756" y="299" width="250.94819999999999" height="30" rx="6" fill="#eff4fa" stroke="#315b92" stroke-width="1.4" /><text x="1018.9482" y="321" font-size="17" font-weight="700" fill="#19334a" style="fill:#19334a" text-anchor="start">66.04</text><text x="625" y="402" font-size="18" font-weight="700" fill="#315b92" style="fill:#315b92" text-anchor="start">局部姿态细化减少 13.7%；约 2.27 帧/s。</text><path d="M590 102 L590 421" stroke="#a6b3be" stroke-width="2" fill="none"/><text x="35" y="461" font-size="19" font-weight="700" fill="#b57418" style="fill:#b57418" text-anchor="start">整段9项已剖析任务：CPU线性子问题占合计求解时间约83.2%。范围仅覆盖这9项。</text><text x="35" y="494" font-size="17" font-weight="400" fill="#19334a" style="fill:#19334a" text-anchor="start">相同输入 / 候选，原14个CPU worker并行；计时复用既有模型与种子，完整部署延迟、全候选吞吐与GPU默认资格仍待验证。</text></svg></div><div class="bar"><p class="caption">FK局部加速与传输优化已经有实测收益。整段任务的主要成本仍在CPU线性子问题，逐帧任务则反复支付控制和通信成本。进一步收益需要改变执行位置和批规模。</p><a class="download" download href="assets/20261119_k4_method_atlas/06_evidence.svg">下载矢量 SVG ↗</a></div><div class="calculator"><div><h3>瓶颈上界演示：Amdahl公式</h3><p>若可加速部分占时间p、该部分加速s倍，忽略新增开销时，总加速比为 1 / [(1−p) + p/s]。</p><label>可加速占比 p：<input id="fraction" type="range" min="5" max="95" value="20"><output id="fractionValue">20%</output></label><br><label>局部加速 s：<input id="speed" type="range" min="1" max="20" value="7"><output id="speedValue">7×</output></label></div><div><h3 id="amdahl">总加速 1.21×</h3><p id="saving">耗时减少17.1%</p><small>这是可调的理论示意，默认p=20%为假设。9项整段任务的83.2%仅用于对应线性子问题分析，不能推广为全部40项或所有K路径的时间比例。</small></div></div></section><section id="matrix"><h2>哪些能加速、能Batch，哪些做了？</h2><p>状态描述当前工程实现与证据范围。绿色“已接入”也不代表整套GPU默认资格通过。筛选只改变显示，完整清单保留17个环节。</p><div class="filters"><button class="active" data-filter="all">全部环节</button><button data-filter="done">已接入</button><button data-filter="partial">部分覆盖</button><button data-filter="local">局部实验</button><button data-filter="todo">待工程化</button></div><div class="table-scroll"><table id="statusTable"><thead><tr><th>环节</th><th>并行空间</th><th>当前状态</th><th>已经做了</th><th>剩余工作 / 边界</th></tr></thead><tbody><tr data-state="done"><td>输入读取、格式适配、缓存<br><small>motion.py / input_rig.py / backends/score_store.py</small></td><td>跨文件；数值转换可批</td><td><span class="badge done">已接入</span></td><td>八格式CPU读取器复用；按内容哈希缓存与数值列缓存已有</td><td>完整读取/准备流程的GPU化与统一流水预取尚未完成；先减少重复解析</td></tr><tr data-state="partial"><td>固定模型与几何准备<br><small>fixed_geometry.py / backends/opensim_export.py</small></td><td>跨候选/序列；同源资产复用</td><td><span class="badge partial">部分接入</span></td><td>输入驱动固定几何与OpenSim→Torch模型导出已有</td><td>每个固定模型仍须建模与核验；不同几何的通用批结构待完成</td></tr><tr data-state="todo"><td>OpenSim基础IK与种子生成<br><small>initialization.py / k4_fitting.py</small></td><td>跨候选/独立初值可并行</td><td><span class="badge todo">CPU已有</span></td><td>标记IK、输入多初值及全窗口种子选择保持原实现</td><td>本轮GPU面板复用固定模型和求解前状态；基础IK尚未GPU迁移</td></tr><tr data-state="done"><td>模型 FK、坐标变换<br><small>backends/torch_model.py / engineering/graph.py</small></td><td>同模型的帧/扰动/请求批</td><td><span class="badge done">已接入</span></td><td>float64批量FK、耦合、模型驻留、CUDA Graph、坐标批变换</td><td>完整算法覆盖与默认替换仍由独立验收决定</td></tr><tr data-state="done"><td>有限差分雅可比<br><small>engineering/derivatives.py / kernel.py</small></td><td>同次迭代的扰动列可批</td><td><span class="badge done">已接入</span></td><td>沿用CPU步长/边界；批量计算扰动FK</td><td>设备端直接生成全部残差/雅可比尚未完成；自动微分属独立导数条件</td></tr><tr data-state="local"><td>同帧多初值<br><small>engineering/batching.py / contracts.py</small></td><td>独立初值可并行；追加初值有触发条件</td><td><span class="badge local">局部实验</span></td><td>双CPU控制器共享设备计算已实现；4帧3.22s，顺序2.65s</td><td>该测试更慢，主面板仍顺序；设备端批控制待完成</td></tr><tr data-state="partial"><td>连续逐帧拟合<br><small>refinement.py / engineering/kernel.py</small></td><td>跨序列/候选可批；同序列有前态依赖</td><td><span class="badge partial">部分接入</span></td><td>GPU模型计算 + CPU原TRF控制</td><td>完整设备驻留TRF、活动样本掩码和停止管理尚未实现</td></tr><tr data-state="partial"><td>整段轨迹残差<br><small>trajectory_objective.py / trajectory.py</small></td><td>给定当前轨迹后可全帧批</td><td><span class="badge partial">部分接入</span></td><td>全帧模型计算与有限差分批；原稀疏目标保留</td><td>稀疏雅可比组装与整个迭代尚未完整驻留GPU</td></tr><tr data-state="local"><td>有界稀疏线性子问题<br><small>trajectory_solver.py / engineering/linear.py</small></td><td>矩阵算子可GPU；独立系统可批</td><td><span class="badge local">局部实验</span></td><td>CPU转置CSR缓存：两矩阵约5.6% / 7.9%局部提速</td><td>CPU等价LSMR/边界管理的GPU版本待实现；不能把现有独立GN算作已完成迁移</td></tr><tr data-state="todo"><td>迭代、线搜索与停止<br><small>engineering/contracts.py / trajectory_solver.py</small></td><td>有依赖但可设备执行；独立样本掩码批</td><td><span class="badge todo">尚未实现</span></td><td>当前按CPU原预算与顺序决策</td><td>设备端信赖域更新、接受/回退及投机计算预算需保持</td></tr><tr data-state="local"><td>跨序列批处理<br><small>engineering/sessions.py</small></td><td>相同模型可微批；异构几何可另建批模型</td><td><span class="badge local">局部实验</span></td><td>两个6帧片段7.65→5.54–6.15s；位置差0.0163mm</td><td>完整旋转/时序资格待验；40项仅两组共8项共享模型，异构几何未实现</td></tr><tr data-state="partial"><td>跨候选调度<br><small>candidate_pool.py / candidate_ablation.py</small></td><td>独立配置可并行；完全相同产物可复用</td><td><span class="badge partial">部分接入</span></td><td>CPU独立候选、内容哈希复用及全适用消融已有</td><td>GPU全候选动态队列和异构固定几何分桶尚未完成</td></tr><tr data-state="todo"><td>root补偿与附着头颈链<br><small>root.py / head_neck.py / output.py</small></td><td>已知身体姿态后，多帧可批</td><td><span class="badge todo">CPU已有</span></td><td>双髋中点root与头颈组合FK已有；原生旋转对照单列</td><td>完整头颈/补偿路径的GPU批化尚未端到端接入；欠观测轴向旋转保持未知</td></tr><tr data-state="todo"><td>SO(3)插值与协调导出<br><small>resampling/coordinated.py / rotation_resampling.py</small></td><td>区间独立计算；中间拟合需管理前态</td><td><span class="badge todo">CPU已有</span></td><td>SO(3)、固定锚点协调路径、原生结果复用已落地</td><td>完整协调导出GPU批求解尚未接入；插值目标属于假设</td></tr><tr data-state="partial"><td>评分与统一骨长<br><small>backends/torch_scoring.py</small></td><td>窗口/比较/部位/时钟可批</td><td><span class="badge partial">已实现独立后端</span></td><td>Torch score_batch保留有效掩码、跳变分层及分位数</td><td>当前冻结CPU评分继续；完整头颈/回读验收链的统一GPU覆盖仍待证明</td></tr><tr data-state="partial"><td>独立OpenSim FK / 文件回读<br><small>k4_fitting.py / engineering/acceptance.py</small></td><td>可跨文件CPU并行与严格缓存</td><td><span class="badge partial">CPU已有</span></td><td>作为独立计算基准与导出检查</td><td>保留独立性；无需把验收与求解合成同一GPU实现</td></tr><tr data-state="done"><td>报告聚合与落盘<br><small>backends/score_store.py / reporting/candidate_ablation.py</small></td><td>可增量/缓存；I/O可流水</td><td><span class="badge done">已接入</span></td><td>哈希复用、紧凑评分列和报告节流</td><td>HTML/文件I/O优先CPU与缓存，GPU计算收益需以实测决定</td></tr></tbody></table></div></section><section id="catalogue"><h2>当前全部24列候选：逐项可追溯</h2><p>13个原生配置中，<code>forward_full_path</code>与<code>reverse_full_path</code>自带协调导出；其余11个另有<code>__coordinated</code>变体，共24列。每列适用分母由冻结协议逐路统计；合计9512个适用单元（包含已证明等价项）。这是算法消融列数，40项GPU面板尚未覆盖全部9512单元。</p><div class="table-scroll"><table><thead><tr><th>候选列</th><th>方法变化</th><th>适用路数 / 656</th><th>配置证据</th></tr></thead><tbody><tr><td><code>pelvis_continuity</code></td><td>加强骨盆线与方向变化的连续性；逐帧多初值。</td><td>656<br><small>{&#x27;applicable&#x27;: 656}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;pelvis_continuity&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Explicit development candidate; full six-sentinel 017 regression retained; no default promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Registered v6 controls: pose residuals5deg/5cm; added-direction velocity scale10deg/s with weight0.25; pelvis-line weight2 is a separate engineering hypothesis. No R or per-window selector.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;pelvis_line_weight&quot;: 2.0
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;rotation_temporal_search_pelvis&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -75,
+          75
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -75,
+          75
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0
+  }
+}</pre></details></td></tr><tr><td><code>pelvis_continuity__coordinated</code></td><td>复用 pelvis_continuity 的原生拟合；增加固定锚点协调导出。</td><td>656<br><small>{&#x27;applicable&#x27;: 656}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;pelvis_continuity&quot;,
+  &quot;kind&quot;: &quot;export&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Explicit development candidate; full six-sentinel 017 regression retained; no default promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Registered v6 controls: pose residuals5deg/5cm; added-direction velocity scale10deg/s with weight0.25; pelvis-line weight2 is a separate engineering hypothesis. No R or per-window selector.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;pelvis_line_weight&quot;: 2.0
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;rotation_temporal_search_pelvis&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -75,
+          75
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -75,
+          75
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0
+  },
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_weight&quot;: 1.0,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5.0,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;continuity_weight&quot;: 0.0,
+      &quot;max_nfev&quot;: 60
+    }
+  }
+}</pre></details></td></tr><tr><td><code>balanced_targets</code></td><td>统一归一方向、位置、几何角及超目标惩罚。</td><td>656<br><small>{&#x27;applicable&#x27;: 656}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;balanced_targets&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Explicit development candidate, no default promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;target_balanced_temporal&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -75,
+          75
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -75,
+          75
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0
+  }
+}</pre></details></td></tr><tr><td><code>balanced_targets__coordinated</code></td><td>复用 balanced_targets 的原生拟合；增加固定锚点协调导出。</td><td>656<br><small>{&#x27;applicable&#x27;: 656}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;balanced_targets&quot;,
+  &quot;kind&quot;: &quot;export&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Explicit development candidate, no default promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;target_balanced_temporal&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -75,
+          75
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -75,
+          75
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0
+  },
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_weight&quot;: 1.0,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5.0,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;continuity_weight&quot;: 0.0,
+      &quot;max_nfev&quot;: 60
+    }
+  }
+}</pre></details></td></tr><tr><td><code>rig_centres</code></td><td>采用声明源骨架关节中心，检验模型节点注册。</td><td>492<br><small>{&#x27;applicable&#x27;: 492, &#x27;inapplicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;rig_centres&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent fixed-foot geometry/domain ablation; no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;registered_centres&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -75,
+          75
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -75,
+          75
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;joint_centres&quot;: &quot;declared_rig&quot;
+  }
+}</pre></details></td></tr><tr><td><code>rig_centres__coordinated</code></td><td>复用 rig_centres 的原生拟合；增加固定锚点协调导出。</td><td>492<br><small>{&#x27;applicable&#x27;: 492, &#x27;inapplicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;rig_centres&quot;,
+  &quot;kind&quot;: &quot;export&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent fixed-foot geometry/domain ablation; no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;registered_centres&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -75,
+          75
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -75,
+          75
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;joint_centres&quot;: &quot;declared_rig&quot;
+  },
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_weight&quot;: 1.0,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5.0,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;continuity_weight&quot;: 0.0,
+      &quot;max_nfev&quot;: 60
+    }
+  }
+}</pre></details></td></tr><tr><td><code>rig_arm_domain_centres</code></td><td>声明中心与足几何，扩展足踝与上臂轴向坐标域。</td><td>492<br><small>{&#x27;applicable&#x27;: 492, &#x27;inapplicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;rig_arm_domain_centres&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;forward&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;domain_centres&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_rot_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;arm_rot_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;joint_centres&quot;: &quot;declared_rig&quot;
+  }
+}</pre></details></td></tr><tr><td><code>rig_arm_domain_centres__coordinated</code></td><td>复用 rig_arm_domain_centres 的原生拟合；增加固定锚点协调导出。</td><td>492<br><small>{&#x27;applicable&#x27;: 492, &#x27;inapplicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;rig_arm_domain_centres&quot;,
+  &quot;kind&quot;: &quot;export&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;forward&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;domain_centres&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_rot_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;arm_rot_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;joint_centres&quot;: &quot;declared_rig&quot;
+  },
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_weight&quot;: 1.0,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5.0,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;continuity_weight&quot;: 0.0,
+      &quot;max_nfev&quot;: 60
+    }
+  }
+}</pre></details></td></tr><tr><td><code>rig_reverse_leg_path</code></td><td>声明足几何与足踝范围，反向遍历。</td><td>492<br><small>{&#x27;applicable&#x27;: 492, &#x27;inapplicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;rig_reverse_leg_path&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;reverse&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;reverse_path&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;coordinated_path&quot;: {
+      &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+      &quot;refinement&quot;: {
+        &quot;active_coordinates&quot;: [
+          &quot;hip_flexion_l&quot;,
+          &quot;hip_adduction_l&quot;,
+          &quot;hip_rotation_l&quot;,
+          &quot;knee_angle_l&quot;,
+          &quot;ankle_angle_l&quot;,
+          &quot;subtalar_angle_l&quot;,
+          &quot;hip_flexion_r&quot;,
+          &quot;hip_adduction_r&quot;,
+          &quot;hip_rotation_r&quot;,
+          &quot;knee_angle_r&quot;,
+          &quot;ankle_angle_r&quot;,
+          &quot;subtalar_angle_r&quot;
+        ],
+        &quot;position_weight&quot;: 1.0,
+        &quot;position_scale_m&quot;: 0.05,
+        &quot;direction_scale_deg&quot;: 5.0,
+        &quot;include_pelvis_line&quot;: true,
+        &quot;joint_angle_weight&quot;: 1.0,
+        &quot;target_violation_weight&quot;: 4.0,
+        &quot;target_margin_fraction&quot;: 0.8,
+        &quot;continuity_weight&quot;: 0.0,
+        &quot;max_nfev&quot;: 60
+      }
+    }
+  }
+}</pre></details></td></tr><tr><td><code>rig_reverse_leg_path__coordinated</code></td><td>复用 rig_reverse_leg_path 的原生拟合；增加固定锚点协调导出。</td><td>492<br><small>{&#x27;applicable&#x27;: 492, &#x27;inapplicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;rig_reverse_leg_path&quot;,
+  &quot;kind&quot;: &quot;export&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;reverse&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;reverse_path&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;coordinated_path&quot;: {
+      &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+      &quot;refinement&quot;: {
+        &quot;active_coordinates&quot;: [
+          &quot;hip_flexion_l&quot;,
+          &quot;hip_adduction_l&quot;,
+          &quot;hip_rotation_l&quot;,
+          &quot;knee_angle_l&quot;,
+          &quot;ankle_angle_l&quot;,
+          &quot;subtalar_angle_l&quot;,
+          &quot;hip_flexion_r&quot;,
+          &quot;hip_adduction_r&quot;,
+          &quot;hip_rotation_r&quot;,
+          &quot;knee_angle_r&quot;,
+          &quot;ankle_angle_r&quot;,
+          &quot;subtalar_angle_r&quot;
+        ],
+        &quot;position_weight&quot;: 1.0,
+        &quot;position_scale_m&quot;: 0.05,
+        &quot;direction_scale_deg&quot;: 5.0,
+        &quot;include_pelvis_line&quot;: true,
+        &quot;joint_angle_weight&quot;: 1.0,
+        &quot;target_violation_weight&quot;: 4.0,
+        &quot;target_margin_fraction&quot;: 0.8,
+        &quot;continuity_weight&quot;: 0.0,
+        &quot;max_nfev&quot;: 60
+      }
+    }
+  },
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_weight&quot;: 1.0,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5.0,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;continuity_weight&quot;: 0.0,
+      &quot;max_nfev&quot;: 60
+    }
+  }
+}</pre></details></td></tr><tr><td><code>rig_reverse_rate_leg_path</code></td><td>反向腿部分支增加方向误差变化率惩罚。</td><td>492<br><small>{&#x27;applicable&#x27;: 492, &#x27;inapplicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;rig_reverse_rate_leg_path&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;direction_rate_violation_weight&quot;: 1.0,
+      &quot;direction_rate_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;reverse&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;reverse_rate1_path&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;coordinated_path&quot;: {
+      &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+      &quot;refinement&quot;: {
+        &quot;active_coordinates&quot;: [
+          &quot;hip_flexion_l&quot;,
+          &quot;hip_adduction_l&quot;,
+          &quot;hip_rotation_l&quot;,
+          &quot;knee_angle_l&quot;,
+          &quot;ankle_angle_l&quot;,
+          &quot;subtalar_angle_l&quot;,
+          &quot;hip_flexion_r&quot;,
+          &quot;hip_adduction_r&quot;,
+          &quot;hip_rotation_r&quot;,
+          &quot;knee_angle_r&quot;,
+          &quot;ankle_angle_r&quot;,
+          &quot;subtalar_angle_r&quot;
+        ],
+        &quot;position_weight&quot;: 1.0,
+        &quot;position_scale_m&quot;: 0.05,
+        &quot;direction_scale_deg&quot;: 5.0,
+        &quot;include_pelvis_line&quot;: true,
+        &quot;joint_angle_weight&quot;: 1.0,
+        &quot;target_violation_weight&quot;: 4.0,
+        &quot;target_margin_fraction&quot;: 0.8,
+        &quot;continuity_weight&quot;: 0.0,
+        &quot;max_nfev&quot;: 60
+      }
+    }
+  }
+}</pre></details></td></tr><tr><td><code>rig_reverse_rate_leg_path__coordinated</code></td><td>复用 rig_reverse_rate_leg_path 的原生拟合；增加固定锚点协调导出。</td><td>492<br><small>{&#x27;applicable&#x27;: 492, &#x27;inapplicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;rig_reverse_rate_leg_path&quot;,
+  &quot;kind&quot;: &quot;export&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;direction_rate_violation_weight&quot;: 1.0,
+      &quot;direction_rate_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;reverse&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;reverse_rate1_path&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;coordinated_path&quot;: {
+      &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+      &quot;refinement&quot;: {
+        &quot;active_coordinates&quot;: [
+          &quot;hip_flexion_l&quot;,
+          &quot;hip_adduction_l&quot;,
+          &quot;hip_rotation_l&quot;,
+          &quot;knee_angle_l&quot;,
+          &quot;ankle_angle_l&quot;,
+          &quot;subtalar_angle_l&quot;,
+          &quot;hip_flexion_r&quot;,
+          &quot;hip_adduction_r&quot;,
+          &quot;hip_rotation_r&quot;,
+          &quot;knee_angle_r&quot;,
+          &quot;ankle_angle_r&quot;,
+          &quot;subtalar_angle_r&quot;
+        ],
+        &quot;position_weight&quot;: 1.0,
+        &quot;position_scale_m&quot;: 0.05,
+        &quot;direction_scale_deg&quot;: 5.0,
+        &quot;include_pelvis_line&quot;: true,
+        &quot;joint_angle_weight&quot;: 1.0,
+        &quot;target_violation_weight&quot;: 4.0,
+        &quot;target_margin_fraction&quot;: 0.8,
+        &quot;continuity_weight&quot;: 0.0,
+        &quot;max_nfev&quot;: 60
+      }
+    }
+  },
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_weight&quot;: 1.0,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5.0,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;continuity_weight&quot;: 0.0,
+      &quot;max_nfev&quot;: 60
+    }
+  }
+}</pre></details></td></tr><tr><td><code>reverse_full_path</code></td><td>反向原生求解并自带全身协调导出。</td><td>656<br><small>{&#x27;applicable&#x27;: 656}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;reverse_full_path&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;reverse&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;reverse_fullpath&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;coordinated_path&quot;: {
+      &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+      &quot;refinement&quot;: {
+        &quot;position_weight&quot;: 1.0,
+        &quot;position_scale_m&quot;: 0.05,
+        &quot;direction_scale_deg&quot;: 5.0,
+        &quot;include_pelvis_line&quot;: true,
+        &quot;joint_angle_weight&quot;: 1.0,
+        &quot;target_violation_weight&quot;: 4.0,
+        &quot;target_margin_fraction&quot;: 0.8,
+        &quot;continuity_weight&quot;: 0.0,
+        &quot;max_nfev&quot;: 60
+      }
+    }
+  }
+}</pre></details></td></tr><tr><td><code>position_chain</code></td><td>位置输入的观察链长代理，保持固定几何。</td><td>164<br><small>{&#x27;inapplicable&#x27;: 492, &#x27;applicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;position_chain&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;forward&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;native_chain&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;position_trunk_strategy&quot;: &quot;observed_chain_proxy_v1&quot;
+  }
+}</pre></details></td></tr><tr><td><code>position_chain__coordinated</code></td><td>复用 position_chain 的原生拟合；增加固定锚点协调导出。</td><td>164<br><small>{&#x27;inapplicable&#x27;: 492, &#x27;applicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;position_chain&quot;,
+  &quot;kind&quot;: &quot;export&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;forward&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;native_chain&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;position_trunk_strategy&quot;: &quot;observed_chain_proxy_v1&quot;
+  },
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_weight&quot;: 1.0,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5.0,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;continuity_weight&quot;: 0.0,
+      &quot;max_nfev&quot;: 60
+    }
+  }
+}</pre></details></td></tr><tr><td><code>position_fixed_foot_chain</code></td><td>链长代理加输入可辨识的固定足部几何。</td><td>164<br><small>{&#x27;inapplicable&#x27;: 492, &#x27;applicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;position_fixed_foot_chain&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent fixed-foot geometry/domain ablation; no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;chain&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;position_foot_geometry&quot;: {
+      &quot;version&quot;: &quot;input_polar_envelope_v1&quot;,
+      &quot;length_tolerance_m&quot;: 0.02
+    },
+    &quot;position_trunk_strategy&quot;: &quot;observed_chain_proxy_v1&quot;
+  }
+}</pre></details></td></tr><tr><td><code>position_fixed_foot_chain__coordinated</code></td><td>复用 position_fixed_foot_chain 的原生拟合；增加固定锚点协调导出。</td><td>164<br><small>{&#x27;inapplicable&#x27;: 492, &#x27;applicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;position_fixed_foot_chain&quot;,
+  &quot;kind&quot;: &quot;export&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent fixed-foot geometry/domain ablation; no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;chain&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;position_foot_geometry&quot;: {
+      &quot;version&quot;: &quot;input_polar_envelope_v1&quot;,
+      &quot;length_tolerance_m&quot;: 0.02
+    },
+    &quot;position_trunk_strategy&quot;: &quot;observed_chain_proxy_v1&quot;
+  },
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_weight&quot;: 1.0,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5.0,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;continuity_weight&quot;: 0.0,
+      &quot;max_nfev&quot;: 60
+    }
+  }
+}</pre></details></td></tr><tr><td><code>position_trajectory</code></td><td>从逐帧种子进入整段有界Gauss–Newton。</td><td>164<br><small>{&#x27;inapplicable&#x27;: 492, &#x27;applicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;position_trajectory&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;forward&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;control&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;trajectory_refinement&quot;: {
+      &quot;version&quot;: &quot;joint_trajectory_v1&quot;,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;angle_scale_deg&quot;: 5.0,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;direction_rate_weight&quot;: 1.0,
+      &quot;max_nfev&quot;: 20,
+      &quot;solver&quot;: &quot;bounded_gauss_newton&quot;,
+      &quot;linear_max_iter&quot;: 50,
+      &quot;linear_lsmr_maxiter&quot;: 500,
+      &quot;projected_gradient_fallback&quot;: true,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8
+    },
+    &quot;position_trunk_strategy&quot;: &quot;observed_chain_proxy_v1&quot;,
+    &quot;trajectory_kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;preserve_existing&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_rot_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;arm_rot_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    }
+  }
+}</pre></details></td></tr><tr><td><code>position_trajectory__coordinated</code></td><td>复用 position_trajectory 的原生拟合；增加固定锚点协调导出。</td><td>164<br><small>{&#x27;inapplicable&#x27;: 492, &#x27;applicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;position_trajectory&quot;,
+  &quot;kind&quot;: &quot;export&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;forward&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;control&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;trajectory_refinement&quot;: {
+      &quot;version&quot;: &quot;joint_trajectory_v1&quot;,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;angle_scale_deg&quot;: 5.0,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;direction_rate_weight&quot;: 1.0,
+      &quot;max_nfev&quot;: 20,
+      &quot;solver&quot;: &quot;bounded_gauss_newton&quot;,
+      &quot;linear_max_iter&quot;: 50,
+      &quot;linear_lsmr_maxiter&quot;: 500,
+      &quot;projected_gradient_fallback&quot;: true,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8
+    },
+    &quot;position_trunk_strategy&quot;: &quot;observed_chain_proxy_v1&quot;,
+    &quot;trajectory_kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;preserve_existing&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_rot_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;arm_rot_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    }
+  },
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_weight&quot;: 1.0,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5.0,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;continuity_weight&quot;: 0.0,
+      &quot;max_nfev&quot;: 60
+    }
+  }
+}</pre></details></td></tr><tr><td><code>position_trajectory_chart</code></td><td>整段求解前选择余量更大的等价坐标表示。</td><td>164<br><small>{&#x27;inapplicable&#x27;: 492, &#x27;applicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;position_trajectory_chart&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;forward&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;interior_chart&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;trajectory_refinement&quot;: {
+      &quot;version&quot;: &quot;joint_trajectory_v1&quot;,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;angle_scale_deg&quot;: 5.0,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;direction_rate_weight&quot;: 1.0,
+      &quot;max_nfev&quot;: 20,
+      &quot;solver&quot;: &quot;bounded_gauss_newton&quot;,
+      &quot;linear_max_iter&quot;: 50,
+      &quot;linear_lsmr_maxiter&quot;: 500,
+      &quot;projected_gradient_fallback&quot;: true,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;equivalent_seed_chart&quot;: &quot;max_margin_v1&quot;
+    },
+    &quot;position_trunk_strategy&quot;: &quot;observed_chain_proxy_v1&quot;,
+    &quot;trajectory_kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;preserve_existing&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_rot_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;arm_rot_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    }
+  }
+}</pre></details></td></tr><tr><td><code>position_trajectory_chart__coordinated</code></td><td>复用 position_trajectory_chart 的原生拟合；增加固定锚点协调导出。</td><td>164<br><small>{&#x27;inapplicable&#x27;: 492, &#x27;applicable&#x27;: 164}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;position_trajectory_chart&quot;,
+  &quot;kind&quot;: &quot;export&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;forward&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;interior_chart&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;trajectory_refinement&quot;: {
+      &quot;version&quot;: &quot;joint_trajectory_v1&quot;,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;angle_scale_deg&quot;: 5.0,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;direction_rate_weight&quot;: 1.0,
+      &quot;max_nfev&quot;: 20,
+      &quot;solver&quot;: &quot;bounded_gauss_newton&quot;,
+      &quot;linear_max_iter&quot;: 50,
+      &quot;linear_lsmr_maxiter&quot;: 500,
+      &quot;projected_gradient_fallback&quot;: true,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;equivalent_seed_chart&quot;: &quot;max_margin_v1&quot;
+    },
+    &quot;position_trunk_strategy&quot;: &quot;observed_chain_proxy_v1&quot;,
+    &quot;trajectory_kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;preserve_existing&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_rot_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;arm_rot_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    }
+  },
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_weight&quot;: 1.0,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5.0,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;continuity_weight&quot;: 0.0,
+      &quot;max_nfev&quot;: 60
+    }
+  }
+}</pre></details></td></tr><tr><td><code>forward_full_path</code></td><td>正向原生求解并自带全身协调导出。</td><td>656<br><small>{&#x27;applicable&#x27;: 656}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;forward_full_path&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Explicit development candidate, no default promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;target_balanced_temporal&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -75,
+          75
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -75,
+          75
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;coordinated_path&quot;: {
+      &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+      &quot;refinement&quot;: {
+        &quot;position_weight&quot;: 1.0,
+        &quot;position_scale_m&quot;: 0.05,
+        &quot;direction_scale_deg&quot;: 5.0,
+        &quot;include_pelvis_line&quot;: true,
+        &quot;joint_angle_weight&quot;: 1.0,
+        &quot;target_violation_weight&quot;: 4.0,
+        &quot;target_margin_fraction&quot;: 0.8,
+        &quot;continuity_weight&quot;: 0.0,
+        &quot;max_nfev&quot;: 60
+      }
+    }
+  }
+}</pre></details></td></tr><tr><td><code>position_total_proxy</code></td><td>总链长代理加等价坐标图与整段求解。</td><td>164<br><small>{&#x27;inapplicable&#x27;: 492, &#x27;equivalent&#x27;: 160, &#x27;applicable&#x27;: 4}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;position_total_proxy&quot;,
+  &quot;kind&quot;: &quot;native&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;forward&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;interior_chart&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;trajectory_refinement&quot;: {
+      &quot;version&quot;: &quot;joint_trajectory_v1&quot;,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;angle_scale_deg&quot;: 5.0,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;direction_rate_weight&quot;: 1.0,
+      &quot;max_nfev&quot;: 20,
+      &quot;solver&quot;: &quot;bounded_gauss_newton&quot;,
+      &quot;linear_max_iter&quot;: 50,
+      &quot;linear_lsmr_maxiter&quot;: 500,
+      &quot;projected_gradient_fallback&quot;: true,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;equivalent_seed_chart&quot;: &quot;max_margin_v1&quot;
+    },
+    &quot;position_trunk_strategy&quot;: &quot;observed_chain_total_proxy_v1&quot;,
+    &quot;trajectory_kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;preserve_existing&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_rot_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;arm_rot_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    }
+  }
+}</pre></details></td></tr><tr><td><code>position_total_proxy__coordinated</code></td><td>复用 position_total_proxy 的原生拟合；增加固定锚点协调导出。</td><td>164<br><small>{&#x27;inapplicable&#x27;: 492, &#x27;equivalent&#x27;: 160, &#x27;applicable&#x27;: 4}</small></td><td><details><summary>完整冻结配置</summary><pre>{
+  &quot;base&quot;: &quot;position_total_proxy&quot;,
+  &quot;kind&quot;: &quot;export&quot;,
+  &quot;config&quot;: {
+    &quot;version&quot;: &quot;k4-fit-1&quot;,
+    &quot;status&quot;: &quot;Independent temporal factor candidate, no promotion&quot;,
+    &quot;independent_geometry&quot;: true,
+    &quot;solver&quot;: &quot;direction_position_refinement&quot;,
+    &quot;constraint_policy&quot;: &quot;direct_couplers&quot;,
+    &quot;postprocess&quot;: &quot;native_preserving&quot;,
+    &quot;root_policy&quot;: &quot;input_hip_midpoint&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5,
+      &quot;position_weight&quot;: 1.0,
+      &quot;continuity_weight&quot;: 0.02,
+      &quot;max_nfev&quot;: 100,
+      &quot;parameter_source&quot;: &quot;Reuse registered v4 input-target engineering weights after shoulder-width correction; uniform normalized 5deg/5cm targets plus 20% margin. No window-specific runtime branch, no R.&quot;,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;extra_start&quot;: &quot;neutral_knee_if_target_failed&quot;,
+      &quot;direction_continuity_weight&quot;: 0.25,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;traversal&quot;: &quot;forward&quot;
+    },
+    &quot;joint_domain&quot;: &quot;Explicit independent kinematic ranges; original asset limits reported separately&quot;,
+    &quot;scope&quot;: &quot;Independent kinematic joint domains and declared high-flexion coupling continuation; unchanged joint structure; no force qualification&quot;,
+    &quot;force_eligible&quot;: false,
+    &quot;condition&quot;: &quot;interior_chart&quot;,
+    &quot;initialization&quot;: {
+      &quot;strategy&quot;: &quot;input_multistart&quot;,
+      &quot;seeds&quot;: [
+        &quot;nominal&quot;,
+        &quot;knee&quot;,
+        &quot;heading&quot;,
+        &quot;heading_knee&quot;
+      ],
+      &quot;selection&quot;: &quot;full_window_weighted_markers&quot;,
+      &quot;parameter_source&quot;: &quot;022 same-model D-only initialization controls; clip-level selection, fixed original IK weights&quot;,
+      &quot;search_ranges_deg&quot;: {
+        &quot;hip_flexion_l&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -40,
+          40
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -30,
+          175
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -50,
+          30
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -40,
+          40
+        ]
+      }
+    },
+    &quot;marker_registration&quot;: &quot;owned_joint_frame&quot;,
+    &quot;head_neck&quot;: &quot;attached_head_neck_v1&quot;,
+    &quot;kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;release_subtalar_original_range&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_flex_l&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;arm_flex_r&quot;: [
+          -90,
+          160
+        ],
+        &quot;hip_flexion_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;subtalar_angle_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;knee_angle_l&quot;: [
+          0,
+          180
+        ],
+        &quot;knee_angle_r&quot;: [
+          0,
+          180
+        ],
+        &quot;hip_adduction_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;hip_adduction_r&quot;: [
+          -90,
+          90
+        ],
+        &quot;hip_rotation_r&quot;: [
+          -180,
+          180
+        ],
+        &quot;ankle_angle_l&quot;: [
+          -90,
+          90
+        ],
+        &quot;ankle_angle_r&quot;: [
+          -90,
+          90
+        ]
+      }
+    },
+    &quot;head_neck_attachment&quot;: &quot;input_fixed_offset&quot;,
+    &quot;kinematic_coupling&quot;: {
+      &quot;version&quot;: &quot;knee_auxiliary_hermite_v2&quot;,
+      &quot;boundary_deg&quot;: 140.0,
+      &quot;end_deg&quot;: 180.0,
+      &quot;grid_deg&quot;: 0.1
+    },
+    &quot;shoulder_width_source&quot;: &quot;observed_rigid_median&quot;,
+    &quot;rotation_resampling&quot;: &quot;whole_body_so3&quot;,
+    &quot;export_clock&quot;: &quot;native_multiple&quot;,
+    &quot;resample_min_rate_hz&quot;: 100.0,
+    &quot;foot_geometry&quot;: &quot;declared_rig&quot;,
+    &quot;trajectory_refinement&quot;: {
+      &quot;version&quot;: &quot;joint_trajectory_v1&quot;,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;angle_scale_deg&quot;: 5.0,
+      &quot;direction_rate_scale_deg_s&quot;: 10.0,
+      &quot;direction_rate_weight&quot;: 1.0,
+      &quot;max_nfev&quot;: 20,
+      &quot;solver&quot;: &quot;bounded_gauss_newton&quot;,
+      &quot;linear_max_iter&quot;: 50,
+      &quot;linear_lsmr_maxiter&quot;: 500,
+      &quot;projected_gradient_fallback&quot;: true,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;equivalent_seed_chart&quot;: &quot;max_margin_v1&quot;
+    },
+    &quot;position_trunk_strategy&quot;: &quot;observed_chain_total_proxy_v1&quot;,
+    &quot;trajectory_kinematic_domain&quot;: {
+      &quot;base&quot;: &quot;preserve_existing&quot;,
+      &quot;scope&quot;: &quot;independent_kinematic&quot;,
+      &quot;coordinate_ranges_deg&quot;: {
+        &quot;arm_rot_l&quot;: [
+          -180,
+          180
+        ],
+        &quot;arm_rot_r&quot;: [
+          -180,
+          180
+        ]
+      }
+    }
+  },
+  &quot;policy&quot;: {
+    &quot;version&quot;: &quot;fixed_native_anchors_v1&quot;,
+    &quot;refinement&quot;: {
+      &quot;position_weight&quot;: 1.0,
+      &quot;position_scale_m&quot;: 0.05,
+      &quot;direction_scale_deg&quot;: 5.0,
+      &quot;include_pelvis_line&quot;: true,
+      &quot;joint_angle_weight&quot;: 1.0,
+      &quot;target_violation_weight&quot;: 4.0,
+      &quot;target_margin_fraction&quot;: 0.8,
+      &quot;continuity_weight&quot;: 0.0,
+      &quot;max_nfev&quot;: 60
+    }
+  }
+}</pre></details></td></tr></tbody></table></div><p>不适用与未通过分别记账。完整消融要求每个适用候选有独立验收；候选自身通过率、至少一个候选通过的覆盖与运行时选择器效果分别汇报。</p></section><section id="priorities"><h2>接下来值得优先投入的工作</h2><table><thead><tr><th>优先级</th><th>工程方向</th><th>预期作用与验收</th></tr></thead><tbody><tr><td>1 · 整段路径</td><td>稀疏线性子问题与残差/雅可比设备驻留</td><td>直面已测9项任务约83.2%的线性成本。保持原边界与停止规则，先验证单次实际线性化，再验证全轨迹。收益仍需实测。</td></tr><tr><td>1 · 逐帧路径</td><td>异构固定几何 + 跨序列动态Batch</td><td>把许多小请求合成设备工作批；每条序列保持自己的前态。40项中34个不同固定模型使“只合相同模型”覆盖有限。</td></tr><tr><td>2 · 迭代控制</td><td>GPU端收敛掩码、信赖域与接受步骤</td><td>减少往返和CPU控制开销。先保留算法，再比较延迟、吞吐与差异传播；提前结束样本冻结。</td></tr><tr><td>2 · 导出和评分</td><td>协调路径批处理、批评分、复用同一原生解</td><td>减少验证轮次总耗时；分别统计求解耗时、导出耗时、验收耗时，避免将报告提速算成算法提速。</td></tr><tr><td>持续</td><td>完成一致性诊断和全路径资格</td><td>26/40只是当前通过范围；010/015精确状态对照用于区分单帧偏差与传播。保持CPU原结果和完整分母。</td></tr></tbody></table><p>这些方向可以并行推进研发，但当前GPU进程和CPU实验仍按既有资源规则运行。本次只制作图谱与证据分析，没有调整实验、减少候选或改变评分阈值。</p></section><section id="sources"><h2>证据与版本</h2><p>本文图示描述已核查源码与冻结配置。性能数字为明确局部条件的测量；公式演示与后续工程方向分别标注。GPU性能面板在本次取数时完成 5/10；000 Kimodo四项局部条件已经完成。</p><p><a href="20261119_k4_gpu_status_report.html">一致性与速度详细报告</a> · <a href="20261119_k4_gpu_diagnostics.html">后台诊断动态进度</a> · <a href="20261118_k4_candidate_ablation.html">全部候选消融</a></p><details><summary>本次核查来源及内容哈希</summary><pre>[
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/full_candidate_ablation_20261118_v1/protocol.json&quot;,
+    &quot;sha256&quot;: &quot;1fbfedf524a65c196d8a17da932a220e5a08b45d3f72a5d26ef17712da293208&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_20261119_v1/performance_v2/progress.json&quot;,
+    &quot;sha256&quot;: &quot;863db1ddecdfa8c4aed367cbad58a923e45afa822d4d2bce0df14443e2216354&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_20261119_v1/acceptance_v2/latest.json&quot;,
+    &quot;sha256&quot;: &quot;7e3b66c1e705012a47c14ab485c493037f48033b17089a1e4a5070fbcb358ae7&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/home/heinrich/MorionGen/develop_logs/notes/20261119_k4_gpu_engineering.md&quot;,
+    &quot;sha256&quot;: &quot;1b31f504ee24b4d26ef850d7839d24fdf120e6dd5eac63bf978e5e4f8c419937&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/home/heinrich/MorionGen/develop_logs/notes/20261119_k4_gpu_continuity_performance.md&quot;,
+    &quot;sha256&quot;: &quot;455d650a46df28579eeec5461ad021ca2baa7491f93d1d6abffae20b45888543&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/candidate_pool.py&quot;,
+    &quot;sha256&quot;: &quot;6f89abd336d50e53f1dda397e547f7e19bb1972e65a3bfee13c14c160482e193&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/k4_fitting.py&quot;,
+    &quot;sha256&quot;: &quot;0b7463fd6e1b319398445ea96c00c5fd1ab4d011449f3082be1511d0e5c4caf4&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/refinement.py&quot;,
+    &quot;sha256&quot;: &quot;c2d50ff67ebf5d885d3fc3ff3a157fb71e024772ae642431331f43e8f8d5353d&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/trajectory_solver.py&quot;,
+    &quot;sha256&quot;: &quot;e1ae830a2bc3c2b7d2912de6efaa4c758c8d017f54c519470e35df070f629e9e&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/head_neck.py&quot;,
+    &quot;sha256&quot;: &quot;c006ab6323b3888398d0ac6f7b45377efe66502031b83f7e4a5ae1c20ea66e89&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/resampling/coordinated.py&quot;,
+    &quot;sha256&quot;: &quot;515b32e8ec5e32331ee5f882860928acfd5e45358b44458eae38fcf84d6d1bf9&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/backends/torch_scoring.py&quot;,
+    &quot;sha256&quot;: &quot;11db9b0531fcf0e94a2af449f626ba4e843ca7c83325d86327841bcfbb830281&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/backends/engineering/contracts.py&quot;,
+    &quot;sha256&quot;: &quot;8c8decd62a9a90961538dc09182cc77d94db7f2660b6a144b2f979f955154dc3&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/backends/engineering/sessions.py&quot;,
+    &quot;sha256&quot;: &quot;d8afd4cd35c4ac950068ea50e94e66b5c8464771701d86b225e03bc064648ee2&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/utils/motiogen/evalkit/k/backends/engineering/linear.py&quot;,
+    &quot;sha256&quot;: &quot;0473a0f8ba2f4ad1b706dacc2b6802965b746ddcfd2a26f37b903a6502b31c5d&quot;
+  },
+  {
+    &quot;path&quot;: &quot;/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/gpu_engineering_v1_checkout/python/scripts/evalkit_k4_gpu_engineering_case.py&quot;,
+    &quot;sha256&quot;: &quot;ec579fe71d8a38a63f965f2429c6e6872023da8bd1a05b67b9432f3dba45a1c3&quot;
+  }
+]</pre></details><p>主CPU候选协议：dfe8239；40项GPU面板：117cb84；性能条件：00a9e65；精确状态诊断：9c9b3ea。早期note中的严格初值选择判据由用户后续批准的输出一致性口径更新；历史结果保留。</p></section></main><footer>K4方法图谱 · 所有图形与页面样式内嵌，断网仍可阅读；独立SVG用于论文排版与审阅。方法概念图不等于已通过的实验结论。</footer><script>
+const buttons=document.querySelectorAll('[data-filter]');buttons.forEach(b=>b.addEventListener('click',()=>{buttons.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('#statusTable tbody tr').forEach(r=>r.hidden=b.dataset.filter!=='all'&&r.dataset.state!==b.dataset.filter)}));
+function calc(){const p=Number(document.getElementById('fraction').value)/100,s=Number(document.getElementById('speed').value),t=1-p+p/s;document.getElementById('fractionValue').textContent=Math.round(p*100)+'%';document.getElementById('speedValue').textContent=s+'×';document.getElementById('amdahl').textContent='理论总加速 '+(1/t).toFixed(2)+'×';document.getElementById('saving').textContent='理论耗时减少 '+((1-t)*100).toFixed(1)+'%';}document.getElementById('fraction').addEventListener('input',calc);document.getElementById('speed').addEventListener('input',calc);calc();
+</script></body></html>

@@ -1,0 +1,13 @@
+{
+  "protected_files": {
+    "total": 610,
+    "mismatches": []
+  },
+  "svg_count": 6,
+  "candidate_columns": 24,
+  "applicable_cells": 9512,
+  "offline_dependencies": "all figures/styles/scripts embedded",
+  "links": "verified",
+  "browser": "pipeline, batch and CPU/GPU rendered; filters and Amdahl slider verified",
+  "new_holdout_uses": 0
+}
