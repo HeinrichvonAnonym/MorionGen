@@ -1,0 +1,102 @@
+{
+  "manifest_sha256": "47d19f0a0f7b87321e45d177a51a1e3a5f530225947c1999072041e4abde847d",
+  "old_usage": {
+    "status": "completed",
+    "started_at": "2026-11-15T16:59:10.504641+00:00",
+    "freeze_commit": "acb48ac8cbd656a24b722a4b6fa2a01e0404bf9c",
+    "freeze_sha256": "c0d0b73f838631a36aebdb5d0011bd6ce0d612f65066963f44d4c101b8be7d99",
+    "counts": {
+      "andy_trials": 75,
+      "andy_people": 5,
+      "television_unique_trials": 532
+    },
+    "policy": "single frozen evaluation; results will not be used to tune this version",
+    "format_output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k_20261116/final_holdout",
+    "gap_output": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k_20261116/gaps_final_holdout",
+    "already_used": true,
+    "completed_at": "2026-11-15T17:09:59.207144+00:00",
+    "artifact_sha256": {
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k_20261116/final_holdout/receipt.json": "1df5bf3c293657e11ae59588afe0d8d1ff9f1574270998a38485d8d56bc99180",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k_20261116/final_holdout/records.jsonl": "3059ebe0dc602cb89139333f171bdc16d59f29e9337344f5a04297f5f230ab82",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k_20261116/gaps_final_holdout/receipt.json": "65aaadb1d647b7350d415fcae1d709de7e639d1a879667a1b207a12251242ab1",
+      "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k_20261116/gaps_final_holdout/records.jsonl": "eaa785d59489826140d0e0aabe72829d3953d180ca035c2c36237901814992eb",
+      "config/evalkit_k_validation_20261116/final_summary.json": "703de8509480aa1f0776781871b52c4ebe44fbd4b6220b4adc76ae7e91a5c1df"
+    },
+    "freeze_file_checks": 45,
+    "frozen_implementation_unchanged": true,
+    "execution_failures": 0
+  },
+  "counts": {
+    "records": 607,
+    "andy": 75,
+    "television": 532,
+    "duplicate_aliases": 1
+  },
+  "andy": {
+    "subjects": {
+      "541": 15,
+      "5535": 15,
+      "8524": 15,
+      "9266": 15,
+      "9875": 15
+    },
+    "setups": {
+      "A": 30,
+      "B": 45
+    },
+    "sequence_labels": {
+      "3": 10,
+      "4": 20,
+      "5": 15,
+      "1": 15,
+      "2": 10,
+      "6": 5
+    },
+    "reference_scope": "Current independent reference supports head/thorax marker frames. Existing whole-body fixture outside these regions is a prior, not whole-body ground truth."
+  },
+  "television": {
+    "subjects": {
+      "S01": 353,
+      "S02": 162,
+      "S03": 17
+    },
+    "tasks": {
+      "Packaging": 53,
+      "Board_Connection": 322,
+      "Drilling": 157
+    },
+    "task_subject": {
+      "Board_Connection": {
+        "S01": 266,
+        "S02": 56
+      },
+      "Drilling": {
+        "S01": 78,
+        "S02": 79
+      },
+      "Packaging": {
+        "S01": 9,
+        "S02": 27,
+        "S03": 17
+      }
+    },
+    "sampling_dt": {
+      "0.0111111": 527,
+      "0.0416667": 4,
+      "0.0166667": 1
+    },
+    "duration_s": {
+      "total": 6837.529697000009,
+      "minimum": 1.5777762,
+      "median": 8.422213800000002,
+      "p95": 45.2555103,
+      "maximum": 132.95542260000002
+    },
+    "shorter_than_5s": 169,
+    "shorter_than_1s": 0,
+    "central_5s_total_nominal_s": 2387.8938786,
+    "eight_format_routes": 4256
+  },
+  "new_K4_test_fit_runs": 0,
+  "execution_state": "Awaiting candidate scope and window scope; no test motions used to choose K parameters."
+}
