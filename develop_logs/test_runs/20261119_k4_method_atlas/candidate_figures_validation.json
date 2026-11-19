@@ -1,0 +1,16 @@
+{
+  "native_figures": 13,
+  "export_figures": 11,
+  "total": 24,
+  "svg_and_png_rendered": 24,
+  "visual_review": "4 contact sheets covering all 24; all text/diagrams inspected",
+  "browser_filters": {
+    "native": 13,
+    "export": 11
+  },
+  "links": "all verified",
+  "protected": 610,
+  "mismatches": [],
+  "experiment_mutation": false,
+  "new_holdout_use": 0
+}

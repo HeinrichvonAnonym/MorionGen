@@ -1,0 +1,125 @@
+{
+  "protocol_sha256": "1fbfedf524a65c196d8a17da932a220e5a08b45d3f72a5d26ef17712da293208",
+  "figures": [
+    {
+      "name": "pelvis_continuity",
+      "kind": "native",
+      "svg_sha256": "3b7059e9ce4348ba5b3081e1b4aab2ccd41c5616fa4d4607da18ddcce411a484"
+    },
+    {
+      "name": "pelvis_continuity__coordinated",
+      "kind": "export",
+      "svg_sha256": "9204e9ab8d892270e6501a49d2a37d1e0df9ac03a3de65728bee2d433f94cbf1"
+    },
+    {
+      "name": "balanced_targets",
+      "kind": "native",
+      "svg_sha256": "bb8925dbcaf92a60d14fe752ce39213c41702ff90bef2f957450e71eb60d4366"
+    },
+    {
+      "name": "balanced_targets__coordinated",
+      "kind": "export",
+      "svg_sha256": "c08fde153ecd9644de234b64e2ffe1597d95ceb2cf9136f283e70a30fe0081d2"
+    },
+    {
+      "name": "rig_centres",
+      "kind": "native",
+      "svg_sha256": "744849b9ad2cf3a55772f1b94bb5f2d1a5c0a5a8afa79099fa67405551015608"
+    },
+    {
+      "name": "rig_centres__coordinated",
+      "kind": "export",
+      "svg_sha256": "e9ecfcd2fb6fae23dacea15dadd85df7cd81f5696ef8585a3cd5f598c3b6a290"
+    },
+    {
+      "name": "rig_arm_domain_centres",
+      "kind": "native",
+      "svg_sha256": "79631f92d22df3ab4940d65d74c4b3cccb330ce3e6796f3550f89a84112ba9ae"
+    },
+    {
+      "name": "rig_arm_domain_centres__coordinated",
+      "kind": "export",
+      "svg_sha256": "611e20cff8b01f8139922856555372007e44a400e5e827f6ec44b90fa7e04037"
+    },
+    {
+      "name": "rig_reverse_leg_path",
+      "kind": "native",
+      "svg_sha256": "100a4892f8020281f24a8bee129c2feff5eb89bd11776bd471fa6fa1ea9e1fdc"
+    },
+    {
+      "name": "rig_reverse_leg_path__coordinated",
+      "kind": "export",
+      "svg_sha256": "2c404736a2aee6ac36267a97045045b39a34ec98bbf60bf6c42f547b4babd811"
+    },
+    {
+      "name": "rig_reverse_rate_leg_path",
+      "kind": "native",
+      "svg_sha256": "34c0b6f3a2589fb910822d24f493979ad17ac3466ae1349c070e14aa0c53b353"
+    },
+    {
+      "name": "rig_reverse_rate_leg_path__coordinated",
+      "kind": "export",
+      "svg_sha256": "26612cb2784f0fcc2e31b2040e9f7d687b43102c09b20229b97f880eec4ddeb1"
+    },
+    {
+      "name": "reverse_full_path",
+      "kind": "native",
+      "svg_sha256": "588cba2c0a41b8c3cfd5bac8867be7410855f6ae1a54517dbb59e2720b098b63"
+    },
+    {
+      "name": "position_chain",
+      "kind": "native",
+      "svg_sha256": "68cad77e69eee7536d264a11259f1ccdaa1f98c51e3a85fca9ff05e197b75d75"
+    },
+    {
+      "name": "position_chain__coordinated",
+      "kind": "export",
+      "svg_sha256": "0000586972489ef59110fccf071170935bfeab52a4053ba76be1a57b65d1daee"
+    },
+    {
+      "name": "position_fixed_foot_chain",
+      "kind": "native",
+      "svg_sha256": "8cec86e19950075f552a100268294de5e8004d0f355f3b5c3e8ef6bdba5a7f97"
+    },
+    {
+      "name": "position_fixed_foot_chain__coordinated",
+      "kind": "export",
+      "svg_sha256": "46a0afb47b356a88a2ba279a863bc64d3f0d034f7ef5d20d6ac7dbf698176a4c"
+    },
+    {
+      "name": "position_trajectory",
+      "kind": "native",
+      "svg_sha256": "b3b374a3fb4bd8e09fb1dfa97a5350d79cc90e6f86205d9eab9a4e2a4c5df003"
+    },
+    {
+      "name": "position_trajectory__coordinated",
+      "kind": "export",
+      "svg_sha256": "f055aceae85dad4f8cd35c4f3bff533fd02623f3d5a39f686ce16b2e183b1cd4"
+    },
+    {
+      "name": "position_trajectory_chart",
+      "kind": "native",
+      "svg_sha256": "0574a49b794b5006c191ee32c7429f9bd156dc6580ccdb9bc1f77063228886f5"
+    },
+    {
+      "name": "position_trajectory_chart__coordinated",
+      "kind": "export",
+      "svg_sha256": "586877a2365603500fe720c97a1e3f48d1c6814fd3dde7f95fabeefbe1312630"
+    },
+    {
+      "name": "forward_full_path",
+      "kind": "native",
+      "svg_sha256": "ed3ecfa5431494acf4ec00a2eb89719ce83d54afdae4968df96379ee72239b0a"
+    },
+    {
+      "name": "position_total_proxy",
+      "kind": "native",
+      "svg_sha256": "3b64c31eab58758df94bdb2c091ce41be8a3352dab9b7ccc68ed996eca6087e8"
+    },
+    {
+      "name": "position_total_proxy__coordinated",
+      "kind": "export",
+      "svg_sha256": "8f0796fe6423a05214752bca1e423d64871fa933fc8c7b074c9c6e944f0a1bed"
+    }
+  ]
+}
