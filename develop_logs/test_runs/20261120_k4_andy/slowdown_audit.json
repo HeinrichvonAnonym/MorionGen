@@ -1,0 +1,220 @@
+{
+  "timestamp": 1795149727.1506689,
+  "routes": [
+    {
+      "key": "A000_ardy",
+      "total_min": 46.258317708969116,
+      "fit_min": 44.904592446486156,
+      "visited": 14,
+      "visited_optical_passed": 14,
+      "early": null,
+      "full_pool": true,
+      "first_candidate": "pelvis_continuity",
+      "first_optical_passed": true,
+      "first_D_failed": [
+        "direction/shoulder_line",
+        "rate/shoulder_line",
+        "direction/pelvis_line",
+        "rate/pelvis_line"
+      ],
+      "fail_frequency": {
+        "direction/shoulder_line": 14,
+        "rate/shoulder_line": 14,
+        "direction/pelvis_line": 14,
+        "rate/pelvis_line": 14
+      }
+    },
+    {
+      "key": "A000_chois",
+      "total_min": 57.014716573556264,
+      "fit_min": 55.63598176240921,
+      "visited": 14,
+      "visited_optical_passed": 14,
+      "early": null,
+      "full_pool": true,
+      "first_candidate": "pelvis_continuity",
+      "first_optical_passed": true,
+      "first_D_failed": [
+        "direction/shoulder_line",
+        "rate/shoulder_line",
+        "direction/pelvis_line",
+        "rate/pelvis_line"
+      ],
+      "fail_frequency": {
+        "direction/shoulder_line": 14,
+        "rate/shoulder_line": 14,
+        "direction/pelvis_line": 14,
+        "rate/pelvis_line": 14
+      }
+    },
+    {
+      "key": "A000_closd",
+      "total_min": 59.83077521721522,
+      "fit_min": 58.382987169424695,
+      "visited": 14,
+      "visited_optical_passed": 14,
+      "early": null,
+      "full_pool": true,
+      "first_candidate": "pelvis_continuity",
+      "first_optical_passed": true,
+      "first_D_failed": [
+        "direction/shoulder_line",
+        "rate/shoulder_line",
+        "direction/pelvis_line",
+        "rate/pelvis_line"
+      ],
+      "fail_frequency": {
+        "direction/shoulder_line": 14,
+        "rate/shoulder_line": 14,
+        "direction/pelvis_line": 14,
+        "rate/pelvis_line": 14
+      }
+    },
+    {
+      "key": "A000_dart",
+      "total_min": 56.624260600407915,
+      "fit_min": 55.163974368572234,
+      "visited": 14,
+      "visited_optical_passed": 14,
+      "early": null,
+      "full_pool": true,
+      "first_candidate": "pelvis_continuity",
+      "first_optical_passed": true,
+      "first_D_failed": [
+        "direction/shoulder_line",
+        "rate/shoulder_line",
+        "direction/pelvis_line",
+        "rate/pelvis_line"
+      ],
+      "fail_frequency": {
+        "direction/shoulder_line": 14,
+        "rate/shoulder_line": 14,
+        "direction/pelvis_line": 14,
+        "rate/pelvis_line": 14
+      }
+    },
+    {
+      "key": "A000_kimodo",
+      "total_min": 58.24317389726639,
+      "fit_min": 56.75173648198446,
+      "visited": 14,
+      "visited_optical_passed": 14,
+      "early": null,
+      "full_pool": true,
+      "first_candidate": "pelvis_continuity",
+      "first_optical_passed": true,
+      "first_D_failed": [
+        "direction/shoulder_line",
+        "rate/shoulder_line",
+        "direction/pelvis_line",
+        "rate/pelvis_line"
+      ],
+      "fail_frequency": {
+        "direction/shoulder_line": 14,
+        "rate/shoulder_line": 14,
+        "direction/pelvis_line": 14,
+        "rate/pelvis_line": 14
+      }
+    },
+    {
+      "key": "A000_motionlcm",
+      "total_min": 47.86245191891988,
+      "fit_min": 46.67402346134186,
+      "visited": 14,
+      "visited_optical_passed": 14,
+      "early": null,
+      "full_pool": true,
+      "first_candidate": "pelvis_continuity",
+      "first_optical_passed": true,
+      "first_D_failed": [
+        "position/right_shoulder",
+        "direction/shoulder_line",
+        "rate/shoulder_line",
+        "direction/pelvis_line",
+        "rate/pelvis_line"
+      ],
+      "fail_frequency": {
+        "position/right_shoulder": 2,
+        "direction/shoulder_line": 14,
+        "rate/shoulder_line": 14,
+        "direction/pelvis_line": 14,
+        "rate/pelvis_line": 14
+      }
+    },
+    {
+      "key": "A000_omnicontrol",
+      "total_min": 47.66970863342285,
+      "fit_min": 46.37834266424179,
+      "visited": 14,
+      "visited_optical_passed": 14,
+      "early": null,
+      "full_pool": true,
+      "first_candidate": "pelvis_continuity",
+      "first_optical_passed": true,
+      "first_D_failed": [
+        "position/right_shoulder",
+        "direction/shoulder_line",
+        "rate/shoulder_line",
+        "direction/pelvis_line",
+        "rate/pelvis_line"
+      ],
+      "fail_frequency": {
+        "position/right_shoulder": 2,
+        "direction/shoulder_line": 14,
+        "rate/shoulder_line": 14,
+        "direction/pelvis_line": 14,
+        "rate/pelvis_line": 14
+      }
+    },
+    {
+      "key": "A000_primal",
+      "total_min": 55.676831817626955,
+      "fit_min": 54.24193663597107,
+      "visited": 14,
+      "visited_optical_passed": 14,
+      "early": null,
+      "full_pool": true,
+      "first_candidate": "pelvis_continuity",
+      "first_optical_passed": true,
+      "first_D_failed": [
+        "direction/shoulder_line",
+        "rate/shoulder_line",
+        "direction/pelvis_line",
+        "rate/pelvis_line"
+      ],
+      "fail_frequency": {
+        "direction/shoulder_line": 14,
+        "rate/shoulder_line": 14,
+        "direction/pelvis_line": 14,
+        "rate/pelvis_line": 14
+      }
+    },
+    {
+      "key": "A001_motionlcm",
+      "total_min": 52.67261148293813,
+      "fit_min": 51.33401584625244,
+      "visited": 14,
+      "visited_optical_passed": 14,
+      "early": null,
+      "full_pool": true,
+      "first_candidate": "pelvis_continuity",
+      "first_optical_passed": true,
+      "first_D_failed": [
+        "position/right_shoulder",
+        "direction/shoulder_line",
+        "rate/shoulder_line",
+        "direction/pelvis_line"
+      ],
+      "fail_frequency": {
+        "position/right_shoulder": 2,
+        "direction/shoulder_line": 14,
+        "rate/shoulder_line": 14,
+        "direction/pelvis_line": 14,
+        "rate/pelvis_line": 12
+      }
+    }
+  ],
+  "fit_seconds_approx_from_receipt_mtime": 28168.055450201035,
+  "postfit_seconds_approx": 743.1154208183289,
+  "note": "mtime phase boundaries; no per-function profiling; nine routes represent only two original recordings"
+}
