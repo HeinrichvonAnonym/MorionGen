@@ -1,0 +1,22 @@
+{
+  "run": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2",
+  "previous_run": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v1",
+  "resume_task": "A002_closd",
+  "legacy_completed": 20,
+  "selector_scope": "optical_head_task_d_only_v1",
+  "thresholds": {
+    "angle_deg": 5.0,
+    "position_cm": 5.0,
+    "direction_rate_deg_s": 10.0,
+    "added_step_deg": 5.0
+  },
+  "margin": 0.8,
+  "code_identity": {
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/control/head_task_selection.py": "5d94bbefc56be77e88646e0ca7ab45cb229ddf03e7ce88274cf47af9e979c6e2",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/control/evalkit_k4_slot_lease.py": "c569958be38ff2619e87a0c042c16d6a221daa89c0aa4a9aa1d46824d03f75fa",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/control/evalkit_k4_andy.py": "ea2442b8330685d1d1b76b32b873d5c02fea2d3a5d568354a651a915a861f85e",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/control/evalkit_k4_head_run.py": "e75e2e13146bc2eb7e8097e44a618e5043c71a8e4669f7f18ad6a31eda4e203a"
+  },
+  "hash_policy": "no tree hash scans; known receipts and registered identities reused; only new control files fingerprinted",
+  "development_verification": "/home/heinrich/MorionGen/develop_logs/test_runs/20261120_k4_andy_head/verification.json"
+}

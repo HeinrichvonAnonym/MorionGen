@@ -1,0 +1,1408 @@
+{
+  "at_unix_s": 1795185354.7848682,
+  "first_resumed_result": {
+    "window": "A002",
+    "subject": "541",
+    "method": "closd",
+    "status": "completed",
+    "started_unix_s": 1795185228.1245348,
+    "quality": {
+      "full_record_frames": 12523,
+      "head_valid": 8919,
+      "thorax_valid": 6687,
+      "paired_valid": 4534,
+      "selected_frames": 600,
+      "selected_paired_valid": 600,
+      "selected_duration_s": 4.9916698932647705,
+      "selection_rule": "centre <=5s within historically registered K1 optical-valid window; no current fit error selection",
+      "reference_method": "direct four-marker frames; no template imputation, redundant-marker recovery or temporal filling"
+    },
+    "selector_version": "optical_head_task_d_only_v1",
+    "passed": true,
+    "selected": "pelvis_continuity",
+    "failed_metrics": [],
+    "optical_metrics": {
+      "native": {
+        "D_clock": {
+          "D-R": {
+            "full": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 1.2074182697257333e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.006508761288651e-09,
+                "p95": 4.6203369347645187e-07,
+                "max": 1.5305288171611281e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 1.2074182697257333e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.006508761288651e-09,
+                "p95": 4.6203369347645187e-07,
+                "max": 1.5305288171611281e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            }
+          },
+          "F-D": {
+            "full": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 0.0,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.0702761943366854e-14,
+                "p95": 2.8948417960506114e-14,
+                "max": 4.547579067961901e-14,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 0.0,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.0702761943366854e-14,
+                "p95": 2.8948417960506114e-14,
+                "max": 4.547579067961901e-14,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            }
+          },
+          "F-R": {
+            "full": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 4.6957550543836205e-07,
+                "max": 1.2074182697257333e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.0064906084062603e-09,
+                "p95": 4.620336890139187e-07,
+                "max": 1.5305288140329575e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 4.6957550543836205e-07,
+                "max": 1.2074182697257333e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.0064906084062603e-09,
+                "p95": 4.620336890139187e-07,
+                "max": 1.5305288140329575e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            }
+          }
+        },
+        "R_clock": {
+          "D-R": {
+            "full": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.011150821953939166,
+                "p95": 0.2270093605278704,
+                "max": 0.4728759586488134,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.015725904303349247,
+                "p95": 0.32305147057897216,
+                "max": 0.6319472656005823,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.011150821953939166,
+                "p95": 0.2270093605278704,
+                "max": 0.4728759586488134,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.015725904303349247,
+                "p95": 0.32305147057897216,
+                "max": 0.6319472656005823,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            }
+          },
+          "F-D": {
+            "full": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 8.537736462515939e-07,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 8.697962226449576e-15,
+                "p95": 2.5490692228870017e-14,
+                "max": 4.570216355820017e-14,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 8.537736462515939e-07,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 8.697962226449576e-15,
+                "p95": 2.5490692228870017e-14,
+                "max": 4.570216355820017e-14,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            }
+          },
+          "F-R": {
+            "full": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.011150821953939166,
+                "p95": 0.2270093605278704,
+                "max": 0.4728759586488134,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.01572590430334813,
+                "p95": 0.3230514705789757,
+                "max": 0.6319472656005815,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.011150821953939166,
+                "p95": 0.2270093605278704,
+                "max": 0.4728759586488134,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.01572590430334813,
+                "p95": 0.3230514705789757,
+                "max": 0.6319472656005815,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "export": {
+        "D_clock": {
+          "D-R": {
+            "full": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 1.2074182697257333e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.006508761288651e-09,
+                "p95": 4.6203369347645187e-07,
+                "max": 1.5305288171611281e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 1.2074182697257333e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.006508761288651e-09,
+                "p95": 4.6203369347645187e-07,
+                "max": 1.5305288171611281e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            }
+          },
+          "F-D": {
+            "full": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 0.0,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.1376847946991669e-14,
+                "p95": 2.862693783920412e-14,
+                "max": 4.386469255583729e-14,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 0.0,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.1376847946991669e-14,
+                "p95": 2.862693783920412e-14,
+                "max": 4.386469255583729e-14,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            }
+          },
+          "F-R": {
+            "full": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 1.2074182697257333e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.006491813668273e-09,
+                "p95": 4.6203368917145265e-07,
+                "max": 1.5305288140861307e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 0.0,
+                "p95": 0.0,
+                "max": 1.2074182697257333e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 150,
+                "denominator": 150,
+                "median": 1.006491813668273e-09,
+                "p95": 4.6203368917145265e-07,
+                "max": 1.5305288140861307e-06,
+                "valid_fraction": 1.0,
+                "within": {
+                  "5": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "10": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  },
+                  "20": {
+                    "n": 150,
+                    "denominator": 150,
+                    "valid_denominator": 150
+                  }
+                }
+              }
+            }
+          }
+        },
+        "R_clock": {
+          "D-R": {
+            "full": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.011150821953939166,
+                "p95": 0.2270093605278704,
+                "max": 0.4728759586488134,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.015725904303349247,
+                "p95": 0.32305147057897216,
+                "max": 0.6319472656005823,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.011150821953939166,
+                "p95": 0.2270093605278704,
+                "max": 0.4728759586488134,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.015725904303349247,
+                "p95": 0.32305147057897216,
+                "max": 0.6319472656005823,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            }
+          },
+          "F-D": {
+            "full": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 3.306651113363206e-06,
+                "p95": 0.0023749997647446487,
+                "max": 0.0084460025265096,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 3.2884448224156e-06,
+                "p95": 0.0020367489383197536,
+                "max": 0.007923122111272432,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 3.306651113363206e-06,
+                "p95": 0.0023749997647446487,
+                "max": 0.0084460025265096,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 3.2884448224156e-06,
+                "p95": 0.0020367489383197536,
+                "max": 0.007923122111272432,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            }
+          },
+          "F-R": {
+            "full": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.011151691628541332,
+                "p95": 0.22698742967565216,
+                "max": 0.47282581312418115,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.01572532193602356,
+                "p95": 0.3231488414801251,
+                "max": 0.6314296128684473,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            },
+            "continuous": {
+              "head_up_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.011151691628541332,
+                "p95": 0.22698742967565216,
+                "max": 0.47282581312418115,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              },
+              "head_relative_thorax_deg": {
+                "n": 596,
+                "denominator": 600,
+                "median": 0.01572532193602356,
+                "p95": 0.3231488414801251,
+                "max": 0.6314296128684473,
+                "valid_fraction": 0.9933333333333333,
+                "within": {
+                  "5": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "10": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  },
+                  "20": {
+                    "n": 596,
+                    "denominator": 600,
+                    "valid_denominator": 596
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "visited": 1,
+    "visited_passed": 1,
+    "runtime_failures": {},
+    "elapsed_s": 8.395177364349365
+  },
+  "runtime_status": {
+    "status": "completed",
+    "frames": 597,
+    "selector": "optical_head_task_d_only_v1",
+    "elapsed_s": 0.29600954055786133,
+    "reusable_complete_candidates": [
+      "balanced_targets",
+      "pelvis_continuity",
+      "pelvis_continuity__coordinated"
+    ],
+    "hash_policy": "registered dependency hashes reused; no source/protection tree rehash",
+    "registered_hash_cache_hits": 116,
+    "local_task_hash_calls": 6
+  },
+  "children": [
+    {
+      "pid": 878763,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 879809,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 879872,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 879970,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 881990,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 882156,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 882409,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 883237,
+      "ppid": 585745,
+      "state": "T"
+    },
+    {
+      "pid": 883363,
+      "ppid": 883253,
+      "state": "R"
+    },
+    {
+      "pid": 883364,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 883393,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 883424,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 883488,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 883500,
+      "ppid": 585745,
+      "state": "R"
+    },
+    {
+      "pid": 883508,
+      "ppid": 585745,
+      "state": "R"
+    }
+  ],
+  "active_slots": 14,
+  "TV_evaluated": 1074
+}

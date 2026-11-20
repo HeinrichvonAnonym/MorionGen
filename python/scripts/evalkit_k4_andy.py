@@ -235,17 +235,20 @@ def report(p,results,state):
            reference_insufficient=sum(r['status']=='reference_insufficient' for r in rows),pending=600-len(rows),
            updated_unix_s=time.time(),rows=rows)
     d['per_format']={m:dict(expected=75,evaluated=sum(r['method']==m for r in done),passed=sum(r['method']==m and r['passed'] for r in done)) for m in METHODS}
+    d['per_selector']={s:dict(evaluated=sum(r.get('selector_version','whole_body_v1')==s for r in done),passed=sum(r.get('selector_version','whole_body_v1')==s and r['passed'] for r in done)) for s in sorted({r.get('selector_version','whole_body_v1') for r in done})}
     d['per_person']={s:dict(expected=120,evaluated=sum(r['subject']==s for r in done),passed=sum(r['subject']==s and r['passed'] for r in done)) for s in sorted({r['subject'] for r in p['records']})}
     save(Path(p['run'])/'progress.json',d)
     page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Andy头胸test</title><style>body{font:16px/1.7 system-ui;background:#f2f5f7;color:#193143}main{max-width:1000px;margin:auto;padding:28px}section{padding:22px;background:white;margin:20px 0;border-radius:10px}td,th{padding:8px;border-bottom:1px solid #dce3e7;text-align:left}table{width:100%;border-collapse:collapse}</style><main><h1>Andy：光学头胸参考 × 冻结K4</h1><p>75条、5人、八格式，共600路；与电视4256路全身测试分开报告。</p>'
     page+=f'<section><h2>{len(done)}/600已验 · {d["passed"]}通过</h2><p>{d["metric_failed"]}指标未通过，{d["execution_failed"]}执行失败，{d["reference_insufficient"]}参考不足。状态：{state}。</p><p>更新时间：{time.strftime("%Y-%m-%d %H:%M:%S")}；在线每30秒刷新。待运行项保留完整分母。</p></section>'
+    if p.get('resume_without_tree_rehash'):
+        page+='<section><h2>头胸D-only加速续跑</h2><p>当前规则仅以D支持的头部方向、头胸相对旋转、覆盖及原生/导出时序停止；模板位置、肩和骨盆仅作诊断。阈值及0.8余量保持原值，数值求解器和候选顺序保持原值。</p><p>切换前已完成结果保留旧规则，切换后结果使用独立新版本；600路总表是进度，不是同一规则的完整验证。</p><pre>'+html.escape(json.dumps(d['per_selector'],ensure_ascii=False,indent=2))+'</pre></section>'
     page+='<section><h2>参考与先验</h2><p>实测：原始头部四标记、胸部四标记构造的段坐标架。评价八格式的头部上方向，以及六旋转格式的头相对胸旋转；两位置格式的轴向旋转不适用。</p><p>模板先验：全身位置、体型、骨长、颈点、附着和根位置。虚拟头颈连杆将实测头部方向传入位置格式，其关节位置不是实测人体关节中心。模板身体只提供输入上下文，任何身体位置拟合不计入实测通过率。</p><p>窗口：K1已登记光学有效区间的中央最多5秒。整条试次的参考可见率另存reference_quality，不能用窗口内完整覆盖代替全试次覆盖。直接标记参考，无缺测补齐；若旧窗口不满足参考要求，保留不足状态，不另选好窗口。</p></section>'
     page+='<section><h2>按格式</h2><table><tr><th>格式</th><th>已验</th><th>通过</th></tr>'+''.join(f'<tr><td>{m}</td><td>{v["evaluated"]}/75</td><td>{v["passed"]}</td></tr>' for m,v in d['per_format'].items())+'</table></section>'
     page+='<section><h2>逐路结果</h2><p>每项展开显示选中候选的独立评分。角度均为度；完整窗口和连续区间分别保留，时序门槛采用冻结规则。</p>'
     for r in sorted(rows,key=lambda r:(r['window'],r['method'])):
         status=('通过' if r['passed'] else '指标未通过') if r['status']=='completed' else r['status']
         title=f"{r['window']} · {r['subject']} · {r['method']} · {status}"
-        detail={k:r[k] for k in ('selected','visited','visited_passed','quality','optical_metrics','failed_metrics','error') if k in r}
+        detail={k:r[k] for k in ('selector_version','origin','selected','visited','visited_passed','quality','optical_metrics','failed_metrics','error') if k in r}
         page+=f'<details><summary>{html.escape(title)}</summary><pre style="overflow:auto;font-size:12px">{html.escape(json.dumps(detail,ensure_ascii=False,indent=2))}</pre></details>'
     page+='</section>'
     page+='<section><h2>实验边界</h2><p>D-only提前接受，选中后以独立光学R评分。所有实际访问且成功输出的候选单独留证；未访问候选未知。D−R、F−D、F−R，原生/导出与D/R时钟分别保存。5°角度、全观测覆盖和原冻结时序门槛；本测试不授予5cm物理位置或全身精度资格。来源跳变分层依据原始光学帧与标记质心。</p><p>模板条件下头胸角度重构的证据不等于生理解剖角验证；标记软组织与坐标架定义误差仍属于参考自身限制。K1使用历史保留，本次为K4重新评估。GPU继续冻结。</p></section></main><script>if(location.protocol!=="file:")setTimeout(()=>location.reload(),30000)</script></html>'
@@ -255,8 +258,9 @@ def report(p,results,state):
 def run(a):
     import fcntl
     p=read(a.run/'protocol.json');lock=(a.run/'.controller.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
-    for f,h in {**p['identity'],**p['protected_at_start']}.items():
-        if sha(f)!=h:raise ValueError('Registered file changed: '+f)
+    if not p.get('resume_without_tree_rehash'):
+        for f,h in {**p['identity'],**p['protected_at_start']}.items():
+            if sha(f)!=h:raise ValueError('Registered file changed: '+f)
     # The external lease is mandatory while TV is still active.
     lease=read(a.lease)
     for _ in range(30):
@@ -275,11 +279,12 @@ def run(a):
     report(p,results,'running')
     for row in p['records']:
         w=row['window_key'];prep=a.run/'preparation'/w;prep.mkdir(parents=True,exist_ok=True)
+        if all(w+'_'+method in results for method in METHODS):continue
         request=prep/'request.json';save(request,dict(row=row,run=str(a.run)))
         try:
             if not (a.run/'prepared'/w/'receipt.json').exists():call(script,['prepare','--request',request],prep/'prepare.log')
             prepared=read(a.run/'prepared'/w/'receipt.json')
-            if any(sha(f)!=h for f,h in prepared['hashes'].items()):raise ValueError('Prepared reference/input changed')
+            if not p.get('resume_without_tree_rehash') and any(sha(f)!=h for f,h in prepared['hashes'].items()):raise ValueError('Prepared reference/input changed')
         except Exception as error:
             # Signal/reference issues are separate from numerical K failures.
             quality=a.run/'prepared'/w/'reference_quality.json'
@@ -294,15 +299,17 @@ def run(a):
             key=w+'_'+method
             if key in results:continue
             task=a.run/'tasks'/key;task.mkdir(parents=True,exist_ok=True)
-            value=dict(window=w,subject=row['subject'],method=method,status='running',started_unix_s=time.time(),quality=prepared['quality'])
+            value=dict(window=w,subject=row['subject'],method=method,status='running',started_unix_s=time.time(),quality=prepared['quality'],selector_version=p.get('selection_scope','whole_body_v1'))
             save(task/'state.json',value)
             report(p,results,'running '+key)
             try:
                 item=prepared['records'][method];fit=a.run/'fits'/w/method
-                if fit.exists() and not (fit/'receipt.json').exists():fit.rename(fit.with_name(method+'_interrupted_'+str(time.time_ns())))
+                if fit.exists() and not (fit/'receipt.json').exists() and not p.get('fit_runner'):fit.rename(fit.with_name(method+'_interrupted_'+str(time.time_ns())))
                 job=dict(input=item['input'],method=method,output=str(fit),mass_kg=item['mass_kg'],floor_m=item['floor_m'],fit_config=p['fit_config'])
+                if p.get('fit_runner'):
+                    job.update(registered_identity=p['registered_identity'],selector_module=p['selector_module'],reuse_fit=str(Path(p['previous_run'])/'fits'/w/method))
                 save(task/'runtime_job.json',job)
-                if not (fit/'receipt.json').exists():call(CODE/'python/scripts/evalkit_k4_run.py',['--code-root',CODE,'--job',task/'runtime_job.json'],task/'fit.log')
+                if not (fit/'receipt.json').exists():call(Path(p.get('fit_runner',CODE/'python/scripts/evalkit_k4_run.py')),['--code-root',CODE,'--job',task/'runtime_job.json'],task/'fit.log')
                 selection=read(fit/'candidate_selection.json');selection_hash=sha(fit/'candidate_selection.json');save(task/'selection_before_R.json',dict(hash=selection_hash,selected=selection['selected']))
                 reviewed={}
                 for candidate in selection['qualities']:
@@ -331,9 +338,9 @@ def run(a):
             except Exception as error:value.update(status='failed',error=str(error),traceback=traceback.format_exc())
             value['elapsed_s']=time.time()-value['started_unix_s'];save(task/'result.json',value);results[key]=value
             print(key,value['status'],value.get('passed'),flush=True);report(p,results,'running')
-    changed=[f for f,h in {**p['identity'],**p['protected_at_start']}.items() if sha(f)!=h]
+    changed=[] if p.get('resume_without_tree_rehash') else [f for f,h in {**p['identity'],**p['protected_at_start']}.items() if sha(f)!=h]
     report(p,results,'completed' if not changed else 'integrity_failed')
-    save(a.run/'completion.json',dict(routes=len(results),expected=600,changed=changed,complete=not changed and len(results)==600))
+    save(a.run/'completion.json',dict(routes=len(results),expected=600,changed=changed,complete=not changed and len(results)==600,integrity='registered evidence retained; tree rehash explicitly skipped' if p.get('resume_without_tree_rehash') else 'hash verified'))
     save(a.run/'usage.json',dict(status='completed',prior_K1_use_retained=True,expected_routes=600,finished_routes=len(results),finished_unix_s=time.time()))
 
 

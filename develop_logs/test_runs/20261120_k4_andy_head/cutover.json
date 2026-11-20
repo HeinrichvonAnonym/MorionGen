@@ -1,0 +1,37 @@
+{
+  "cutover_unix_s": 1795185227.0770104,
+  "old_run": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v1",
+  "new_run": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2",
+  "old_progress": "running A002_closd",
+  "resume_task": "A002_closd",
+  "legacy_completed": [
+    "A000_motionlcm",
+    "A000_omnicontrol",
+    "A000_ardy",
+    "A000_chois",
+    "A000_closd",
+    "A000_dart",
+    "A000_kimodo",
+    "A000_primal",
+    "A001_motionlcm",
+    "A001_omnicontrol",
+    "A001_ardy",
+    "A001_chois",
+    "A001_closd",
+    "A001_dart",
+    "A001_kimodo",
+    "A001_primal",
+    "A002_motionlcm",
+    "A002_omnicontrol",
+    "A002_ardy",
+    "A002_chois"
+  ],
+  "old_slot_released": true,
+  "hash_policy": "no tree hash scans; known receipts and registered identities reused; only new control files fingerprinted",
+  "new_control_sha256": {
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/control/head_task_selection.py": "5d94bbefc56be77e88646e0ca7ab45cb229ddf03e7ce88274cf47af9e979c6e2",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/control/evalkit_k4_slot_lease.py": "c569958be38ff2619e87a0c042c16d6a221daa89c0aa4a9aa1d46824d03f75fa",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/control/evalkit_k4_andy.py": "ea2442b8330685d1d1b76b32b873d5c02fea2d3a5d568354a651a915a861f85e",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/control/evalkit_k4_head_run.py": "e75e2e13146bc2eb7e8097e44a618e5043c71a8e4669f7f18ad6a31eda4e203a"
+  }
+}

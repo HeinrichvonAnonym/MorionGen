@@ -1,0 +1,34 @@
+{
+  "checks": [
+    {
+      "method": "ardy",
+      "selection": "pelvis_continuity",
+      "visited": [
+        "pelvis_continuity"
+      ],
+      "early": "pelvis_continuity",
+      "wall_s": 1.5881736278533936,
+      "body_prior_invariance": true,
+      "bad_direction_rejected": true,
+      "missing_rejected": true,
+      "export_jump_rejected": true,
+      "rotation_observable": true
+    },
+    {
+      "method": "motionlcm",
+      "selection": "pelvis_continuity",
+      "visited": [
+        "pelvis_continuity"
+      ],
+      "early": "pelvis_continuity",
+      "wall_s": 1.6136510372161865,
+      "body_prior_invariance": true,
+      "bad_direction_rejected": true,
+      "missing_rejected": true,
+      "export_jump_rejected": true,
+      "rotation_observable": false
+    }
+  ],
+  "test_R_reads": 0,
+  "scope": "Fixed thresholds and metric contract, development D/F only"
+}
