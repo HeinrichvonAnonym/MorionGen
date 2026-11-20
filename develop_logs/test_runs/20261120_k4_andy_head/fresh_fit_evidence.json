@@ -1,0 +1,21 @@
+{
+  "window": "A002",
+  "method": "dart",
+  "status": "completed",
+  "passed": true,
+  "selected": "pelvis_continuity",
+  "visited": 1,
+  "elapsed_s": 178.26656770706177,
+  "selector_version": "optical_head_task_d_only_v1",
+  "source": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/tasks/A002_dart/result.json",
+  "runtime_status": {
+    "status": "completed",
+    "frames": 597,
+    "selector": "optical_head_task_d_only_v1",
+    "elapsed_s": 170.3215847015381,
+    "reusable_complete_candidates": [],
+    "hash_policy": "registered dependency hashes reused; no source/protection tree rehash",
+    "registered_hash_cache_hits": 117,
+    "local_task_hash_calls": 11
+  }
+}
