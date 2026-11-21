@@ -1,0 +1,10 @@
+{
+  "version": "andy-parallel-execution-1",
+  "workers": 14,
+  "television_completion": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1/completion.json",
+  "controller": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/control/evalkit_k4_andy_parallel_20261121.py",
+  "controller_sha256": "933456dcf0726a8d72c1041404921674bfb86edd9757c39647bc4505f15e540a",
+  "numerical_protocol": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/protocol.json",
+  "numerical_policy_changed": false,
+  "hash_policy": "No tree rehash; reuse existing task checkpoints and registered identities"
+}

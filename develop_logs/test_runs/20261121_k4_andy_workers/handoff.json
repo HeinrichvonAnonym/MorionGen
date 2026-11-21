@@ -1,0 +1,32 @@
+{
+  "started_unix_s": 1795255357.3013315,
+  "old_controller": 883253,
+  "old_guard": 883248,
+  "progress_before": {
+    "state": "running A060_closd",
+    "evaluated": 484,
+    "passed": 484,
+    "pending": 116
+  },
+  "checkpoint_children": [
+    {
+      "pid": 979430,
+      "ppid": 883253,
+      "state": "R",
+      "start": "62490973"
+    }
+  ],
+  "new_controller": 979899,
+  "switched_unix_s": 1795255459.4345672,
+  "workers": 14,
+  "current_stage_finished": true,
+  "command": [
+    "/home/heinrich/.local/share/opensim-api/bin/python",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/control/evalkit_k4_andy_parallel_20261121.py",
+    "run",
+    "--run",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2",
+    "--execution-config",
+    "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/andy_head_test_20261120_v2/execution_parallel_14.json"
+  ]
+}

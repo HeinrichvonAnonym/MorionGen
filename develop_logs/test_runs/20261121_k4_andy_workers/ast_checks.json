@@ -1,0 +1,21 @@
+{
+  "unchanged_functions": [
+    "read",
+    "sha",
+    "save",
+    "setup",
+    "fixture",
+    "measurement_metadata",
+    "build",
+    "directional_scores",
+    "score",
+    "register"
+  ],
+  "changed_functions": [
+    "run",
+    "report",
+    "main"
+  ],
+  "new_function": "dispatch_records",
+  "numerical_code_changed": false
+}

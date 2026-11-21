@@ -234,12 +234,13 @@ def report(p,results,state):
            metric_failed=sum(not r['passed'] for r in done),execution_failed=sum(r['status']=='failed' for r in rows),
            reference_insufficient=sum(r['status']=='reference_insufficient' for r in rows),pending=600-len(rows),
            updated_unix_s=time.time(),rows=rows)
+    d['worker_limit']=p.get('workers',1);d['active_tasks']=list(p.get('_active_tasks',{}).values())
     d['per_format']={m:dict(expected=75,evaluated=sum(r['method']==m for r in done),passed=sum(r['method']==m and r['passed'] for r in done)) for m in METHODS}
     d['per_selector']={s:dict(evaluated=sum(r.get('selector_version','whole_body_v1')==s for r in done),passed=sum(r.get('selector_version','whole_body_v1')==s and r['passed'] for r in done)) for s in sorted({r.get('selector_version','whole_body_v1') for r in done})}
     d['per_person']={s:dict(expected=120,evaluated=sum(r['subject']==s for r in done),passed=sum(r['subject']==s and r['passed'] for r in done)) for s in sorted({r['subject'] for r in p['records']})}
     save(Path(p['run'])/'progress.json',d)
     page='<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Andy头胸test</title><style>body{font:16px/1.7 system-ui;background:#f2f5f7;color:#193143}main{max-width:1000px;margin:auto;padding:28px}section{padding:22px;background:white;margin:20px 0;border-radius:10px}td,th{padding:8px;border-bottom:1px solid #dce3e7;text-align:left}table{width:100%;border-collapse:collapse}</style><main><h1>Andy：光学头胸参考 × 冻结K4</h1><p>75条、5人、八格式，共600路；与电视4256路全身测试分开报告。</p>'
-    page+=f'<section><h2>{len(done)}/600已验 · {d["passed"]}通过</h2><p>{d["metric_failed"]}指标未通过，{d["execution_failed"]}执行失败，{d["reference_insufficient"]}参考不足。状态：{state}。</p><p>更新时间：{time.strftime("%Y-%m-%d %H:%M:%S")}；在线每30秒刷新。待运行项保留完整分母。</p></section>'
+    page+=f'<section><h2>{len(done)}/600已验 · {d["passed"]}通过</h2><p>{d["metric_failed"]}指标未通过，{d["execution_failed"]}执行失败，{d["reference_insufficient"]}参考不足。状态：{state}。</p><p>更新时间：{time.strftime("%Y-%m-%d %H:%M:%S")}；在线每30秒刷新。待运行项保留完整分母。调度上限{d["worker_limit"]}，活跃记录{len(d["active_tasks"])}。</p></section>'
     if p.get('resume_without_tree_rehash'):
         page+='<section><h2>头胸D-only加速续跑</h2><p>当前规则仅以D支持的头部方向、头胸相对旋转、覆盖及原生/导出时序停止；模板位置、肩和骨盆仅作诊断。阈值及0.8余量保持原值，数值求解器和候选顺序保持原值。</p><p>切换前已完成结果保留旧规则，切换后结果使用独立新版本；600路总表是进度，不是同一规则的完整验证。</p><pre>'+html.escape(json.dumps(d['per_selector'],ensure_ascii=False,indent=2))+'</pre></section>'
     page+='<section><h2>参考与先验</h2><p>实测：原始头部四标记、胸部四标记构造的段坐标架。评价八格式的头部上方向，以及六旋转格式的头相对胸旋转；两位置格式的轴向旋转不适用。</p><p>模板先验：全身位置、体型、骨长、颈点、附着和根位置。虚拟头颈连杆将实测头部方向传入位置格式，其关节位置不是实测人体关节中心。模板身体只提供输入上下文，任何身体位置拟合不计入实测通过率。</p><p>窗口：K1已登记光学有效区间的中央最多5秒。整条试次的参考可见率另存reference_quality，不能用窗口内完整覆盖代替全试次覆盖。直接标记参考，无缺测补齐；若旧窗口不满足参考要求，保留不足状态，不另选好窗口。</p></section>'
@@ -255,31 +256,60 @@ def report(p,results,state):
     target=Path(p['html']);tmp=target.with_suffix('.tmp');tmp.write_text(page);tmp.replace(target)
 
 
+def dispatch_records(records,workers,execute,publish):
+    """One owner per original record; each owner runs sequential numeric stages."""
+    from concurrent.futures import ThreadPoolExecutor,wait,FIRST_COMPLETED
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        pending={pool.submit(execute,row) for row in records}
+        while pending:
+            finished,pending=wait(pending,timeout=30,return_when=FIRST_COMPLETED)
+            for future in finished:future.result()
+            publish()
+
+
 def run(a):
     import fcntl
+    import threading
     p=read(a.run/'protocol.json');lock=(a.run/'.controller.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+    execution=read(a.execution_config) if a.execution_config else {}
+    workers=int(execution.get('workers',1))
+    if not 1<=workers<=14:raise ValueError('Worker limit is 14')
+    if execution:
+        television=read(Path(execution['television_completion']))
+        if television.get('state')!='completed' or television.get('finished')!=4256 or television.get('active')!=0:raise ValueError('TV must finish before standalone execution')
+    p=dict(p,workers=workers,_active_tasks={})
     if not p.get('resume_without_tree_rehash'):
         for f,h in {**p['identity'],**p['protected_at_start']}.items():
             if sha(f)!=h:raise ValueError('Registered file changed: '+f)
-    # The external lease is mandatory while TV is still active.
-    lease=read(a.lease)
-    for _ in range(30):
-        if lease.get('state')=='guest_running':break
-        time.sleep(.1);lease=read(a.lease)
-    if lease.get('state')!='guest_running' or lease.get('guest_pid')!=os.getpid():raise ValueError('Missing live one-slot reservation')
-    script=a.run/'control/evalkit_k4_andy.py';results={f.parent.name:read(f) for f in (a.run/'tasks').glob('*/result.json')}
+    # Standalone allocation is registered separately after TV has completed.
+    if not execution:
+        lease=read(a.lease)
+        for _ in range(30):
+            if lease.get('state')=='guest_running':break
+            time.sleep(.1);lease=read(a.lease)
+        if lease.get('state')!='guest_running' or lease.get('guest_pid')!=os.getpid():raise ValueError('Missing live one-slot reservation')
+    script=Path(__file__).resolve();results={f.parent.name:read(f) for f in (a.run/'tasks').glob('*/result.json')}
+    state_lock=threading.RLock()
+    def publish(state):
+        with state_lock:report(p,dict(results),state)
+    def remember(key,value):
+        with state_lock:results[key]=value
+    def set_active(window,task):
+        with state_lock:
+            if task is None:p['_active_tasks'].pop(window,None)
+            else:p['_active_tasks'][window]=task
     save(a.run/'usage.json',dict(status='running',numerical_started=True,prior_K1_use_retained=True,started_unix_s=time.time(),expected_routes=600))
     def call(file,args,log):
         if shutil.disk_usage(a.run).free<80*1024**3:raise RuntimeError('80 GiB disk reserve')
         available=int(next(line.split()[1] for line in Path('/proc/meminfo').read_text().splitlines() if line.startswith('MemAvailable:')))*1024
         while available<8*1024**3:
-            report(p,results,'waiting_for_8GiB_available_memory');time.sleep(30)
+            publish('waiting_for_8GiB_available_memory');time.sleep(30)
             available=int(next(line.split()[1] for line in Path('/proc/meminfo').read_text().splitlines() if line.startswith('MemAvailable:')))*1024
         with log.open('a') as stream:subprocess.run([sys.executable,str(file),*map(str,args)],stdout=stream,stderr=subprocess.STDOUT,env=ENV,check=True)
-    report(p,results,'running')
-    for row in p['records']:
+    publish('running')
+    def execute_record(row):
         w=row['window_key'];prep=a.run/'preparation'/w;prep.mkdir(parents=True,exist_ok=True)
-        if all(w+'_'+method in results for method in METHODS):continue
+        if all(w+'_'+method in results for method in METHODS):return
         request=prep/'request.json';save(request,dict(row=row,run=str(a.run)))
         try:
             if not (a.run/'prepared'/w/'receipt.json').exists():call(script,['prepare','--request',request],prep/'prepare.log')
@@ -293,15 +323,16 @@ def run(a):
             status='reference_insufficient' if insufficient else 'failed'
             for method in METHODS:
                 key=w+'_'+method;value=dict(window=w,subject=row['subject'],method=method,status=status,error=str(error),phase='reference_preparation')
-                save(a.run/'tasks'/key/'result.json',value);results[key]=value
-            report(p,results,'running');continue
+                save(a.run/'tasks'/key/'result.json',value);remember(key,value)
+            publish('running');return
         for method in METHODS:
             key=w+'_'+method
             if key in results:continue
             task=a.run/'tasks'/key;task.mkdir(parents=True,exist_ok=True)
             value=dict(window=w,subject=row['subject'],method=method,status='running',started_unix_s=time.time(),quality=prepared['quality'],selector_version=p.get('selection_scope','whole_body_v1'))
             save(task/'state.json',value)
-            report(p,results,'running '+key)
+            set_active(w,key)
+            publish('running '+key)
             try:
                 item=prepared['records'][method];fit=a.run/'fits'/w/method
                 if fit.exists() and not (fit/'receipt.json').exists() and not p.get('fit_runner'):fit.rename(fit.with_name(method+'_interrupted_'+str(time.time_ns())))
@@ -336,10 +367,16 @@ def run(a):
                 selected=reviewed[selection['selected']]
                 value.update(status='completed',passed=selected['passed'],selected=selection['selected'],failed_metrics=selected['failed_metrics'],optical_metrics=selected['optical_metrics'],visited=len(reviewed),visited_passed=sum(r['passed'] for r in reviewed.values()),runtime_failures=selection['failures'])
             except Exception as error:value.update(status='failed',error=str(error),traceback=traceback.format_exc())
-            value['elapsed_s']=time.time()-value['started_unix_s'];save(task/'result.json',value);results[key]=value
-            print(key,value['status'],value.get('passed'),flush=True);report(p,results,'running')
+            value['elapsed_s']=time.time()-value['started_unix_s'];save(task/'result.json',value);remember(key,value)
+            print(key,value['status'],value.get('passed'),flush=True);publish('running')
+    def execute(row):
+        window=row['window_key'];set_active(window,window+':prepare')
+        try:execute_record(row)
+        finally:set_active(window,None)
+    todo=[row for row in p['records'] if any(row['window_key']+'_'+method not in results for method in METHODS)]
+    dispatch_records(todo,workers,execute,lambda:publish('running'))
     changed=[] if p.get('resume_without_tree_rehash') else [f for f,h in {**p['identity'],**p['protected_at_start']}.items() if sha(f)!=h]
-    report(p,results,'completed' if not changed else 'integrity_failed')
+    publish('completed' if not changed else 'integrity_failed')
     save(a.run/'completion.json',dict(routes=len(results),expected=600,changed=changed,complete=not changed and len(results)==600,integrity='registered evidence retained; tree rehash explicitly skipped' if p.get('resume_without_tree_rehash') else 'hash verified'))
     save(a.run/'usage.json',dict(status='completed',prior_K1_use_retained=True,expected_routes=600,finished_routes=len(results),finished_unix_s=time.time()))
 
@@ -347,6 +384,7 @@ def run(a):
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('phase',choices=['register','prepare','score','run'])
     ap.add_argument('--run',type=Path);ap.add_argument('--request',type=Path);ap.add_argument('--lease',type=Path)
+    ap.add_argument('--execution-config',type=Path)
     a=ap.parse_args()
     if a.phase=='register':register(a)
     elif a.phase=='run':run(a)
