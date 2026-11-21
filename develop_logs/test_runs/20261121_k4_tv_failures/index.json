@@ -1,0 +1,86 @@
+{
+  "created": "2026-11-21T18:14:02.576514+08:00",
+  "scope": "Read-only test diagnosis. No new fitting, scoring, tuning, holdout use, or hash scan.",
+  "source": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/test_budget_20261120_v1",
+  "counts": {
+    "姿态位置+时序": 56,
+    "native/D_clock": 82,
+    "时序": 24,
+    "export/R_clock": 4,
+    "native/R_clock": 2,
+    "姿态位置": 8
+  },
+  "body_route_counts": {
+    "踝/足": 6,
+    "腿/膝": 6,
+    "肩/肩线": 18,
+    "上臂/前臂": 69,
+    "肘": 57,
+    "腕": 15,
+    "躯干": 6
+  },
+  "selector_counts": {
+    "候选池耗尽且均未通过": 82,
+    "已访问通过候选漏选": 4,
+    "提前接受失败/未访问未知": 2
+  },
+  "format_counts": {
+    "ardy": {
+      "failed": 11,
+      "total": 532
+    },
+    "chois": {
+      "failed": 12,
+      "total": 532
+    },
+    "closd": {
+      "failed": 12,
+      "total": 532
+    },
+    "dart": {
+      "failed": 12,
+      "total": 532
+    },
+    "kimodo": {
+      "failed": 12,
+      "total": 532
+    },
+    "motionlcm": {
+      "failed": 9,
+      "total": 532
+    },
+    "omnicontrol": {
+      "failed": 9,
+      "total": 532
+    },
+    "primal": {
+      "failed": 11,
+      "total": 532
+    }
+  },
+  "activity_counts": {
+    "Packaging": {
+      "failed": 19,
+      "total": 424,
+      "affected_windows": 3,
+      "total_windows": 53
+    },
+    "Board_Connection": {
+      "failed": 69,
+      "total": 2576,
+      "affected_windows": 9,
+      "total_windows": 322
+    },
+    "Drilling": {
+      "failed": 0,
+      "total": 1256,
+      "affected_windows": 0,
+      "total_windows": 157
+    }
+  },
+  "roundtrip": {
+    "passed": 88,
+    "total": 88
+  },
+  "evidence": "/media/heinrich/9bbdd73e-4410-4279-9639-6161f0c958391/MorionGen/outputs/evalkit_k4_20261117/tv_failure_analysis_20261121/evidence.json"
+}
